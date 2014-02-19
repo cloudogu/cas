@@ -1,0 +1,377 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* reset */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video { border: 0; outline: 0; vertical-align: baseline; background: transparent; }
+
+body { line-height: 1; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+
+nav ul { list-style: none; }
+
+blockquote, q { quotes: none; }
+
+/*blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }*/
+
+/* change colours to suit your needs */
+ins { background-color: #ff9; color: #000; text-decoration: none; }
+
+/* change colours to suit your needs */
+mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
+
+del { text-decoration: line-through; }
+
+abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+/* change border colour to suit your needs */
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #cccccc; margin: 1em 0; padding: 0; }
+
+input, select { vertical-align: middle; }
+
+/* general page */
+@font-face { font-family: 'Exo';
+             src: url('../Exo-font/Exo.woff') format('woff'); }
+
+html {
+	height: 100%;
+	font-family: 'Exo', Calibri, Arial;
+	font-size: 14px;
+	background: url(images/background.jpg) no-repeat center center fixed; 
+	-webkit-background-size: cover;	
+	-o-background-size: cover;
+	background-size: cover;
+}
+body{
+	height: 100%;
+	margin: 0;
+}
+a{
+	color: grey;
+	text-decoration: none;
+	margin: 0; 
+	padding: 0; 
+	vertical-align: baseline; 
+	background: transparent;
+}
+a:hover{
+	color: #00A6E2;
+}
+
+#content {  
+	overflow: hidden;
+	/*height: 100%;*/
+}
+#exception{
+	position: absolute;
+	top: 0px;
+	width: 100%;
+}
+
+#msg { }
+#msg h2 { font-size: 1.4em; margin-bottom: 0.5em; }
+#msg.errors { background-color: #EA9999 !important; color: #CD0606; font-weight: bold; border-radius: 3px; width: 100%; position: absolute; bottom: 165px; padding: 6px;}
+#msg.errors_connection {color: #BB0000; background-color: #EA9999; font-weight: bold; width: 100%;}
+#msg.success { border: none; color: #FFFFFF; background: transparent !important; float: right; margin-top: 15%;}
+#msg.info { border: 1px dotted #008; color: #008; padding-left: 100px; background: url(../images/info.gif) no-repeat 20px center; }
+#error{
+	padding: 20px;
+}
+#login #fm1 h2 { font-size: 1.4em; font-weight: normal; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #DDDDDD; }
+#login #fm1 .row { margin-bottom: 25px; }
+#login #fm1 .row .fl-label { display: block; color: white; font-size: 16px;}
+#login #fm1 .row input[type=text], #content #login #fm1 .row input[type=password] {width: 100%; padding: 6px; outline: none; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; border: 1px solid #DDDDDD; background: #FEFEFE; border: none;}
+#login #fm1 .row.check { padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #DDDDDD; border: none; font-size: 11px; }
+
+
+
+#login #fm1 .row .btn-submit {
+	background: none repeat scroll 0 0 #FFFFFF;
+	color: #555555;
+	margin: 7px -12px 0;
+	padding: 7px 14px !important;
+	display: inline-block;
+	margin-bottom: 0;
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 3px;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.3);
+	border-bottom: 2px solid rgba(0,0,0,0.2);
+	position: relative;
+	cursor: pointer;
+	background-color: #00A6E2;
+	border: none !important;
+	float: right;	
+}
+
+
+#login #fm1 .row .btn-reset { border: 0; background: none; color: #777; text-transform: lowercase; border-left: 1px solid #ddd; }
+#login #fm1 .row .btn-submit:hover, #cas #content #login #fm1 .row .btn-reset:hover { cursor: pointer; }
+#sidebar { width: auto; }
+#sidebar .sidebar-content { padding-left: 20px; }
+#sidebar .sidebar-content p { margin-bottom: 1.4em; }
+#sidebar .sidebar-content #list-languages ul { list-style: none; }
+#sidebar .sidebar-content #list-languages ul li { display: inline-block; padding: 0px 10px; border-right: 1px solid #e2e2e2; }
+#sidebar .sidebar-content #list-languages ul li:last-child { border: 0; line-height: 1.4em; }
+
+
+#container-main{
+	position: absolute;
+	top: 50%;
+	margin-top: -175px;
+	background-color: #2F333F;
+	height: 350px;
+	width: 100%;
+	text-align: center;
+	
+}
+#container-main-middle{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 58px;
+	width: 50%;
+	height: 235px;
+	text-align: left;
+}
+#scmmu-logo{
+	float: left;
+
+}
+#scmmu-png{
+	width: 100%;
+	-webkit-min-width: 100%;
+}
+#login{
+	width: 320px;
+	max-width: 386px;
+	margin-top: 84px;
+	position: relative;
+	float: right;
+}
+#logout{
+	width: 320px;
+	max-width: 386px;
+	margin-top: 100px;
+	position: relative;
+	float: right;
+	color: white;
+}
+#message-box{
+	width: 320px;
+	max-width: 386px;
+	margin-top: 0px;
+	position: relative;
+	float: right;
+	color: white;
+}
+#login-success{
+	width: 320px;
+	max-width: 386px;
+	margin-top: 75px;
+	position: relative;
+	float: right;
+	color: white;
+}
+
+#logout-message{
+	font-size: 14px;
+
+}
+
+/* footer */
+#footer { 
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background-color: #2F333F;  
+	line-height: 30px;
+	text-transform: none;
+	font-size: 12px;
+	color: #636363;
+	font-weight: 300;
+	}
+#copyright{
+	padding-left: 35px;
+}
+#logoutTextParagraph{
+	margin-bottom: 10px;
+}
+#backButton{
+	background: none repeat scroll 0 0 #FFFFFF;
+	color: #555555;
+	margin: 7px 0;
+	padding: 7px 14px !important;
+	display: inline-block;
+	margin-bottom: 0;
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 3px;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.3);
+	border-bottom: 2px solid rgba(0,0,0,0.2);
+	position: relative;
+	cursor: pointer;
+	background-color: #00A6E2;
+	border: none !important;
+	float: right;	
+}
+ 
+@media screen and (max-width: 1681px){
+ 	#container-main-middle{
+		width: 60%;		
+	}
+}
+@media screen and (max-width: 1281px){
+ 	#container-main-middle{
+		width: 70%;		
+	}
+}
+@media screen and (max-width: 1025px){
+ 	#container-main-middle{
+		width: 80%;		
+	}
+}
+/*@media screen and (max-width: 900px){
+ 	#container-main-middle{
+		width: 90%;		
+	}
+}
+@media screen and (max-width: 790px){
+ 	#container-main-middle{
+		width: 95%;		
+	}
+}*/
+@media screen and (max-width: 900px){
+ 	body{
+		height: 100%;
+		overflow: hidden;
+		background-color: #2F333F;
+		font-size: 11px;
+	}
+	#msg h2{
+		font-size: 12px;
+	}
+	#content{
+		height: 100%;
+		/*min-height: 500px;*/
+		background-color: #2F333F;
+	}
+	#container-main{
+		height: auto;
+		position: static;
+		margin-top: 25px;
+	}
+	#container-main-middle{
+		position: static;
+		width: 60%;
+		height: auto;
+		margin-top: 0px;
+	}
+	#error{
+		padding: 2px 2px 2px 10px;
+	}
+	#login {
+		float: left;
+		width: 100%;
+		margin-top: 55px;
+	}
+	#login #fm1 .row{
+		margin-bottom: 5px;
+	}
+	#login #fm1 .row .btn-submit {
+		margin-top: 0px;
+	}
+	#logout {
+		float: left;
+		width: 100%;
+		margin-top: 20px;
+	}
+	#message-box{
+		float: left;
+		width: 100%;
+		margin-top: 20px;		
+	
+	}
+	#login-success{
+		float: left;
+		width: 100%;
+		margin-top: 20px;
+	}
+
+	#exception{
+		position: absolute;
+		top: 0px;
+	}
+	#msg.errors {
+		max-width: 386px;
+		bottom: 107px;
+	}
+	.connection-text{
+		display: none;
+	}
+	#scmmu-logo{
+		margin: 10px -12px 0px 0px;
+	}
+	#footer {
+		height: 30px;
+		line-height: 20px;
+		position: absolute;
+		margin-top: -60px;
+	}
+	.footer-text{
+		margin:0px;
+		padding-top: 5px;
+	}
+}
+@media screen and (max-height: 321px){
+	#container-main-middle{
+		width: 95%;
+	}
+	#scmmu-logo{
+		width: 38%;
+		margin-top: 15px;
+	}
+	#content{
+	min-height: 230px;
+	}
+	#login{
+		margin: 52px 2%;
+		float: right;
+		width: 55%;
+	}
+	#login #fm1 .row{
+		margin-bottom: 5px;
+	}
+	#msg.errors {
+	bottom: 105px;
+	}
+	#footer {
+		height: 30px;
+		line-height: 20px;
+		position: static;
+		margin-top: -45px;
+	}
+}
