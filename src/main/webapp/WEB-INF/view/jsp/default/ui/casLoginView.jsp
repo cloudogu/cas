@@ -20,13 +20,18 @@
 --%>
 <jsp:directive.include file="includes/top.jsp" />
 
+<script>
+	var URL=document.URL;
+	var URLsecure=URL.replace("http","https");
+</script>
+
 	<body>
 		<div id="exception">
 			<c:if test="${not pageContext.request.secure}">
 				<div id="msg" class="errors_connection">
 					<div id="error">
 						<h2>Non-secure Connection</h2>
-						<p class="connection-text">You are currently accessing CAS over a non-secure connection. Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over HTTPS.</p>
+						<p class="connection-text">You are currently accessing CAS over a non-secure connection. Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.</p>
 					</div>
 				</div>
 			</c:if>

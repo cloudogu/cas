@@ -74,9 +74,9 @@ a{
 	vertical-align: baseline; 
 	background: transparent;
 }
-a:hover{
+/* a:hover{
 	color: #00A6E2;
-}
+} */
 
 #content {  
 	overflow: hidden;
@@ -163,6 +163,10 @@ a:hover{
 	width: 100%;
 	-webkit-min-width: 100%;
 }
+.link-underlined{
+	color: #00A6E2;
+	text-decoration: underline;
+}
 #login{
 	width: 320px;
 	max-width: 386px;
@@ -189,7 +193,7 @@ a:hover{
 #login-success{
 	width: 320px;
 	max-width: 386px;
-	margin-top: 75px;
+	margin-top: 50px;
 	position: relative;
 	float: right;
 	color: white;
@@ -218,7 +222,7 @@ a:hover{
 #logoutTextParagraph{
 	margin-bottom: 10px;
 }
-#backButton{
+.button{
 	background: none repeat scroll 0 0 #FFFFFF;
 	color: #555555;
 	margin: 7px 0;
@@ -229,8 +233,6 @@ a:hover{
 	font-weight: bold;
 	text-decoration: none;
 	border-radius: 3px;
-	box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-	text-shadow: 0 -1px 1px rgba(0,0,0,0.3);
 	border-bottom: 2px solid rgba(0,0,0,0.2);
 	position: relative;
 	cursor: pointer;
@@ -238,6 +240,24 @@ a:hover{
 	border: none !important;
 	float: right;	
 }
+.button-home{
+	background: none repeat scroll 0 0 #FFFFFF;
+	color: #555555;
+	margin: 7px 0;
+	padding: 7px 14px !important;
+	display: inline-block;
+	margin-bottom: 0;
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 3px;
+	border-bottom: 2px solid rgba(0,0,0,0.2);
+	position: relative;
+	cursor: pointer;
+	background-color: #00A6E2;
+	border: none !important;
+	float: left;	
+} 
  
 @media screen and (max-width: 1681px){
  	#container-main-middle{

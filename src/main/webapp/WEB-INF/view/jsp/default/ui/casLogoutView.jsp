@@ -21,29 +21,21 @@
 <jsp:directive.include file="includes/top.jsp" />
 
 
-<body>
-	
+<body>	
 		<div id="content">
-			
-
 			<div id="container-main">
 				<div id="container-main-middle">
 					<div id="scmmu-logo">
 						<img id="scmmu-png" src="themes/scmm-universe/images/scmmu.png">
 					</div>
-		
+
 					<div id="logout" class="box-flpanel logout-back">
-		
-
-
-		<h2 id = "logoutTextParagraph">Logout successful</h2>
-		<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>				
-		<p ><a id="backButton" href="/" target="_self">&nbsp&lt;&lt; Back&nbsp</a></p>
-						
-	</div>
-	
-			</div>	
+						<h2 id = "logoutTextParagraph">Log out successful</h2>
+						<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
+						<p><input type="button" value="Close" class="button" onclick="window.close()"></p>						
+					</div>	
+				</div>	
+			</div>
 		</div>
 	</div>
-</div>						
 <jsp:directive.include file="includes/bottom.jsp" />
