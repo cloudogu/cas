@@ -157,6 +157,17 @@
 	  -->
 	  <property name="url" value="${ldap.authentication.server.urls}" />
 	  <property name="anonymousReadOnly" value="${ldap.authentication.server.anonymousReadOnly}" />
+	  <property name="userDn" value="${ldap.authentication.manager.userdn}" />
+	  <property name="password" value="${ldap.authentication.manager.password}" />
+      <property name="referral" value="follow" />
+      <property name="baseEnvironmentProperties">
+        <map>
+          <entry>
+            <key><value>java.naming.security.authentication</value></key>
+            <value>simple</value>
+          </entry>
+        </map>
+      </property>
 	</bean>
 
 	<bean id="attributeRepository" class="org.jasig.services.persondir.support.ldap.LdapPersonAttributeDao">
