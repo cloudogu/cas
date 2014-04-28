@@ -46,7 +46,7 @@
 		<!--<link type="text/css" rel="stylesheet" media="screen" href="<c:url value="/css/fss-framework-1.1.2.css" />" />-->
         <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />		
+	    <link type="image/x-icon" href="/favicon.ico" rel="shortcut icon">	
 		<meta charset="utf-8" /> <!-- Legt die Zeichenkodierung fest -->
 				
 	</head>
