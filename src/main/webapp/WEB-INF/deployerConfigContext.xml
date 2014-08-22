@@ -189,11 +189,14 @@
 	  <property name="resultAttributeMapping">
 	    <map>
 	      <!-- Mapping beetween LDAP entry attributes (key) and Principal's (value) -->
-	      			  <entry value="username" key="${ldap.authentication.attribute.username}" />
-				      <entry value="cn" key="${ldap.authentication.attribute.cn}" />
-				      <entry value="mail" key="${ldap.authentication.attribute.mail}" />
-				      <entry value="groups" key="${ldap.authentication.attribute.groups}" />
-				      <!-- <entry value="Fax" key="facsimileTelephoneNumber" /> -->
+	      <entry value="username" key="${ldap.authentication.attribute.username}" />
+				<entry value="cn" key="${ldap.authentication.attribute.cn}" />
+				<entry value="mail" key="${ldap.authentication.attribute.mail}" />
+				<entry value="groups" key="${ldap.authentication.attribute.groups}" />
+        <entry value="displayName" key="${ldap.authentication.attribute.displayName}" />
+        <entry value="givenName" key="${ldap.authentication.attribute.givenName}" />
+        <entry value="sn" key="${ldap.authentication.attribute.sn}" />
+				<!-- <entry value="Fax" key="facsimileTelephoneNumber" /> -->
 	    </map>
 	  </property>
 	</bean>
