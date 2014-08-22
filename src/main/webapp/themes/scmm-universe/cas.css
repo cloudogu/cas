@@ -150,13 +150,15 @@ a{
 #container-main-middle{
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 58px;
+	/*margin-top: 58px;*/
+        margin-top: 110px;
 	width: 50%;
 	height: 235px;
 	text-align: left;
 }
 #scmmu-logo{
 	float: left;
+        width: 398px;
 
 }
 #scmmu-png{
@@ -170,14 +172,14 @@ a{
 #login{
 	width: 320px;
 	max-width: 386px;
-	margin-top: 84px;
+	/*margin-top: 84px;*/
 	position: relative;
 	float: right;
 }
 #logout{
 	width: 320px;
 	max-width: 386px;
-	margin-top: 100px;
+	/*margin-top: 100px;*/
 	position: relative;
 	float: right;
 	color: white;
@@ -185,7 +187,7 @@ a{
 #message-box{
 	width: 320px;
 	max-width: 386px;
-	margin-top: 0px;
+	margin-top: -20px;
 	position: relative;
 	float: right;
 	color: white;
@@ -193,7 +195,7 @@ a{
 #login-success{
 	width: 320px;
 	max-width: 386px;
-	margin-top: 50px;
+	margin-top: 0px;
 	position: relative;
 	float: right;
 	color: white;
@@ -324,6 +326,9 @@ a{
 	#login #fm1 .row .btn-submit {
 		margin-top: 0px;
 	}
+	#login-success{
+	max-width: 100%;
+	}
 	#logout {
 		float: left;
 		width: 100%;
@@ -332,7 +337,8 @@ a{
 	#message-box{
 		float: left;
 		width: 100%;
-		margin-top: 20px;		
+		margin-top: 20px;
+		max-width:100%;
 	
 	}
 	#login-success{
@@ -354,6 +360,7 @@ a{
 	}
 	#scmmu-logo{
 		margin: 10px -12px 0px 0px;
+		width:100%;
 	}
 	#footer {
 		height: 30px;
