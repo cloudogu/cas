@@ -6,18 +6,15 @@
   <groupId>de.triology.scm.universe</groupId>
   <artifactId>scmm-universe-cas</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-          <configuration>
-             <warName>cas</warName>
-          </configuration>
-          <version>2.4</version>
-      </plugin>
-    </plugins>
-  </build>
+  <version>3.5.2-SCMMU-SNAPSHOT</version>
+  
+  <properties>
+    <cas.version>3.5.2</cas.version>
+    <hibernate.version>3.6.10.Final</hibernate.version>
+  </properties>
+  
+  
+ 
   <dependencies>
     <dependency>
 	    <groupId>org.jasig.cas</groupId>
@@ -66,10 +63,36 @@
 	    <version>5.1.28</version>
 	</dependency>
   </dependencies>
-  <properties>
-    <cas.version>3.5.2</cas.version>
-    <hibernate.version>3.6.10.Final</hibernate.version>
-  </properties>
+ 
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+          <configuration>
+             <warName>cas</warName>
+          </configuration>
+          <version>2.4</version>
+      </plugin>
+    </plugins>
+  </build>
+ 
+  <distributionManagement>
+     <repository>
+      <id>universe.triology.de</id>
+      <name>Triology Nexus Release Repository</name>
+      <url>https://universe.triology.de/nexus/content/repositories/releases/</url>
+    </repository>
+ 
+    <snapshotRepository>
+      <id>universe.triology.de</id>
+      <name>Triology Nexus Snapshot Repository</name>
+      <url>https://universe.triology.de/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+ 
+  </distributionManagement>
+ 
+ 
   <repositories>
     <repository>
       <id>ja-sig</id>
@@ -80,4 +103,6 @@
       <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
     </repository>
   </repositories>
+  
+ 
 </project>
