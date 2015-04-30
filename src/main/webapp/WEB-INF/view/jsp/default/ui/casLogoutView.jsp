@@ -26,13 +26,13 @@
 			<div id="container-main">
 				<div id="container-main-middle">
 					<div id="scmmu-logo">
-						<img id="scmmu-png" src="themes/scmm-universe/images/scmmu.png">
+						<img id="scmmu-png" src="/wp-content/uploads/2014/07/UniverseLogo.png">
 					</div>
 
 					<div id="logout" class="box-flpanel logout-back">
 						<h2 id = "logoutTextParagraph">Log out successful</h2>
 						<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
-						<p><input type="button" value="Close" class="button" onclick="window.close()"></p>						
+						<p><input type="button" value="Login again" class="button" onclick="location.href = '/cas/login';"></p>
 					</div>	
 				</div>	
 			</div>

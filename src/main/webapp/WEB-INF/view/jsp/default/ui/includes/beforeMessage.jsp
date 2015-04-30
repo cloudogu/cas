@@ -27,7 +27,7 @@
 		<div id="container-main">
 			<div id="container-main-middle">
 				<div id="scmmu-logo">
-					<img id="scmmu-png" src="themes/scmm-universe/images/scmmu.png">
+					<img id="scmmu-png" src="/wp-content/uploads/2014/07/UniverseLogo.png">
 				</div>
 	
 				<div id="message-box" class="box-flpanel">
