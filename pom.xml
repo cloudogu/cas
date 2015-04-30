@@ -9,7 +9,7 @@
   <version>3.5.2-SCMMU-SNAPSHOT</version>
   
   <properties>
-    <cas.version>3.5.2</cas.version>
+    <cas.version>3.5.3</cas.version>
     <hibernate.version>3.6.10.Final</hibernate.version>
   </properties>
   
