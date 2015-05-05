@@ -8,7 +8,7 @@
   
   <properties>
     <cas.version>4.0.1</cas.version>
-    <hibernate.version>3.6.10.Final</hibernate.version>
+    <hibernate.core.version>4.1.0.Final</hibernate.core.version>
   </properties>
   
   <!--
@@ -23,52 +23,31 @@
   
  
   <dependencies>
+    
+    <!-- cas server -->
     <dependency>
-	    <groupId>org.jasig.cas</groupId>
-	    <artifactId>cas-server-webapp</artifactId>
-	    <version>${cas.version}</version>
-	    <type>war</type>
-	    <scope>runtime</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.jasig.cas</groupId>
-	    <artifactId>cas-server-support-ldap</artifactId>
-	    <version>${cas.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-dbcp</groupId>
-		<artifactId>commons-dbcp</artifactId>
-		<version>1.4</version>
-		<scope>runtime</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-core</artifactId>
-	    <version>${hibernate.version}</version>
-	    <scope>compile</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-entitymanager</artifactId>
-	    <version>${hibernate.version}</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.jasig.cas</groupId>
-	    <artifactId>cas-server-integration-restlet</artifactId>
-	    <version>${cas.version}</version>
-	    <type>jar</type>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-webapp</artifactId>
+      <version>${cas.version}</version>
+      <type>war</type>
+      <scope>runtime</scope>
     </dependency>
+    
+    <!-- ldap support -->
+    
     <dependency>
-		 <groupId>org.springframework</groupId>
-		 <artifactId>spring-web</artifactId>
-		 <version>3.1.1.RELEASE</version>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-ldap</artifactId>
+      <version>${cas.version}</version>
     </dependency>
-	<!-- MySQL Connector -->
-	<dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	    <version>5.1.28</version>
-	</dependency>
+    
+    <!-- rest support -->
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-integration-restlet</artifactId>
+      <version>${cas.version}</version>
+    </dependency>
+    
   </dependencies>
  
 
@@ -83,18 +62,18 @@
         </configuration>
       </plugin>
 	  
-	  <plugin>
+      <plugin>
         <artifactId>maven-war-plugin</artifactId>
-          <configuration>
-             <warName>cas</warName>
-          </configuration>
-          <version>2.4</version>
+        <configuration>
+          <warName>cas</warName>
+        </configuration>
+        <version>2.4</version>
       </plugin>
     </plugins>
   </build>
  
   <distributionManagement>
-     <repository>
+    <repository>
       <id>universe.triology.de</id>
       <name>Triology Nexus Release Repository</name>
       <url>https://universe.triology.de/nexus/content/repositories/releases/</url>
