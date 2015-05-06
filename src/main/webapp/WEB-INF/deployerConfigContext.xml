@@ -61,7 +61,7 @@
                    | set its name to something other than its default name (typically the simple class name).
                    -->
                 <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-                <entry key-ref="ldapAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+                <entry key-ref="ldapAuthenticationHandler" value="#{null}" />
             </map>
         </constructor-arg>
 
@@ -195,7 +195,7 @@
     
     <bean id="ldapAuthenticationHandler"
           class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute="mail"
+          p:principalIdAttribute="${ldap.authn.attribute.username}"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeMap">
             <map>
