@@ -42,9 +42,18 @@
     </dependency>
     
     <!-- rest support -->
+    
     <dependency>
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-integration-restlet</artifactId>
+      <version>${cas.version}</version>
+    </dependency>
+    
+    <!-- saml support -->
+    
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-saml</artifactId>
       <version>${cas.version}</version>
     </dependency>
     

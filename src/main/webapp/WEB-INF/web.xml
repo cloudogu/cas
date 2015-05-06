@@ -195,6 +195,15 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/authorizationFailure.html</url-pattern>
   </servlet-mapping>
+  
+  <!-- saml support -->
+  
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/samlValidate</url-pattern>
+  </servlet-mapping>
+  
+  <!-- rest support -->
  
   <servlet-mapping>
     <servlet-name>restlet</servlet-name>
