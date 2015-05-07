@@ -101,8 +101,13 @@
         <level value="WARN" />
     </logger>
 
+    <logger name="de.triology" additivity="true">
+        <level value="TRACE" />
+        <appender-ref ref="cas" />
+    </logger>
+
     <logger name="org.jasig" additivity="true">
-        <level value="INFO" />
+        <level value="TRACE" />
         <appender-ref ref="cas" />
     </logger>
 
