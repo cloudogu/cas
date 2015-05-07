@@ -202,7 +202,7 @@
     <!-- ldap support -->
     
     <bean id="ldapAuthenticationHandler"
-          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          class="de.triology.cas.ldap.AdvancedLdapAuthenticationHandler"
           p:principalIdAttribute="${ldap.authn.attribute.username}"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeMap">
@@ -223,6 +223,15 @@
               <entry key="${ldap.authn.attribute.surname}" value="surname"/>
               <entry key="${ldap.authn.attribute.displayName}" value="displayName"/>
             </map>
+        </property>
+        <!--
+        strip dn attributes
+        -->
+        <property name="stripDNAttributes">
+          <util:set>
+            <value>${ldap.authn.attribute.groups}</value>
+            <value>groups</value>
+          </util:set>
         </property>
     </bean>
 
