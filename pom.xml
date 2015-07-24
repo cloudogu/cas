@@ -4,7 +4,7 @@
   <groupId>de.triology.scm.universe</groupId>
   <artifactId>scmm-universe-cas</artifactId>
   <packaging>war</packaging>
-  <version>4.0.2-SCMMU</version>
+  <version>4.0.3-SCMMU-SNAPSHOT</version>
   
   <properties>
     <cas.version>4.0.1</cas.version>
@@ -18,7 +18,7 @@
     <connection>scm:git:https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</connection>
     <developerConnection>scm:git:https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</developerConnection>
     <url>https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</url>
-    <tag>4.0.2-SCMMU</tag>
+    <tag>HEAD</tag>
   </scm>
   
  
