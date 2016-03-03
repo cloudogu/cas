@@ -159,10 +159,16 @@
         <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
               p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-            <property name="attributeFilter">
-                <!-- allow all attributes -->
-                <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" 
-                      c:regex="^.*$" /> 
+            <property name="allowedAttributes">
+                <list>
+                    <value>username</value>
+                    <value>cn</value>
+                    <value>mail</value>
+                    <value>groups</value>
+                    <value>givenName</value>
+                    <value>surname</value>
+                    <value>displayName</value>
+                </list>
             </property>
         </bean>
         <!--
