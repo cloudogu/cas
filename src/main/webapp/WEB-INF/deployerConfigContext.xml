@@ -158,7 +158,13 @@
     <util:list id="registeredServicesList">
         <bean class="org.jasig.cas.services.RegexRegisteredService"
               p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
+            <property name="attributeFilter">
+                <!-- allow all attributes -->
+                <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" 
+                      c:regex="^.*$" /> 
+            </property>
+        </bean>
         <!--
         Use the following definition instead of the above to further restrict access
         to services within your domain (including sub domains).
