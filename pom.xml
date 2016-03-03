@@ -4,11 +4,10 @@
   <groupId>de.triology.scm.universe</groupId>
   <artifactId>scmm-universe-cas</artifactId>
   <packaging>war</packaging>
-  <version>4.0.3-SCMMU-SNAPSHOT</version>
+  <version>4.0.7-SCMMU-SNAPSHOT</version>
   
   <properties>
-    <cas.version>4.0.1</cas.version>
-    <hibernate.core.version>4.1.0.Final</hibernate.core.version>
+    <cas.version>4.0.7</cas.version>
   </properties>
   
   <!--
