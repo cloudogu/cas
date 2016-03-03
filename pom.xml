@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.triology.scm.universe</groupId>
-  <artifactId>scmm-universe-cas</artifactId>
+  <groupId>com.cloudogu.ces</groupId>
+  <artifactId>cas</artifactId>
   <packaging>war</packaging>
-  <version>4.0.7-SCMMU-SNAPSHOT</version>
+  <version>4.0.7.1-SNAPSHOT</version>
   
   <properties>
     <cas.version>4.0.7</cas.version>
@@ -14,9 +14,9 @@
   For release purpose
   -->
   <scm>
-    <connection>scm:git:https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</connection>
-    <developerConnection>scm:git:https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</developerConnection>
-    <url>https://universe.triology.de/scm/git/SCM-Manager/ApplianceCAS</url>
+    <connection>scm:git:https://github.com/cloudogu/cas</connection>
+    <developerConnection>scm:git@github.com:cloudogu/cas.git</developerConnection>
+    <url>https://github.com/cloudogu/cas</url>
     <tag>HEAD</tag>
   </scm>
   
@@ -99,22 +99,6 @@
       </plugin>
     </plugins>
   </build>
- 
-  <distributionManagement>
-    <repository>
-      <id>universe.triology.de</id>
-      <name>Triology Nexus Release Repository</name>
-      <url>https://universe.triology.de/nexus/content/repositories/releases/</url>
-    </repository>
- 
-    <snapshotRepository>
-      <id>universe.triology.de</id>
-      <name>Triology Nexus Snapshot Repository</name>
-      <url>https://universe.triology.de/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
- 
-  </distributionManagement>
- 
  
   <repositories>
     <repository>
