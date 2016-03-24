@@ -18,24 +18,16 @@
     under the License.
 
 --%>
+
 <jsp:directive.include file="includes/top.jsp" />
+<jsp:directive.include file="includes/beforeMessage.jsp" />
 
-
-<body>	
-		<div id="content">
-			<div id="container-main">
-				<div id="container-main-middle">
-					<div id="scmmu-logo">
-						<img id="scmmu-png" src="/_static/images/universe-logo.png">
-					</div>
-
-					<div id="logout" class="box-flpanel logout-back">
-						<h2 id = "logoutTextParagraph">Log out successful</h2>
-						<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
-						<p><input type="button" value="Login again" class="button" onclick="location.href = '/cas/login';"></p>
-					</div>	
-				</div>	
-			</div>
-		</div>
+	<div class="alert alert-success">
+		<h2>Log out successful</h2>
+		<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
 	</div>
+
+    <input type="button" value="Login again" class="btn btn-primary" onclick="location.href = '/cas/login';">
+
+<jsp:directive.include file="includes/afterMessage.jsp" />					
 <jsp:directive.include file="includes/bottom.jsp" />

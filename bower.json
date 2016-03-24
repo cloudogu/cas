@@ -1,0 +1,15 @@
+{
+  "name": "cas",
+  "version": "0.1.0",
+  "description": "CAS Server for CES",
+  "author": "Sebastian Sdorra <sebastian.sdorra@triology.de>",
+  "keywords": [
+    "cas",
+    "authentication",
+    "sso"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "ces-theme": "git+ssh://git@github.com/cloudogu/ces-theme.git"
+  }
+}

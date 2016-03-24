@@ -18,22 +18,8 @@
     under the License.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-</div>
-                <div id="footer" class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-                	<a id="jasig" href="https://www.scm-manager.com/imprint/" title="go to Jasig home page"></a>
-                    <div id="copyright">
-                        <p class="footer-text"><a href="https://www.scm-manager.com/imprint/" target = "_blank">&copy; 2014 TRIOLOGY GmbH</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-  
-	  <script type="text/javascript" src="themes/scmm-universe/jquery/jquery-1.9.1.js"></script>
-
-        <script type="text/javascript" src="themes/scmm-universe/jquery/jquery-ui.js"></script>
-        <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
-    </body>
+    </div>
+  </body>
 </html>
 
