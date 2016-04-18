@@ -1,0 +1,55 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 13.04.2016, 14:07:04
+    Author     : mbehlendorf
+*/
+
+.btn-primary{
+    border-color:#FFFFFF;   
+}
+
+.link-underlined{
+    color:#FFFFFF;
+    text-decoration: underline;
+}
+
+.link-underlined:hover{
+    color:#FFFFFF;
+}
+
+.login-msg{
+    margin-bottom: 12px;
+}
+
+.logout-msg{
+    margin-bottom: 12px;
+}
+
+.logout-btn{
+    float:right;
+}
+
+.mid{
+    height:400px;
+}
+
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+.alert-msg-credentials{
+    position: absolute;
+}
+
+.warning-msg-https{
+    position: absolute;
+    margin-top: 70px;
+}
+
+.logo{
+    margin-top:-30px;
+}

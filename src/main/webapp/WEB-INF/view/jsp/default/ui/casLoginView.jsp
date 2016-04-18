@@ -24,15 +24,17 @@
         var URL=document.URL;
         var URLsecure=URL.replace("http","https");
     </script>
-
-    <div class="row">
-      <div class="col-md-3 col-md-offset-2">
+    
+    <div class="row mid vertical-align">
+      <div class="col-md-3 col-md-offset-2 logo">
         <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="" class="spacer-top pull-right">
       </div>
       <div class="col-md-3">
 
     <form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
+        
         <div id="login">
+
             <c:if test="${not empty sessionScope.openIdLocalId}">
             <strong>${sessionScope.openIdLocalId}</strong>
             <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
@@ -40,6 +42,7 @@
             
             <c:if test="${empty sessionScope.openIdLocalId}">
             <div class="form-group">
+                            
                 <label for="username">
                     Username:
                 </label>
@@ -60,16 +63,17 @@
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
             
-            <form:errors path="*" id="msg" cssClass="alert alert-danger" element="div" />
+            
+           
             
             <c:if test="${not pageContext.request.secure}">
-            <div class="alert alert-warning">
+            <div class="alert alert-warning warning-msg-https">
               You are currently accessing CAS over a non-secure connection. Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
             </div>
             </c:if>
             
-            <input class="btn btn-default pull-right" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" />
-            
+            <input class="btn btn-primary pull-right" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" />
+            <form:errors path="*" id="msg" cssClass="alert alert-danger alert-msg-credentials" element="div" />
         </div>
     </form:form>
             

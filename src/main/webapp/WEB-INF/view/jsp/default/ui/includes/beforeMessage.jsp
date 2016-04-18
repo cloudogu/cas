@@ -20,8 +20,8 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-    <div class="row">
-      <div class="col-md-3 col-md-offset-2">
+    <div class="row mid vertical-align">
+      <div class="col-md-3 col-md-offset-2 logo">
         <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="" class="spacer-top pull-right">
       </div>
       <div class="col-md-3">

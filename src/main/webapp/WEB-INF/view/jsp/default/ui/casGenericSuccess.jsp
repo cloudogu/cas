@@ -21,14 +21,14 @@
 <jsp:directive.include file="includes/top.jsp" />
 <jsp:directive.include file="includes/beforeMessage.jsp" />
 
-	<div class="alert alert-success">
-		<h2>Log in successful</h2>
+	<div class="login-msg">
+		<h2>Login successful</h2>
 		<p>You have successfully logged into the Central Authentication Service.</p>
 		<p>For security reasons please log out and exit your web browser when you are done accessing services that require authentication.</p>
 	</div>
 
 	<a href="/" class="btn btn-primary">Home</a>
-	<a href="logout" class="btn btn-warning">
+	<a href="logout" class="btn btn-warning logout-btn">
 		Log out	
 	</a>
 		
