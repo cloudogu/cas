@@ -33,7 +33,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <link type="text/css" rel="stylesheet" href="<c:url value="/themes/ces-theme/dist/css/ces.css" />" media="screen" />
-
+    <link type="text/css" rel="stylesheet" href="<c:url value="/style/custom.css" />" media="screen" />
     <!-- favicons -->
     <link rel="icon" type="image/png" href="<c:url value="/themes/ces-theme/dist/images/favicon/favicon-64px.png" />" sizes="64x64"/>
     <link rel="icon" type="image/png" href="<c:url value="/themes/ces-theme/dist/images/favicon/favicon-32px.png" />" sizes="64x64"/>

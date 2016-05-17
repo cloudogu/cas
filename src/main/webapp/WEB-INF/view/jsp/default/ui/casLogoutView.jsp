@@ -22,7 +22,7 @@
 <jsp:directive.include file="includes/top.jsp" />
 <jsp:directive.include file="includes/beforeMessage.jsp" />
 
-	<div class="alert alert-success">
+	<div class="logout-msg">
 		<h2>Log out successful</h2>
 		<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
 	</div>
