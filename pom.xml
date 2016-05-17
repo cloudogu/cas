@@ -32,6 +32,13 @@
       <scope>runtime</scope>
     </dependency>
     
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-extension-clearpass</artifactId>
+      <version>${cas.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    
     <!-- ldap support -->
     
     <dependency>
