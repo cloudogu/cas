@@ -21,6 +21,7 @@ import mousio.etcd4j.responses.EtcdAuthenticationException;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import mousio.etcd4j.responses.EtcdKeysResponse.EtcdNode;
+import org.jasig.cas.services.RegexRegisteredService;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -35,28 +36,44 @@ import org.json.simple.parser.ParseException;
  * @author mbehlendorf
  */
 public class ServiceRegistry implements ServiceRegistryDao {
-    
+
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
-    
+
     private String fqdn;
     
-    ServiceRegistry() throws IOException, EtcdException, EtcdAuthenticationException, ParseException, TimeoutException{
+    List<String> allowedAttributes;
+
+    ServiceRegistry() throws IOException, EtcdException, EtcdAuthenticationException, ParseException, TimeoutException {
+
+        allowedAttributes = Arrays.asList("username", "cn", "mail", "groups", "givenName", "surname", "displayName");
+         
         registeredServices = new ArrayList<RegisteredService>();
-        
+
         EtcdClient etcd = new EtcdClient(URI.create(getEtcdUri()));
-    
-            
-        EtcdKeysResponse response1 = etcd.getDir("/dogu").recursive().send().get();
-        
-        EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-        
-        fqdn = response2.getNode().getValue();
-            
-        addServices(response1);
-    
+
+        EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
+
+        if (stageResponse.getNode().getValue().equals("development")) {
+            System.out.println("In development stage");
+            RegexRegisteredService regexService = new RegexRegisteredService();
+            regexService.setServiceId("^(https?|imaps?)://.*");
+            regexService.setId(0);
+            regexService.setName("10000001");
+            regexService.setAllowedToProxy(true);
+            regexService.setAllowedAttributes(allowedAttributes);
+            registeredServices.add(regexService);
+        } else {
+
+            EtcdKeysResponse response1 = etcd.getDir("/dogu").recursive().send().get();
+
+            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
+
+            fqdn = response2.getNode().getValue();
+
+            addServices(response1);
+        }
     }
-    
-    
+
     public RegisteredService save(RegisteredService rs) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -65,33 +82,33 @@ public class ServiceRegistry implements ServiceRegistryDao {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private String getEtcdUri() throws FileNotFoundException, IOException{
-        BufferedReader bR;        
+    private String getEtcdUri() throws FileNotFoundException, IOException {
+        BufferedReader bR;
         // read node_master
         bR = new BufferedReader(new FileReader("/etc/ces/node_master"));
         String nodeMaster = bR.readLine();
 
         // empty node_master
-        if(nodeMaster.equals("")){
-            Logger.getLogger(ServiceRegistry.class.getName()).log(Level.SEVERE,"/etc/ces/node_master is empty");
+        if (nodeMaster.equals("")) {
+            Logger.getLogger(ServiceRegistry.class.getName()).log(Level.SEVERE, "/etc/ces/node_master is empty");
         }
-        String uri = "http://"+nodeMaster +":4001";
+        String uri = "http://" + nodeMaster + ":4001";
         return uri;
     }
-    
-    public List<RegisteredService> load() {        
+
+    public List<RegisteredService> load() {
         return registeredServices;
     }
 
     public RegisteredService findServiceById(long id) {
-         for (final RegisteredService r : this.registeredServices) {
+        for (final RegisteredService r : this.registeredServices) {
             if (r.getId() == id) {
                 return r;
             }
         }
         return null;
     }
-    
+
     private long findHighestId() {
         long id = 0;
 
@@ -105,38 +122,38 @@ public class ServiceRegistry implements ServiceRegistryDao {
     }
 
     private void addServices(EtcdKeysResponse response) throws ParseException {
-        List<String> allowedAttributes = Arrays.asList("username","cn","mail","groups","givenName","surname","displayName");
+       
         // get all dogu nodes
-            for(EtcdNode doguNode : response.getNode().getNodes()){
-                String version ="";
-                // get used dogu version
-                for(EtcdNode leaf : doguNode.getNodes()){   
-                    if(leaf.getKey().equals(doguNode.getKey()+"/current")){
-                        version = leaf.getValue();
-                    }
-                
+        for (EtcdNode doguNode : response.getNode().getNodes()) {
+            String version = "";
+            // get used dogu version
+            for (EtcdNode leaf : doguNode.getNodes()) {
+                if (leaf.getKey().equals(doguNode.getKey() + "/current")) {
+                    version = leaf.getValue();
                 }
-                // empty if dogu isnt used
-                if(!version.isEmpty()){
-                    for(EtcdNode leaf : doguNode.getNodes()){                    
-                        if(leaf.getKey().equals(doguNode.getKey()+"/"+version)){
-                            JSONParser parser = new JSONParser();
-                            JSONObject json = (JSONObject) parser.parse(leaf.getValue());
-                            // check if dogu needs cas
-                            if(json.get("Dependencies")!=null && ((JSONArray)json.get("Dependencies")).contains("cas")) {
-                                RegisteredServiceImpl rS = new RegisteredServiceImpl();
-                                rS.setAllowedToProxy(true);
-                                rS.setName(json.get("Name").toString());                                
-                                rS.setServiceId("https://"+fqdn+"/"+json.get("Name")+"/");
-                                rS.setId(findHighestId()+1);
-                                rS.setEvaluationOrder((int) rS.getId());
-                                rS.setAllowedAttributes(allowedAttributes);
-                                registeredServices.add(rS);
-                            }                            
-                        }                
+
+            }
+            // empty if dogu isnt used
+            if (!version.isEmpty()) {
+                for (EtcdNode leaf : doguNode.getNodes()) {
+                    if (leaf.getKey().equals(doguNode.getKey() + "/" + version)) {
+                        JSONParser parser = new JSONParser();
+                        JSONObject json = (JSONObject) parser.parse(leaf.getValue());
+                        // check if dogu needs cas
+                        if (json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas")) {
+                            RegisteredServiceImpl rS = new RegisteredServiceImpl();
+                            rS.setAllowedToProxy(true);
+                            rS.setName(json.get("Name").toString());
+                            rS.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/");
+                            rS.setId(findHighestId() + 1);
+                            rS.setEvaluationOrder((int) rS.getId());
+                            rS.setAllowedAttributes(allowedAttributes);
+                            registeredServices.add(rS);
+                        }
                     }
                 }
             }
+        }
     }
-    
+
 }
