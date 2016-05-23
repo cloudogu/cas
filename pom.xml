@@ -1,122 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.cloudogu.ces</groupId>
-  <artifactId>cas</artifactId>
-  <packaging>war</packaging>
-  <version>4.0.7.3</version>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cloudogu.ces</groupId>
+    <artifactId>cas</artifactId>
+    <packaging>war</packaging>
+    <version>4.0.7.3</version>
   
-  <properties>
-    <cas.version>4.0.7</cas.version>
-  </properties>
+    <properties>
+        <cas.version>4.0.7</cas.version>
+    </properties>
   
-  <!--
-  For release purpose
-  -->
-  <scm>
-    <connection>scm:git:https://github.com/cloudogu/cas</connection>
-    <developerConnection>scm:git@github.com:cloudogu/cas.git</developerConnection>
-    <url>https://github.com/cloudogu/cas</url>
-    <tag>HEAD</tag>
-  </scm>
+    <!--
+    For release purpose
+    -->
+    <scm>
+        <connection>scm:git:https://github.com/cloudogu/cas</connection>
+        <developerConnection>scm:git@github.com:cloudogu/cas.git</developerConnection>
+        <url>https://github.com/cloudogu/cas</url>
+        <tag>HEAD</tag>
+    </scm>
   
  
-  <dependencies>
+    <dependencies>
     
-    <!-- cas server -->
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-webapp</artifactId>
-      <version>${cas.version}</version>
-      <type>war</type>
-      <scope>runtime</scope>
-    </dependency>
+        <!-- cas server -->
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-webapp</artifactId>
+            <version>${cas.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
     
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-extension-clearpass</artifactId>
-      <version>${cas.version}</version>
-      <scope>runtime</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-extension-clearpass</artifactId>
+            <version>${cas.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     
-    <!-- ldap support -->
+        <!-- ldap support -->
     
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-ldap</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-ldap</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
     
-    <!-- rest support -->
+        <!-- rest support -->
     
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-integration-restlet</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-integration-restlet</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
     
-    <!-- saml support -->
+        <!-- saml support -->
     
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-saml</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-saml</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
     
-    <!-- fix version conflicts -->
+        <!-- fix version conflicts -->
     
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.5</version>
-    </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
     
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.12</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
     
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
-    </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
     
-  </dependencies>
+        <dependency>
+            <groupId>org.mousio</groupId>
+            <artifactId>etcd4j</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
  
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
 	  
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <warName>cas</warName>
-        </configuration>
-        <version>2.4</version>
-      </plugin>
-    </plugins>
-  </build>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warName>cas</warName>
+                </configuration>
+                <version>2.4</version>
+            </plugin>
+        </plugins>
+    </build>
  
-  <repositories>
-    <repository>
-      <id>ja-sig</id>
-      <url>http://oss.sonatype.org/content/repositories/releases/</url>
-    </repository>
-    <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>ja-sig</id>
+            <url>http://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+    </repositories>
   
  
 </project>
