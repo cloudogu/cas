@@ -151,7 +151,9 @@
     would probably want to replace this with the JPA-backed ServiceRegistry DAO
     The name of this bean should remain "serviceRegistryDao".
     +-->
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
+    <bean id="serviceRegistryDao" class="de.triology.cas.services.ServiceRegistry" />
+    
+  <!-- <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
             p:registeredServices-ref="registeredServicesList" />
 
     <util:list id="registeredServicesList">
@@ -171,7 +173,7 @@
                 </list>
             </property>
         </bean>
-        <!--
+-->        <!--
         Use the following definition instead of the above to further restrict access
         to services within your domain (including sub domains).
         Note that example.com must be replaced with the domain you wish to permit.
@@ -189,8 +191,8 @@
               <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" />
             </property>
         </bean>
-        -->
-    </util:list>
+       
+    </util:list> -->
 
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 
