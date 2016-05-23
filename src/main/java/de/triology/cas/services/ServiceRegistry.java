@@ -127,7 +127,7 @@ public class ServiceRegistry implements ServiceRegistryDao {
                                 RegisteredServiceImpl rS = new RegisteredServiceImpl();
                                 rS.setAllowedToProxy(true);
                                 rS.setName(json.get("Name").toString());                                
-                                rS.setServiceId(fqdn+json.get("Name"));
+                                rS.setServiceId("https://"+fqdn+"/"+json.get("Name")+"/");
                                 rS.setId(findHighestId()+1);
                                 rS.setEvaluationOrder((int) rS.getId());
                                 rS.setAllowedAttributes(allowedAttributes);
