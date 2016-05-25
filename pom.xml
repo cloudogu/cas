@@ -8,6 +8,8 @@
   
     <properties>
         <cas.version>4.0.7</cas.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
   
     <!--
