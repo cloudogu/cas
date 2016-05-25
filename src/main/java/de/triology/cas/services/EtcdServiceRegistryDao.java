@@ -64,9 +64,11 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
         EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
 
         if (stageResponse.getNode().getValue().equals("development")) {
+            LOG.debug("cas started in development mode");
             addDevService();
 
         } else {
+            LOG.debug("cas started in production mode");
             EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
             EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
             fqdn = response2.getNode().getValue();
@@ -76,11 +78,12 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
     }
 
     private void changeLoop(EtcdClient etcd) {
-       
+        LOG.debug("entered changeLoop");
         try {
             EtcdResponsePromise responsePromise = etcd.getDir("/dogu").waitForChange().recursive().send();
             responsePromise.addListener(promise -> {
                 try {
+                    LOG.debug("registered change in /dogu");
                     addServices((EtcdKeysResponse) promise.get());
                 } catch (Exception ex) {
                     LOG.warn("failed to load service", ex);
@@ -133,10 +136,10 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
         return null;
     }
 
-    private long findHighestId() {
+    private long findHighestId(ArrayList<RegisteredService> list) {
         long id = 0;
 
-        for (final RegisteredService r : this.registeredServices) {
+        for (final RegisteredService r : list) {
             if (r.getId() > id) {
                 id = r.getId();
             }
@@ -172,15 +175,15 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
 
-    private RegisteredService createService(EtcdNode doguNode) throws ParseException {
+    private RegisteredServiceImpl createService(EtcdNode doguNode) throws ParseException {
         JSONObject json = getCurrentDoguNode(doguNode);
         // check if dogu needs cas
         if (hasCasDependency(json)) {
+            System.out.println(json);
             RegisteredServiceImpl service = new RegisteredServiceImpl();
             service.setAllowedToProxy(true);
             service.setName(json.get("Name").toString());
             service.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/");
-            service.setId(findHighestId() + 1);
             service.setEvaluationOrder((int) service.getId());
             service.setAllowedAttributes(allowedAttributes);
             return service;
@@ -192,8 +195,9 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
         ArrayList<RegisteredService> tempServices = new ArrayList<>();
         // get all dogu nodes
         for (EtcdNode doguNode : response.getNode().getNodes()) {
-            RegisteredService service = createService(doguNode);
+            RegisteredServiceImpl service = createService(doguNode);
             if (service != null) {
+                service.setId(findHighestId(tempServices) + 1);
                 tempServices.add(service);
             }
         }
@@ -205,8 +209,7 @@ public class EtcdServiceRegistryDao implements ServiceRegistryDao {
         }
     }
 
-    private void addDevService() {
-        System.out.println("In development stage");
+    private void addDevService() {        
         RegexRegisteredService regexService = new RegexRegisteredService();
         regexService.setServiceId("^(https?|imaps?)://.*");
         regexService.setId(0);
