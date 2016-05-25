@@ -151,7 +151,19 @@
     would probably want to replace this with the JPA-backed ServiceRegistry DAO
     The name of this bean should remain "serviceRegistryDao".
     +-->
-    <bean id="serviceRegistryDao" class="de.triology.cas.services.ServiceRegistry" />
+    <bean id="serviceRegistryDao" class="de.triology.cas.services.ServiceRegistry" >
+        <constructor-arg>
+            <list>
+                <value>username</value>
+                <value>cn</value>
+                <value>mail</value>
+                <value>groups</value>
+                <value>givenName</value>
+                <value>surname</value>
+                <value>displayName</value>
+            </list>
+        </constructor-arg>
+    </bean>
     
   <!-- <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl"
             p:registeredServices-ref="registeredServicesList" />

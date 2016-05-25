@@ -47,9 +47,9 @@ public class ServiceRegistry implements ServiceRegistryDao {
 
     private final JSONParser parser = new JSONParser();
 
-    ServiceRegistry() throws IOException, EtcdException, EtcdAuthenticationException, ParseException, TimeoutException {
+    ServiceRegistry(List allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, ParseException, TimeoutException {
 
-        allowedAttributes = Arrays.asList("username", "cn", "mail", "groups", "givenName", "surname", "displayName");
+        this.allowedAttributes = allowedAttributes;
         registeredServices = new ArrayList<RegisteredService>();
         EtcdClient etcd = new EtcdClient(URI.create(getEtcdUri()));
         EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
