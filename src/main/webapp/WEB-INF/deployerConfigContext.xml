@@ -150,6 +150,7 @@
         Registers a service for every installed dogu, which needs cas.
         In development stage every service will be accepted.
     -->
+        
     <bean id="serviceRegistryDao" class="de.triology.cas.services.EtcdServiceRegistryDao" >
         <constructor-arg>
             <list>
