@@ -149,14 +149,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
 
-    private RegisteredServiceImpl createService(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
+    private RegexRegisteredService createService(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
         JSONObject json = getCurrentDoguNode(doguNode);
         // check if dogu needs cas
         if (hasCasDependency(json)) {
-            RegisteredServiceImpl service = new RegisteredServiceImpl();
+            RegexRegisteredService service = new RegexRegisteredService();
             service.setAllowedToProxy(true);
             service.setName(json.get("Name").toString());
-            service.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/");
+            service.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/.*");
             service.setEvaluationOrder((int) service.getId());
             service.setAllowedAttributes(allowedAttributes);
             return service;
@@ -169,7 +169,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
                 = new ConcurrentHashMap<>();
         // get all dogu nodes
         for (EtcdKeysResponse.EtcdNode doguNode : response.getNode().getNodes()) {
-            RegisteredServiceImpl service = createService(doguNode);
+            RegexRegisteredService service = createService(doguNode);
             if (service != null) {
                 service.setId(findHighestId(localServices) + 1);
                 localServices.put(service.getId(), service);
@@ -203,8 +203,11 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             return null;
         }
         lock.writeLock().lock();
-        this.registeredServices.remove(id);
-        lock.writeLock().unlock();
+        try {
+            this.registeredServices.remove(id);
+        } finally {
+            lock.writeLock().unlock();
+        }
         return r;
     }
 
@@ -258,8 +261,11 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         lock.writeLock().lock();
-        this.registeredServices.put(registeredService.getId(), registeredService);
-        lock.writeLock().unlock();
+        try {
+            this.registeredServices.put(registeredService.getId(), registeredService);
+        } finally {
+            lock.writeLock().unlock();
+        }
         return registeredService;
     }
 
