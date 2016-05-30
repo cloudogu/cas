@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
  *      Further 'cas' has to be in the dependencies of the dogu.
  *  Changes of the '/dogu' directory will be noticed and registeredServices updated.
  *  Every service will be accepted if the ecosystem is in development stage.
- * 
+ *
  * @author Michael Behlendorf
  */
 public final class EtcdServicesManager implements ReloadableServicesManager {
@@ -271,8 +271,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     @Override
     public void reload() {
-        logger.info("Reloading registered services.");
-        load();
+        logger.info("Cas wants to reload registered services.");
     }
 
     private void load() {
