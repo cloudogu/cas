@@ -68,6 +68,10 @@
         <value>classpath:messages</value>
     </util:list>
     
+    <!--
+        Registers a service for every installed dogu, which needs cas.
+        In development stage every service will be accepted.
+    -->
     <bean id="servicesManager" class="de.triology.cas.services.EtcdServicesManager" >
         <constructor-arg>
             <list>

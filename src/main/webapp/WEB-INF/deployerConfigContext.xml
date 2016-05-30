@@ -146,26 +146,6 @@
         <entry key="groupMembership" value="groupMembership" />
     </util:map>
 
-    <!--
-        Registers a service for every installed dogu, which needs cas.
-        In development stage every service will be accepted.
-    -->
-        
-    <bean id="serviceRegistryDao" class="de.triology.cas.services.EtcdServiceRegistryDao" >
-        <constructor-arg>
-            <list>
-                <value>username</value>
-                <value>cn</value>
-                <value>mail</value>
-                <value>groups</value>
-                <value>givenName</value>
-                <value>surname</value>
-                <value>displayName</value>
-            </list>
-        </constructor-arg>
-    </bean>
-    
-
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 
     <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />

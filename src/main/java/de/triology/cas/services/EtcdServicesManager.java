@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.validation.constraints.NotNull;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -31,7 +30,6 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReloadableServicesManager;
-import org.jasig.cas.services.ServiceRegistryDao;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -41,19 +39,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
+ *  Adds for each dogu, which needs cas, a service to registeredServices.
+ *  These dogus getting identified with etcd:
+ *      Installed dogus have a directory '/dogu/${name of dogu}/current' with their used version.
+ *      Further 'cas' has to be in the dependencies of the dogu.
+ *  Changes of the '/dogu' directory will be noticed and registeredServices updated.
+ *  Every service will be accepted if the ecosystem is in development stage.
+ * 
  * @author Michael Behlendorf
  */
 public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Instance of ServiceRegistryDao. */
-    @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
-
-    /** Map to store all services. */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    /**
+     * Map to store all registeredServices.
+     */
+    private ConcurrentHashMap<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
 
     private String fqdn;
 
@@ -62,13 +64,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     private final JSONParser parser = new JSONParser();
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    
-        public EtcdServicesManager (List<String> allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
-        this.allowedAttributes = allowedAttributes;
-        services = new ConcurrentHashMap<>();
-        EtcdClient etcd = new EtcdClient(URI.create(getEtcdUri()));
-        EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
 
+    private final EtcdClient etcd;
+
+    public EtcdServicesManager(List<String> allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
+        this.allowedAttributes = allowedAttributes;
+        registeredServices = new ConcurrentHashMap<>();
+        etcd = new EtcdClient(URI.create(getEtcdUri()));
+        EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
         if (stageResponse.getNode().getValue().equals("development")) {
             logger.debug("cas started in development mode");
             addDevService();
@@ -79,26 +82,21 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
             fqdn = response2.getNode().getValue();
             addServices(response1.get());
-            changeLoop(etcd);
+            changeLoop();
         }
     }
 
-    private void changeLoop(EtcdClient etcd) {
+    private void changeLoop() {
         logger.debug("entered changeLoop");
         try {
             EtcdResponsePromise responsePromise = etcd.getDir("/dogu").recursive().waitForChange().send();
             responsePromise.addListener(promise -> {
-                try {
-                    logger.debug("registered change in /dogu");
-                    addServices(etcd.getDir("/dogu").recursive().send().get());                    
-                } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
-                    logger.warn("failed to load service", ex);
-                } finally {
-                    changeLoop(etcd);
-                }
+                logger.debug("registered change in /dogu");
+                load();
+                changeLoop();
             });
         } catch (IOException ex) {
-             logger.error("failed to load service", ex);
+            logger.error("failed to load service", ex);
         }
     }
 
@@ -112,15 +110,11 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         }
     }
 
-    public RegisteredService findServiceById(long id) {
-        return services.get(id);
-    }
-
     private long findHighestId(ConcurrentHashMap<Long, RegisteredService> map) {
         long id = 0;
 
-        for (Entry<Long,RegisteredService> entry : map.entrySet()) {
-            if (entry.getKey()> id) {
+        for (Entry<Long, RegisteredService> entry : map.entrySet()) {
+            if (entry.getKey() > id) {
                 id = entry.getKey();
             }
         }
@@ -171,32 +165,32 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     private void addServices(EtcdKeysResponse response) throws ParseException {
-        final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<>();
+        final ConcurrentHashMap<Long, RegisteredService> localServices
+                = new ConcurrentHashMap<>();
         // get all dogu nodes
         for (EtcdKeysResponse.EtcdNode doguNode : response.getNode().getNodes()) {
             RegisteredServiceImpl service = createService(doguNode);
             if (service != null) {
                 service.setId(findHighestId(localServices) + 1);
-                localServices.put(service.getId(),service);
+                localServices.put(service.getId(), service);
             }
         }
         try {
             lock.writeLock().lock();
-            services = localServices;
-        } finally{
+            registeredServices = localServices;
+        } finally {
             lock.writeLock().unlock();
         }
     }
 
-    private void addDevService() {        
+    private void addDevService() {
         RegexRegisteredService regexService = new RegexRegisteredService();
         regexService.setServiceId("^(https?|imaps?)://.*");
         regexService.setId(0);
         regexService.setName("10000001");
         regexService.setAllowedToProxy(true);
         regexService.setAllowedAttributes(allowedAttributes);
-        services.put(regexService.getId(),regexService);
+        registeredServices.put(regexService.getId(), regexService);
     }
 
     @Transactional(readOnly = false)
@@ -208,16 +202,15 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         if (r == null) {
             return null;
         }
-
-        this.serviceRegistryDao.delete(r);
-        this.services.remove(id);
-
+        lock.writeLock().lock();
+        this.registeredServices.remove(id);
+        lock.writeLock().unlock();
         return r;
     }
 
     /**
-     * {@inheritDoc}
-     * Note, if the repository is empty, this implementation will return a default service to grant all access.
+     * {@inheritDoc} Note, if the repository is empty, this implementation will
+     * return a default service to grant all access.
      * <p>
      * This preserves default CAS behavior.
      */
@@ -236,7 +229,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.services.get(id);
+        final RegisteredService r = this.registeredServices.get(id);
 
         try {
             return r == null ? null : r.clone();
@@ -246,7 +239,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(this.services.values());
+        return new TreeSet<>(this.registeredServices.values());
     }
 
     @Override
@@ -264,9 +257,10 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
-        final RegisteredService r = this.serviceRegistryDao.save(registeredService);
-        this.services.put(r.getId(), r);
-        return r;
+        lock.writeLock().lock();
+        this.registeredServices.put(registeredService.getId(), registeredService);
+        lock.writeLock().unlock();
+        return registeredService;
     }
 
     @Override
@@ -276,16 +270,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     private void load() {
-        final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<>();
-
-        for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            logger.debug("Adding registered service {}", r.getServiceId());
-            localServices.put(r.getId(), r);
+        try {
+            addServices(etcd.getDir("/dogu").recursive().send().get());
+        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
+            logger.warn("failed to update servicesManager");
         }
-
-        this.services = localServices;
-        logger.info(String.format("Loaded %s services.", this.services.size()));
+        logger.info(String.format("Loaded %s services.", this.registeredServices.size()));
     }
-    
+
 }
