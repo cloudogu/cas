@@ -39,12 +39,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *  Adds for each dogu, which needs cas, a service to registeredServices.
- *  These dogus getting identified with etcd:
- *      Installed dogus have a directory '/dogu/${name of dogu}/current' with their used version.
- *      Further 'cas' has to be in the dependencies of the dogu.
- *  Changes of the '/dogu' directory will be noticed and registeredServices updated.
- *  Every service will be accepted if the ecosystem is in development stage.
+ * Adds for each dogu, which needs cas, a service to registeredServices. These
+ * dogus getting identified with etcd: Installed dogus have a directory
+ * '/dogu/${name of dogu}/current' with their used version. Further 'cas' has to
+ * be in the dependencies of the dogu. Changes of the '/dogu' directory will be
+ * noticed and registeredServices updated. Every service will be accepted if the
+ * ecosystem is in development stage.
  *
  * @author Michael Behlendorf
  */
@@ -69,7 +69,6 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     public EtcdServicesManager(List<String> allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
         this.allowedAttributes = allowedAttributes;
-        registeredServices = new ConcurrentHashMap<>();
         etcd = new EtcdClient(URI.create(getEtcdUri()));
         EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
         if (stageResponse.getNode().getValue().equals("development")) {
@@ -197,7 +196,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
-    public synchronized RegisteredService delete(final long id) {
+    public RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
         if (r == null) {
             return null;
@@ -211,43 +210,57 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         return r;
     }
 
-    /**
-     * {@inheritDoc} Note, if the repository is empty, this implementation will
-     * return a default service to grant all access.
-     * <p>
-     * This preserves default CAS behavior.
-     */
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
+        try {
+            lock.readLock().lock();
+            final Collection<RegisteredService> c = convertToTreeSet();
 
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
-                return r;
+            for (final RegisteredService r : c) {
+                if (r.matches(service)) {
+                    return r;
+                }
             }
-        }
 
-        return null;
+            return null;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.registeredServices.get(id);
-
         try {
-            return r == null ? null : r.clone();
-        } catch (final CloneNotSupportedException e) {
-            return r;
+            lock.readLock().lock();
+            final RegisteredService r = this.registeredServices.get(id);
+
+            try {
+                return r == null ? null : r.clone();
+            } catch (final CloneNotSupportedException e) {
+                return r;
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(this.registeredServices.values());
+        try {
+            lock.readLock().lock();
+            return new TreeSet<>(this.registeredServices.values());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(convertToTreeSet());
+        try {
+            lock.readLock().lock();
+            return Collections.unmodifiableCollection(convertToTreeSet());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
@@ -259,7 +272,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
-    public synchronized RegisteredService save(final RegisteredService registeredService) {
+    public RegisteredService save(final RegisteredService registeredService) {
         lock.writeLock().lock();
         try {
             this.registeredServices.put(registeredService.getId(), registeredService);
@@ -278,7 +291,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         try {
             addServices(etcd.getDir("/dogu").recursive().send().get());
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
-            logger.warn("failed to update servicesManager");
+            logger.warn("failed to update servicesManager", ex);
         }
         logger.info(String.format("Loaded %s services.", this.registeredServices.size()));
     }
