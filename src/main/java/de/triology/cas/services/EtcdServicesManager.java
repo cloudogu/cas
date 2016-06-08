@@ -70,8 +70,15 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     public EtcdServicesManager(List<String> allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
         this.allowedAttributes = allowedAttributes;
         etcd = new EtcdClient(URI.create(getEtcdUri()));
-        EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
-        if (stageResponse.getNode().getValue().equals("development")) {
+        String stage;
+        try {
+            EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
+            stage = stageResponse.getNode().getValue();
+        } catch (EtcdException ex) {
+            logger.warn("/config/_global/stage could not be read", ex);
+            stage = "production";
+        }
+        if (stage.equals("development")) {
             logger.debug("cas started in development mode");
             addDevService();
 
