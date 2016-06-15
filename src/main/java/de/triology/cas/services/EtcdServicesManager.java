@@ -5,7 +5,6 @@
  */
 package de.triology.cas.services;
 
-import com.github.inspektr.audit.annotation.Audit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -36,7 +34,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Adds for each dogu, which needs cas, a service to registeredServices. These
@@ -199,22 +196,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         registeredServices.put(regexService.getId(), regexService);
     }
 
-    @Transactional(readOnly = false)
-    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService delete(final long id) {
-        final RegisteredService r = findServiceBy(id);
-        if (r == null) {
-            return null;
-        }
-        lock.writeLock().lock();
-        try {
-            this.registeredServices.remove(id);
-        } finally {
-            lock.writeLock().unlock();
-        }
-        return r;
+        throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
     @Override
@@ -251,13 +235,8 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         }
     }
 
-    protected TreeSet<RegisteredService> convertToTreeSet() {
-        try {
-            lock.readLock().lock();
-            return new TreeSet<>(this.registeredServices.values());
-        } finally {
-            lock.readLock().unlock();
-        }
+    protected TreeSet<RegisteredService> convertToTreeSet() {           
+        return new TreeSet<>(this.registeredServices.values());
     }
 
     @Override
@@ -275,18 +254,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         return findServiceBy(service) != null;
     }
 
-    @Transactional(readOnly = false)
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        lock.writeLock().lock();
-        try {
-            this.registeredServices.put(registeredService.getId(), registeredService);
-        } finally {
-            lock.writeLock().unlock();
-        }
-        return registeredService;
+        throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
