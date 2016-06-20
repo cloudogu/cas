@@ -84,6 +84,9 @@
                 <value>displayName</value>
             </list>
         </constructor-arg>
+        <constructor-arg>
+            <value>${stage}</value>
+        </constructor-arg>
     </bean>
 
     <!--

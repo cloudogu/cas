@@ -64,29 +64,40 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private final EtcdClient etcd;
 
-    public EtcdServicesManager(List<String> allowedAttributes) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
+    public EtcdServicesManager(List<String> allowedAttributes, String stage) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException, ParseException {
         this.allowedAttributes = allowedAttributes;
-        etcd = new EtcdClient(URI.create(getEtcdUri()));
-        String stage;
-        try {
-            EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
-            stage = stageResponse.getNode().getValue();
-        } catch (EtcdException ex) {
-            logger.warn("/config/_global/stage could not be read", ex);
-            stage = "production";
-        }
-        if (stage.equals("development")) {
-            logger.debug("cas started in development mode");
-            addDevService();
-
+        // depends on stage configured in cas.properties
+        if (!stage.equals("development")) {
+            String access;
+            etcd = new EtcdClient(URI.create(getEtcdUri()));
+            try {
+                EtcdKeysResponse stageResponse = etcd.get("/config/_global/casAccess").send().get();
+                access = stageResponse.getNode().getValue();
+            } catch (EtcdException ex) {
+                logger.warn("/config/_global/casAccess could not be read", ex);
+                access = "restricted";
+            }
+            if (access.equals("open")) {
+                initDevMode();
+            } else {
+                logger.debug("cas started in restricted production mode");
+                logger.debug("only installed dogus can get a ST");
+                EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
+                EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
+                fqdn = response2.getNode().getValue();
+                addServices(response1.get());
+                changeLoop();
+            }
         } else {
-            logger.debug("cas started in production mode");
-            EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
-            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-            fqdn = response2.getNode().getValue();
-            addServices(response1.get());
-            changeLoop();
+            etcd = null;
+            initDevMode();
         }
+    }
+
+    private void initDevMode() {
+        logger.debug("cas started in development mode");
+        logger.debug("all services can get a ST");
+        addDevService();
     }
 
     private void changeLoop() {
@@ -178,12 +189,25 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
                 localServices.put(service.getId(), service);
             }
         }
+        addCasService(localServices);
         try {
             lock.writeLock().lock();
             registeredServices = localServices;
         } finally {
             lock.writeLock().unlock();
         }
+    }
+    
+    // this is necessary since cas needs a ST in clearPass workflow
+    private void addCasService(ConcurrentHashMap<Long, RegisteredService> localServices) {
+        RegexRegisteredService service = new RegexRegisteredService();
+        service.setAllowedToProxy(true);
+        service.setName("cas");
+        service.setServiceId("https://" + fqdn + "/cas/.*");
+        service.setEvaluationOrder((int) service.getId());
+        service.setAllowedAttributes(allowedAttributes);
+        service.setId(findHighestId(localServices) + 1);
+        localServices.put(service.getId(), service);
     }
 
     private void addDevService() {
