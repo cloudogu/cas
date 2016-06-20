@@ -68,19 +68,19 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         this.allowedAttributes = allowedAttributes;
         // depends on stage configured in cas.properties
         if (!stage.equals("development")) {
-            String access;
+            // check which stage is set in etcd
             etcd = new EtcdClient(URI.create(getEtcdUri()));
             try {
-                EtcdKeysResponse stageResponse = etcd.get("/config/_global/casAccess").send().get();
-                access = stageResponse.getNode().getValue();
+                EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
+                stage = stageResponse.getNode().getValue();
             } catch (EtcdException ex) {
-                logger.warn("/config/_global/casAccess could not be read", ex);
-                access = "restricted";
+                logger.warn("/config/_global/stage could not be read", ex);
+                stage = "production";
             }
-            if (access.equals("open")) {
+            if (stage.equals("development")) {
                 initDevMode();
             } else {
-                logger.debug("cas started in restricted production mode");
+                logger.debug("cas started in production stage");
                 logger.debug("only installed dogus can get a ST");
                 EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
                 EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
@@ -95,7 +95,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     private void initDevMode() {
-        logger.debug("cas started in development mode");
+        logger.debug("cas started in development stage");
         logger.debug("all services can get a ST");
         addDevService();
     }
