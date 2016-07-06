@@ -2,7 +2,7 @@
   "name": "cas",
   "version": "0.1.0",
   "description": "CAS Server for CES",
-  "author": "Sebastian Sdorra <sebastian.sdorra@triology.de>",
+  "author": "Sebastian Sdorra <sebastian.sdorra@cloudogu.com>",
   "keywords": [
     "cas",
     "authentication",
