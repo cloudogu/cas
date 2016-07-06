@@ -170,7 +170,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             RegexRegisteredService service = new RegexRegisteredService();
             service.setAllowedToProxy(true);
             service.setName(json.get("Name").toString());
-            service.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/.*");
+            service.setServiceId("https://" + fqdn + "(:443)?/" + json.get("Name") + "(/.*)?");
             service.setEvaluationOrder((int) service.getId());
             service.setAllowedAttributes(allowedAttributes);
             return service;
