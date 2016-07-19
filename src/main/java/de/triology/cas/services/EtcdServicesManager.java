@@ -168,9 +168,10 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         // check if dogu needs cas
         if (hasCasDependency(json)) {
             RegexRegisteredService service = new RegexRegisteredService();
+            String[] nameArray = StringUtils.split(json.get("Name").toString(),"/");
             service.setAllowedToProxy(true);
             service.setName(json.get("Name").toString());
-            service.setServiceId("https://" + fqdn + "/" + json.get("Name") + "/.*");
+            service.setServiceId("https://" + fqdn + "(:443)?/" + nameArray[nameArray.length-1] + "(/.*)?");
             service.setEvaluationOrder((int) service.getId());
             service.setAllowedAttributes(allowedAttributes);
             return service;
