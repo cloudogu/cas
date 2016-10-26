@@ -114,8 +114,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     private TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(
-                getRegisteredServices().values());
+        return new TreeSet<>(getRegisteredServices().values());
     }
 
     private void load() {
@@ -152,14 +151,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             if ("development".equals(stage)) {
                 initDevelopmentMode();
             } else {
-            logger.debug("cas started in production stage");
-            logger.debug("only installed dogus can get a ST");
-            EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
-            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-            fqdn = response2.getNode().getValue();
-            addServices(response1.get());
-            addCasService(registeredServices);
-            changeLoop();
+                logger.debug("cas started in production stage");
+                logger.debug("only installed dogus can get a ST");
+                EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
+                EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
+                fqdn = response2.getNode().getValue();
+                addServices(response1.get());
+                addCasService(registeredServices);
+                changeLoop();
             }
         } catch (EtcdException ex) {
             logger.warn("/config/_global/stage could not be read", ex);
@@ -174,7 +173,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         addDevService(registeredServices);
     }
 
-    // changeLoop detects when a new dogu is installed
+    /**
+     * ChangeLoop detects when a new dogu is installed
+     */
     private void changeLoop() {
         logger.debug("entered changeLoop");
         try {
@@ -189,7 +190,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         }
     }
 
-    // creates a RegexRegisteredService for an given name
+    /**
+     * Creates a RegexRegisteredService for an given name
+     */
     private RegexRegisteredService createService(String name) {
         RegexRegisteredService service = new RegexRegisteredService();
         String[] nameArray = StringUtils.split(name, "/");
@@ -202,7 +205,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         return service;
     }
 
-    // adds for each installed dogu an entry to registeredServices
+    /**
+     * Adds for each installed dogu an entry to registeredServices
+     */
     private void addServices(EtcdKeysResponse response) throws ParseException {
         // get all dogu nodes
         List<EtcdNode> nodesFromEtcd = response.getNode().getNodes();
@@ -210,9 +215,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         synchronize(stringServiceList, this.registeredServices);
     }
 
-    // destination becomes a Map with a RegisteredService for each String in source
+    /**
+     * Destination becomes a Map with a RegisteredService for each String in source
+     */
     private void synchronize(List<String> source, ConcurrentHashMap<Long, RegisteredService> destination) {
-        for (Iterator<Map.Entry<Long, RegisteredService>> entries = destination.entrySet().iterator(); entries.hasNext();) {
+        for (Iterator<Map.Entry<Long, RegisteredService>> entries = destination.entrySet().iterator(); entries
+                .hasNext(); ) {
             Map.Entry<Long, RegisteredService> entry = entries.next();
             int index = EtcdRegistryUtils.containsService(source, entry.getValue());
             if (index < 0) {
@@ -229,7 +237,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     }
 
-    // this is necessary since cas needs a ST in clearPass workflow
+    /**
+     * This is necessary since cas needs a ST in clearPass workflow
+     */
     private void addCasService(ConcurrentHashMap<Long, RegisteredService> localServices) {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setAllowedToProxy(true);
@@ -241,7 +251,9 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         localServices.put(service.getId(), service);
     }
 
-    // the dev service accepts all services
+    /**
+     * The dev service accepts all services
+     */
     private void addDevService(ConcurrentHashMap<Long, RegisteredService> localServices) {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId("^(https?|imaps?)://.*");
