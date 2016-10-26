@@ -5,16 +5,6 @@
  */
 package de.triology.cas.services;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -29,6 +19,17 @@ import org.jasig.cas.services.ReloadableServicesManager;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Adds for each dogu, which needs cas, a service to registeredServices. These
@@ -62,6 +63,70 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         this.stage = stage;
     }
 
+    @Override
+    public Collection<RegisteredService> getAllServices() {
+        return Collections.unmodifiableCollection(convertToTreeSet());
+    }
+
+    @Override
+    public RegisteredService findServiceBy(final Service service) {
+        final Collection<RegisteredService> c = convertToTreeSet();
+
+        for (final RegisteredService r : c) {
+            if (r.matches(service)) {
+                return r;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public RegisteredService findServiceBy(final long id) {
+        final RegisteredService r = getRegisteredServices().get(id);
+
+        try {
+            return r == null ? null : r.clone();
+        } catch (final CloneNotSupportedException e) {
+            return r;
+        }
+
+    }
+
+    @Override
+    public boolean matchesExistingService(final Service service) {
+        return findServiceBy(service) != null;
+    }
+
+    @Override
+    public void reload() {
+        logger.info("Cas wants to reload registered services.");
+    }
+
+    @Override
+    public RegisteredService save(final RegisteredService registeredService) {
+        throw new UnsupportedOperationException("Operation save is not supported.");
+    }
+
+    @Override
+    public RegisteredService delete(final long id) {
+        throw new UnsupportedOperationException("Operation delete is not supported.");
+    }
+
+    private TreeSet<RegisteredService> convertToTreeSet() {
+        return new TreeSet<>(
+                getRegisteredServices().values());
+    }
+
+    private void load() {
+        try {
+            addServices(etcd.getDir("/dogu").recursive().send().get());
+        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
+            logger.warn("failed to update servicesManager", ex);
+        }
+        logger.info(String.format("Loaded %s services.", getRegisteredServices().size()));
+    }
+
     private ConcurrentHashMap<Long, RegisteredService> getRegisteredServices() {
         if (this.registeredServices.isEmpty()) {
             initRegisteredServices();
@@ -73,7 +138,6 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         // depends on stage configured in cas.properties
         if (!"development".equals(stage)) {
             initProductionMode();
-
         } else {
             initDevelopmentMode();
         }
@@ -88,14 +152,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             if ("development".equals(stage)) {
                 initDevelopmentMode();
             } else {
-                logger.debug("cas started in production stage");
-                logger.debug("only installed dogus can get a ST");
-                EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
-                EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-                fqdn = response2.getNode().getValue();
-                addServices(response1.get());
-                addCasService(registeredServices);
-                changeLoop();
+            logger.debug("cas started in production stage");
+            logger.debug("only installed dogus can get a ST");
+            EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
+            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
+            fqdn = response2.getNode().getValue();
+            addServices(response1.get());
+            addCasService(registeredServices);
+            changeLoop();
             }
         } catch (EtcdException ex) {
             logger.warn("/config/_global/stage could not be read", ex);
@@ -187,68 +251,4 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         service.setAllowedAttributes(allowedAttributes);
         localServices.put(service.getId(), service);
     }
-
-    @Override
-    public RegisteredService delete(final long id) {
-        throw new UnsupportedOperationException("Operation delete is not supported.");
-    }
-
-    @Override
-    public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
-
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
-                return r;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = getRegisteredServices().get(id);
-
-        try {
-            return r == null ? null : r.clone();
-        } catch (final CloneNotSupportedException e) {
-            return r;
-        }
-
-    }
-
-    protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(getRegisteredServices().values());
-    }
-
-    @Override
-    public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(convertToTreeSet());
-    }
-
-    @Override
-    public boolean matchesExistingService(final Service service) {
-        return findServiceBy(service) != null;
-    }
-
-    @Override
-    public RegisteredService save(final RegisteredService registeredService) {
-        throw new UnsupportedOperationException("Operation save is not supported.");
-    }
-
-    @Override
-    public void reload() {
-        logger.info("Cas wants to reload registered services.");
-    }
-
-    private void load() {
-        try {
-            addServices(etcd.getDir("/dogu").recursive().send().get());
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
-            logger.warn("failed to update servicesManager", ex);
-        }
-        logger.info(String.format("Loaded %s services.", getRegisteredServices().size()));
-    }
-
 }
