@@ -35,7 +35,7 @@ public class EtcdServicesManagerTest {
      * Generals tests, independent of mode.
      */
     public static class General {
-        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "don't care");
+        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "don't care", mock(CloudoguRegistry.class));
 
         /**
          * Logger of class under test.
@@ -97,7 +97,7 @@ public class EtcdServicesManagerTest {
          */
         private static final long DEVELOPMENT_SERVICE_ID = 0;
 
-        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "development");
+        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "development", mock(CloudoguRegistry.class));
 
         /**
          * Test for {@link EtcdServicesManager#getAllServices()}.

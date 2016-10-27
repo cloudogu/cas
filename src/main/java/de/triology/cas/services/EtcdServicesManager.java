@@ -5,23 +5,14 @@
  */
 package de.triology.cas.services;
 
-import mousio.etcd4j.EtcdClient;
-import mousio.etcd4j.promises.EtcdResponsePromise;
-import mousio.etcd4j.responses.EtcdAuthenticationException;
-import mousio.etcd4j.responses.EtcdException;
-import mousio.etcd4j.responses.EtcdKeysResponse;
-import mousio.etcd4j.responses.EtcdKeysResponse.EtcdNode;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -29,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Adds for each dogu, which needs cas, a service to registeredServices. These
@@ -56,11 +46,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private final List<String> allowedAttributes;
 
-    private EtcdClient etcd;
+    private CloudoguRegistry cloudoguRegistry;
 
-    public EtcdServicesManager(List<String> allowedAttributes, String stage) {
+    public EtcdServicesManager(List<String> allowedAttributes, String stage, CloudoguRegistry cloudoguRegistry) {
         this.allowedAttributes = allowedAttributes;
         this.stage = stage;
+        this.cloudoguRegistry = cloudoguRegistry;
     }
 
     @Override
@@ -119,8 +110,8 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private void load() {
         try {
-            addServices(etcd.getDir("/dogu").recursive().send().get());
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
+            addServices(cloudoguRegistry.getDogus());
+        } catch (CloudoguRegistryException ex) {
             logger.warn("failed to update servicesManager", ex);
         }
         logger.info(String.format("Loaded %s services.", getRegisteredServices().size()));
@@ -144,22 +135,17 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private void initProductionMode() {
         try {
-            // check which stage is set in etcd
-            etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
             logger.debug("cas started in production stage");
             logger.debug("only installed dogus can get a ST");
-            EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
-            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-            fqdn = response2.getNode().getValue();
-            addServices(response1.get());
+            fqdn = cloudoguRegistry.getFqdn();
+            addServices(cloudoguRegistry.getDogus());
             addCasService(registeredServices);
             changeLoop();
-        } catch (EtcdException ex) {
-            logger.warn("/config/_global/stage could not be read", ex);
-        } catch (IOException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
-            logger.warn("failed to get dogus or fqdn from etcd", ex);
+        } catch (CloudoguRegistryException ex) {
+            logger.warn("failed to data from cloudoguRegistry", ex);
         }
     }
+
 
     private void initDevelopmentMode() {
         logger.debug("cas started in development stage");
@@ -173,13 +159,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     private void changeLoop() {
         logger.debug("entered changeLoop");
         try {
-            EtcdResponsePromise responsePromise = etcd.getDir("/dogu").recursive().waitForChange().send();
-            responsePromise.addListener(promise -> {
+            cloudoguRegistry.addDoguChangeListener(()-> {
                 logger.debug("registered change in /dogu");
                 load();
                 changeLoop();
             });
-        } catch (IOException ex) {
+        } catch (CloudoguRegistryException ex) {
             logger.error("failed to load service", ex);
         }
     }
@@ -201,12 +186,11 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     /**
      * Adds for each installed dogu an entry to registeredServices
+     *
+     * @param nodesFromEtcd  all dogu nodes
      */
-    private void addServices(EtcdKeysResponse response) throws ParseException {
-        // get all dogu nodes
-        List<EtcdNode> nodesFromEtcd = response.getNode().getNodes();
-        List<String> stringServiceList = EtcdRegistryUtils.convertNodesToStringList(nodesFromEtcd);
-        synchronize(stringServiceList, this.registeredServices);
+    private void addServices(List<String> nodesFromEtcd) {
+        synchronize(nodesFromEtcd, registeredServices);
     }
 
     /**
@@ -228,7 +212,6 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             RegexRegisteredService newService = createService(entry);
             destination.put(newService.getId(), newService);
         }
-
     }
 
     /**
