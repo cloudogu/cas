@@ -146,20 +146,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         try {
             // check which stage is set in etcd
             etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
-            EtcdKeysResponse stageResponse = etcd.get("/config/_global/stage").send().get();
-            stage = stageResponse.getNode().getValue();
-            if ("development".equals(stage)) {
-                initDevelopmentMode();
-            } else {
-                logger.debug("cas started in production stage");
-                logger.debug("only installed dogus can get a ST");
-                EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
-                EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
-                fqdn = response2.getNode().getValue();
-                addServices(response1.get());
-                addCasService(registeredServices);
-                changeLoop();
-            }
+            logger.debug("cas started in production stage");
+            logger.debug("only installed dogus can get a ST");
+            EtcdResponsePromise<EtcdKeysResponse> response1 = etcd.getDir("/dogu").recursive().send();
+            EtcdKeysResponse response2 = etcd.get("/config/_global/fqdn").send().get();
+            fqdn = response2.getNode().getValue();
+            addServices(response1.get());
+            addCasService(registeredServices);
+            changeLoop();
         } catch (EtcdException ex) {
             logger.warn("/config/_global/stage could not be read", ex);
         } catch (IOException | EtcdAuthenticationException | TimeoutException | ParseException ex) {
