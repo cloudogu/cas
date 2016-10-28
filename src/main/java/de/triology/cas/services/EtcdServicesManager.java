@@ -52,6 +52,8 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         this.allowedAttributes = allowedAttributes;
         this.stage = stage;
         this.cloudoguRegistry = cloudoguRegistry;
+
+        // TODO Single responsibility: Extract separate classes for Production and Development modes
     }
 
     @Override
@@ -104,6 +106,8 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
+    /* TODO is this conversion really necessary? If so, the name is misleading.
+     * Something like getRegisteredServicesAsTreeMap() would be more concise. */
     private TreeSet<RegisteredService> convertToTreeSet() {
         return new TreeSet<>(getRegisteredServices().values());
     }
@@ -138,11 +142,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             logger.debug("cas started in production stage");
             logger.debug("only installed dogus can get a ST");
             fqdn = cloudoguRegistry.getFqdn();
+            // TODO keep this DRY and call load()
             addServices(cloudoguRegistry.getDogus());
             addCasService(registeredServices);
             changeLoop();
         } catch (CloudoguRegistryException ex) {
-            logger.warn("failed to data from cloudoguRegistry", ex);
+            logger.warn("failed to get data from cloudoguRegistry", ex);
         }
     }
 
@@ -162,6 +167,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             cloudoguRegistry.addDoguChangeListener(()-> {
                 logger.debug("registered change in /dogu");
                 load();
+                // TODO why register again? Rename method changeLoop() to registerChangeListener?
                 changeLoop();
             });
         } catch (CloudoguRegistryException ex) {
@@ -178,6 +184,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         service.setAllowedToProxy(true);
         service.setName(name);
         service.setServiceId("https://" + fqdn + "(:443)?/" + nameArray[nameArray.length - 1] + "(/.*)?");
+        // TODO Why set this to the initial ID value of the Service? --> Same order for each service!
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
         service.setId(EtcdRegistryUtils.findHighestId(registeredServices) + 1);
@@ -204,6 +211,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
             if (index < 0) {
                 entries.remove();
             } else {
+                // TODO modifying parameter may lead to unwanted side-effects. Using a separate list instance is more robust.
                 source.remove(index);
             }
         }
@@ -225,6 +233,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
         service.setId(EtcdRegistryUtils.findHighestId(localServices) + 1);
+        // TODO keep this DRY! Re-use createService(), just set special serviceId
         localServices.put(service.getId(), service);
     }
 

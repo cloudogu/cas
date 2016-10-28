@@ -1,18 +1,25 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.CloudoguRegistry.DoguChangeListener;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.slf4jtest.TestLoggerFactoryResetRule;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -22,20 +29,21 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 /**
  * Tests for {@link EtcdServicesManager}
  */
-@RunWith(Enclosed.class)
-public class EtcdServicesManagerTest {
+@RunWith(Enclosed.class) public class EtcdServicesManagerTest {
 
     /**
      * Generals tests, independent of mode.
      */
     public static class General {
-        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "don't care", mock(CloudoguRegistry.class));
+        EtcdServicesManager etcdServicesManger =
+                new EtcdServicesManager(null, "don't care", mock(CloudoguRegistry.class));
 
         /**
          * Logger of class under test.
@@ -45,14 +53,12 @@ public class EtcdServicesManagerTest {
         /**
          * Reset logger before each test.
          **/
-        @Rule
-        public TestLoggerFactoryResetRule testLoggerFactoryResetRule = new TestLoggerFactoryResetRule();
+        @Rule public TestLoggerFactoryResetRule testLoggerFactoryResetRule = new TestLoggerFactoryResetRule();
 
         /**
          * Rule for asserting exceptions.
          */
-        @Rule
-        public ExpectedException thrown = ExpectedException.none();
+        @Rule public ExpectedException thrown = ExpectedException.none();
 
         /**
          * Test for {@link EtcdServicesManager#reload()}.
@@ -89,6 +95,149 @@ public class EtcdServicesManagerTest {
     }
 
     /**
+     * Tests for production mode.
+     */
+    public static class ProductionMode {
+        static final String STAGE_PRODUCTION = "production";
+        static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
+        static final String EXPECTED_SERVICE_NAME_1 = "/dogu/nexus";
+        static final String EXPECTED_SERVICE_NAME_2 = "/dogu/smeagol";
+        static final String EXPECTED_SERVICE_NAME_CAS = "cas";
+        List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
+        List<ExpectedService> expectedServices;
+        CloudoguRegistry registry = mock(CloudoguRegistry.class);
+
+        EtcdServicesManager etcdServicesManger =
+                new EtcdServicesManager(expectedAllowedAttributes, STAGE_PRODUCTION, registry);
+
+        @Before
+        public void setUp() {
+            when(registry.getFqdn()).thenReturn(EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME);
+            when(registry.getDogus()).thenReturn(Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2));
+            expectedServices = new LinkedList<>(Arrays.asList(
+                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_1)
+                                         .setServiceId("https://fully/qualified(:443)?/nexus(/.*)?"),
+                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_2)
+                                         .setServiceId("https://fully/qualified(:443)?/smeagol(/.*)?"),
+                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_CAS)
+                                         .setServiceId("https://fully/qualified/cas/.*")));
+        }
+
+        /**
+         * Test for listener, when a dogu is added after initialization.
+         */
+        @Test
+        public void doguChangeListenerAddDogu() throws Exception {
+            // Initialize expectedServices
+            DoguChangeListener doguChangeListener = assertGetAllServices();
+
+            // Add service
+            String expectedServiceName3 = "/dogu/scm";
+            when(registry.getDogus()).thenReturn(new LinkedList<>(
+                    Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
+            expectedServices.add(new ExpectedService().setName(expectedServiceName3)
+                                                      .setServiceId("https://fully/qualified(:443)?/scm(/.*)?"));
+
+            // Notify manager of change
+            doguChangeListener.onChange();
+
+            Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
+            for (ExpectedService expectedService : expectedServices) {
+                expectedService.assertContainedIn(allServices);
+            }
+        }
+
+        /**
+         * Test for listener, when a dogu is removed after initialization.
+         */
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        @Test
+        public void doguChangeListenerAddDoguRemoveDogu() throws Exception {
+            // Initialize expectedServices
+            DoguChangeListener doguChangeListener = assertGetAllServices();
+            // Remove service
+            when(registry.getDogus()).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_NAME_1)));
+            expectedServices = expectedServices.stream().filter(expectedService -> !EXPECTED_SERVICE_NAME_2
+                    .equals(expectedService.name)).collect(Collectors.toList());
+
+            // Notify manager of change
+            doguChangeListener.onChange();
+
+            Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
+            for (ExpectedService expectedService : expectedServices) {
+                expectedService.assertContainedIn(allServices);
+            }
+        }
+
+        /**
+         * Test for {@link EtcdServicesManager#getAllServices()}.
+         */
+        @Test
+        public void getAllServices() throws Exception {
+            assertGetAllServices();
+        }
+
+        /**
+         * Calls {@link EtcdServicesManager#getAllServices()} and returns the {@link DoguChangeListener} passed to
+         * {@link CloudoguRegistry#addDoguChangeListener(DoguChangeListener)}.
+         */
+        private DoguChangeListener assertGetAllServices() {
+            Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
+            for (ExpectedService expectedService : expectedServices) {
+                expectedService.assertContainedIn(allServices);
+            }
+            ArgumentCaptor<DoguChangeListener> doguChangeListener = ArgumentCaptor.forClass(DoguChangeListener.class);
+            verify(registry).addDoguChangeListener(doguChangeListener.capture());
+            return doguChangeListener.getValue();
+        }
+
+        /**
+         * Helper class for asserting services.
+         */
+        private class ExpectedService {
+            boolean allowedToProxy = true;
+            List<String> allowedAttributes = expectedAllowedAttributes;
+            String name;
+            String serviceId;
+
+            ExpectedService setName(String name) {
+                this.name = name;
+                return this;
+            }
+
+            ExpectedService setServiceId(String serviceId) {
+                this.serviceId = serviceId;
+                return this;
+            }
+
+            /**
+             * Asserts that a service with the specified name is contained within <code>services</code> and that this
+             * service's attributes equal the one specified in this {@link ExpectedService}.
+             */
+            void assertContainedIn(Collection<RegisteredService> services) {
+                List<RegisteredService> matchingServices =
+                        services.stream().filter(registeredService -> name.equals(registeredService.getName()))
+                                .collect(Collectors.toList());
+                assertEquals("Unexpected amount of services matching name=\"" + name + "\" found within services "
+                             + services, 1, matchingServices.size());
+                RegisteredService actualService = matchingServices.get(0);
+                assertEquals("Service \" + name \": Unexpected value allowedToProxy", allowedToProxy,
+                             actualService.isAllowedToProxy());
+                assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
+                             actualService.getAllowedAttributes());
+                assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
+                             actualService.getServiceId());
+                assertTrue("Service \" + name \": ID is not unique", 1 == services.stream().filter(registeredService ->
+                                                                                                           actualService
+                                                                                                                   .getId()
+                                                                                                           == registeredService
+                                                                                                                   .getId())
+                                                                                  .count());
+            }
+        }
+    }
+
+    /**
      * Tests for development mode.
      */
     public static class DevelopmentMode {
@@ -97,7 +246,8 @@ public class EtcdServicesManagerTest {
          */
         private static final long DEVELOPMENT_SERVICE_ID = 0;
 
-        EtcdServicesManager etcdServicesManger = new EtcdServicesManager(null, "development", mock(CloudoguRegistry.class));
+        EtcdServicesManager etcdServicesManger =
+                new EtcdServicesManager(null, "development", mock(CloudoguRegistry.class));
 
         /**
          * Test for {@link EtcdServicesManager#getAllServices()}.

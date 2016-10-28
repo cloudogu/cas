@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Abstraction of cloudogu's registry.
  */
+// TODO rename to Registry
 interface CloudoguRegistry {
 
     /**
