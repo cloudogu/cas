@@ -3,20 +3,19 @@ package de.triology.cas.services;
 import java.util.List;
 
 /**
- * Abstraction of cloudogu's registry.
+ * Abstraction of a registry that provides service information.
  */
-// TODO rename to Registry
-interface CloudoguRegistry {
+interface Registry {
 
     /**
      * @return the url of all dogus
-     * @throws CloudoguRegistryException wrapper for all technical exceptions
+     * @throws RegistryException wrapper for all technical exceptions
      */
     List<String> getDogus();
 
     /**
      * @return the fully qualified domain name
-     * @throws CloudoguRegistryException wrapper for all technical exceptions
+     * @throws RegistryException wrapper for all technical exceptions
      */
     String getFqdn();
 
@@ -24,7 +23,7 @@ interface CloudoguRegistry {
      * Adds a listener that is called when a new dogu is added to or delted from etcd.
      *
      * @param doguChangeListener listener to be called on dogu change
-     * @throws CloudoguRegistryException wrapper for all technical exceptions
+     * @throws RegistryException wrapper for all technical exceptions
      */
     void addDoguChangeListener(DoguChangeListener doguChangeListener);
 

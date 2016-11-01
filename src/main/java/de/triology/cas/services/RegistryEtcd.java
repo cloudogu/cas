@@ -12,21 +12,21 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Default implementation of {@link CloudoguRegistry} using {@link EtcdClient}.
+ * Default implementation of {@link Registry} using {@link EtcdClient}.
  */
-public class CloudoguRegistryEtcd implements CloudoguRegistry {
+public class RegistryEtcd implements Registry {
     private EtcdClient etcd;
 
     /**
-     * Creates a cloudogu etcd client that loads its URI from <code>/etc/ces/node_master</code>.
+     * Creates a etcd client that loads its URI from <code>/etc/ces/node_master</code>.
      *
-     * @throws CloudoguRegistryException when the URI cannot be read
+     * @throws RegistryException when the URI cannot be read
      */
-    public CloudoguRegistryEtcd() {
+    public RegistryEtcd() {
         try {
             etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
         } catch (IOException e) {
-            throw new CloudoguRegistryException(e);
+            throw new RegistryException(e);
         }
     }
 
@@ -36,7 +36,7 @@ public class CloudoguRegistryEtcd implements CloudoguRegistry {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").recursive().send().get().getNode().getNodes();
             return EtcdRegistryUtils.convertNodesToStringList(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            throw new CloudoguRegistryException(e);
+            throw new RegistryException(e);
         }
     }
 
@@ -45,7 +45,7 @@ public class CloudoguRegistryEtcd implements CloudoguRegistry {
         try {
             return etcd.get("/config/_global/fqdn").send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            throw new CloudoguRegistryException(e);
+            throw new RegistryException(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class CloudoguRegistryEtcd implements CloudoguRegistry {
                 doguChangeListener.onChange();
             });
         } catch (IOException e) {
-            throw new CloudoguRegistryException(e);
+            throw new RegistryException(e);
         }
     }
 }

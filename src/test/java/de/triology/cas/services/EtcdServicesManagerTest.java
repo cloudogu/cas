@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.CloudoguRegistry.DoguChangeListener;
+import de.triology.cas.services.Registry.DoguChangeListener;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.junit.Assert;
@@ -45,7 +45,7 @@ public class EtcdServicesManagerTest {
      */
     public static class General {
         EtcdServicesManager etcdServicesManger =
-                new EtcdServicesManager(null, "don't care", mock(CloudoguRegistry.class));
+                new EtcdServicesManager(null, "don't care", mock(Registry.class));
 
         /**
          * Logger of class under test.
@@ -107,7 +107,7 @@ public class EtcdServicesManagerTest {
         static final String EXPECTED_SERVICE_NAME_CAS = "cas";
         List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
         List<ExpectedService> expectedServices;
-        CloudoguRegistry registry = mock(CloudoguRegistry.class);
+        Registry registry = mock(Registry.class);
 
         EtcdServicesManager etcdServicesManger =
                 new EtcdServicesManager(expectedAllowedAttributes, STAGE_PRODUCTION, registry);
@@ -256,7 +256,7 @@ public class EtcdServicesManagerTest {
 
         /**
          * Calls {@link EtcdServicesManager#getAllServices()} and returns the {@link DoguChangeListener} passed to
-         * {@link CloudoguRegistry#addDoguChangeListener(DoguChangeListener)}.
+         * {@link Registry#addDoguChangeListener(DoguChangeListener)}.
          */
         private DoguChangeListener assertGetAllServices() {
             Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
@@ -339,7 +339,7 @@ public class EtcdServicesManagerTest {
         private static final long DEVELOPMENT_SERVICE_ID = 0;
 
         EtcdServicesManager etcdServicesManger =
-                new EtcdServicesManager(null, "development", mock(CloudoguRegistry.class));
+                new EtcdServicesManager(null, "development", mock(Registry.class));
 
         /**
          * Test for {@link EtcdServicesManager#getAllServices()}.

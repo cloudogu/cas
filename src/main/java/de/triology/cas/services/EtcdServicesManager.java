@@ -53,12 +53,12 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private final List<String> allowedAttributes;
 
-    private CloudoguRegistry cloudoguRegistry;
+    private Registry registry;
 
-    public EtcdServicesManager(List<String> allowedAttributes, String stage, CloudoguRegistry cloudoguRegistry) {
+    public EtcdServicesManager(List<String> allowedAttributes, String stage, Registry registry) {
         this.allowedAttributes = allowedAttributes;
         this.stage = stage;
-        this.cloudoguRegistry = cloudoguRegistry;
+        this.registry = registry;
 
         // TODO Single responsibility: Extract separate classes for Production and Development modes
     }
@@ -121,8 +121,8 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private void load() {
         try {
-            addServices(cloudoguRegistry.getDogus());
-        } catch (CloudoguRegistryException ex) {
+            addServices(registry.getDogus());
+        } catch (RegistryException ex) {
             logger.warn("failed to update servicesManager", ex);
         }
         logger.info(String.format("Loaded %s services.", getRegisteredServices().size()));
@@ -148,13 +148,13 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         try {
             logger.debug("cas started in production stage");
             logger.debug("only installed dogus can get a ST");
-            fqdn = cloudoguRegistry.getFqdn();
+            fqdn = registry.getFqdn();
             // TODO keep this DRY and call load()
-            addServices(cloudoguRegistry.getDogus());
+            addServices(registry.getDogus());
             addCasService(registeredServices);
             changeLoop();
-        } catch (CloudoguRegistryException ex) {
-            logger.warn("failed to get data from cloudoguRegistry", ex);
+        } catch (RegistryException ex) {
+            logger.warn("failed to get data from registry", ex);
         }
     }
 
@@ -171,13 +171,13 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     private void changeLoop() {
         logger.debug("entered changeLoop");
         try {
-            cloudoguRegistry.addDoguChangeListener(()-> {
+            registry.addDoguChangeListener(()-> {
                 logger.debug("registered change in /dogu");
                 load();
                 // TODO why register again? Rename method changeLoop() to registerChangeListener?
                 changeLoop();
             });
-        } catch (CloudoguRegistryException ex) {
+        } catch (RegistryException ex) {
             logger.error("failed to load service", ex);
         }
     }

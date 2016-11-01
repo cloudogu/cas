@@ -90,7 +90,7 @@
         <constructor-arg ref="etcdRegistry"/>
     </bean>
 
-    <bean id="etcdRegistry" class="de.triology.cas.services.CloudoguRegistry"/>
+    <bean id="etcdRegistry" class="de.triology.cas.services.Registry"/>
 
     <!--
         Job to periodically reload services from service registry.
