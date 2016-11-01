@@ -336,7 +336,7 @@ public class EtcdServicesManagerTest {
         /**
          * ID of the service used in development mode.
          */
-        private static final long DEVELOPMENT_SERVICE_ID = 0;
+        private static final long DEVELOPMENT_SERVICE_ID = 1;
 
         EtcdServicesManager etcdServicesManger =
                 new EtcdServicesManager(null, "development", mock(Registry.class));

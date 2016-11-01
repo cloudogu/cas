@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Default implementation of {@link Registry} using {@link EtcdClient}.
  */
-public class RegistryEtcd implements Registry {
+class RegistryEtcd implements Registry {
     private EtcdClient etcd;
 
     /**

@@ -25,7 +25,7 @@ import java.util.Map;
 // TODO document public API
 // TODO Favor object orientation over util classes. That is, move the methods used here to RegistryEtcd/EtcdServicesManager
 // TODO unit test this
-public final class EtcdRegistryUtils {
+final class EtcdRegistryUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdRegistryUtils.class);
 
