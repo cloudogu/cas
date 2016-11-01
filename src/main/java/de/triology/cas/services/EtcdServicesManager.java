@@ -26,18 +26,19 @@ import java.util.List;
  * @author Michael Behlendorf
  */
 // TODO rename to CasServiceManager or CesCasServiceManager? --> No direct connection to etcd!
-public final class EtcdServicesManager implements ReloadableServicesManager {
+public class EtcdServicesManager implements ReloadableServicesManager {
+
+    /**
+     * This triggers operation in development stage.
+     */
+    static final String STAGE_DEVELOPMENT = "development";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private EtcdServicesManagerStage serviceStage;
 
     public EtcdServicesManager(List<String> allowedAttributes, String stage, Registry registry) {
-        if (!"development".equals(stage)) {
-            serviceStage = new EtcdServicesManagerStageProductive(allowedAttributes, registry);
-        } else {
-            serviceStage = new EtcdServicesManagerStageDevelopment(allowedAttributes);
-        }
+        serviceStage = createStage(stage, allowedAttributes, registry);
     }
 
     @Override
@@ -87,5 +88,16 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     @Override
     public RegisteredService delete(final long id) {
         throw new UnsupportedOperationException("Operation delete is not supported.");
+    }
+
+    /**
+     * @return a new instance of the {@link EtcdServicesManagerStage}, depending on the <code>stageString</code> parameter.
+     */
+    protected EtcdServicesManagerStage createStage(String stageString, List<String> allowedAttributes, Registry registry) {
+        if (!STAGE_DEVELOPMENT.equals(stageString)) {
+            return new EtcdServicesManagerStageProductive(allowedAttributes, registry);
+        } else {
+            return new EtcdServicesManagerStageDevelopment(allowedAttributes);
+        }
     }
 }
