@@ -150,7 +150,6 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
         /**
          * Test for listener, when a dogu is removed after initialization.
          */
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
         @Test
         public void doguChangeListenerAddDoguRemoveDogu() throws Exception {
             // Initialize expectedServices

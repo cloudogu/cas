@@ -5,13 +5,6 @@
  */
 package de.triology.cas.services;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
@@ -22,10 +15,16 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author mbehlendorf
- */
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+// TODO document public API
+// TODO unit test this
 public final class EtcdRegistryUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdRegistryUtils.class);
@@ -75,17 +74,6 @@ public final class EtcdRegistryUtils {
 
         return json;
 
-    }
-
-    public static int containsService(List<String> list, RegisteredService registeredService) {
-        int index = 0;
-        for (String entry : list) {
-            if (entry.equals(registeredService.getName())) {
-                return index;
-            }
-            index++;
-        }
-        return -1;
     }
 
     public static long findHighestId(ConcurrentHashMap<Long, RegisteredService> map) {

@@ -18,8 +18,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Adds for each dogu, which needs cas, a service to registeredServices. These
@@ -32,6 +34,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Michael Behlendorf
  */
 public final class EtcdServicesManager implements ReloadableServicesManager {
+
+    /**
+     * Name of the special service that allows cas to access itself. See {@link #addCasService(ConcurrentHashMap)}.
+     */
+    private static final String SERVICE_NAME_CAS = "cas";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -201,25 +208,53 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     /**
-     * Destination becomes a Map with a RegisteredService for each String in source
+     * Synchronize services from <code>newServices</code> to <code>existingServices</code>.
+     * That is, remove ones that are not present in <code>newServices</code> and add the ones that are only present
+     * in <code>newServices</code> to <code>existingServices</code>.
      */
-    private void synchronize(List<String> source, ConcurrentHashMap<Long, RegisteredService> destination) {
-        for (Iterator<Map.Entry<Long, RegisteredService>> entries = destination.entrySet().iterator(); entries
-                .hasNext(); ) {
-            Map.Entry<Long, RegisteredService> entry = entries.next();
-            int index = EtcdRegistryUtils.containsService(source, entry.getValue());
-            if (index < 0) {
-                entries.remove();
-            } else {
-                // TODO modifying parameter may lead to unwanted side-effects. Using a separate list instance is more robust.
-                source.remove(index);
+    private void synchronize(List<String> newServiceNames, Map<Long, RegisteredService> existingServices) {
+        removeServicesThatNoLongerExist(newServiceNames, existingServices);
+        addServicesThatDoNotExistYet(newServiceNames, existingServices);
+    }
+
+    /**
+     * First operation of {@link #synchronize(List, Map)}: Remove Services that are not present in
+     * <code>newServices</code> from <code>existingServices</code>.
+     */
+    private void removeServicesThatNoLongerExist(List<String> newServiceNames,
+                                                 Map<Long, RegisteredService> existingServices) {
+        for (Iterator<Map.Entry<Long, RegisteredService>> existingServiceIterator =
+             existingServices.entrySet().iterator(); existingServiceIterator.hasNext(); ) {
+            Map.Entry<Long, RegisteredService> existingServiceEntry = existingServiceIterator.next();
+
+            if (newServiceNames.contains(existingServiceEntry.getValue().getName()) &&
+                // Special case: Cas service is not added via registry. Don't delete it!
+                !SERVICE_NAME_CAS.equals(existingServiceEntry.getValue().getName())) {
+                existingServiceIterator.remove();
             }
         }
+    }
 
-        for (String entry : source) {
-            RegexRegisteredService newService = createService(entry);
-            destination.put(newService.getId(), newService);
-        }
+    /**
+     * Second operation of {@link #synchronize(List, Map)}: Add services that are only present in
+     * <code>newServices</code> to <code>existingServices</code>.
+     */
+    private void addServicesThatDoNotExistYet(List<String> newServiceNames,
+                                              Map<Long, RegisteredService> existingServices) {
+        Set<String> existingServiceNames =
+                existingServices.values().stream().map(RegisteredService::getName).collect(Collectors.toSet());
+
+        newServiceNames.stream()
+                       .filter(newServiceName -> !existingServiceNames.contains(newServiceName))
+                       .forEach(newServiceName -> addNewService(newServiceName, existingServices));
+    }
+
+    /**
+     * Creates a new service and adds it to the <code>existingServices</code>.
+     */
+    private void addNewService(String newServiceName, Map<Long, RegisteredService> existingServices) {
+        RegexRegisteredService newService = createService(newServiceName);
+        existingServices.put(newService.getId(), newService);
     }
 
     /**
@@ -228,7 +263,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     private void addCasService(ConcurrentHashMap<Long, RegisteredService> localServices) {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setAllowedToProxy(true);
-        service.setName("cas");
+        service.setName(SERVICE_NAME_CAS);
         service.setServiceId("https://" + fqdn + "/cas/.*");
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
