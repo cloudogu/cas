@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 // TODO document public API
+// TODO Favor object orientation over util classes. That is, move the methods used here to RegistryEtcd/EtcdServicesManager
 // TODO unit test this
 public final class EtcdRegistryUtils {
 
@@ -76,7 +76,7 @@ public final class EtcdRegistryUtils {
 
     }
 
-    public static long findHighestId(ConcurrentHashMap<Long, RegisteredService> map) {
+    public static long findHighestId(Map<Long, RegisteredService> map) {
         long id = 0;
 
         for (Map.Entry<Long, RegisteredService> entry : map.entrySet()) {

@@ -24,6 +24,7 @@ public class RegistryEtcd implements Registry {
      */
     public RegistryEtcd() {
         try {
+            // TODO when is this resource closed?
             etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
         } catch (IOException e) {
             throw new RegistryException(e);
@@ -55,6 +56,11 @@ public class RegistryEtcd implements Registry {
             EtcdResponsePromise responsePromise = etcd.getDir("/dogu").recursive().waitForChange().send();
             responsePromise.addListener(promise -> {
                 doguChangeListener.onChange();
+                /* Register again! Why?
+                 * The promise is like some kind of long polling. Once the promise is fulfilled, the connection is
+                 * gone. The listener, however, expects to be called on all following  changes, so just get a new
+                 * promise. */
+                addDoguChangeListener(doguChangeListener);
             });
         } catch (IOException e) {
             throw new RegistryException(e);

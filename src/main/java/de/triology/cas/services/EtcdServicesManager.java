@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -65,16 +64,16 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(convertToTreeSet());
+        return Collections.unmodifiableCollection(getRegisteredServices().values());
     }
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
+        final Collection<RegisteredService> registeredServices = getRegisteredServices().values();
 
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
-                return r;
+        for (final RegisteredService registeredService : registeredServices) {
+            if (registeredService.matches(service)) {
+                return registeredService;
             }
         }
 
@@ -90,7 +89,6 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         } catch (final CloneNotSupportedException e) {
             return r;
         }
-
     }
 
     @Override
@@ -113,15 +111,14 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
-    /* TODO is this conversion really necessary? If so, the name is misleading.
-     * Something like getRegisteredServicesAsTreeMap() would be more concise. */
-    private TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(getRegisteredServices().values());
-    }
-
-    private void load() {
+    /**
+     * Synchronize services from {@link #registry} to <code>existingServices</code>.
+     * That is, remove the ones that are not present in{@link #registry} and add the ones that are only present
+     * in {@link #registry} to <code>existingServices</code>.
+     */
+    private void synchronizeServicesWithRegistry(ConcurrentHashMap<Long, RegisteredService> existingServices) {
         try {
-            addServices(registry.getDogus());
+            synchronizeServices(registry.getDogus(), existingServices);
         } catch (RegistryException ex) {
             logger.warn("failed to update servicesManager", ex);
         }
@@ -146,46 +143,40 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
 
     private void initProductionMode() {
         try {
-            logger.debug("cas started in production stage");
-            logger.debug("only installed dogus can get a ST");
+            logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
             fqdn = registry.getFqdn();
-            // TODO keep this DRY and call load()
-            addServices(registry.getDogus());
+            synchronizeServicesWithRegistry(registeredServices);
             addCasService(registeredServices);
-            changeLoop();
+            registerChangeListener();
         } catch (RegistryException ex) {
             logger.warn("failed to get data from registry", ex);
         }
     }
 
-
     private void initDevelopmentMode() {
-        logger.debug("cas started in development stage");
-        logger.debug("all services can get a ST");
+        logger.debug("Cas started in development stage. All services can get an ST.");
         addDevService(registeredServices);
     }
 
     /**
-     * ChangeLoop detects when a new dogu is installed
+     * Detects when a new dogu is installed or an existing one is removed
      */
-    private void changeLoop() {
-        logger.debug("entered changeLoop");
+    private void registerChangeListener() {
+        logger.debug("entered registerChangeListener");
         try {
             registry.addDoguChangeListener(()-> {
                 logger.debug("registered change in /dogu");
-                load();
-                // TODO why register again? Rename method changeLoop() to registerChangeListener?
-                changeLoop();
+                synchronizeServicesWithRegistry(registeredServices);
             });
         } catch (RegistryException ex) {
-            logger.error("failed to load service", ex);
+            logger.error("failed to synchronizeServicesWithRegistry service", ex);
         }
     }
 
     /**
      * Creates a RegexRegisteredService for an given name
      */
-    private RegexRegisteredService createService(String name) {
+    private RegexRegisteredService createService(String name, Map<Long, RegisteredService> existingServices) {
         RegexRegisteredService service = new RegexRegisteredService();
         String[] nameArray = StringUtils.split(name, "/");
         service.setAllowedToProxy(true);
@@ -194,31 +185,22 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
         // TODO Why set this to the initial ID value of the Service? --> Same order for each service!
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
-        service.setId(EtcdRegistryUtils.findHighestId(registeredServices) + 1);
+        service.setId(EtcdRegistryUtils.findHighestId(existingServices) + 1);
         return service;
     }
 
     /**
-     * Adds for each installed dogu an entry to registeredServices
-     *
-     * @param nodesFromEtcd  all dogu nodes
-     */
-    private void addServices(List<String> nodesFromEtcd) {
-        synchronize(nodesFromEtcd, registeredServices);
-    }
-
-    /**
      * Synchronize services from <code>newServices</code> to <code>existingServices</code>.
-     * That is, remove ones that are not present in <code>newServices</code> and add the ones that are only present
+     * That is, remove the ones that are not present in <code>newServices</code> and add the ones that are only present
      * in <code>newServices</code> to <code>existingServices</code>.
      */
-    private void synchronize(List<String> newServiceNames, Map<Long, RegisteredService> existingServices) {
+    private void synchronizeServices(List<String> newServiceNames, Map<Long, RegisteredService> existingServices) {
         removeServicesThatNoLongerExist(newServiceNames, existingServices);
         addServicesThatDoNotExistYet(newServiceNames, existingServices);
     }
 
     /**
-     * First operation of {@link #synchronize(List, Map)}: Remove Services that are not present in
+     * First operation of {@link #synchronizeServices(List, Map)}: Remove Services that are not present in
      * <code>newServices</code> from <code>existingServices</code>.
      */
     private void removeServicesThatNoLongerExist(List<String> newServiceNames,
@@ -236,7 +218,7 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     /**
-     * Second operation of {@link #synchronize(List, Map)}: Add services that are only present in
+     * Second operation of {@link #synchronizeServices(List, Map)}: Add services that are only present in
      * <code>newServices</code> to <code>existingServices</code>.
      */
     private void addServicesThatDoNotExistYet(List<String> newServiceNames,
@@ -253,35 +235,29 @@ public final class EtcdServicesManager implements ReloadableServicesManager {
      * Creates a new service and adds it to the <code>existingServices</code>.
      */
     private void addNewService(String newServiceName, Map<Long, RegisteredService> existingServices) {
-        RegexRegisteredService newService = createService(newServiceName);
+        RegexRegisteredService newService = createService(newServiceName, existingServices);
         existingServices.put(newService.getId(), newService);
     }
 
     /**
      * This is necessary since cas needs a ST in clearPass workflow
      */
-    private void addCasService(ConcurrentHashMap<Long, RegisteredService> localServices) {
-        RegexRegisteredService service = new RegexRegisteredService();
-        service.setAllowedToProxy(true);
-        service.setName(SERVICE_NAME_CAS);
+    private void addCasService(ConcurrentHashMap<Long, RegisteredService> existingServices) {
+        RegexRegisteredService service = createService(SERVICE_NAME_CAS, existingServices);
         service.setServiceId("https://" + fqdn + "/cas/.*");
-        service.setEvaluationOrder((int) service.getId());
-        service.setAllowedAttributes(allowedAttributes);
-        service.setId(EtcdRegistryUtils.findHighestId(localServices) + 1);
-        // TODO keep this DRY! Re-use createService(), just set special serviceId
-        localServices.put(service.getId(), service);
+        existingServices.put(service.getId(), service);
     }
 
     /**
      * The dev service accepts all services
      */
-    private void addDevService(ConcurrentHashMap<Long, RegisteredService> localServices) {
+    private void addDevService(ConcurrentHashMap<Long, RegisteredService> existingServices) {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId("^(https?|imaps?)://.*");
         service.setId(0);
         service.setName("10000001");
         service.setAllowedToProxy(true);
         service.setAllowedAttributes(allowedAttributes);
-        localServices.put(service.getId(), service);
+        existingServices.put(service.getId(), service);
     }
 }
