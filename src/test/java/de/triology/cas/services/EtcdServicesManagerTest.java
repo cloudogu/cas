@@ -3,6 +3,7 @@ package de.triology.cas.services;
 import de.triology.cas.services.CloudoguRegistry.DoguChangeListener;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,7 +37,8 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 /**
  * Tests for {@link EtcdServicesManager}
  */
-@RunWith(Enclosed.class) public class EtcdServicesManagerTest {
+@RunWith(Enclosed.class)
+public class EtcdServicesManagerTest {
 
     /**
      * Generals tests, independent of mode.
@@ -115,12 +117,15 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
             when(registry.getFqdn()).thenReturn(EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME);
             when(registry.getDogus()).thenReturn(Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2));
             expectedServices = new LinkedList<>(Arrays.asList(
-                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_1)
-                                         .setServiceId("https://fully/qualified(:443)?/nexus(/.*)?"),
-                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_2)
-                                         .setServiceId("https://fully/qualified(:443)?/smeagol(/.*)?"),
-                    new ExpectedService().setName(EXPECTED_SERVICE_NAME_CAS)
-                                         .setServiceId("https://fully/qualified/cas/.*")));
+                    new ExpectedService().name(EXPECTED_SERVICE_NAME_1)
+                                         .serviceId("https://fully/qualified(:443)?/nexus(/.*)?")
+                                         .serviceIdExample("https://fully/qualified/nexus/something"),
+                    new ExpectedService().name(EXPECTED_SERVICE_NAME_2)
+                                         .serviceId("https://fully/qualified(:443)?/smeagol(/.*)?")
+                                         .serviceIdExample("https://fully/qualified/smeagol/somethingElse"),
+                    new ExpectedService().name(EXPECTED_SERVICE_NAME_CAS)
+                                         .serviceId("https://fully/qualified/cas/.*")
+                                         .serviceIdExample("https://fully/qualified/cas/somethingCompletelyDifferent")));
         }
 
         /**
@@ -135,8 +140,8 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
             String expectedServiceName3 = "/dogu/scm";
             when(registry.getDogus()).thenReturn(new LinkedList<>(
                     Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
-            expectedServices.add(new ExpectedService().setName(expectedServiceName3)
-                                                      .setServiceId("https://fully/qualified(:443)?/scm(/.*)?"));
+            expectedServices.add(new ExpectedService().name(expectedServiceName3)
+                                                      .serviceId("https://fully/qualified(:443)?/scm(/.*)?"));
 
             // Notify manager of change
             doguChangeListener.onChange();
@@ -177,6 +182,79 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
         }
 
         /**
+         * Test for {@link EtcdServicesManager#matchesExistingService(Service)}.
+         */
+        @Test
+        public void matchesExistingService() throws Exception {
+            for (ExpectedService expectedService : expectedServices) {
+                Service service = mock(Service.class);
+                when(service.getId()).thenReturn(expectedService.serviceIdExample);
+                assertTrue("Unexpected value for service ID=" + expectedService.serviceIdExample,
+                           etcdServicesManger.matchesExistingService(service));
+            }
+        }
+
+        /**
+         * Test for {@link EtcdServicesManager#findServiceBy(Service)} for a services that does not exist.
+         */
+        @Test
+        public void matchesExistingServiceNegative() throws Exception {
+            Service service = mock(Service.class);
+            when(service.getId()).thenReturn("https://somethingThatDoesNotExist");
+            assertFalse("Unexpected value for non-https service", etcdServicesManger.matchesExistingService(service));
+        }
+
+        /**
+         * Test for {@link EtcdServicesManager#findServiceBy(Service)}.
+         */
+        @Test
+        public void findServiceBy() throws Exception {
+            for (ExpectedService expectedService : expectedServices) {
+                RegisteredService registeredService = testFindServiceBy(expectedService.serviceIdExample);
+                assertNotNull("findServiceBy(Service) did not return a registered service for id="
+                              + expectedService.serviceIdExample,
+                              registeredService);
+                expectedService.assertEqualsService(registeredService);
+            }
+        }
+
+        /**
+         * Test for {@link EtcdServicesManager#findServiceBy(Service)} for a service that does not exist.
+         */
+        @Test
+        public void findServiceByNegative() throws Exception {
+            RegisteredService registeredService = testFindServiceBy("something");
+            assertNull(
+                    "findServiceBy(Service) unexpectedly returned registered service",
+                    registeredService);
+        }
+
+        /**
+         * Test for {@link EtcdServicesManager#findServiceBy(long)}.
+         */
+        @Test
+        public void findServiceById() throws Exception {
+            int expectedId = 1;
+            // IDs start with "1", the "expectedServices" array is zero-based
+            ExpectedService expectedService = expectedServices.get(expectedId - 1);
+
+            RegisteredService registeredService = etcdServicesManger.findServiceBy(expectedId);
+
+            assertNotNull("findServiceBy(long) did not return a service for id=" + expectedId, registeredService);
+            expectedService.assertEqualsService(registeredService);
+        }
+
+        /**
+         * Calls {@link EtcdServicesManager#findServiceBy(Service)} with a mocked service that returns
+         * <code>serviceId</code> on {@link Service#getId()}.
+         */
+        private RegisteredService testFindServiceBy(String serviceId) {
+            Service service = mock(Service.class);
+            when(service.getId()).thenReturn(serviceId);
+            return etcdServicesManger.findServiceBy(service);
+        }
+
+        /**
          * Calls {@link EtcdServicesManager#getAllServices()} and returns the {@link DoguChangeListener} passed to
          * {@link CloudoguRegistry#addDoguChangeListener(DoguChangeListener)}.
          */
@@ -191,21 +269,30 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
         }
 
         /**
-         * Helper class for asserting services.
+         * Helper class for storing test data and asserting services.
          */
         private class ExpectedService {
             boolean allowedToProxy = true;
             List<String> allowedAttributes = expectedAllowedAttributes;
             String name;
             String serviceId;
+            String serviceIdExample;
 
-            ExpectedService setName(String name) {
+            ExpectedService name(String name) {
                 this.name = name;
                 return this;
             }
 
-            ExpectedService setServiceId(String serviceId) {
+            ExpectedService serviceId(String serviceId) {
                 this.serviceId = serviceId;
+                return this;
+            }
+
+            /**
+             * An example that matches the service ID. This attrbitute is ignored in {@link #assertContainedIn(Collection)}.
+             */
+            ExpectedService serviceIdExample(String serviceIdExample) {
+                this.serviceIdExample = serviceIdExample;
                 return this;
             }
 
@@ -217,21 +304,27 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
                 List<RegisteredService> matchingServices =
                         services.stream().filter(registeredService -> name.equals(registeredService.getName()))
                                 .collect(Collectors.toList());
-                assertEquals("Unexpected amount of services matching name=\"" + name + "\" found within services "
-                             + services, 1, matchingServices.size());
+                Assert.assertEquals("Unexpected amount of services matching name=\"" + name + "\" found within services "
+                                    + services, 1, matchingServices.size());
                 RegisteredService actualService = matchingServices.get(0);
+
+                assertTrue("Service \" + name \": ID is not unique",
+                           1 == services.stream()
+                                        .filter(registeredService -> actualService.getId() == registeredService.getId())
+                                        .count());
+                assertEqualsService(actualService);
+            }
+
+            /**
+             * Asserts that this service's attributes equal the one specified in this {@link ExpectedService}.
+             */
+            void assertEqualsService(RegisteredService actualService) {
                 assertEquals("Service \" + name \": Unexpected value allowedToProxy", allowedToProxy,
-                             actualService.isAllowedToProxy());
+                                    actualService.isAllowedToProxy());
                 assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                             actualService.getAllowedAttributes());
+                                    actualService.getAllowedAttributes());
                 assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
-                             actualService.getServiceId());
-                assertTrue("Service \" + name \": ID is not unique", 1 == services.stream().filter(registeredService ->
-                                                                                                           actualService
-                                                                                                                   .getId()
-                                                                                                           == registeredService
-                                                                                                                   .getId())
-                                                                                  .count());
+                                    actualService.getServiceId());
             }
         }
     }
@@ -256,7 +349,7 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
             Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
             assertEquals("Unexpected amount of services returned in development mode", 1, allServices.size());
             assertEquals("Development service not returned ny getAllServices()", DEVELOPMENT_SERVICE_ID,
-                         allServices.iterator().next().getId());
+                                allServices.iterator().next().getId());
         }
 
         /**
@@ -284,8 +377,8 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
          * Test for {@link EtcdServicesManager#findServiceBy(Service)} in development mode for an HTTPS service.
          */
         @Test
-        public void findServiceByDevelopmentHttps() throws Exception {
-            RegisteredService registeredService = testFindServiceByDevelopment("https://something");
+        public void findServiceByHttps() throws Exception {
+            RegisteredService registeredService = testFindServiceBy("https://something");
             assertNotNull(
                     "findServiceBy(Service) did not return a registered service in development mode for https service",
                     registeredService);
@@ -295,8 +388,8 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
          * Test for {@link EtcdServicesManager#findServiceBy(Service)} in development mode for an IMAPS service.
          */
         @Test
-        public void findServiceByDevelopmentImaps() throws Exception {
-            RegisteredService registeredService = testFindServiceByDevelopment("imaps://something");
+        public void findServiceByImaps() throws Exception {
+            RegisteredService registeredService = testFindServiceBy("imaps://something");
             assertNotNull(
                     "findServiceBy(Service) did not return a registered service in development mode for imaps service",
                     registeredService);
@@ -307,8 +400,8 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
          * IMAPS nor HTTPS.
          */
         @Test
-        public void findServiceByDevelopmentNegative() throws Exception {
-            RegisteredService registeredService = testFindServiceByDevelopment("something");
+        public void findServiceByNegative() throws Exception {
+            RegisteredService registeredService = testFindServiceBy("something");
             assertNull(
                     "findServiceBy(Service) unexpectedly returned registered service in development mode for service that was neither https nor imaps",
                     registeredService);
@@ -318,7 +411,7 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
          * Test for {@link EtcdServicesManager#findServiceBy(long)} in development mode.
          */
         @Test
-        public void findServiceByIdDevelopment() throws Exception {
+        public void findServiceById() throws Exception {
             RegisteredService service = etcdServicesManger.findServiceBy(DEVELOPMENT_SERVICE_ID);
             assertNotNull("findServiceBy(long) did not return a service in development mode", service);
         }
@@ -327,7 +420,7 @@ import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
          * Calls {@link EtcdServicesManager#findServiceBy(Service)} with a mocked service that returns
          * <code>serviceId</code> on {@link Service#getId()}.
          */
-        private RegisteredService testFindServiceByDevelopment(String serviceId) {
+        private RegisteredService testFindServiceBy(String serviceId) {
             Service service = mock(Service.class);
             when(service.getId()).thenReturn(serviceId);
             return etcdServicesManger.findServiceBy(service);
