@@ -5,9 +5,19 @@ import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
+import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -16,9 +26,13 @@ import java.util.concurrent.TimeoutException;
  *
  * The Dogus are queried from etcd: Installed Dogus and the version iformation are stored in a directory
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
- * Changes of the '/dogu' directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
+ * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
+// TODO unit test? Difficult because most parts of the CAS API are final without public constructor.
 class RegistryEtcd implements Registry {
+    private static final JSONParser PARSER = new JSONParser();
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private EtcdClient etcd;
 
     /**
@@ -29,7 +43,7 @@ class RegistryEtcd implements Registry {
     public RegistryEtcd() {
         try {
             // TODO when is this resource closed? Can spring be used to call etcd.close()?
-            etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
+            etcd = new EtcdClient(URI.create(getEtcdUri()));
         } catch (IOException e) {
             throw new RegistryException(e);
         }
@@ -39,7 +53,7 @@ class RegistryEtcd implements Registry {
     public List<String> getDogus() {
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").recursive().send().get().getNode().getNodes();
-            return EtcdRegistryUtils.convertNodesToStringList(nodes);
+            return convertNodesToStringList(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             throw new RegistryException(e);
         }
@@ -69,5 +83,59 @@ class RegistryEtcd implements Registry {
         } catch (IOException e) {
             throw new RegistryException(e);
         }
+    }
+
+    private List<String> convertNodesToStringList(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd) {
+        List<String> stringList = new ArrayList<>();
+        for (EtcdKeysResponse.EtcdNode entry : nodesFromEtcd) {
+            JSONObject json;
+            try {
+                json = getCurrentDoguNode(entry);
+                if (hasCasDependency(json)) {
+                    stringList.add(json.get("Name").toString());
+                }
+            } catch (ParseException ex) {
+                log.warn("failed to parse EtcdNode to json", ex);
+            }
+
+        }
+        return stringList;
+    }
+
+    private String getEtcdUri() throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader("/etc/ces/node_master"))) {
+            String nodeMaster = reader.readLine();
+            if (StringUtils.isBlank(nodeMaster)) {
+                throw new IOException("failed to read node_master file");
+            }
+            return "http://".concat(nodeMaster).concat(":4001");
+        }
+    }
+
+    private boolean hasCasDependency(JSONObject json) {
+        return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
+    }
+
+    private JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
+        String version = "";
+        JSONObject json = null;
+        // get used dogu version
+        for (EtcdKeysResponse.EtcdNode leaf : doguNode.getNodes()) {
+            if (leaf.getKey().equals(doguNode.getKey() + "/current")) {
+                version = leaf.getValue();
+            }
+
+        }
+        // empty if dogu isnt used
+        if (!version.isEmpty()) {
+            for (EtcdKeysResponse.EtcdNode leaf : doguNode.getNodes()) {
+                if (leaf.getKey().equals(doguNode.getKey() + "/" + version)) {
+
+                    json = (JSONObject) PARSER.parse(leaf.getValue());
+                }
+            }
+        }
+
+        return json;
     }
 }

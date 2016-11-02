@@ -62,8 +62,30 @@ abstract class CesServicesManagerStage {
         // TODO Why set this to the initial ID value of the Service? --> Same order for each service!
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
-        service.setId(EtcdRegistryUtils.findHighestId(registeredServices) + 1);
+        service.setId(createId());
         registeredServices.put(service.getId(), service);
+    }
+
+    /**
+     * @return a new numeric ID for a registered service
+     */
+    private long createId() {
+        // TODO Wouldn't it be simpler an less error prone to use an AtomicLong instead?
+        return findHighestId(registeredServices) + 1;
+    }
+
+    /**
+     * @return the highest number within the keyset of <code>map</code>
+     */
+    private static long findHighestId(Map<Long, RegisteredService> map) {
+        long id = 0;
+
+        for (Map.Entry<Long, RegisteredService> entry : map.entrySet()) {
+            if (entry.getKey() > id) {
+                id = entry.getKey();
+            }
+        }
+        return id;
     }
 
 }
