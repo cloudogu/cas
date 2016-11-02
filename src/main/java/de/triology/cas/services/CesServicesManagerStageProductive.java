@@ -78,8 +78,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * Creates and registers a new service for an given name
      */
     private void addNewService(String name) {
-        String[] nameArray = StringUtils.split(name, "/");
-        addNewService(name, "https://" + fqdn + "(:443)?/" + nameArray[nameArray.length - 1] + "(/.*)?");
+        addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?");
     }
 
     /**

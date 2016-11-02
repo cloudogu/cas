@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 public class CesServiceManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
-    private static final String EXPECTED_SERVICE_NAME_1 = "/dogu/nexus";
-    private static final String EXPECTED_SERVICE_NAME_2 = "/dogu/smeagol";
+    private static final String EXPECTED_SERVICE_NAME_1 = "nexus";
+    private static final String EXPECTED_SERVICE_NAME_2 = "smeagol";
     private static final String EXPECTED_SERVICE_NAME_CAS = "cas";
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private List<ExpectedService> expectedServices;
@@ -60,16 +60,20 @@ public class CesServiceManagerStageProductiveTest {
         DoguChangeListener doguChangeListener = initialize();
 
         // Add service
-        String expectedServiceName3 = "/dogu/scm";
+        String expectedServiceName3 = "scm";
         when(registry.getDogus()).thenReturn(new LinkedList<>(
                 Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
         expectedServices.add(new ExpectedService().name(expectedServiceName3)
                                                   .serviceId("https://fully/qualified(:443)?/scm(/.*)?"));
+        
+        
+        
 
         // Notify manager of change
         doguChangeListener.onChange();
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+        
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
         }
@@ -86,11 +90,12 @@ public class CesServiceManagerStageProductiveTest {
         when(registry.getDogus()).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_NAME_1)));
         expectedServices = expectedServices.stream().filter(expectedService -> !EXPECTED_SERVICE_NAME_2
                 .equals(expectedService.name)).collect(Collectors.toList());
-
+        
         // Notify manager of change
         doguChangeListener.onChange();
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+        assertEquals(expectedServices.size(), allServices.size());
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
         }

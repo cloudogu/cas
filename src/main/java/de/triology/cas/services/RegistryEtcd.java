@@ -92,7 +92,7 @@ class RegistryEtcd implements Registry {
             try {
                 json = getCurrentDoguNode(entry);
                 if (hasCasDependency(json)) {
-                    stringList.add(json.get("Name").toString());
+                    stringList.add(normalizeServiceName(json.get("Name").toString()));
                 }
             } catch (ParseException ex) {
                 log.warn("failed to parse EtcdNode to json", ex);
@@ -100,6 +100,11 @@ class RegistryEtcd implements Registry {
 
         }
         return stringList;
+    }
+    
+    private String normalizeServiceName(String name){
+        String[] nameArray = StringUtils.split(name, "/");
+        return nameArray[nameArray.length - 1];
     }
 
     private String getEtcdUri() throws IOException {
