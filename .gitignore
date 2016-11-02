@@ -3,3 +3,9 @@
 /.project
 /.settings
 src/main/webapp/themes
+
+# Intellij
+.idea/
+*.iml
+*.iws
+

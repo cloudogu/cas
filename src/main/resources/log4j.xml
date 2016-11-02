@@ -107,7 +107,7 @@
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="TRACE" />
+        <level value="INFO" />
         <appender-ref ref="cas" />
     </logger>
 
