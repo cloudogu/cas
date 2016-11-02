@@ -72,7 +72,7 @@
         Registers a service for every installed dogu, which needs cas.
         In development stage every service will be accepted.
     -->
-    <bean id="servicesManager" class="de.triology.cas.services.EtcdServicesManager">
+    <bean id="servicesManager" class="de.triology.cas.services.CesServiceManager">
         <constructor-arg>
             <list>
                 <value>username</value>

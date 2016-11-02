@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 // TODO document public API
-// TODO Favor object orientation over util classes. That is, move the methods used here to RegistryEtcd/EtcdServicesManager
+// TODO Favor object orientation over util classes. That is, move the methods used here to RegistryEtcd/CesServiceManager
 // TODO unit test this
 final class EtcdRegistryUtils {
 
@@ -76,6 +76,7 @@ final class EtcdRegistryUtils {
 
     }
 
+    // TODO Wouldn't it be simpler an less error prone to use an AtomicLong instead?
     public static long findHighestId(Map<Long, RegisteredService> map) {
         long id = 0;
 

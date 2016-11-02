@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static de.triology.cas.services.EtcdServicesManager.STAGE_DEVELOPMENT;
+import static de.triology.cas.services.CesServiceManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.when;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 /**
- * Tests for {@link EtcdServicesManager}
+ * Tests for {@link CesServiceManager}
  */
-public class EtcdServicesManagerTest {
+public class CesServiceManagerTest {
     /**
      * Logger of class under test.
      */
-    private static final TestLogger LOG = TestLoggerFactory.getTestLogger(EtcdServicesManagerUnderTest.class);
+    private static final TestLogger LOG = TestLoggerFactory.getTestLogger(CesServiceManagerUnderTest.class);
 
     /**
      * Reset logger before each test.
@@ -46,43 +46,43 @@ public class EtcdServicesManagerTest {
      */
     @Rule public ExpectedException thrown = ExpectedException.none();
 
-    EtcdServicesManagerStage servicesManagerStage = mock(EtcdServicesManagerStage.class);
-    EtcdServicesManager etcdServicesManger = new EtcdServicesManagerUnderTest(null, "don't care", mock(Registry.class));
+    CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
+    CesServiceManager etcdServicesManger = new CesServiceManagerUnderTest(null, "don't care", mock(Registry.class));
 
     /**
-     * Test for {@link EtcdServicesManager#EtcdServicesManager(List, String, Registry)} for production.
+     * Test for {@link CesServiceManager#CesServiceManager(List, String, Registry)} for production.
      */
     @Test
     public void constructForProduction() throws Exception {
-        new EtcdServicesManager(null, "something", null) {
+        new CesServiceManager(null, "something", null) {
             @Override
-            protected EtcdServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                           Registry registry) {
-                EtcdServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
-                assertThat(stage, instanceOf(EtcdServicesManagerStageProductive.class));
+            protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
+                                                          Registry registry) {
+                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
+                assertThat(stage, instanceOf(CesServicesManagerStageProductive.class));
                 return stage;
             }
         };
     }
 
     /**
-     * Test for {@link EtcdServicesManager#EtcdServicesManager(List, String, Registry)} for production.
+     * Test for {@link CesServiceManager#CesServiceManager(List, String, Registry)} for production.
      */
     @Test
     public void constructForDevelopment() throws Exception {
-        new EtcdServicesManager(null, STAGE_DEVELOPMENT, null) {
+        new CesServiceManager(null, STAGE_DEVELOPMENT, null) {
             @Override
-            protected EtcdServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                           Registry registry) {
-                EtcdServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
-                assertThat(stage, instanceOf(EtcdServicesManagerStageDevelopment.class));
+            protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
+                                                          Registry registry) {
+                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
+                assertThat(stage, instanceOf(CesServicesManagerStageDevelopment.class));
                 return stage;
             }
         };
     }
 
     /**
-     * Test for {@link EtcdServicesManager#getAllServices()}.
+     * Test for {@link CesServiceManager#getAllServices()}.
      */
     @Test
     public void getAllServices() throws Exception {
@@ -98,7 +98,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#getAllServices()} where the result is modified.
+     * Test for {@link CesServiceManager#getAllServices()} where the result is modified.
      */
     @Test
     public void assertGetAllServicesModify() {
@@ -110,7 +110,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#matchesExistingService(Service)}.
+     * Test for {@link CesServiceManager#matchesExistingService(Service)}.
      */
     @Test
     public void matchesExistingService() throws Exception {
@@ -128,7 +128,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#findServiceBy(Service)} for a services that does not exist.
+     * Test for {@link CesServiceManager#findServiceBy(Service)} for a services that does not exist.
      */
     @Test
     public void matchesExistingServiceNegative() throws Exception {
@@ -143,7 +143,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#findServiceBy(Service)}.
+     * Test for {@link CesServiceManager#findServiceBy(Service)}.
      */
     @Test
     public void findServiceBy() throws Exception {
@@ -163,7 +163,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#findServiceBy(Service)} for a service that does not exist.
+     * Test for {@link CesServiceManager#findServiceBy(Service)} for a service that does not exist.
      */
     @Test
     public void findServiceByNegative() throws Exception {
@@ -178,7 +178,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#findServiceBy(long)}.
+     * Test for {@link CesServiceManager#findServiceBy(long)}.
      */
     @Test
     public void findServiceById() throws Exception {
@@ -195,7 +195,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#findServiceBy(long)} for a service that does not exist.
+     * Test for {@link CesServiceManager#findServiceBy(long)} for a service that does not exist.
      */
     @Test
     public void findServiceByIdNegative() throws Exception {
@@ -209,7 +209,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#reload()}.
+     * Test for {@link CesServiceManager#reload()}.
      */
     @Test
     public void reload() throws Exception {
@@ -220,7 +220,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#save(RegisteredService)}.
+     * Test for {@link CesServiceManager#save(RegisteredService)}.
      */
     @Test
     public void save() throws Exception {
@@ -231,7 +231,7 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Test for {@link EtcdServicesManager#delete(long)}.
+     * Test for {@link CesServiceManager#delete(long)}.
      */
     @Test
     public void delete() throws Exception {
@@ -242,16 +242,16 @@ public class EtcdServicesManagerTest {
     }
 
     /**
-     * Special {@link EtcdServicesManager} that return a mocked stage for unit testing in isolation.
+     * Special {@link CesServiceManager} that return a mocked stage for unit testing in isolation.
      */
-    class EtcdServicesManagerUnderTest extends EtcdServicesManager {
-        public EtcdServicesManagerUnderTest(List<String> allowedAttributes, String stage, Registry registry) {
+    class CesServiceManagerUnderTest extends CesServiceManager {
+        public CesServiceManagerUnderTest(List<String> allowedAttributes, String stage, Registry registry) {
             super(allowedAttributes, stage, registry);
         }
 
         @Override
-        protected EtcdServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                       Registry registry) {
+        protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
+                                                      Registry registry) {
             return servicesManagerStage;
         }
     }

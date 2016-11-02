@@ -21,9 +21,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link EtcdServicesManagerStageProductive}.
+ * Tests for {@link CesServicesManagerStageProductive}.
  */
-public class EtcdServicesManagerStageProductiveTest {
+public class CesServiceManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final String EXPECTED_SERVICE_NAME_1 = "/dogu/nexus";
@@ -32,8 +32,8 @@ public class EtcdServicesManagerStageProductiveTest {
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private List<ExpectedService> expectedServices;
     private Registry registry = mock(Registry.class);
-    private EtcdServicesManagerStageProductive stage =
-            new EtcdServicesManagerStageProductive(expectedAllowedAttributes, registry);
+    private CesServicesManagerStageProductive stage =
+            new CesServicesManagerStageProductive(expectedAllowedAttributes, registry);
 
     @Before
     public void setUp() {
@@ -97,7 +97,7 @@ public class EtcdServicesManagerStageProductiveTest {
     }
 
     /**
-     * Calls {@link EtcdServicesManagerStageProductive#getRegisteredServices()} and returns the
+     * Calls {@link CesServicesManagerStageProductive#getRegisteredServices()} and returns the
      * {@link DoguChangeListener} passed to {@link Registry#addDoguChangeListener(DoguChangeListener)}.
      */
     private DoguChangeListener initialize() {

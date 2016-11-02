@@ -10,10 +10,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * The "normal" stage in which a {@link EtcdServicesManager} operates in production.
- * It queries it's services from a {@link Registry}.
+ * The stage in which a {@link CesServiceManager} operates in production.
+ * Services accesible via CAS ({@link RegisteredService}s) are queried from a {@link Registry}.
+ * For each Dogu that is accessible via CAS, one {@link RegisteredService} is returned. An additional service allows
+ * CAS to access itself.
  */
-class EtcdServicesManagerStageProductive extends EtcdServicesManagerStage {
+class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     /**
      * Name of the special service that allows cas to access itself. See {@link #addCasService()}.
@@ -24,7 +26,7 @@ class EtcdServicesManagerStageProductive extends EtcdServicesManagerStage {
 
     private Registry registry;
 
-    EtcdServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
+    CesServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
         super(allowedAttributes);
         this.registry = registry;
     }

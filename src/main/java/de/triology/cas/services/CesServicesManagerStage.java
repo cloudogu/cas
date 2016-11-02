@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * An abstract class that encapsulates the stages {@link EtcdServicesManager} operates in.
+ * An abstract class that encapsulates the stages {@link CesServiceManager} operates in.
  * It provides it's registered services via {@link #getRegisteredServices()}.
  *
  * Implementations must initialize their registered services by implementing the template method
  * {@link #initRegisteredServices(Map)}.
  */
-abstract class EtcdServicesManagerStage {
+abstract class CesServicesManagerStage {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final List<String> allowedAttributes;
@@ -26,7 +26,7 @@ abstract class EtcdServicesManagerStage {
      */
     private final Map<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
 
-    EtcdServicesManagerStage(List<String> allowedAttributes) {
+    CesServicesManagerStage(List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
     }
 

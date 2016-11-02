@@ -13,6 +13,10 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Default implementation of {@link Registry} using {@link EtcdClient}.
+ *
+ * The Dogus are queried from etcd: Installed Dogus and the version iformation are stored in a directory
+ * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
+ * Changes of the '/dogu' directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
 class RegistryEtcd implements Registry {
     private EtcdClient etcd;
@@ -24,7 +28,7 @@ class RegistryEtcd implements Registry {
      */
     public RegistryEtcd() {
         try {
-            // TODO when is this resource closed?
+            // TODO when is this resource closed? Can spring be used to call etcd.close()?
             etcd = new EtcdClient(URI.create(EtcdRegistryUtils.getEtcdUri()));
         } catch (IOException e) {
             throw new RegistryException(e);

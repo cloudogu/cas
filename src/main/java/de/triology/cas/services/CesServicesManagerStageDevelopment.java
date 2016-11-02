@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Special stage in which a {@link EtcdServicesManager} operates during development.
+ * Special stage in which a {@link CesServiceManager} operates during development.
+ *
  * <p><b>Never use in production</b>, as it accepts <b>all</b> requests from https imaps.</p>
  */
-class EtcdServicesManagerStageDevelopment extends EtcdServicesManagerStage {
+class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
 
-    EtcdServicesManagerStageDevelopment(List<String> allowedAttributes) {
+    CesServicesManagerStageDevelopment(List<String> allowedAttributes) {
         super(allowedAttributes);
     }
 
@@ -25,7 +26,6 @@ class EtcdServicesManagerStageDevelopment extends EtcdServicesManagerStage {
      * The dev service accepts all services
      */
     private void addDevService() {
-        // TODO is id=0 necessary for dev services?
         addNewService("10000001", "^(https?|imaps?)://.*");
     }
 }

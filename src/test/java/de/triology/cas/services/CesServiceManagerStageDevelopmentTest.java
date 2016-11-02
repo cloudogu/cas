@@ -8,9 +8,9 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for {@link EtcdServicesManagerStageDevelopment}.
+ * Tests for {@link CesServicesManagerStageDevelopment}.
  */
-public class EtcdServicesManagerStageDevelopmentTest {
+public class CesServiceManagerStageDevelopmentTest {
     /**
      * ID of the service used in development mode.
      */
@@ -20,10 +20,10 @@ public class EtcdServicesManagerStageDevelopmentTest {
      */
     private static final String DEVELOPMENT_SERVICE_SERVICE_ID = "^(https?|imaps?)://.*";
 
-    EtcdServicesManagerStageDevelopment stage = new EtcdServicesManagerStageDevelopment(null);
+    CesServicesManagerStageDevelopment stage = new CesServicesManagerStageDevelopment(null);
 
     /**
-     * Test for {@link EtcdServicesManagerStageDevelopment#getRegisteredServices()}
+     * Test for {@link CesServicesManagerStageDevelopment#getRegisteredServices()}
      */
     @Test
     public void getRegisteredServices() throws Exception {

@@ -16,17 +16,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Adds for each dogu, which needs cas, a service to registeredServices. These
- * dogus getting identified with etcd: Installed dogus have a directory
- * '/dogu/${name of dogu}/current' with their used version. Further 'cas' has to
- * be in the dependencies of the dogu. Changes of the '/dogu' directory will be
- * noticed and registeredServices updated. Every service will be accepted if the
- * ecosystem is in development stage.
- *
- * @author Michael Behlendorf
+ * Manages the Dogus that are accessible via CAS within the Cloudogu Ecosystem.
+ * Depending on the {@link CesServicesManagerStage} ({@link CesServicesManagerStageDevelopment} or
+ * {@link CesServicesManagerStageProductive}), a number of {@link RegisteredService}s is returned.
  */
-// TODO rename to CasServiceManager or CesCasServiceManager? --> No direct connection to etcd!
-public class EtcdServicesManager implements ReloadableServicesManager {
+public class CesServiceManager implements ReloadableServicesManager {
 
     /**
      * This triggers operation in development stage.
@@ -35,9 +29,9 @@ public class EtcdServicesManager implements ReloadableServicesManager {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private EtcdServicesManagerStage serviceStage;
+    private CesServicesManagerStage serviceStage;
 
-    public EtcdServicesManager(List<String> allowedAttributes, String stage, Registry registry) {
+    public CesServiceManager(List<String> allowedAttributes, String stage, Registry registry) {
         serviceStage = createStage(stage, allowedAttributes, registry);
     }
 
@@ -91,13 +85,13 @@ public class EtcdServicesManager implements ReloadableServicesManager {
     }
 
     /**
-     * @return a new instance of the {@link EtcdServicesManagerStage}, depending on the <code>stageString</code> parameter.
+     * @return a new instance of the {@link CesServicesManagerStage}, depending on the <code>stageString</code> parameter.
      */
-    protected EtcdServicesManagerStage createStage(String stageString, List<String> allowedAttributes, Registry registry) {
+    protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes, Registry registry) {
         if (!STAGE_DEVELOPMENT.equals(stageString)) {
-            return new EtcdServicesManagerStageProductive(allowedAttributes, registry);
+            return new CesServicesManagerStageProductive(allowedAttributes, registry);
         } else {
-            return new EtcdServicesManagerStageDevelopment(allowedAttributes);
+            return new CesServicesManagerStageDevelopment(allowedAttributes);
         }
     }
 }
