@@ -20,7 +20,7 @@ import java.util.List;
  * Depending on the {@link CesServicesManagerStage} ({@link CesServicesManagerStageDevelopment} or
  * {@link CesServicesManagerStageProductive}), a number of {@link RegisteredService}s is returned.
  */
-public class CesServiceManager implements ReloadableServicesManager {
+public class CesServicesManager implements ReloadableServicesManager {
 
     /**
      * This triggers operation in development stage.
@@ -31,7 +31,7 @@ public class CesServiceManager implements ReloadableServicesManager {
 
     private CesServicesManagerStage serviceStage;
 
-    public CesServiceManager(List<String> allowedAttributes, String stage, Registry registry) {
+    public CesServicesManager(List<String> allowedAttributes, String stage, Registry registry) {
         serviceStage = createStage(stage, allowedAttributes, registry);
     }
 

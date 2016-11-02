@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 
 import java.util.Iterator;
@@ -101,7 +100,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
              existingServices.entrySet().iterator(); existingServiceIterator.hasNext(); ) {
             Map.Entry<Long, RegisteredService> existingServiceEntry = existingServiceIterator.next();
 
-            if (newServiceNames.contains(existingServiceEntry.getValue().getName()) &&
+            if (!newServiceNames.contains(existingServiceEntry.getValue().getName()) &&
                 // Special case: Cas service is not added via registry. Don't delete it!
                 !SERVICE_NAME_CAS.equals(existingServiceEntry.getValue().getName())) {
                 existingServiceIterator.remove();

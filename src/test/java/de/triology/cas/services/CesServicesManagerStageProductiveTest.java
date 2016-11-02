@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests for {@link CesServicesManagerStageProductive}.
  */
-public class CesServiceManagerStageProductiveTest {
+public class CesServicesManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final String EXPECTED_SERVICE_NAME_1 = "nexus";

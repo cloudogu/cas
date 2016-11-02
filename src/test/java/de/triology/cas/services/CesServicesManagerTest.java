@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static de.triology.cas.services.CesServiceManager.STAGE_DEVELOPMENT;
+import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.when;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 /**
- * Tests for {@link CesServiceManager}
+ * Tests for {@link CesServicesManager}
  */
-public class CesServiceManagerTest {
+public class CesServicesManagerTest {
     /**
      * Logger of class under test.
      */
@@ -47,14 +47,14 @@ public class CesServiceManagerTest {
     @Rule public ExpectedException thrown = ExpectedException.none();
 
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
-    CesServiceManager etcdServicesManger = new CesServiceManagerUnderTest(null, "don't care", mock(Registry.class));
+    CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(null, "don't care", mock(Registry.class));
 
     /**
-     * Test for {@link CesServiceManager#CesServiceManager(List, String, Registry)} for production.
+     * Test for {@link CesServicesManager#CesServiceManager(List, String, Registry)} for production.
      */
     @Test
     public void constructForProduction() throws Exception {
-        new CesServiceManager(null, "something", null) {
+        new CesServicesManager(null, "something", null) {
             @Override
             protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
                                                           Registry registry) {
@@ -66,11 +66,11 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#CesServiceManager(List, String, Registry)} for production.
+     * Test for {@link CesServicesManager#CesServiceManager(List, String, Registry)} for production.
      */
     @Test
     public void constructForDevelopment() throws Exception {
-        new CesServiceManager(null, STAGE_DEVELOPMENT, null) {
+        new CesServicesManager(null, STAGE_DEVELOPMENT, null) {
             @Override
             protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
                                                           Registry registry) {
@@ -82,7 +82,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#getAllServices()}.
+     * Test for {@link CesServicesManager#getAllServices()}.
      */
     @Test
     public void getAllServices() throws Exception {
@@ -98,7 +98,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#getAllServices()} where the result is modified.
+     * Test for {@link CesServicesManager#getAllServices()} where the result is modified.
      */
     @Test
     public void assertGetAllServicesModify() {
@@ -110,7 +110,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#matchesExistingService(Service)}.
+     * Test for {@link CesServicesManager#matchesExistingService(Service)}.
      */
     @Test
     public void matchesExistingService() throws Exception {
@@ -128,7 +128,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#findServiceBy(Service)} for a services that does not exist.
+     * Test for {@link CesServicesManager#findServiceBy(Service)} for a services that does not exist.
      */
     @Test
     public void matchesExistingServiceNegative() throws Exception {
@@ -143,7 +143,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#findServiceBy(Service)}.
+     * Test for {@link CesServicesManager#findServiceBy(Service)}.
      */
     @Test
     public void findServiceBy() throws Exception {
@@ -163,7 +163,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#findServiceBy(Service)} for a service that does not exist.
+     * Test for {@link CesServicesManager#findServiceBy(Service)} for a service that does not exist.
      */
     @Test
     public void findServiceByNegative() throws Exception {
@@ -178,7 +178,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#findServiceBy(long)}.
+     * Test for {@link CesServicesManager#findServiceBy(long)}.
      */
     @Test
     public void findServiceById() throws Exception {
@@ -195,7 +195,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#findServiceBy(long)} for a service that does not exist.
+     * Test for {@link CesServicesManager#findServiceBy(long)} for a service that does not exist.
      */
     @Test
     public void findServiceByIdNegative() throws Exception {
@@ -209,7 +209,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#reload()}.
+     * Test for {@link CesServicesManager#reload()}.
      */
     @Test
     public void reload() throws Exception {
@@ -220,7 +220,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#save(RegisteredService)}.
+     * Test for {@link CesServicesManager#save(RegisteredService)}.
      */
     @Test
     public void save() throws Exception {
@@ -231,7 +231,7 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Test for {@link CesServiceManager#delete(long)}.
+     * Test for {@link CesServicesManager#delete(long)}.
      */
     @Test
     public void delete() throws Exception {
@@ -242,9 +242,9 @@ public class CesServiceManagerTest {
     }
 
     /**
-     * Special {@link CesServiceManager} that return a mocked stage for unit testing in isolation.
+     * Special {@link CesServicesManager} that return a mocked stage for unit testing in isolation.
      */
-    class CesServiceManagerUnderTest extends CesServiceManager {
+    class CesServiceManagerUnderTest extends CesServicesManager {
         public CesServiceManagerUnderTest(List<String> allowedAttributes, String stage, Registry registry) {
             super(allowedAttributes, stage, registry);
         }

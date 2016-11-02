@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests for {@link CesServicesManagerStageDevelopment}.
  */
-public class CesServiceManagerStageDevelopmentTest {
+public class CesServicesManagerStageDevelopmentTest {
     /**
      * ID of the service used in development mode.
      */
