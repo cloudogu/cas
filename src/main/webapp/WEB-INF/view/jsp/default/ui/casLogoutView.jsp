@@ -27,7 +27,5 @@
 		<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
 	</div>
 
-    <input type="button" value="Login again" class="btn btn-primary" onclick="location.href = '/cas/login';">
-
 <jsp:directive.include file="includes/afterMessage.jsp" />					
 <jsp:directive.include file="includes/bottom.jsp" />
