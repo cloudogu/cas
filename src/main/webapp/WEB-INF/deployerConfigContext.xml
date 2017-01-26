@@ -125,10 +125,58 @@
     </util:list>
 
     <!-- ldap support -->
+    
+    <!-- 
+    Create a combined group resolver to resolve groups from
+    memberOf attribute and by searching groups by member with
+    the dn of the user.
+    -->
+    
+    <bean id="groupSearchControls"
+          class="javax.naming.directory.SearchControls"
+          p:searchScope="2" />
+    
+    <util:list id="groupResolvers">
+    
+        <!--
+        use memberOf attribute and extract the name from dn
+        -->
+        <bean class="de.triology.cas.ldap.MemberOfGroupResolver"
+              c:attribute="${ldap.authn.attribute.groups}"
+              c:isDnAttribute="true"
+         />
 
+        <!--
+        use userdn to search all groups which contain a member attribute
+        with the dn of the user
+        -->
+        <bean id="memberGroupResolver"
+              class="de.triology.cas.ldap.MemberGroupResolver"
+              p:baseDN="${ldap.authn.groups.baseDn}"
+              p:connectionFactory-ref="searchPooledLdapConnectionFactory"
+              p:searchFilter="${ldap.authn.groups.searchFilter}"
+              p:searchControls-ref="groupSearchControls"
+              p:nameAttribute="${ldap.authn.groups.attribute.name}"
+        />
+    
+    </util:list>
+    
+    <!-- 
+    combine member and memberOf group resolvers
+    -->
+    <bean id="groupResolver"
+          class="de.triology.cas.ldap.CombinedGroupResolver"
+          c:groupResolvers-ref="groupResolvers"
+    />
+
+    <!--
+    handle ldap authentication, fetch attributes and resolve groups
+    -->
     <bean id="ldapAuthenticationHandler"
-          class="de.triology.cas.ldap.AdvancedLdapAuthenticationHandler"
+          class="de.triology.cas.ldap.GroupAwareLdapAuthenticationHandler"
           p:principalIdAttribute="${ldap.authn.attribute.username}"
+          p:groupResolver-ref="groupResolver"
+          p:groupAttribute="groups"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeMap">
             <map>
@@ -142,22 +190,21 @@
               <entry key="${ldap.authn.attribute.username}" value="username"/>
               <entry key="${ldap.authn.attribute.cn}" value="cn"/>
               <entry key="${ldap.authn.attribute.mail}" value="mail"/>
-              <entry key="${ldap.authn.attribute.groups}" value="groups"/>
-              <!-- <entry value="Fax" key="facsimileTelephoneNumber" /> -->
               <entry key="${ldap.authn.attribute.givenName}" value="givenName"/>
               <entry key="${ldap.authn.attribute.surname}" value="surname"/>
               <entry key="${ldap.authn.attribute.displayName}" value="displayName"/>
             </map>
         </property>
+        
         <!--
-        strip dn attributes
+        fetch memberOf attribute, to avoid new search
         -->
-        <property name="stripDNAttributes">
-          <util:set>
-            <value>${ldap.authn.attribute.groups}</value>
-            <value>groups</value>
-          </util:set>
+        <property name="additionalAttributes">
+            <util:list>
+                <value>${ldap.authn.attribute.groups}</value>
+            </util:list>
         </property>
+
     </bean>
 
     <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
