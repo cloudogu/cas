@@ -100,52 +100,10 @@
           p:httpClient-ref="httpClient" 
           p:requireSecure="${requireSecure}"/>
 
-    <!--
-       | TODO: Replace this component with one suitable for your enviroment.
-       |
-       | This component provides authentication for the kind of credential used in your environment. In most cases
-       | credential is a username/password pair that lives in a system of record like an LDAP directory.
-       | The most common authentication handler beans:
-       |
-       | * org.jasig.cas.authentication.LdapAuthenticationHandler
-       | * org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler
-       | * org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler
-       | * org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler
-       -->
-    <bean id="primaryAuthenticationHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
-            <map>
-                <entry key="casuser" value="Mellon"/>
-            </map>
-        </property>
-    </bean>
-
     <!-- Required for proxy ticket mechanism -->
     <bean id="proxyPrincipalResolver"
           class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
 
-    <!--
-       | Resolves a principal from a credential using an attribute repository that is configured to resolve
-       | against a deployer-specific store (e.g. LDAP).
-       -->
-    <bean id="primaryPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
-        <property name="attributeRepository" ref="attributeRepository" />
-    </bean>
-
-    <!--
-    Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
-    may go against a database or LDAP server.  The id should remain "attributeRepository" though.
-    +-->
-    <bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao"
-            p:backingMap-ref="attrRepoBackingMap" />
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
-        <entry key="groupMembership" value="groupMembership" />
-    </util:map>
 
     <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 
@@ -167,10 +125,58 @@
     </util:list>
 
     <!-- ldap support -->
+    
+    <!-- 
+    Create a combined group resolver to resolve groups from
+    memberOf attribute and by searching groups by member with
+    the dn of the user.
+    -->
+    
+    <bean id="groupSearchControls"
+          class="javax.naming.directory.SearchControls"
+          p:searchScope="2" />
+    
+    <util:list id="groupResolvers">
+    
+        <!--
+        use memberOf attribute and extract the name from dn
+        -->
+        <bean class="de.triology.cas.ldap.MemberOfGroupResolver"
+              c:attribute="${ldap.authn.attribute.groups}"
+              c:isDnAttribute="true"
+         />
 
+        <!--
+        use userdn to search all groups which contain a member attribute
+        with the dn of the user
+        -->
+        <bean id="memberGroupResolver"
+              class="de.triology.cas.ldap.MemberGroupResolver"
+              p:baseDN="${ldap.authn.groups.baseDn}"
+              p:connectionFactory-ref="searchPooledLdapConnectionFactory"
+              p:searchFilter="${ldap.authn.groups.searchFilter}"
+              p:searchControls-ref="groupSearchControls"
+              p:nameAttribute="${ldap.authn.groups.attribute.name}"
+        />
+    
+    </util:list>
+    
+    <!-- 
+    combine member and memberOf group resolvers
+    -->
+    <bean id="groupResolver"
+          class="de.triology.cas.ldap.CombinedGroupResolver"
+          c:groupResolvers-ref="groupResolvers"
+    />
+
+    <!--
+    handle ldap authentication, fetch attributes and resolve groups
+    -->
     <bean id="ldapAuthenticationHandler"
-          class="de.triology.cas.ldap.AdvancedLdapAuthenticationHandler"
+          class="de.triology.cas.ldap.GroupAwareLdapAuthenticationHandler"
           p:principalIdAttribute="${ldap.authn.attribute.username}"
+          p:groupResolver-ref="groupResolver"
+          p:groupAttribute="groups"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeMap">
             <map>
@@ -184,22 +190,21 @@
               <entry key="${ldap.authn.attribute.username}" value="username"/>
               <entry key="${ldap.authn.attribute.cn}" value="cn"/>
               <entry key="${ldap.authn.attribute.mail}" value="mail"/>
-              <entry key="${ldap.authn.attribute.groups}" value="groups"/>
-              <!-- <entry value="Fax" key="facsimileTelephoneNumber" /> -->
               <entry key="${ldap.authn.attribute.givenName}" value="givenName"/>
               <entry key="${ldap.authn.attribute.surname}" value="surname"/>
               <entry key="${ldap.authn.attribute.displayName}" value="displayName"/>
             </map>
         </property>
+        
         <!--
-        strip dn attributes
+        fetch memberOf attribute, to avoid new search
         -->
-        <property name="stripDNAttributes">
-          <util:set>
-            <value>${ldap.authn.attribute.groups}</value>
-            <value>groups</value>
-          </util:set>
+        <property name="additionalAttributes">
+            <util:list>
+                <value>${ldap.authn.attribute.groups}</value>
+            </util:list>
         </property>
+
     </bean>
 
     <bean id="authenticator" class="org.ldaptive.auth.Authenticator"

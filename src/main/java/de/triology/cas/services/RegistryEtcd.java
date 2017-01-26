@@ -69,6 +69,7 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
         try {
             EtcdResponsePromise responsePromise = etcd.getDir("/dogu").recursive().waitForChange().send();
