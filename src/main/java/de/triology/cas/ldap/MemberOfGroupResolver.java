@@ -44,10 +44,14 @@ public class MemberOfGroupResolver implements GroupResolver {
         LOG.trace("resolve groups from ldap attribute {}", attribute);
         Set<String> groups = new HashSet<>();
         LdapAttribute ldapAttribute = ldapEntry.getAttribute(attribute);
-        for (String value : ldapAttribute.getStringValues()) {
-            String group = normalizeName(value);
-            LOG.trace("added group {} to attribute map", group);
-            groups.add( group );
+        if (ldapAttribute != null && !ldapAttribute.isBinary()) {
+            for (String value : ldapAttribute.getStringValues()) {
+                String group = normalizeName(value);
+                LOG.trace("added group {} to attribute map", group);
+                groups.add( group );
+            }
+        } else {
+            LOG.debug("could not find text based group attribute {} at {}", attribute, ldapEntry.getDn());
         }
         return groups;
     }
