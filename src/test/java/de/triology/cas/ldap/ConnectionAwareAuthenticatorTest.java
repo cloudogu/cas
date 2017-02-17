@@ -6,12 +6,14 @@
 
 package de.triology.cas.ldap;
 
+import static org.junit.Assert.*;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.AuthenticationHandler;
@@ -61,6 +63,7 @@ public class ConnectionAwareAuthenticatorTest {
      */
     @Before
     public void setUpMocks() throws LdapException {
+        when(systemConnection.isOpen()).thenReturn(Boolean.TRUE);
         when(response.getConnection()).thenReturn(userConnection);
         when(connectionFactory.getConnection()).thenReturn(systemConnection);
     }
@@ -84,6 +87,9 @@ public class ConnectionAwareAuthenticatorTest {
         
         verify(entryResolver).resolve(userConnection, criteria);
         verify(entryResolver, never()).resolve(systemConnection, criteria);
+        
+        verify(userConnection, never()).close();
+        verify(systemConnection, never()).close();
     }
     
     /**
@@ -101,10 +107,17 @@ public class ConnectionAwareAuthenticatorTest {
         EntryResolver entryResolver = mock(EntryResolver.class);
         authenticator.setEntryResolver(entryResolver);
         
-        authenticator.resolveEntry(request, response, criteria);
+        LdapEntry entry = new LdapEntry();
+        when(entryResolver.resolve(systemConnection, criteria)).thenReturn(entry);
+        
+        LdapEntry resolvedEntry = authenticator.resolveEntry(request, response, criteria);
+        assertSame(entry, resolvedEntry);
         
         verify(entryResolver).resolve(systemConnection, criteria);
         verify(entryResolver, never()).resolve(userConnection, criteria);
+        
+        verify(userConnection, never()).close();
+        verify(systemConnection).close();
     }
 
     private ConnectionAwareAuthenticator createAuthenticator( boolean useUserConnectionToFetchAttributes ) {
