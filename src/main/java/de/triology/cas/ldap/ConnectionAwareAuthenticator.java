@@ -6,6 +6,7 @@
 package de.triology.cas.ldap;
 
 import javax.validation.constraints.NotNull;
+import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -81,17 +82,31 @@ public class ConnectionAwareAuthenticator extends Authenticator {
             AuthenticationHandlerResponse response, AuthenticationCriteria criteria, EntryResolver resolver
     ) throws LdapException {
         
-        LdapEntry entry = resolver.resolve(getEntryResolverConnection(response), criteria);
+        LdapEntry entry;
+        if (useUserConnectionToFetchAttributes) {
+            entry = resolveEntryWithUserConnection(response, criteria, resolver);
+        } else {
+            entry = resolveEntryWithSystemConnection(criteria, resolver);
+        }
+        
         logger.trace("resolved entry={} with resolver={}", entry, resolver);
         return entry;
     }
     
-    private Connection getEntryResolverConnection(AuthenticationHandlerResponse response) throws LdapException {
-        if (useUserConnectionToFetchAttributes) {
-            logger.debug("use user connection to fetch attributes");
-            return response.getConnection();
-        }
-        logger.debug("use system connection to fetch attributes");
-        return connectionFactory.getConnection();
+    private LdapEntry resolveEntryWithUserConnection(AuthenticationHandlerResponse response, AuthenticationCriteria criteria, EntryResolver resolver) throws LdapException{
+        logger.debug("use user connection to fetch attributes");
+        return resolver.resolve(response.getConnection(), criteria);
     }
+    
+    private LdapEntry resolveEntryWithSystemConnection(AuthenticationCriteria criteria, EntryResolver resolver) throws LdapException {
+        logger.debug("use system connection to fetch attributes");
+        Connection connection = null;
+        try {
+            connection = connectionFactory.getConnection();
+            return resolver.resolve(connection, criteria);
+        } finally {
+            LdapUtils.closeConnection(connection);
+        }
+    }
+   
 }
