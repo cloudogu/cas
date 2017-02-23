@@ -22,9 +22,13 @@ node() { // No specific label
         Maven mvn = new Maven(this, mvnHome, javaHome)
         Git git = new Git(this)
 
+        // TODO refactor this in an object-oriented way and move to build-lib
         if ("master".equals(env.BRANCH_NAME)) {
             mvn.additionalArgs = "-DperformRelease"
             currentBuild.description = mvn.getVersion()
+        } else if (!"develop".equals(env.BRANCH_NAME)) {
+            // run SQ analysis in specific project for feature, hotfix, etc.
+            mvn.additionalArgs = "-Dsonar.branch=" + script.env.BRANCH_NAME
         }
 
         stage('Checkout') {
