@@ -29,7 +29,7 @@ node() { // No specific label
         } else if (!"develop".equals(env.BRANCH_NAME)) {
             // CHANGE_ID == pull request id
             // http://stackoverflow.com/questions/41695530/how-to-get-pull-request-id-from-jenkins-pipeline
-            if ( env.CHANGE_ID != null && env.CHANGE_ID.length > 0 ) {
+            if ( env.CHANGE_ID != null && env.CHANGE_ID.length() > 0 ) {
                 echo 'build pr ' + env.CHANGE_ID + ' at ' + env.BRANCH_NAME
                 mvn.additionalArgs = "-Dsonar.analysis.mode=preview "
                 mvn.additionalArgs += "-Dsonar.github.pullRequest=${env.CHANGE_ID} "
