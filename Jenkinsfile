@@ -31,11 +31,11 @@ node() { // No specific label
             // http://stackoverflow.com/questions/41695530/how-to-get-pull-request-id-from-jenkins-pipeline
             if ( env.CHANGE_ID != null && env.CHANGE_ID.length > 0 ) {
                 echo 'build pr ' + env.CHANGE_ID + ' at ' + env.BRANCH_NAME
-                mvn.additionalArgs = "-Dsonar.analysis.mode=preview"
-                mvn.additionalArgs += " -Dsonar.github.pullRequest=${env.CHANGE_ID}"
-                mvn.additionalArgs += " -Dsonar.github.repository=cloudogu/cas"
+                mvn.additionalArgs = "-Dsonar.analysis.mode=preview "
+                mvn.additionalArgs += "-Dsonar.github.pullRequest=${env.CHANGE_ID} "
+                mvn.additionalArgs += "-Dsonar.github.repository=cloudogu/cas "
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonarqube-gh', passwordVariable: 'GITHUB_ACCESS_TOKEN']]) {
-                    mvn.additionalArgs += " -Dsonar.github.oauth=${GITHUB_ACCESS_TOKEN}"
+                    mvn.additionalArgs += "-Dsonar.github.oauth=${GITHUB_ACCESS_TOKEN} "
                 }
             } else {
                 echo 'build branch ' + env.BRANCH_NAME
