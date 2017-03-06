@@ -27,8 +27,21 @@ node() { // No specific label
             mvn.additionalArgs = "-DperformRelease"
             currentBuild.description = mvn.getVersion()
         } else if (!"develop".equals(env.BRANCH_NAME)) {
-            // run SQ analysis in specific project for feature, hotfix, etc.
-            mvn.additionalArgs = "-Dsonar.branch=" + script.env.BRANCH_NAME
+            // CHANGE_ID == pull request id
+            // http://stackoverflow.com/questions/41695530/how-to-get-pull-request-id-from-jenkins-pipeline
+            if ( env.CHANGE_ID != null && env.CHANGE_ID.length > 0 ) {
+                echo 'build pr ' + env.CHANGE_ID + ' at ' + script.env.BRANCH_NAME
+                mvn.additionalArgs = "-Dsonar.analysis.mode=preview"
+                mvn.additionalArgs += " -Dsonar.github.pullRequest=${env.CHANGE_ID}"
+                mvn.additionalArgs += " -Dsonar.github.repository=cloudogu/cas"
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonarqube-gh', passwordVariable: 'GITHUB_ACCESS_TOKEN']]) {
+                    mvn.additionalArgs += " -Dsonar.github.oauth=${GITHUB_ACCESS_TOKEN}"
+                }
+            } else {
+                echo 'build branch ' + script.env.BRANCH_NAME
+                // run SQ analysis in specific project for feature, hotfix, etc.
+                mvn.additionalArgs = "-Dsonar.branch=" + script.env.BRANCH_NAME
+            }
         }
 
         stage('Checkout') {
