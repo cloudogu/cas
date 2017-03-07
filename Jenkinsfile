@@ -35,7 +35,7 @@ node() { // No specific label
                 mvn.additionalArgs += "-Dsonar.github.pullRequest=${env.CHANGE_ID} "
                 mvn.additionalArgs += "-Dsonar.github.repository=cloudogu/cas "
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sonarqube-gh', passwordVariable: 'GITHUB_ACCESS_TOKEN']]) {
-                    mvn.additionalArgs += "-Dsonar.github.oauth=${GITHUB_ACCESS_TOKEN} "
+                    mvn.additionalArgs += "-Dsonar.github.oauth=${env.GITHUB_ACCESS_TOKEN} "
                 }
             } else {
                 echo 'build branch ' + env.BRANCH_NAME
