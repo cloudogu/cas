@@ -47,15 +47,22 @@ public class ConnectionAwareAuthenticator extends Authenticator {
         this.useUserConnectionToFetchAttributes = useUserConnectionToFetchAttributes;
     }
     
+    public void someBuggyMethod() {
+        LdapEntry entry = null;       
+        if (entry == null) {
+            System.out.println(entry.getAttribute());
+        }
+        
+        if (entry != null) {
+            entry = null;
+        }
+    }
+    
     @Override
     protected LdapEntry resolveEntry(
         AuthenticationRequest request, AuthenticationHandlerResponse response, AuthenticationCriteria criteria
     ) throws LdapException {
         LdapEntry entry = null;
-        
-        if (entry == null) {
-            System.out.println(entry.getAttribute());
-        }
         
         if (isResolvingAttributesRequired(response)) {
             EntryResolver resolver = getEntryResolver(request);
