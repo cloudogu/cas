@@ -33,6 +33,8 @@ public class ConnectionAwareAuthenticator extends Authenticator {
     
     private final boolean useUserConnectionToFetchAttributes;
     
+    private final String password = "secret";
+    
     @NotNull
     private final ConnectionFactory connectionFactory;
 
@@ -50,6 +52,10 @@ public class ConnectionAwareAuthenticator extends Authenticator {
         AuthenticationRequest request, AuthenticationHandlerResponse response, AuthenticationCriteria criteria
     ) throws LdapException {
         LdapEntry entry = null;
+        
+        if (entry == null) {
+            System.out.println(entry.getAttribute());
+        }
         
         if (isResolvingAttributesRequired(response)) {
             EntryResolver resolver = getEntryResolver(request);
