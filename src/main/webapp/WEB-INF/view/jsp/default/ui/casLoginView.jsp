@@ -70,7 +70,8 @@
             
             <c:if test="${not pageContext.request.secure}">
             <div class="alert alert-warning warning-msg-https">
-              You are currently accessing CAS over a non-secure connection. Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
+                <spring:message code="screen.welcome.label.httpWarning" />
+                <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
             </div>
             </c:if>
             
