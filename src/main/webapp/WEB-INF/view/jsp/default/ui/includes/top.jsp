@@ -50,29 +50,7 @@
                 height: 100%;
                 width: 100%;
             }
-            #lang-selector{
-                font-size: 2vh;
-                position: absolute;
-                right: 0.5vw;
-            }
-            #lang-selector>a{
-                color: white;
-            }
-            #lang-selector>a.selected{
-                text-decoration: underline;
-            }
         </style>
-        <script>
-        </script>
     </head>
     <body class="bg-primary">
-        <div id="list-languages">
-            <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
-            <c:set var='query' value='<%=queryString%>' />
-            <c:set var="xquery" value="${fn:escapeXml(query)}" />
-            <c:set var="loginUrl" value="login?${xquery}${not empty xquery ? '&' : ''}locale=" />
-            <div id="lang-selector">
-                <a id="de" href="${loginUrl}de">DE</a> | <a id="en" href="${loginUrl}en">EN</a>
-            </div>
-        </div>
         <div class="container vertical-center">
