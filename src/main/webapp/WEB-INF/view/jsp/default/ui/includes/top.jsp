@@ -63,40 +63,16 @@
             }
         </style>
         <script>
-            String.prototype.replaceAll = function (search, replacement) {
-                var target = this;
-                return target.replace(new RegExp(search, 'g'), replacement);
-            };
-
-            function highlightSelectedLanguage() {
-                var currentParams = window.location.search;
-                var searchString = 'locale=';
-                var index = currentParams.search(searchString);
-                if (index < 0) {
-                    setLocale('en');
-                }
-                var endOfSearch = index + searchString.length;
-                var sub = currentParams.substring(endOfSearch, endOfSearch + 2);
-                document.getElementById(sub).classList.add("selected");
-            }
-            function setLocale(locale) {
-                var path = window.location.path;
-                var currentParams = window.location.search;
-                currentParams = currentParams.replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^[?]locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");
-                var newParams = "";
-                if (currentParams) {
-                    newParams = currentParams + '&';
-                } else {
-                    newParams = '?';
-                }
-                newParams += 'locale=' + locale;
-                location.href = path + newParams;
-            }
         </script>
     </head>
-    <body class="bg-primary" onload="highlightSelectedLanguage()">
-
-        <div id="lang-selector">
-            <a id="de" href="javascript:setLocale('de')">DE</a> | <a id="en" href="javascript:setLocale('en')">EN</a>
+    <body class="bg-primary">
+        <div id="list-languages">
+            <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
+            <c:set var='query' value='<%=queryString%>' />
+            <c:set var="xquery" value="${fn:escapeXml(query)}" />
+            <c:set var="loginUrl" value="login?${xquery}${not empty xquery ? '&' : ''}locale=" />
+            <div id="lang-selector">
+                <a id="de" href="${loginUrl}de">DE</a> | <a id="en" href="${loginUrl}en">EN</a>
+            </div>
         </div>
         <div class="container vertical-center">
