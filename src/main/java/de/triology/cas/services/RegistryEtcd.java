@@ -34,7 +34,7 @@ class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private EtcdClient etcd;
+    private final EtcdClient etcd;
 
     /**
      * Creates a etcd client that loads its URI from <code>/etc/ces/node_master</code>.
@@ -48,6 +48,10 @@ class RegistryEtcd implements Registry {
         } catch (IOException e) {
             throw new RegistryException(e);
         }
+    }
+
+    RegistryEtcd(URI uri) {
+        etcd = new EtcdClient(uri);
     }
 
     @Override
