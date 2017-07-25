@@ -4,8 +4,8 @@
     <groupId>com.cloudogu.ces</groupId>
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
-    <version>4.0.7.11</version>
-  
+    <version>4.0.7.12</version>
+
     <properties>
         <cas.version>4.0.7</cas.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jacoco.version>0.7.8</jacoco.version>
     </properties>
-  
+
     <!--
     For release purpose
     -->
@@ -23,10 +23,10 @@
         <url>https://github.com/cloudogu/cas</url>
         <tag>HEAD</tag>
     </scm>
-  
- 
+
+
     <dependencies>
-    
+
         <!-- cas server -->
         <dependency>
             <groupId>org.jasig.cas</groupId>
@@ -35,58 +35,58 @@
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
-    
+
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-extension-clearpass</artifactId>
             <version>${cas.version}</version>
             <scope>runtime</scope>
         </dependency>
-    
+
         <!-- ldap support -->
-    
+
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-ldap</artifactId>
             <version>${cas.version}</version>
         </dependency>
-    
+
         <!-- rest support -->
-    
+
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-integration-restlet</artifactId>
             <version>${cas.version}</version>
         </dependency>
-    
+
         <!-- saml support -->
-    
+
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-saml</artifactId>
             <version>${cas.version}</version>
         </dependency>
-    
+
         <!-- fix version conflicts -->
-    
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.5</version>
         </dependency>
-    
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.12</version>
         </dependency>
-    
+
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
-    
+
         <dependency>
             <groupId>org.mousio</groupId>
             <artifactId>etcd4j</artifactId>
@@ -194,7 +194,7 @@
 
         </plugins>
     </build>
- 
+
     <repositories>
         <repository>
             <id>ja-sig</id>
