@@ -44,19 +44,21 @@
             <div class="form-group">
                             
                 <label for="username">
-                    Username:
+                    <spring:message code="screen.welcome.label.netid" />
                 </label>
                 <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
-                <form:input cssClass="form-control" cssErrorClass="error" id="username" placeholder="Username" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="false" htmlEscape="true" />
+                <spring:message code="screen.welcome.label.netid.placeholder" var="userPlaceholder"/>
+                <form:input cssClass="form-control" cssErrorClass="error" id="username" placeholder="${userPlaceholder}" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="false" htmlEscape="true" />
             </div>
             </c:if>
 
             <div class="form-group">
                 <label for="password">
-                    Password:
+                    <spring:message code="screen.welcome.label.password" />
                 </label>
                 <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
-                <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "Password" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
+                <spring:message code="screen.welcome.label.password.placeholder" var="passwordPlaceholder"/>
+                <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "${passwordPlaceholder}" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
             </div>
             
             <input type="hidden" name="lt" value="${loginTicket}" />
@@ -68,7 +70,8 @@
             
             <c:if test="${not pageContext.request.secure}">
             <div class="alert alert-warning warning-msg-https">
-              You are currently accessing CAS over a non-secure connection. Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
+                <spring:message code="screen.welcome.label.httpWarning" />
+                <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
             </div>
             </c:if>
             
@@ -76,7 +79,7 @@
             <form:errors path="*" id="msg" cssClass="alert alert-danger alert-msg-credentials" element="div" />
         </div>
     </form:form>
-            
+ 
     </div>
   </div>
 

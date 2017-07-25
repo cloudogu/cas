@@ -117,6 +117,15 @@
     </logger>
 
     <!--
+        Suppress missing i18n key messages e.g.:
+        The code [xxx] cannot be found in the language bundle for the locale [en_US]
+    -->
+    <logger name="org.jasig.cas.web.view.CasReloadableMessageBundle">
+        <level value="ERROR" />
+        <appender-ref ref="cas" />
+    </logger>
+
+    <!--
         WARNING: Setting the flow package to DEBUG will display
         the parameters posted to the login servlet including
         cleartext authentication credentials

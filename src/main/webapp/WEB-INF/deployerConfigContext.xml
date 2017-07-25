@@ -207,9 +207,11 @@
 
     </bean>
 
-    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+    <bean id="authenticator" class="de.triology.cas.ldap.ConnectionAwareAuthenticator"
+          c:connectionFactory-ref="searchPooledLdapConnectionFactory"
           c:resolver-ref="dnResolver"
-          c:handler-ref="authHandler" />
+          c:handler-ref="authHandler"
+          c:useUserConnectionToFetchAttributes="${ldap.authn.useUserConnectionToFetchAttributes}" />
 
     <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
           p:baseDn="${ldap.authn.baseDn}"

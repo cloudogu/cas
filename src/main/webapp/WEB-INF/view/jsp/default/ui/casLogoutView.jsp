@@ -22,10 +22,11 @@
 <jsp:directive.include file="includes/top.jsp" />
 <jsp:directive.include file="includes/beforeMessage.jsp" />
 
-	<div class="logout-msg">
-		<h2>Log out successful</h2>
-		<p id="logout-message">You have successfully logged out of the Central Authentication Service.</p>
-	</div>
+<div id="msg" class="success">
+    <h2><spring:message code="screen.logout.header" /></h2>
+    <p><spring:message code="screen.logout.success" /></p>
+    <p><spring:message code="screen.logout.security" /></p>
+</div>
 
 <jsp:directive.include file="includes/afterMessage.jsp" />					
 <jsp:directive.include file="includes/bottom.jsp" />

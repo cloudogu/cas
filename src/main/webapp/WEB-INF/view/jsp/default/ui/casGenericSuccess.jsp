@@ -21,17 +21,17 @@
 <jsp:directive.include file="includes/top.jsp" />
 <jsp:directive.include file="includes/beforeMessage.jsp" />
 
-	<div class="login-msg">
-		<h2>Login successful</h2>
-		<p>You have successfully logged into the Central Authentication Service.</p>
-		<p>For security reasons please log out and exit your web browser when you are done accessing services that require authentication.</p>
-	</div>
+<div id="msg" class="success">
+    <h2><spring:message code="screen.success.header" /></h2>
+    <p><spring:message code="screen.success.success" /></p>
+    <p><spring:message code="screen.success.security" /></p>
+</div>
 
-	<a href="/" class="btn btn-primary">Home</a>
-	<a href="logout" class="btn btn-warning logout-btn">
-		Log out	
-	</a>
-		
+<a href="/" class="btn btn-primary">Home</a>
+<a href="logout" class="btn btn-warning logout-btn">
+    Log out	
+</a>
+
 <jsp:directive.include file="includes/afterMessage.jsp" />					
 <jsp:directive.include file="includes/bottom.jsp" />
 
