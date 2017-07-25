@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
@@ -109,7 +110,12 @@ class RegistryEtcd implements Registry {
     }
 
     private String getEtcdUri() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader("/etc/ces/node_master"))) {
+        File nodeMasterFile = new File("/etc/ces/node_master");
+        if (!nodeMasterFile.exists()) {
+            return "http://localhost:4001";
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(nodeMasterFile))) {
             String nodeMaster = reader.readLine();
             if (StringUtils.isBlank(nodeMaster)) {
                 throw new IOException("failed to read node_master file");
