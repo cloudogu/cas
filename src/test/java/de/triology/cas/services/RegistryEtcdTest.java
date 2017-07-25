@@ -20,7 +20,7 @@ public class RegistryEtcdTest {
   public WireMockRule wireMockRule = new WireMockRule(
           WireMockConfiguration.options()
                   .dynamicPort()
-                  .notifier(new ConsoleNotifier(true))
+                  .notifier(new ConsoleNotifier(false))
   );
 
   @Test
