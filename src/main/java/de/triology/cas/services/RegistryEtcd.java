@@ -42,9 +42,13 @@ class RegistryEtcd implements Registry {
      * @throws RegistryException when the URI cannot be read
      */
     public RegistryEtcd() {
+        this("/etc/ces/node_master");
+    }
+
+    RegistryEtcd(String nodeMasterFilepath) {
         try {
             // TODO when is this resource closed? Can spring be used to call etcd.close()?
-            etcd = new EtcdClient(URI.create(getEtcdUri()));
+            etcd = new EtcdClient(URI.create(getEtcdUri(nodeMasterFilepath)));
         } catch (IOException e) {
             throw new RegistryException(e);
         }
@@ -113,8 +117,8 @@ class RegistryEtcd implements Registry {
         return nameArray[nameArray.length - 1];
     }
 
-    private String getEtcdUri() throws IOException {
-        File nodeMasterFile = new File("/etc/ces/node_master");
+    private String getEtcdUri(String nodeMasterFilePath) throws IOException {
+        File nodeMasterFile = new File(nodeMasterFilePath);
         if (!nodeMasterFile.exists()) {
             return "http://localhost:4001";
         }
