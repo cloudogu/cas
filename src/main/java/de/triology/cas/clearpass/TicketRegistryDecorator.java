@@ -83,7 +83,6 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteTicket(final String ticketId) {
-        final String userName = this.cache.get(ticketId);
         return this.ticketRegistry.deleteTicket(ticketId);
     }
 
