@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -32,12 +33,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TicketRegistryDecoratorTest {
@@ -46,7 +46,7 @@ public class TicketRegistryDecoratorTest {
     private TicketRegistry registry;
     @Mock
     private Ticket ticket;
-    @Mock(answer = Answers.RETURNS_MOCKS)
+    @Mock
     private TicketGrantingTicket tgt;
 
     private TicketRegistryDecorator decorator;
@@ -89,7 +89,7 @@ public class TicketRegistryDecoratorTest {
         cache.put(ticket, "username");
         cache.put("username", "password");
         decorator.deleteTicket(ticket);
-        assertEquals(1, cache.size());
+        assertEquals(2, cache.size());
         verify(registry).deleteTicket(ticket);
     }
 
@@ -114,7 +114,23 @@ public class TicketRegistryDecoratorTest {
     }
 
     @Test
+    public void sessionCountWithTicketRegistryState() {
+        TicketRegistry registryState = Mockito.mock(TicketRegistry.class, withSettings().extraInterfaces(TicketRegistryState.class));
+        when(((TicketRegistryState)registryState).sessionCount()).thenReturn(123);
+        decorator = new TicketRegistryDecorator(registryState, cache);
+        assertEquals(123, decorator.sessionCount());
+    }
+
+    @Test
     public void serviceTicketCount() {
         assertEquals(Integer.MIN_VALUE, decorator.serviceTicketCount());
+    }
+
+    @Test
+    public void serviceTicketCountWithTicketRegistryState() {
+        TicketRegistry registryState = Mockito.mock(TicketRegistry.class, withSettings().extraInterfaces(TicketRegistryState.class));
+        when(((TicketRegistryState)registryState).serviceTicketCount()).thenReturn(123);
+        decorator = new TicketRegistryDecorator(registryState, cache);
+        assertEquals(123, decorator.serviceTicketCount());
     }
 }

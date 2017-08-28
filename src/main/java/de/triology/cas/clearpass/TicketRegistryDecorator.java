@@ -84,12 +84,6 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
     @Override
     public boolean deleteTicket(final String ticketId) {
         final String userName = this.cache.get(ticketId);
-
-        if (userName != null) {
-            logger.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
-            this.cache.remove(userName);
-        }
-
         return this.ticketRegistry.deleteTicket(ticketId);
     }
 
