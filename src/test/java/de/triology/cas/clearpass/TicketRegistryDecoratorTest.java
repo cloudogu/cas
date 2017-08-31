@@ -88,8 +88,9 @@ public class TicketRegistryDecoratorTest {
         String ticket = "Ticket-123";
         cache.put(ticket, "username");
         cache.put("username", "password");
+        when(registry.deleteTicket(ticket)).thenReturn(true);
         decorator.deleteTicket(ticket);
-        assertEquals(2, cache.size());
+        assertEquals(1, cache.size());
         verify(registry).deleteTicket(ticket);
     }
 
@@ -97,8 +98,9 @@ public class TicketRegistryDecoratorTest {
     public void deleteTicketWithoutUser() {
         String ticket = "Ticket-123";
         cache.put(ticket, "username");
+        when(registry.deleteTicket(ticket)).thenReturn(true);
         decorator.deleteTicket(ticket);
-        assertEquals(1, cache.size());
+        assertEquals(0, cache.size());
         verify(registry).deleteTicket(ticket);
     }
 
