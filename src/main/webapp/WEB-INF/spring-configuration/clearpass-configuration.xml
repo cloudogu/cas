@@ -50,7 +50,7 @@
     NOTE:
     Name of delegated ticket registry bean in ticketRegistry.xml must be "ticketRegistryValue."
   -->
-  <bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator"
+  <bean id="ticketRegistry" class="de.triology.cas.clearpass.TicketRegistryDecorator"
     c:actualTicketRegistry-ref="ticketRegistryValue" c:cache-ref="encryptedMap" />
 
   <!-- implementation of the clear pass vending service -->
