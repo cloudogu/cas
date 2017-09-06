@@ -255,8 +255,8 @@
           class="org.ldaptive.ConnectionConfig"
           p:ldapUrl="${ldap.url}"
           p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS}" />
-      <!--p:sslConfig-ref="sslConfig"-->
+          p:useStartTLS="${ldap.useStartTLS}"
+          p:sslConfig-ref="sslConfig" />
 
     <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
           p:minPoolSize="${ldap.pool.minSize}"
@@ -265,14 +265,11 @@
           p:validatePeriodically="${ldap.pool.validatePeriodically}"
           p:validatePeriod="${ldap.pool.validatePeriod}" />
 
-    <!--
     <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.X509CredentialConfig"
-                  p:trustCertificates="${ldap.trustedCert}" />
+        <property name="trustManagers">
+            <bean class="${ldap.trustManager}" />
         </property>
     </bean>
-    -->
 
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
           p:prunePeriod="${ldap.pool.prunePeriod}"
