@@ -72,6 +72,7 @@ public class CesServicesManager implements ReloadableServicesManager {
     @Override
     public void reload() {
         logger.info("Cas wants to reload registered services.");
+        serviceStage.updateRegisteredServices();
     }
 
     @Override

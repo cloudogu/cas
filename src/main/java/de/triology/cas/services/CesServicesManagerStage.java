@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * An abstract class that encapsulates the stages {@link CesServiceManager} operates in.
  * It provides it's registered services via {@link #getRegisteredServices()}.
- *
+ * <p>
  * Implementations must initialize their registered services by implementing the template method
  * {@link #initRegisteredServices(Map)}.
  */
@@ -24,7 +24,7 @@ abstract class CesServicesManagerStage {
     /**
      * Map to store all registeredServices.
      */
-    private final Map<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
+    protected final Map<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
 
     CesServicesManagerStage(List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
@@ -43,15 +43,21 @@ abstract class CesServicesManagerStage {
 
     /**
      * Template method that add the stage-specific services to the <code>registeredServices</code>.
+     *
      * @param registeredServices
      */
     protected abstract void initRegisteredServices(Map<Long, RegisteredService> registeredServices);
 
+    void updateRegisteredServices() {
+        updateRegisteredServices(this.registeredServices);
+    }
+
+    protected abstract void updateRegisteredServices(Map<Long, RegisteredService> registeredServices);
 
     /**
      * Creates and registers a new service
      *
-     * @param name name of the service
+     * @param name      name of the service
      * @param serviceId regex to match requests against
      */
     protected void addNewService(String name, String serviceId) {
