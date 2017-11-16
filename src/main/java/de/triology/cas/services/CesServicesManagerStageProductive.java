@@ -43,6 +43,11 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         }
     }
 
+    @Override
+    protected void updateRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+        synchronizeServicesWithRegistry(registeredServices);
+    }
+
     /**
      * Synchronize services from {@link #registry} to <code>existingServices</code>.
      * That is, remove the ones that are not present in{@link #registry} and add the ones that are only present
