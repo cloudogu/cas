@@ -91,7 +91,7 @@ public class CesServicesManagerStageProductiveTest {
         when(registry.getDogus()).thenReturn(new LinkedList<>(
                 Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
         ExpectedService service3 = new ExpectedService().name(expectedServiceName3)
-                .serviceId("https://fully/qualified(:443)?/scm(/.*)?");
+                .serviceId("https://"+EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME+"(:443)?/scm(/.*)?");
         expectedServices.add(service3);
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
@@ -99,6 +99,21 @@ public class CesServicesManagerStageProductiveTest {
         service3.assertNotContainedIn(allServices);
 
         stage.updateRegisteredServices();
+
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
+     * Test for update-method without an initialization.
+     * This happens in production if the user does not use cas before the first automatic update.
+     */
+    @Test
+    public void updateRegisteredServicesWithoutInit() throws Exception {
+        stage.updateRegisteredServices();
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
 
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
