@@ -80,6 +80,32 @@ public class CesServicesManagerStageProductiveTest {
     }
 
     /**
+     * Test for update-method when a dogu is added after initialization.
+     */
+    @Test
+    public void updateRegisteredServicesAddService() throws Exception {
+
+        stage.initRegisteredServices(stage.registeredServices);
+        // Add service
+        String expectedServiceName3 = "scm";
+        when(registry.getDogus()).thenReturn(new LinkedList<>(
+                Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
+        ExpectedService service3 = new ExpectedService().name(expectedServiceName3)
+                .serviceId("https://fully/qualified(:443)?/scm(/.*)?");
+        expectedServices.add(service3);
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+
+        service3.assertNotContainedIn(allServices);
+
+        stage.updateRegisteredServices();
+
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
      * Test for listener, when a dogu is removed after initialization.
      */
     @Test
@@ -160,6 +186,17 @@ public class CesServicesManagerStageProductiveTest {
                                     .filter(registeredService -> actualService.getId() == registeredService.getId())
                                     .count());
             assertEqualsService(actualService);
+        }
+
+        /**
+         * Asserts that a service with the specified name is not contained within <code>services</code>
+         */
+        void assertNotContainedIn(Collection<RegisteredService> services) {
+            List<RegisteredService> matchingServices =
+                    services.stream().filter(registeredService -> name.equals(registeredService.getName()))
+                            .collect(Collectors.toList());
+            Assert.assertEquals("Unexpected amount of services matching name=\"" + name + "\" found within services "
+                    + services, 0, matchingServices.size());
         }
 
         /**
