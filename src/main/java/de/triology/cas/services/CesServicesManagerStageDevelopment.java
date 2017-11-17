@@ -22,6 +22,11 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         addDevService();
     }
 
+    @Override
+    protected void updateRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+        logger.debug("Cas started in development stage. No services need to be updated");
+    }
+
     /**
      * The dev service accepts all services
      */
