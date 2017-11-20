@@ -49,7 +49,7 @@ abstract class CesServicesManagerStage {
     protected abstract void initRegisteredServices(Map<Long, RegisteredService> registeredServices);
 
     void updateRegisteredServices() {
-        updateRegisteredServices(this.registeredServices);
+        updateRegisteredServices(this.getRegisteredServices());
     }
 
     protected abstract void updateRegisteredServices(Map<Long, RegisteredService> registeredServices);
