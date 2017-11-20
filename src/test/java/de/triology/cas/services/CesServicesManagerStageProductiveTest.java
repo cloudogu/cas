@@ -120,6 +120,18 @@ public class CesServicesManagerStageProductiveTest {
         }
     }
 
+    @Test
+    public void initTwoTimesParallel() throws Exception {
+        new Thread(() -> stage.initRegisteredServices(stage.registeredServices)).start();
+        stage.initRegisteredServices(stage.registeredServices);
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+        // ensures that init only happened once
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
     /**
      * Test for listener, when a dogu is removed after initialization.
      */

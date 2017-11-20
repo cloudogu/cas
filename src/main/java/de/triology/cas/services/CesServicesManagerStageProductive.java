@@ -25,19 +25,26 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private Registry registry;
 
+    private boolean initialized = false;
+
     CesServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
         super(allowedAttributes);
         this.registry = registry;
     }
 
     @Override
-    protected void initRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected synchronized void initRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+        if(initialized) {
+            logger.info("Already initialized CesServicesManager. Doing nothing.");
+            return;
+        }
         try {
             logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
             fqdn = registry.getFqdn();
             synchronizeServicesWithRegistry(registeredServices);
             addCasService();
             registerChangeListener(registeredServices);
+            initialized = true;
         } catch (RegistryException ex) {
             logger.warn("failed to get data from registry", ex);
         }
