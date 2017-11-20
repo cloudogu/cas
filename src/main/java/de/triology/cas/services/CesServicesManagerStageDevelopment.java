@@ -17,13 +17,13 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
     }
 
     @Override
-    protected void initRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected void initRegisteredServices() {
         logger.debug("Cas started in development stage. All services can get an ST.");
         addDevService();
     }
 
     @Override
-    protected void updateRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected void updateRegisteredServices() {
         logger.debug("Cas started in development stage. No services need to be updated");
     }
 

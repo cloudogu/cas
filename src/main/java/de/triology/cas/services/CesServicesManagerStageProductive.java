@@ -33,7 +33,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     @Override
-    protected synchronized void initRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected synchronized void initRegisteredServices() {
         if(initialized) {
             logger.info("Already initialized CesServicesManager. Doing nothing.");
             return;
@@ -51,8 +51,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     @Override
-    protected void updateRegisteredServices(Map<Long, RegisteredService> registeredServices) {
-        synchronizeServicesWithRegistry(registeredServices);
+    protected void updateRegisteredServices() {
+        synchronizeServicesWithRegistry(this.getRegisteredServices());
     }
 
     /**

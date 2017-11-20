@@ -85,7 +85,7 @@ public class CesServicesManagerStageProductiveTest {
     @Test
     public void updateRegisteredServicesAddService() throws Exception {
 
-        stage.initRegisteredServices(stage.registeredServices);
+        stage.initRegisteredServices();
         // Add service
         String expectedServiceName3 = "scm";
         when(registry.getDogus()).thenReturn(new LinkedList<>(
@@ -122,8 +122,8 @@ public class CesServicesManagerStageProductiveTest {
 
     @Test
     public void initTwoTimesParallel() throws Exception {
-        new Thread(() -> stage.initRegisteredServices(stage.registeredServices)).start();
-        stage.initRegisteredServices(stage.registeredServices);
+        new Thread(() -> stage.initRegisteredServices()).start();
+        stage.initRegisteredServices();
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
         // ensures that init only happened once

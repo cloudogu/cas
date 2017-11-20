@@ -35,24 +35,19 @@ abstract class CesServicesManagerStage {
      * @return the services registered in this stage.
      */
     public Map<Long, RegisteredService> getRegisteredServices() {
-        if (registeredServices.isEmpty()) {
-            initRegisteredServices(registeredServices);
+        if (this.registeredServices.isEmpty()) {
+            initRegisteredServices();
         }
         return this.registeredServices;
     }
 
     /**
      * Template method that add the stage-specific services to the <code>registeredServices</code>.
-     *
-     * @param registeredServices
      */
-    protected abstract void initRegisteredServices(Map<Long, RegisteredService> registeredServices);
+    protected abstract void initRegisteredServices();
 
-    void updateRegisteredServices() {
-        updateRegisteredServices(this.getRegisteredServices());
-    }
 
-    protected abstract void updateRegisteredServices(Map<Long, RegisteredService> registeredServices);
+    protected abstract void updateRegisteredServices();
 
     /**
      * Creates and registers a new service
