@@ -34,51 +34,58 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     @Override
     protected synchronized void initRegisteredServices() {
-        if(initialized) {
+        if(isInitialized()) {
             logger.info("Already initialized CesServicesManager. Doing nothing.");
             return;
         }
         try {
             logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
             fqdn = registry.getFqdn();
-            synchronizeServicesWithRegistry(registeredServices);
+            synchronizeServicesWithRegistry();
             addCasService();
-            registerChangeListener(registeredServices);
+            registerChangeListener();
             initialized = true;
         } catch (RegistryException ex) {
             logger.warn("failed to get data from registry", ex);
         }
     }
 
+    protected boolean isInitialized() {
+        return initialized;
+    }
+
     @Override
     protected void updateRegisteredServices() {
-        synchronizeServicesWithRegistry(this.getRegisteredServices());
+        if (isInitialized()){
+            synchronizeServicesWithRegistry();
+        } else {
+            initRegisteredServices();
+        }
     }
 
     /**
      * Synchronize services from {@link #registry} to <code>existingServices</code>.
      * That is, remove the ones that are not present in{@link #registry} and add the ones that are only present
-     * in {@link #registry} to <code>existingServices</code>.
+     * in {@link #registry} to <code>registeredServices</code>.
      */
-    private void synchronizeServicesWithRegistry(Map<Long, RegisteredService> existingServices) {
+    private void synchronizeServicesWithRegistry() {
         try {
-            synchronizeServices(registry.getDogus(), existingServices);
+            synchronizeServices(registry.getDogus());
         } catch (RegistryException ex) {
             logger.warn("failed to update servicesManager", ex);
         }
-        logger.info(String.format("Loaded %s services.", getRegisteredServices().size()));
+        logger.info(String.format("Loaded %s services.", registeredServices.size()));
     }
 
     /**
      * Detects when a new dogu is installed or an existing one is removed
-     * @param registeredServices
      */
-    private void registerChangeListener(Map<Long, RegisteredService> registeredServices) {
+    private void registerChangeListener() {
         logger.debug("entered registerChangeListener");
         try {
             registry.addDoguChangeListener(()-> {
                 logger.debug("registered change in /dogu");
-                synchronizeServicesWithRegistry(registeredServices);
+                synchronizeServicesWithRegistry();
             });
         } catch (RegistryException ex) {
             logger.error("failed to synchronizeServicesWithRegistry service", ex);
@@ -93,23 +100,22 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * Synchronize services from <code>newServices</code> to <code>existingServices</code>.
+     * Synchronize services from <code>newServices</code> to <code>registeredServices</code>.
      * That is, remove the ones that are not present in <code>newServices</code> and add the ones that are only present
-     * in <code>newServices</code> to <code>existingServices</code>.
+     * in <code>newServices</code> to <code>registeredServices</code>.
      */
-    private void synchronizeServices(List<String> newServiceNames, Map<Long, RegisteredService> existingServices) {
-        removeServicesThatNoLongerExist(newServiceNames, existingServices);
-        addServicesThatDoNotExistYet(newServiceNames, existingServices);
+    private void synchronizeServices(List<String> newServiceNames) {
+        removeServicesThatNoLongerExist(newServiceNames);
+        addServicesThatDoNotExistYet(newServiceNames);
     }
 
     /**
      * First operation of {@link #synchronizeServices(List, Map)}: Remove Services that are not present in
-     * <code>newServices</code> from <code>existingServices</code>.
+     * <code>newServices</code> from <code>registeredServices</code>.
      */
-    private void removeServicesThatNoLongerExist(List<String> newServiceNames,
-                                                 Map<Long, RegisteredService> existingServices) {
+    private void removeServicesThatNoLongerExist(List<String> newServiceNames) {
         for (Iterator<Map.Entry<Long, RegisteredService>> existingServiceIterator =
-             existingServices.entrySet().iterator(); existingServiceIterator.hasNext(); ) {
+             registeredServices.entrySet().iterator(); existingServiceIterator.hasNext(); ) {
             Map.Entry<Long, RegisteredService> existingServiceEntry = existingServiceIterator.next();
 
             if (!newServiceNames.contains(existingServiceEntry.getValue().getName()) &&
@@ -122,12 +128,11 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     /**
      * Second operation of {@link #synchronizeServices(List, Map)}: Add services that are only present in
-     * <code>newServices</code> to <code>existingServices</code>.
+     * <code>newServices</code> to <code>registeredServices</code>.
      */
-    private void addServicesThatDoNotExistYet(List<String> newServiceNames,
-                                              Map<Long, RegisteredService> existingServices) {
+    private void addServicesThatDoNotExistYet(List<String> newServiceNames) {
         Set<String> existingServiceNames =
-                existingServices.values().stream().map(RegisteredService::getName).collect(Collectors.toSet());
+                registeredServices.values().stream().map(RegisteredService::getName).collect(Collectors.toSet());
 
         newServiceNames.stream()
                        .filter(newServiceName -> !existingServiceNames.contains(newServiceName))
