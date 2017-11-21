@@ -32,6 +32,13 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         this.registry = registry;
     }
 
+    /**
+     * Initialize the registered services found in registry.
+     * This is synchronized because otherwise two parallel calls would lead
+     * to multiple initializations and an inconsistent state(e.g. cas-service multiple times).
+     * Parallel calls can happen since we call initRegisteredServices() in getRegisteredServices().
+     * This will not be an performance issue because initRegisteredServices() is only called after startup.
+     */
     @Override
     protected synchronized void initRegisteredServices() {
         if(isInitialized()) {
