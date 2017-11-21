@@ -1,9 +1,7 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.services.RegisteredService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Special stage in which a {@link CesServiceManager} operates during development.
