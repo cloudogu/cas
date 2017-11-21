@@ -71,7 +71,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * Synchronize services from {@link #registry} to <code>existingServices</code>.
+     * Synchronize services from {@link #registry} to <code>registeredServices</code>.
      * That is, remove the ones that are not present in{@link #registry} and add the ones that are only present
      * in {@link #registry} to <code>registeredServices</code>.
      */
