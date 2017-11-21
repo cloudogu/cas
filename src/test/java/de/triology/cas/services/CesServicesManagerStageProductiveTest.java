@@ -120,9 +120,13 @@ public class CesServicesManagerStageProductiveTest {
         }
     }
 
+    /**
+     * Stage should still be in the same state after calling initRegisteredServices
+     * a second time.
+     */
     @Test
-    public void initTwoTimesParallel() throws Exception {
-        new Thread(() -> stage.initRegisteredServices()).start();
+    public void initNotPerformedTwice() throws Exception {
+        stage.initRegisteredServices();
         stage.initRegisteredServices();
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
