@@ -80,6 +80,63 @@ public class CesServicesManagerStageProductiveTest {
     }
 
     /**
+     * Test for update-method when a dogu is added after initialization.
+     */
+    @Test
+    public void updateRegisteredServicesAddService() throws Exception {
+
+        stage.initRegisteredServices();
+        // Add service
+        String expectedServiceName3 = "scm";
+        when(registry.getDogus()).thenReturn(new LinkedList<>(
+                Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
+        ExpectedService service3 = new ExpectedService().name(expectedServiceName3)
+                .serviceId("https://"+EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME+"(:443)?/scm(/.*)?");
+        expectedServices.add(service3);
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+
+        service3.assertNotContainedIn(allServices);
+
+        stage.updateRegisteredServices();
+
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
+     * Test for update-method without an initialization.
+     * This happens in production if the user does not use cas before the first automatic update.
+     */
+    @Test
+    public void updateRegisteredServicesWithoutInit() throws Exception {
+        stage.updateRegisteredServices();
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
+     * Stage should still be in the same state after calling initRegisteredServices
+     * a second time.
+     */
+    @Test
+    public void initNotPerformedTwice() throws Exception {
+        stage.initRegisteredServices();
+        stage.initRegisteredServices();
+
+        Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
+        // ensures that init only happened once
+        for (ExpectedService expectedService : expectedServices) {
+            expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
      * Test for listener, when a dogu is removed after initialization.
      */
     @Test
@@ -160,6 +217,17 @@ public class CesServicesManagerStageProductiveTest {
                                     .filter(registeredService -> actualService.getId() == registeredService.getId())
                                     .count());
             assertEqualsService(actualService);
+        }
+
+        /**
+         * Asserts that a service with the specified name is not contained within <code>services</code>
+         */
+        void assertNotContainedIn(Collection<RegisteredService> services) {
+            List<RegisteredService> matchingServices =
+                    services.stream().filter(registeredService -> name.equals(registeredService.getName()))
+                            .collect(Collectors.toList());
+            Assert.assertEquals("Unexpected amount of services matching name=\"" + name + "\" found within services "
+                    + services, 0, matchingServices.size());
         }
 
         /**
