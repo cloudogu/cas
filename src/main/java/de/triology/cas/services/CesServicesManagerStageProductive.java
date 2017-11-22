@@ -34,14 +34,14 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     /**
      * Initialize the registered services found in registry.
-     * This is synchronized because otherwise two parallel calls would lead
-     * to multiple initializations and an inconsistent state(e.g. cas-service multiple times).
-     * Parallel calls can happen since we call initRegisteredServices() in getRegisteredServices().
-     * This will not be an performance issue because initRegisteredServices() is only called after startup.
+     * This is synchronized because otherwise two parallel calls could lead
+     * to multiple initializations and an inconsistent state (e.g. cas-service multiple times).
+     * Parallel calls can happen since we call {@code initRegisteredServices()} in {@link #getRegisteredServices()}.
+     * This will not be an performance issue because this method is only called once, after startup.
      */
     @Override
     protected synchronized void initRegisteredServices() {
-        if(isInitialized()) {
+        if (isInitialized()) {
             logger.info("Already initialized CesServicesManager. Doing nothing.");
             return;
         }
@@ -57,7 +57,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         }
     }
 
-    protected boolean isInitialized() {
+    private boolean isInitialized() {
         return initialized;
     }
 
@@ -81,7 +81,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         } catch (RegistryException ex) {
             logger.warn("failed to update servicesManager", ex);
         }
-        logger.info(String.format("Loaded %s services.", registeredServices.size()));
+        logger.info("Loaded {} services.", registeredServices.size());
     }
 
     /**
