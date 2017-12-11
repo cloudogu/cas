@@ -1,9 +1,7 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.services.RegisteredService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Special stage in which a {@link CesServiceManager} operates during development.
@@ -17,13 +15,13 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
     }
 
     @Override
-    protected void initRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected void initRegisteredServices() {
         logger.debug("Cas started in development stage. All services can get an ST.");
         addDevService();
     }
 
     @Override
-    protected void updateRegisteredServices(Map<Long, RegisteredService> registeredServices) {
+    protected void updateRegisteredServices() {
         logger.debug("Cas started in development stage. No services need to be updated");
     }
 
