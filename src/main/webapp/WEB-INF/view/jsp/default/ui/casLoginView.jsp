@@ -31,7 +31,7 @@
       </div>
       <div class="col-md-3">
 
-    <form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
+    <form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true" onsubmit="return prepareSubmit(this);">
         
         <div id="login">
 
