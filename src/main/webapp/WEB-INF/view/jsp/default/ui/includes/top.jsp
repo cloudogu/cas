@@ -32,6 +32,7 @@
         <title>CAS &#8211; Central Authentication Service</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
         <link type="text/css" rel="stylesheet" href="<c:url value="/themes/ces-theme/dist/css/ces.css" />" media="screen" />
         <link type="text/css" rel="stylesheet" href="<c:url value="/style/custom.css" />" media="screen" />
         <!-- favicons -->
