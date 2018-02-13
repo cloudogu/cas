@@ -29,6 +29,6 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
      * The dev service accepts all services
      */
     private void addDevService() {
-        addNewService("10000001", "^(https?|imaps?)://.*");
+        addNewService("10000001", "^(https?|imaps?)://.*", null);
     }
 }

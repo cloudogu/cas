@@ -1,6 +1,7 @@
 package de.triology.cas.services;
 
 import org.jasig.cas.services.RegisteredService;
+import org.json.simple.parser.ParseException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -103,7 +104,16 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * Creates and registers a new service for an given name
      */
     private void addNewService(String name) {
-        addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?");
+        if (registry instanceof RegistryEtcd){
+            try {
+                addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?", ((RegistryEtcd) registry).getCasLogoutUri(name));
+            } catch (GetCasLogoutUriException e) {
+                logger.warn("GetCasLogoutUriException", "CAS Logout URI of service "+ name +" could not be retrieved; adding service without it...");
+                addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?", null);
+            }
+        } else {
+            addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?", null);
+        }
     }
 
     /**
@@ -117,7 +127,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * First operation of {@link #synchronizeServices(List, Map)}: Remove Services that are not present in
+     * First operation of {@link #synchronizeServices(List)}: Remove Services that are not present in
      * <code>newServices</code> from <code>registeredServices</code>.
      */
     private void removeServicesThatNoLongerExist(List<String> newServiceNames) {
@@ -134,7 +144,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * Second operation of {@link #synchronizeServices(List, Map)}: Add services that are only present in
+     * Second operation of {@link #synchronizeServices(List)}: Add services that are only present in
      * <code>newServices</code> to <code>registeredServices</code>.
      */
     private void addServicesThatDoNotExistYet(List<String> newServiceNames) {
@@ -150,7 +160,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * This is necessary since cas needs a ST in clearPass workflow
      */
     private void addCasService() {
-        addNewService(SERVICE_NAME_CAS, "https://" + fqdn + "/cas/.*");
+        addNewService(SERVICE_NAME_CAS, "https://" + fqdn + "/cas/.*", null);
     }
 
 }

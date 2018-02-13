@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -74,6 +75,54 @@ class RegistryEtcd implements Registry {
             return etcd.get("/config/_global/fqdn").send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             throw new RegistryException(e);
+        }
+    }
+
+    public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
+        JSONObject doguMetaData, properties;
+        try {
+            EtcdKeysResponse.EtcdNode node = getDoguNodeFromEtcd(doguname);
+            doguMetaData = getCurrentDoguNode(node);
+            if (doguMetaData != null) {
+                Object propertiesObject = doguMetaData.get("Properties");
+                if (propertiesObject != null) {
+                    if (propertiesObject instanceof JSONObject) {
+                        properties = (JSONObject) propertiesObject;
+                    } else {
+                        throw new GetCasLogoutUriException("Properties are not in JSONObject format");
+                    }
+                } else {
+                    throw new GetCasLogoutUriException("Properties are empty");
+                }
+            } else {
+                throw new GetCasLogoutUriException("Could not get dogu metadata");
+            }
+            if (properties != null) {
+                Object logoutUri = properties.get("logoutUri");
+                if (logoutUri != null){
+                    String logoutUriString = logoutUri.toString();
+                    if (logoutUriString != null) {
+                        return new URI(logoutUriString);
+                    } else {
+                        throw new GetCasLogoutUriException("Could not get logoutUri from properties");
+                    }
+                } else {
+                    throw new GetCasLogoutUriException("Could not get logoutUri from properties");
+                }
+            } else {
+                throw new GetCasLogoutUriException("Could not get dogu properties");
+            }
+        } catch (ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
+            throw new GetCasLogoutUriException(e.toString());
+        }
+    }
+
+    protected EtcdKeysResponse.EtcdNode getDoguNodeFromEtcd(String name) throws GetDoguNodeFromEtcdException {
+        try {
+            return etcd.getDir("/dogu/"+name).recursive().send().get().getNode();
+        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+            log.error(e.toString());
+            throw new GetDoguNodeFromEtcdException();
         }
     }
 
@@ -136,7 +185,7 @@ class RegistryEtcd implements Registry {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
 
-    private JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
+    protected JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
         String version = "";
         JSONObject json = null;
         // get used dogu version

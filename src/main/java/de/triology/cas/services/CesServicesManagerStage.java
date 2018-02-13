@@ -1,10 +1,10 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,8 +55,8 @@ abstract class CesServicesManagerStage {
      * @param name      name of the service
      * @param serviceId regex to match requests against
      */
-    protected void addNewService(String name, String serviceId) {
-        RegexRegisteredService service = new RegexRegisteredService();
+    protected void addNewService(String name, String serviceId, URI logoutUri) {
+        LogoutUriEnabledRegexRegisteredService service = new LogoutUriEnabledRegexRegisteredService();
         service.setName(name);
         service.setServiceId(serviceId);
         service.setAllowedToProxy(true);
@@ -64,6 +64,9 @@ abstract class CesServicesManagerStage {
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
         service.setId(createId());
+        if (logoutUri != null){
+            service.setLogoutUri(logoutUri);
+        }
         registeredServices.put(service.getId(), service);
     }
 
