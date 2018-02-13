@@ -84,36 +84,45 @@ class RegistryEtcd implements Registry {
             EtcdKeysResponse.EtcdNode node = getDoguNodeFromEtcd(doguname);
             doguMetaData = getCurrentDoguNode(node);
             if (doguMetaData != null) {
-                Object propertiesObject = doguMetaData.get("Properties");
-                if (propertiesObject != null) {
-                    if (propertiesObject instanceof JSONObject) {
-                        properties = (JSONObject) propertiesObject;
-                    } else {
-                        throw new GetCasLogoutUriException("Properties are not in JSONObject format");
-                    }
-                } else {
-                    throw new GetCasLogoutUriException("Properties are empty");
-                }
+                properties = getPropertiesFromMetaData(doguMetaData);
             } else {
                 throw new GetCasLogoutUriException("Could not get dogu metadata");
             }
             if (properties != null) {
-                Object logoutUri = properties.get("logoutUri");
-                if (logoutUri != null){
-                    String logoutUriString = logoutUri.toString();
-                    if (logoutUriString != null) {
-                        return new URI(logoutUriString);
-                    } else {
-                        throw new GetCasLogoutUriException("Could not get logoutUri from properties");
-                    }
-                } else {
-                    throw new GetCasLogoutUriException("Could not get logoutUri from properties");
-                }
+                URI logoutUri = getLogoutUriFromProperties(properties);
+                return logoutUri;
             } else {
                 throw new GetCasLogoutUriException("Could not get dogu properties");
             }
         } catch (ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
             throw new GetCasLogoutUriException(e.toString());
+        }
+    }
+
+    private URI getLogoutUriFromProperties(JSONObject properties) throws GetCasLogoutUriException, URISyntaxException {
+        Object logoutUri = properties.get("logoutUri");
+        if (logoutUri != null){
+            String logoutUriString = logoutUri.toString();
+            if (logoutUriString != null) {
+                return new URI(logoutUriString);
+            } else {
+                throw new GetCasLogoutUriException("Could not get logoutUri from properties");
+            }
+        } else {
+            throw new GetCasLogoutUriException("Could not get logoutUri from properties");
+        }
+    }
+
+    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) throws GetCasLogoutUriException {
+        Object propertiesObject = doguMetaData.get("Properties");
+        if (propertiesObject != null) {
+            if (propertiesObject instanceof JSONObject) {
+                return (JSONObject) propertiesObject;
+            } else {
+                throw new GetCasLogoutUriException("Properties are not in JSONObject format");
+            }
+        } else {
+            throw new GetCasLogoutUriException("Properties are empty");
         }
     }
 

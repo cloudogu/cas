@@ -108,7 +108,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             try {
                 addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?", ((RegistryEtcd) registry).getCasLogoutUri(name));
             } catch (GetCasLogoutUriException e) {
-                logger.warn("GetCasLogoutUriException", "CAS Logout URI of service "+ name +" could not be retrieved; adding service without it...");
+                logger.info("GetCasLogoutUriException", "CAS logout URI of service "+ name +" could not be retrieved: "+e.toString());
+                logger.info("Adding service without CAS logout URI");
                 addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?", null);
             }
         } else {
