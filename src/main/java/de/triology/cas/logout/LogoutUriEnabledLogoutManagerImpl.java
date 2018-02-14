@@ -47,10 +47,10 @@ import org.slf4j.LoggerFactory;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class LogoutManagerImpl implements org.jasig.cas.logout.LogoutManager {
+public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.logout.LogoutManager {
 
     /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutUriEnabledLogoutManagerImpl.class);
 
     /** ASCII character set. */
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -75,8 +75,8 @@ public final class LogoutManagerImpl implements org.jasig.cas.logout.LogoutManag
      * @param httpClient an HTTP client.
      * @param logoutMessageBuilder the builder to construct logout messages.
      */
-    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
-                             final LogoutMessageCreator logoutMessageBuilder) {
+    public LogoutUriEnabledLogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
+                                             final LogoutMessageCreator logoutMessageBuilder) {
         this.servicesManager = servicesManager;
         this.httpClient = httpClient;
         this.logoutMessageBuilder = logoutMessageBuilder;

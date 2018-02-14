@@ -118,7 +118,7 @@
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           p:salt="casrocks"/>
 
-    <bean id="logoutManager" class="de.triology.cas.logout.LogoutManagerImpl"
+    <bean id="logoutManager" class="de.triology.cas.logout.LogoutUriEnabledLogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
