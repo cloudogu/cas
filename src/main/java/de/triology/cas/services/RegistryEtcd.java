@@ -122,7 +122,7 @@ class RegistryEtcd implements Registry {
                 throw new GetCasLogoutUriException("Properties are not in JSONObject format");
             }
         } else {
-            throw new GetCasLogoutUriException("Properties are empty");
+            throw new GetCasLogoutUriException("No Properties are set");
         }
     }
 
