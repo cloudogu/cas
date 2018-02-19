@@ -118,13 +118,24 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
                         if (registeredService == null || registeredService.getLogoutType() == null
                                 || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
                             // perform back channel logout
-                            if (performBackChannelLogout(logoutRequest)) {
-                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                            if (registeredService instanceof LogoutUriEnabledRegexRegisteredService){
+                                if (performBackChannelLogout(logoutRequest, (LogoutUriEnabledRegexRegisteredService) registeredService)) {
+                                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                                } else {
+                                    logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                                    LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
+                                            singleLogoutService.getId());
+                                }
                             } else {
-                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
-                                        singleLogoutService.getId());
+                                if (performBackChannelLogout(logoutRequest)) {
+                                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+                                } else {
+                                    logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+                                    LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
+                                            singleLogoutService.getId());
+                                }
                             }
+
                         }
                     }
                 }
@@ -140,27 +151,24 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    private boolean performBackChannelLogout(final LogoutRequest request) {
+    private boolean performBackChannelLogout(final LogoutRequest request, LogoutUriEnabledRegexRegisteredService registeredService) {
         final String logoutRequest = this.logoutMessageBuilder.create(request);
         request.getService().setLoggedOutAlready(true);
+        String originalUrl = request.getService().getOriginalUrl();
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        SingleLogoutService service = request.getService();
-        if (service instanceof LogoutUriEnabledRegexRegisteredService){
-            return this.httpClient.sendMessageToEndPoint(getLogoutUriEnabledRegexRegisteredServiceLogoutUri(service), logoutRequest, true);
+        if (registeredService != null && registeredService.getLogoutUri() != null){
+            String logoutUrl = originalUrl + registeredService.getLogoutUri().toString();
+            LOGGER.debug("Found LogoutUriEnabledRegexRegisteredService; will use cas logout URI: "+logoutUrl);
+            return this.httpClient.sendMessageToEndPoint(logoutUrl, logoutRequest, true);
         } else {
-            return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(), logoutRequest, true);
+            LOGGER.debug("Found normal service; will use originalUrl: "+request.getService().getOriginalUrl());
+            return this.httpClient.sendMessageToEndPoint(originalUrl, logoutRequest, true);
         }
     }
 
-    private String getLogoutUriEnabledRegexRegisteredServiceLogoutUri(SingleLogoutService service) {
-        LogoutUriEnabledRegexRegisteredService logoutUriEnabledRegexRegisteredService = (LogoutUriEnabledRegexRegisteredService) service;
-        if (logoutUriEnabledRegexRegisteredService.getLogoutUri() != null){
-            return ((LogoutUriEnabledRegexRegisteredService) service).getLogoutUri().toString();
-        } else {
-            return service.getOriginalUrl();
-        }
-
+    private boolean performBackChannelLogout(LogoutRequest logoutRequest) {
+        return performBackChannelLogout(logoutRequest, null);
     }
 
     /**
