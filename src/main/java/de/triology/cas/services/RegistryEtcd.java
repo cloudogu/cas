@@ -88,12 +88,7 @@ class RegistryEtcd implements Registry {
             } else {
                 throw new GetCasLogoutUriException("Could not get dogu metadata");
             }
-            if (properties != null) {
-                URI logoutUri = getLogoutUriFromProperties(properties);
-                return logoutUri;
-            } else {
-                throw new GetCasLogoutUriException("Could not get dogu properties");
-            }
+            return getLogoutUriFromProperties(properties);
         } catch (ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
             throw new GetCasLogoutUriException(e.toString());
         }
