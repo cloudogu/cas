@@ -79,10 +79,11 @@ class RegistryEtcd implements Registry {
     }
 
     public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
-        JSONObject doguMetaData, properties;
+        JSONObject doguMetaData;
         try {
             EtcdKeysResponse.EtcdNode node = getDoguNodeFromEtcd(doguname);
             doguMetaData = getCurrentDoguNode(node);
+            JSONObject properties;
             if (doguMetaData != null) {
                 properties = getPropertiesFromMetaData(doguMetaData);
             } else {

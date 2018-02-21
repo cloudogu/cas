@@ -99,7 +99,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         }
         ticket.markTicketExpired();
 
-        final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
+        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!disableSingleSignOut) {
             // through all services

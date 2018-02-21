@@ -1,7 +1,6 @@
 package de.triology.cas.services;
 
 import org.jasig.cas.services.RegisteredService;
-import org.json.simple.parser.ParseException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -109,7 +108,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             try {
                 addNewService(name, serviceId, ((RegistryEtcd) registry).getCasLogoutUri(name));
             } catch (GetCasLogoutUriException e) {
-                logger.info("GetCasLogoutUriException: CAS logout URI of service "+ name +" could not be retrieved: "+e.toString());
+                logger.info("GetCasLogoutUriException: CAS logout URI of service "+ name +" could not be retrieved");
+                logger.info(e.toString());
                 logger.info("Adding service without CAS logout URI");
                 addNewService(name, serviceId);
             }
