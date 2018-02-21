@@ -41,5 +41,5 @@ public class LogoutUriEnabledLogoutManagerImplTest {
         logoutManager.performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
         assertEquals(LogoutRequestStatus.FAILURE, logoutRequest.getStatus());
     }
-    
+
 }
