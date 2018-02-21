@@ -50,10 +50,11 @@ abstract class CesServicesManagerStage {
     protected abstract void updateRegisteredServices();
 
     /**
-     * Creates and registers a new service
+     * Creates and registers a new service with a specific logout URI
      *
      * @param name      name of the service
      * @param serviceId regex to match requests against
+     * @param logoutUri service specific logout URI
      */
     protected void addNewService(String name, String serviceId, URI logoutUri) {
         LogoutUriEnabledRegexRegisteredService service = new LogoutUriEnabledRegexRegisteredService();
@@ -68,6 +69,16 @@ abstract class CesServicesManagerStage {
             service.setLogoutUri(logoutUri);
         }
         registeredServices.put(service.getId(), service);
+    }
+
+    /**
+     * Creates and registers a new service
+     *
+     * @param name      name of the service
+     * @param serviceId regex to match requests against
+     */
+    protected void addNewService(String name, String serviceId) {
+        addNewService(name, serviceId, null);
     }
 
     /**

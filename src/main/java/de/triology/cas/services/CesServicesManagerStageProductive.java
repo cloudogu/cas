@@ -111,10 +111,10 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             } catch (GetCasLogoutUriException e) {
                 logger.info("GetCasLogoutUriException: CAS logout URI of service "+ name +" could not be retrieved: "+e.toString());
                 logger.info("Adding service without CAS logout URI");
-                addNewService(name, serviceId, null);
+                addNewService(name, serviceId);
             }
         } else {
-            addNewService(name, serviceId, null);
+            addNewService(name, serviceId);
         }
     }
 
@@ -162,7 +162,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * This is necessary since cas needs a ST in clearPass workflow
      */
     private void addCasService() {
-        addNewService(SERVICE_NAME_CAS, "https://" + fqdn + "/cas/.*", null);
+        addNewService(SERVICE_NAME_CAS, "https://" + fqdn + "/cas/.*");
     }
 
 }
