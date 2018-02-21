@@ -118,24 +118,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
                         if (registeredService == null || registeredService.getLogoutType() == null
                                 || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
                             // perform back channel logout
-                            if (registeredService instanceof LogoutUriEnabledRegexRegisteredService){
-                                if (performBackChannelLogout(logoutRequest, (LogoutUriEnabledRegexRegisteredService) registeredService)) {
-                                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                                } else {
-                                    logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                    LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
-                                            singleLogoutService.getId());
-                                }
-                            } else {
-                                if (performBackChannelLogout(logoutRequest)) {
-                                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                                } else {
-                                    logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                    LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
-                                            singleLogoutService.getId());
-                                }
-                            }
-
+                            performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
                         }
                     }
                 }
@@ -144,6 +127,27 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
 
         return logoutRequests;
     }
+
+    private void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
+        boolean isLogoutUriEnabledService = registeredService instanceof LogoutUriEnabledRegexRegisteredService;
+        LogoutUriEnabledRegexRegisteredService secondParam;
+        if (isLogoutUriEnabledService) {
+            secondParam = ((LogoutUriEnabledRegexRegisteredService) registeredService);
+        } else {
+            secondParam = null;
+        }
+        boolean successfulLogout = performBackChannelLogout(logoutRequest, secondParam);
+        final LogoutRequestStatus logoutRequestStatus;
+        if (successfulLogout) {
+            logoutRequestStatus = LogoutRequestStatus.SUCCESS;
+        } else {
+            logoutRequestStatus = LogoutRequestStatus.FAILURE;
+            LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
+                    singleLogoutService.getId());
+        }
+        logoutRequest.setStatus(logoutRequestStatus);
+    }
+
 
     /**
      * Log out of a service through back channel.
@@ -165,10 +169,6 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
             LOGGER.debug("Found normal service; will use originalUrl: "+request.getService().getOriginalUrl());
             return this.httpClient.sendMessageToEndPoint(originalUrl, logoutRequest, true);
         }
-    }
-
-    private boolean performBackChannelLogout(LogoutRequest logoutRequest) {
-        return performBackChannelLogout(logoutRequest, null);
     }
 
     /**
