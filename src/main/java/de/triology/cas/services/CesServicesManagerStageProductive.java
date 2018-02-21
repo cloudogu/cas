@@ -90,7 +90,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     /**
      * Creates and registers a new service for an given name
      */
-    private void addNewService(String name) {
+    void addNewService(String name) {
         String serviceId = "https://" + fqdn + "(:443)?/" + name + "(/.*)?";
         if (registry instanceof RegistryEtcd){
             try {

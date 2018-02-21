@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -134,6 +135,15 @@ public class CesServicesManagerStageProductiveTest {
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
         }
+    }
+
+    @Test
+    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException {
+        RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
+        CesServicesManagerStageProductive productiveStage =
+                new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
+        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(new GetCasLogoutUriException("expected exception"));
+        productiveStage.addNewService("testService");
     }
 
     /**
