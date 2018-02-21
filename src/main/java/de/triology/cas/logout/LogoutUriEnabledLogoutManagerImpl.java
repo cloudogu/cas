@@ -128,7 +128,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         return logoutRequests;
     }
 
-    private void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
+    void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
         boolean isLogoutUriEnabledService = registeredService instanceof LogoutUriEnabledRegexRegisteredService;
         LogoutUriEnabledRegexRegisteredService secondParam;
         if (isLogoutUriEnabledService) {
@@ -155,7 +155,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    private boolean performBackChannelLogout(final LogoutRequest request, LogoutUriEnabledRegexRegisteredService registeredService) {
+    boolean performBackChannelLogout(final LogoutRequest request, LogoutUriEnabledRegexRegisteredService registeredService) {
         final String logoutRequest = this.logoutMessageBuilder.create(request);
         request.getService().setLoggedOutAlready(true);
         String originalUrl = request.getService().getOriginalUrl();
