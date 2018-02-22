@@ -130,13 +130,13 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
 
     void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
         boolean isLogoutUriEnabledService = registeredService instanceof LogoutUriEnabledRegexRegisteredService;
-        LogoutUriEnabledRegexRegisteredService secondParam;
+        LogoutUriEnabledRegexRegisteredService serviceWithLogoutUri;
         if (isLogoutUriEnabledService) {
-            secondParam = ((LogoutUriEnabledRegexRegisteredService) registeredService);
+            serviceWithLogoutUri = ((LogoutUriEnabledRegexRegisteredService) registeredService);
         } else {
-            secondParam = null;
+            serviceWithLogoutUri = null;
         }
-        boolean successfulLogout = performBackChannelLogout(logoutRequest, secondParam);
+        boolean successfulLogout = performBackChannelLogout(logoutRequest, serviceWithLogoutUri);
         final LogoutRequestStatus logoutRequestStatus;
         if (successfulLogout) {
             logoutRequestStatus = LogoutRequestStatus.SUCCESS;
