@@ -166,7 +166,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
             LOGGER.debug("Found LogoutUriEnabledRegexRegisteredService; will use cas logout URI: "+logoutUrl);
             return this.httpClient.sendMessageToEndPoint(logoutUrl, logoutRequest, true);
         } else {
-            LOGGER.debug("Found normal service; will use originalUrl: "+request.getService().getOriginalUrl());
+            LOGGER.debug("Found normal service; will use originalUrl: "+originalUrl);
             return this.httpClient.sendMessageToEndPoint(originalUrl, logoutRequest, true);
         }
     }
