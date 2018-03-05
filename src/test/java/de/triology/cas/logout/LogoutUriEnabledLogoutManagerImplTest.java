@@ -7,6 +7,7 @@ import org.jasig.cas.logout.LogoutMessageCreator;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.HttpClient;
 import org.junit.Test;
@@ -39,7 +40,19 @@ public class LogoutUriEnabledLogoutManagerImplTest {
         when(singleLogoutService.getId()).thenReturn("0");
         LogoutRequest logoutRequest = new LogoutRequest("test", mock(SingleLogoutService.class));
         RegisteredService registeredService = new LogoutUriEnabledRegexRegisteredService();
-        when(logoutManager.performBackChannelLogout(logoutRequest, (LogoutUriEnabledRegexRegisteredService) registeredService)).thenReturn(false);
+
+        logoutManager.performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
+        assertEquals(LogoutRequestStatus.FAILURE, logoutRequest.getStatus());
+    }
+
+
+    @Test
+    public void performFailingTypeDependentBackChannelLogoutWithoutLogoutUriEnabledRegexRegisteredService() {
+        LogoutUriEnabledLogoutManagerImpl logoutManager = new LogoutUriEnabledLogoutManagerImpl(mock(ServicesManager.class), mock(HttpClient.class), mock(LogoutMessageCreator.class));
+        SingleLogoutService singleLogoutService = mock(SingleLogoutService.class);
+        when(singleLogoutService.getId()).thenReturn("0");
+        LogoutRequest logoutRequest = new LogoutRequest("test", mock(SingleLogoutService.class));
+        RegisteredService registeredService = new RegisteredServiceImpl();
 
         logoutManager.performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
         assertEquals(LogoutRequestStatus.FAILURE, logoutRequest.getStatus());
