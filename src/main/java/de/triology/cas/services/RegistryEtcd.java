@@ -110,7 +110,7 @@ class RegistryEtcd implements Registry {
         }
     }
 
-    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) throws JsonException, NullPointerException {
+    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) {
         Object propertiesObject = doguMetaData.get("Properties");
         if (propertiesObject != null) {
             if (propertiesObject instanceof JSONObject) {
