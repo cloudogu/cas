@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -18,6 +19,12 @@ interface Registry {
      * @throws RegistryException wrapper for all technical exceptions
      */
     String getFqdn();
+
+    /**
+     * @return the dogu specific CAS logout URI
+     * @throws GetCasLogoutUriException wrapper for all technical exceptions
+     */
+    URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException;
 
     /**
      * Adds a listener that is called when a new dogu is added to or delted from etcd.
