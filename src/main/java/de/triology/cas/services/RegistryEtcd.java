@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import groovy.json.JsonException;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -90,7 +91,7 @@ class RegistryEtcd implements Registry {
                 throw new GetCasLogoutUriException("Could not get dogu metadata");
             }
             return getLogoutUriFromProperties(properties);
-        } catch (ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
+        } catch (JsonException | NullPointerException | ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
             throw new GetCasLogoutUriException(e.toString());
         }
     }
@@ -109,16 +110,16 @@ class RegistryEtcd implements Registry {
         }
     }
 
-    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) throws GetCasLogoutUriException {
+    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) throws JsonException, NullPointerException {
         Object propertiesObject = doguMetaData.get("Properties");
         if (propertiesObject != null) {
             if (propertiesObject instanceof JSONObject) {
                 return (JSONObject) propertiesObject;
             } else {
-                throw new GetCasLogoutUriException("Properties are not in JSONObject format");
+                throw new JsonException("Properties are not in JSONObject format");
             }
         } else {
-            throw new GetCasLogoutUriException("No Properties are set");
+            throw new NullPointerException("No Properties are set");
         }
     }
 
