@@ -1,6 +1,7 @@
 package de.triology.cas.logout;
 
 import de.triology.cas.services.LogoutUriEnabledRegexRegisteredService;
+import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutMessageCreator;
 import org.jasig.cas.logout.LogoutRequest;
@@ -11,7 +12,9 @@ import org.jasig.cas.util.HttpClient;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 public class LogoutUriEnabledLogoutManagerImplTest {
@@ -42,4 +45,14 @@ public class LogoutUriEnabledLogoutManagerImplTest {
         assertEquals(LogoutRequestStatus.FAILURE, logoutRequest.getStatus());
     }
 
+    @Test
+    public void createFrontChannelLogoutMessage() {
+        LogoutMessageCreator logoutMessageCreator = mock(LogoutMessageCreator.class);
+        when(logoutMessageCreator.create(any())).thenReturn("Test");
+        LogoutUriEnabledLogoutManagerImpl logoutManager = new LogoutUriEnabledLogoutManagerImpl(mock(ServicesManager.class), mock(HttpClient.class), logoutMessageCreator);
+        SingleLogoutService service = mock(SingleLogoutService.class);
+        LogoutRequest logoutRequest = new LogoutRequest("TestId", service);
+        String logoutMessage = logoutManager.createFrontChannelLogoutMessage(logoutRequest);
+        assertEquals("eJwLSQ==", logoutMessage);
+    }
 }
