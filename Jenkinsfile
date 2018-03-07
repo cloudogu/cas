@@ -39,6 +39,7 @@ node() { // No specific label
         stage('SonarQube') {
             def sonarQube = new SonarQube(this, 'ces-sonar')
             sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
+            sonarQube.setExclusions('target/**,src/main/webapp/themes/ces-theme/**/*')
 
             sonarQube.analyzeWith(mvn)
         }
