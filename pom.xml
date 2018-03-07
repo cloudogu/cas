@@ -12,6 +12,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jacoco.version>0.7.8</jacoco.version>
+        <sonar.exclusions>src/main/webapp/themes/ces-theme/**/*</sonar.exclusions>
     </properties>
 
     <!--
@@ -200,6 +201,26 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.4.6.v20170531</version>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.sdorra</groupId>
+                <artifactId>buildfrontend-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <allowRoot>true</allowRoot>
+                    <nodeVersion>v8.9.4</nodeVersion>
+                    <npmVersion>v5.6.0</npmVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bower</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>bower-install</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

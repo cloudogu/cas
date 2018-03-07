@@ -45,16 +45,12 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             logger.info("Already initialized CesServicesManager. Doing nothing.");
             return;
         }
-        try {
             logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
             fqdn = registry.getFqdn();
             synchronizeServicesWithRegistry();
             addCasService();
             registerChangeListener();
             initialized = true;
-        } catch (RegistryException ex) {
-            logger.warn("failed to get data from registry", ex);
-        }
     }
 
     private boolean isInitialized() {
@@ -76,11 +72,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * in {@link #registry} to <code>registeredServices</code>.
      */
     private void synchronizeServicesWithRegistry() {
-        try {
-            synchronizeServices(registry.getDogus());
-        } catch (RegistryException ex) {
-            logger.warn("failed to update servicesManager", ex);
-        }
+        synchronizeServices(registry.getDogus());
         logger.info("Loaded {} services.", registeredServices.size());
     }
 
@@ -89,21 +81,24 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      */
     private void registerChangeListener() {
         logger.debug("entered registerChangeListener");
-        try {
-            registry.addDoguChangeListener(()-> {
-                logger.debug("registered change in /dogu");
-                synchronizeServicesWithRegistry();
-            });
-        } catch (RegistryException ex) {
-            logger.error("failed to synchronizeServicesWithRegistry service", ex);
-        }
+        registry.addDoguChangeListener(()-> {
+            logger.debug("registered change in /dogu");
+            synchronizeServicesWithRegistry();
+        });
     }
 
     /**
      * Creates and registers a new service for an given name
      */
-    private void addNewService(String name) {
-        addNewService(name, "https://" + fqdn + "(:443)?/" + name + "(/.*)?");
+    void addNewService(String name) {
+        String serviceId = "https://" + fqdn + "(:443)?/" + name + "(/.*)?";
+        try {
+            addNewService(name, serviceId, registry.getCasLogoutUri(name));
+        } catch (GetCasLogoutUriException e) {
+            logger.info("GetCasLogoutUriException: CAS logout URI of service "+ name +" could not be retrieved: "+e);
+            logger.info("Adding service without CAS logout URI");
+            addNewService(name, serviceId);
+        }
     }
 
     /**
@@ -117,7 +112,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * First operation of {@link #synchronizeServices(List, Map)}: Remove Services that are not present in
+     * First operation of {@link #synchronizeServices(List)}: Remove Services that are not present in
      * <code>newServices</code> from <code>registeredServices</code>.
      */
     private void removeServicesThatNoLongerExist(List<String> newServiceNames) {
@@ -134,7 +129,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     }
 
     /**
-     * Second operation of {@link #synchronizeServices(List, Map)}: Add services that are only present in
+     * Second operation of {@link #synchronizeServices(List)}: Add services that are only present in
      * <code>newServices</code> to <code>registeredServices</code>.
      */
     private void addServicesThatDoNotExistYet(List<String> newServiceNames) {

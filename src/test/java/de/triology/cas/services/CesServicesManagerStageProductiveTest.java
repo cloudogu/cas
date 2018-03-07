@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +56,7 @@ public class CesServicesManagerStageProductiveTest {
      * Test for listener, when a dogu is added after initialization.
      */
     @Test
-    public void doguChangeListenerAddDogu() throws Exception {
+    public void doguChangeListenerAddDogu() {
         // Initialize expectedServices
         DoguChangeListener doguChangeListener = initialize();
 
@@ -83,7 +84,7 @@ public class CesServicesManagerStageProductiveTest {
      * Test for update-method when a dogu is added after initialization.
      */
     @Test
-    public void updateRegisteredServicesAddService() throws Exception {
+    public void updateRegisteredServicesAddService() {
 
         stage.initRegisteredServices();
         // Add service
@@ -110,7 +111,7 @@ public class CesServicesManagerStageProductiveTest {
      * This happens in production if the user does not use cas before the first automatic update.
      */
     @Test
-    public void updateRegisteredServicesWithoutInit() throws Exception {
+    public void updateRegisteredServicesWithoutInit() {
         stage.updateRegisteredServices();
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
@@ -125,7 +126,7 @@ public class CesServicesManagerStageProductiveTest {
      * a second time.
      */
     @Test
-    public void initNotPerformedTwice() throws Exception {
+    public void initNotPerformedTwice() {
         stage.initRegisteredServices();
         stage.initRegisteredServices();
 
@@ -136,11 +137,20 @@ public class CesServicesManagerStageProductiveTest {
         }
     }
 
+    @Test
+    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException {
+        RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
+        CesServicesManagerStageProductive productiveStage =
+                new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
+        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(new GetCasLogoutUriException("expected exception"));
+        productiveStage.addNewService("testService");
+    }
+
     /**
      * Test for listener, when a dogu is removed after initialization.
      */
     @Test
-    public void doguChangeListenerAddDoguRemoveDogu() throws Exception {
+    public void doguChangeListenerAddDoguRemoveDogu() {
         // Initialize expectedServices
         DoguChangeListener doguChangeListener = initialize();
         // Remove service
