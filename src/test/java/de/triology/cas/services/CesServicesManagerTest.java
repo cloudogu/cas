@@ -18,12 +18,9 @@ import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
@@ -214,9 +211,7 @@ public class CesServicesManagerTest {
     @Test
     public void reload() throws Exception {
         etcdServicesManger.reload();
-
-        assertThat(LOG.getLoggingEvents(),
-                   is(Collections.singletonList(info("Cas wants to reload registered services."))));
+        verify(etcdServicesManger.createStage(null,null,null)).updateRegisteredServices();
     }
 
     /**

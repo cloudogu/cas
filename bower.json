@@ -10,6 +10,6 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "ces-theme": "git+ssh://git@github.com/cloudogu/ces-theme.git"
+    "ces-theme": "git+https://github.com/cloudogu/ces-theme.git"
   }
 }

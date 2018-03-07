@@ -4,7 +4,7 @@
     <groupId>com.cloudogu.ces</groupId>
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
-    <version>4.0.7.17</version>
+    <version>4.0.7.18</version>
 
     <properties>
         <cas.version>4.0.7</cas.version>
@@ -12,6 +12,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jacoco.version>0.7.8</jacoco.version>
+        <sonar.exclusions>src/main/webapp/themes/ces-theme/**/*</sonar.exclusions>
     </properties>
 
     <!--
@@ -151,6 +152,16 @@
             <version>19.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <!-- Dependency used in Jenkinsfile. Including this in maven provides code completion in Jenkinsfile. -->
+            <groupId>com.github.cloudogu</groupId>
+            <artifactId>ces-build-lib</artifactId>
+            <!-- Keep this version in sync with the one used in Jenkinsfile -->
+            <version>888733b</version>
+            <!-- Don't ship this dependency with the app -->
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 
@@ -192,6 +203,26 @@
                 <version>9.4.6.v20170531</version>
             </plugin>
 
+            <plugin>
+                <groupId>com.github.sdorra</groupId>
+                <artifactId>buildfrontend-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <allowRoot>true</allowRoot>
+                    <nodeVersion>v8.9.4</nodeVersion>
+                    <npmVersion>v5.6.0</npmVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bower</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>bower-install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -203,6 +234,11 @@
         <repository>
             <id>jboss</id>
             <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+        <repository>
+            <!-- Necessary for ces-build-lib -->
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
