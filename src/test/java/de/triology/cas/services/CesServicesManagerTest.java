@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
@@ -210,9 +211,7 @@ public class CesServicesManagerTest {
     @Test
     public void reload() throws Exception {
         etcdServicesManger.reload();
-
-        assertThat(LOG.getLoggingEvents(),
-                   is(Collections.singletonList(info("Cas wants to reload registered services."))));
+        verify(etcdServicesManger.createStage(null,null,null)).updateRegisteredServices();
     }
 
     /**
