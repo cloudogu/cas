@@ -3,7 +3,7 @@ package de.triology.cas.services;
 /**
  * Wraps exceptions thrown when accessing the {@link Registry}.
  */
-class RegistryException extends RuntimeException {
+public class RegistryException extends RuntimeException {
 
     /**
      * Constructs a new runtime exception with the specified cause and a detail message of
@@ -13,7 +13,7 @@ class RegistryException extends RuntimeException {
      * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
      *              (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
-    RegistryException(Exception cause) {
+    public RegistryException(Exception cause) {
         super(cause);
     }
 }
