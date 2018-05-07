@@ -4,6 +4,14 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TimedLoginLimiterTest {
 
@@ -11,6 +19,9 @@ public class TimedLoginLimiterTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Mock
+    private Clock clock = mock(Clock.class);
 
     @Test
     public void accountShouldNotBeLocked_whenLockingIsDisabled() throws AuthenticationException {
@@ -47,6 +58,36 @@ public class TimedLoginLimiterTest {
         timedLoginLimiter.loginFailed("different");
         timedLoginLimiter.loginFailed("different");
 
+        timedLoginLimiter.assertNotLocked("account");
+    }
+
+    @Test
+    public void lastFailureShouldBeAccountedUpToConfiguredTime() throws AuthenticationException {
+        Instant start = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        when(clock.instant()).thenReturn(start);
+
+        TimedLoginLimiter timedLoginLimiter = new TimedLoginLimiter(DEFAULT_TEST_CONFIGURATION, clock);
+        timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.loginFailed("account");
+
+        expectedException.expect(AuthenticationException.class);
+
+        when(clock.instant()).thenReturn(start.plusSeconds(9));
+        timedLoginLimiter.assertNotLocked("account");
+    }
+
+    @Test
+    public void lastFailureShouldBeIgnoredAfterConfiguredTime() throws AuthenticationException {
+        Instant start = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        when(clock.instant()).thenReturn(start);
+
+        TimedLoginLimiter timedLoginLimiter = new TimedLoginLimiter(DEFAULT_TEST_CONFIGURATION, clock);
+        timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.loginFailed("account");
+
+        when(clock.instant()).thenReturn(start.plusSeconds(11));
         timedLoginLimiter.assertNotLocked("account");
     }
 }
