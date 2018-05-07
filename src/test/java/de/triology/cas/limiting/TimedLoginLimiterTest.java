@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 public class TimedLoginLimiterTest {
 
-    private static final TimedLoginLimiterConfiguration DEFAULT_TEST_CONFIGURATION = new TimedLoginLimiterConfiguration(2, 10, 10);
+    private static final TimedLoginLimiterConfiguration DEFAULT_TEST_CONFIGURATION = new TimedLoginLimiterConfiguration(3, 5, 10);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -62,7 +62,7 @@ public class TimedLoginLimiterTest {
     }
 
     @Test
-    public void lastFailureShouldBeAccountedUpToConfiguredTime() throws AuthenticationException {
+    public void lockShouldBeKeptUpToConfiguredTime() throws AuthenticationException {
         Instant start = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         when(clock.instant()).thenReturn(start);
 
@@ -78,16 +78,36 @@ public class TimedLoginLimiterTest {
     }
 
     @Test
-    public void lastFailureShouldBeIgnoredAfterConfiguredTime() throws AuthenticationException {
+    public void lockShouldBeReleasedAfterConfiguredTime() throws AuthenticationException {
         Instant start = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         when(clock.instant()).thenReturn(start);
 
         TimedLoginLimiter timedLoginLimiter = new TimedLoginLimiter(DEFAULT_TEST_CONFIGURATION, clock);
+        timedLoginLimiter.assertNotLocked("account");
         timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.assertNotLocked("account");
         timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.assertNotLocked("account");
         timedLoginLimiter.loginFailed("account");
 
         when(clock.instant()).thenReturn(start.plusSeconds(11));
+        timedLoginLimiter.assertNotLocked("account");
+    }
+
+    @Test
+    public void failureCountShouldBeResetAfterConfiguredTime() throws AuthenticationException {
+        Instant start = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        when(clock.instant()).thenReturn(start);
+
+        TimedLoginLimiter timedLoginLimiter = new TimedLoginLimiter(DEFAULT_TEST_CONFIGURATION, clock);
+        timedLoginLimiter.assertNotLocked("account");
+        timedLoginLimiter.loginFailed("account");
+        timedLoginLimiter.assertNotLocked("account");
+        timedLoginLimiter.loginFailed("account");
+
+        when(clock.instant()).thenReturn(start.plusSeconds(6));
+        timedLoginLimiter.assertNotLocked("account");
+        timedLoginLimiter.loginFailed("account");
         timedLoginLimiter.assertNotLocked("account");
     }
 }

@@ -32,9 +32,18 @@ class TimedLoginLimiter {
     void assertNotLocked(String account) throws AuthenticationException {
         if (isLimitingEnabled()) {
             AtomicReference<AccountLog> accountLogReference = accountLogs.get(account);
-            if (accountLogReference != null && accountLogReference.get().isLocked()) {
-                LOG.info("Rejected account due to too many failed login attempts: " + account);
-                throw new AuthenticationException(Collections.singletonMap("TimedLoginLimiter", AccountTemporarilyLockedException.class));
+            if (accountLogReference != null) {
+                AccountLog accountLog = accountLogReference.get();
+                if (accountLog.failureCount >= configuration.getMaxNumber()) {
+                    if (clock.instant().isBefore(accountLog.lastLoginAttempt.plusSeconds(configuration.getLockTime()))) {
+                        LOG.info("Rejected account due to too many failed login attempts: " + account);
+                        throw new AuthenticationException(Collections.singletonMap("TimedLoginLimiter", AccountTemporarilyLockedException.class));
+                    } else {
+                        accountLogs.remove(account);
+                    }
+                } else if (clock.instant().isAfter(accountLog.lastLoginAttempt.plusSeconds(configuration.getFailureStoreTime()))) {
+                    accountLogs.remove(account);
+                }
             }
         }
     }
@@ -61,11 +70,6 @@ class TimedLoginLimiter {
         private AccountLog(Instant lastLoginAttempt, int failureCount) {
             this.lastLoginAttempt = lastLoginAttempt;
             this.failureCount = failureCount;
-        }
-
-        private boolean isLocked() {
-            return failureCount > configuration.getMaxNumber()
-                    && clock.instant().isBefore(lastLoginAttempt.plusSeconds(configuration.getFailureStoreTime()));
         }
     }
 }
