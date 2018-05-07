@@ -96,6 +96,7 @@
         <constructor-arg name="maxNumber" value="${login.limit.maxNumber}"/>
         <constructor-arg name="failureStoreTime" value="${login.limit.failureStoreTime}"/>
         <constructor-arg name="lockTime" value="${login.limit.lockTime}"/>
+        <constructor-arg name="maxAccounts" value="${login.limit.maxAccounts}"/>
     </bean>
 
     <bean id="timedLoginLimiter" class="de.triology.cas.limiting.TimedLoginLimiter">

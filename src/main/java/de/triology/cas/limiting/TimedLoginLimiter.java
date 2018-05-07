@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class TimedLoginLimiter {
@@ -17,7 +17,16 @@ class TimedLoginLimiter {
     private final TimedLoginLimiterConfiguration configuration;
     private final Clock clock;
 
-    private Map<String, AccountLog> accountLogs = new HashMap<>();
+    private Map<String, AccountLog> accountLogs = createLruMap();
+
+    private Map<String, AccountLog> createLruMap() {
+        return new LinkedHashMap<String, AccountLog>(64, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry eldest) {
+                return size() > configuration.maxAccounts();
+            }
+        };
+    }
 
     TimedLoginLimiter(TimedLoginLimiterConfiguration configuration) {
         this(configuration, Clock.systemDefaultZone());
@@ -32,18 +41,34 @@ class TimedLoginLimiter {
         if (isLimitingEnabled()) {
             AccountLog accountLog = accountLogs.get(account);
             if (accountLog != null) {
-                if (accountLog.failureCount >= configuration.getMaxNumber()) {
-                    if (clock.instant().isBefore(accountLog.lastLoginAttempt.plusSeconds(configuration.getLockTime()))) {
-                        LOG.info("Rejected account due to too many failed login attempts: " + account);
-                        throw new AuthenticationException(Collections.singletonMap("TimedLoginLimiter", AccountTemporarilyLockedException.class));
-                    } else {
-                        accountLogs.remove(account);
-                    }
-                } else if (clock.instant().isAfter(accountLog.lastLoginAttempt.plusSeconds(configuration.getFailureStoreTime()))) {
-                    accountLogs.remove(account);
-                }
+                evaluateAccountLog(account, accountLog);
             }
         }
+    }
+
+    private void evaluateAccountLog(String account, AccountLog accountLog) throws AuthenticationException {
+        if (accountLog.failureCount >= configuration.getMaxNumber()) {
+            if (inLockTime(accountLog)) {
+                LOG.info("Rejected account due to too many failed login attempts: " + account);
+                throw new AuthenticationException(Collections.singletonMap("TimedLoginLimiter", AccountTemporarilyLockedException.class));
+            } else {
+                removeLog(account);
+            }
+        } else if (lastFailureAfterStoreTime(accountLog)) {
+            removeLog(account);
+        }
+    }
+
+    private void removeLog(String account) {
+        accountLogs.remove(account);
+    }
+
+    private boolean inLockTime(AccountLog accountLog) {
+        return clock.instant().isBefore(accountLog.lastLoginAttempt.plusSeconds(configuration.getLockTime()));
+    }
+
+    private boolean lastFailureAfterStoreTime(AccountLog accountLog) {
+        return clock.instant().isAfter(accountLog.lastLoginAttempt.plusSeconds(configuration.getFailureStoreTime()));
     }
 
     void loginFailed(String account) {
