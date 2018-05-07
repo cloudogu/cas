@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 class TimedLoginLimiter {
 
@@ -18,7 +17,7 @@ class TimedLoginLimiter {
     private final TimedLoginLimiterConfiguration configuration;
     private final Clock clock;
 
-    private Map<String, AtomicReference<AccountLog>> accountLogs = new HashMap<>();
+    private Map<String, AccountLog> accountLogs = new HashMap<>();
 
     TimedLoginLimiter(TimedLoginLimiterConfiguration configuration) {
         this(configuration, Clock.systemDefaultZone());
@@ -31,9 +30,8 @@ class TimedLoginLimiter {
 
     void assertNotLocked(String account) throws AuthenticationException {
         if (isLimitingEnabled()) {
-            AtomicReference<AccountLog> accountLogReference = accountLogs.get(account);
-            if (accountLogReference != null) {
-                AccountLog accountLog = accountLogReference.get();
+            AccountLog accountLog = accountLogs.get(account);
+            if (accountLog != null) {
                 if (accountLog.failureCount >= configuration.getMaxNumber()) {
                     if (clock.instant().isBefore(accountLog.lastLoginAttempt.plusSeconds(configuration.getLockTime()))) {
                         LOG.info("Rejected account due to too many failed login attempts: " + account);
@@ -50,11 +48,11 @@ class TimedLoginLimiter {
 
     void loginFailed(String account) {
         if (isLimitingEnabled()) {
-            AtomicReference<AccountLog> accountLogReference = accountLogs.get(account);
-            if (accountLogReference == null) {
-                accountLogs.put(account, new AtomicReference<>(new AccountLog(clock.instant(), 1)));
+            AccountLog accountLog = accountLogs.get(account);
+            if (accountLog == null) {
+                accountLogs.put(account, new AccountLog(clock.instant(), 1));
             } else {
-                accountLogReference.getAndUpdate(log -> new AccountLog(clock.instant(), log.failureCount + 1));
+                accountLogs.put(account, new AccountLog(clock.instant(), accountLog.failureCount + 1));
             }
         }
     }
