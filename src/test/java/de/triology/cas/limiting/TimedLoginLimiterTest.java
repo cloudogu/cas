@@ -7,7 +7,7 @@ import org.junit.rules.ExpectedException;
 
 public class TimedLoginLimiterTest {
 
-    private static final TimedLoginLimiterConfiguration DEFAULT_TEST_CONFIGURATION = new TimedLoginLimiterConfiguration(2, 0, 0);
+    private static final TimedLoginLimiterConfiguration DEFAULT_TEST_CONFIGURATION = new TimedLoginLimiterConfiguration(2, 10, 10);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
