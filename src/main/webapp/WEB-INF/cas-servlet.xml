@@ -238,7 +238,7 @@
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketRegistry-ref="ticketRegistry"/>
 
-  <bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
+  <bean id="authenticationExceptionHandler" class="de.triology.cas.limiting.LimitingAuthenticationExceptionHandler" />
 
   <bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
