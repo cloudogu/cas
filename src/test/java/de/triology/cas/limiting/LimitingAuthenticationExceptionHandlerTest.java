@@ -17,9 +17,16 @@ public class LimitingAuthenticationExceptionHandlerTest {
     private final MessageContext messageContext = mock(MessageContext.class);
 
     @Test
-    public void shouldHandleTemporayLock() {
+    public void shouldHandleTemporaryLock() {
         String handle = new LimitingAuthenticationExceptionHandler().handle(new AuthenticationException(singletonMap("", AccountTemporarilyLockedException.class)), messageContext);
         assertEquals("AccountTemporarilyLockedException", handle);
+        verify(messageContext).addMessage(any());
+    }
+
+    @Test
+    public void shouldHandleUnknownErrors() {
+        String handle = new LimitingAuthenticationExceptionHandler().handle(new AuthenticationException(singletonMap("", null)), messageContext);
+        assertEquals("UNKNOWN", handle);
         verify(messageContext).addMessage(any());
     }
 
