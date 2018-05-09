@@ -1,6 +1,5 @@
-package de.triology.cas.etcd;
+package de.triology.cas.services;
 
-import de.triology.cas.services.RegistryException;
 import mousio.etcd4j.EtcdClient;
 import org.apache.commons.lang.StringUtils;
 

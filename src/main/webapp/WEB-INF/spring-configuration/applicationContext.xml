@@ -90,10 +90,10 @@
         <constructor-arg ref="etcdRegistry"/>
     </bean>
 
-    <bean id="etcdClientFactory" class="de.triology.cas.etcd.EtcdClientFactory"/>
+    <bean id="etcdClientFactory" class="de.triology.cas.services.EtcdClientFactory"/>
 
     <bean id="etcdClient"
-          class="de.triology.cas.etcd.EtcdClientFactory"
+          class="de.triology.cas.services.EtcdClientFactory"
           factory-bean="etcdClientFactory"
           factory-method="createEtcdClient"
           destroy-method="close"/>

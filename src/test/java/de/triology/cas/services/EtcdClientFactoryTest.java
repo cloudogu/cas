@@ -1,8 +1,7 @@
-package de.triology.cas.etcd;
+package de.triology.cas.services;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import de.triology.cas.services.RegistryException;
 import mousio.etcd4j.EtcdClient;
 import org.junit.Rule;
 import org.junit.Test;

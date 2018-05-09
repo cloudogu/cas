@@ -3,7 +3,6 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import de.triology.cas.etcd.EtcdClientFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Rule;
