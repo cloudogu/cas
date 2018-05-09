@@ -90,7 +90,17 @@
         <constructor-arg ref="etcdRegistry"/>
     </bean>
 
-    <bean id="etcdRegistry" class="de.triology.cas.services.RegistryEtcd"/>
+    <bean id="etcdClientFactory" class="de.triology.cas.services.EtcdClientFactory"/>
+
+    <bean id="etcdClient"
+          class="de.triology.cas.services.EtcdClientFactory"
+          factory-bean="etcdClientFactory"
+          factory-method="createEtcdClient"
+          destroy-method="close"/>
+
+    <bean id="etcdRegistry" class="de.triology.cas.services.RegistryEtcd">
+        <constructor-arg ref="etcdClient"/>
+    </bean>
 
     <!--
         Job to periodically reload services from service registry.
