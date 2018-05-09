@@ -20,7 +20,13 @@ class TimedLoginLimiter {
     private Map<String, AccountLog> accountLogs = createLruMap();
 
     private Map<String, AccountLog> createLruMap() {
-        return new LinkedHashMap<String, AccountLog>(64, 0.75f, true) {
+        // Here we want to create an LRU map. This can be accomplished using a LinkedHashMap and overriding
+        // #removeEldestEntry, so that a given size is not exceeded.
+        // The default behaviour does order elements only when added, not when they are accessed. So for small
+        // sizes a failing account could be pushed out by other accounts. To prevent this we have to set
+        // the flag 'accessOrder'. This is only available in the full constructor, so we have to set the other
+        // values as well (using their default values).
+        return new LinkedHashMap<String, AccountLog>(17, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry eldest) {
                 return size() > configuration.maxAccounts();
