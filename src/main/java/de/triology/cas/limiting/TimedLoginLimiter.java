@@ -37,6 +37,12 @@ class TimedLoginLimiter {
         this.clock = clock;
     }
 
+    void assertNotLocked(String[] accounts) throws AuthenticationException {
+        for (String account : accounts) {
+            assertNotLocked(account);
+        }
+    }
+
     void assertNotLocked(String account) throws AuthenticationException {
         if (isLimitingEnabled()) {
             AccountLog accountLog = accountLogs.get(account);

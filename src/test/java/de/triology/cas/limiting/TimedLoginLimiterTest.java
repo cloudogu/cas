@@ -10,8 +10,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TimedLoginLimiterTest {
 
@@ -22,6 +21,16 @@ public class TimedLoginLimiterTest {
 
     @Mock
     private Clock clock = mock(Clock.class);
+
+    @Test
+    public void shouldIterateAllAccounts() throws AuthenticationException {
+        TimedLoginLimiter timedLoginLimiter = spy(new TimedLoginLimiter(DEFAULT_TEST_CONFIGURATION));
+
+        timedLoginLimiter.assertNotLocked(new String[] {"a", "b"});
+
+        verify(timedLoginLimiter).assertNotLocked("a");
+        verify(timedLoginLimiter).assertNotLocked("b");
+    }
 
     @Test
     public void accountShouldNotBeLocked_whenLockingIsDisabled() throws AuthenticationException {

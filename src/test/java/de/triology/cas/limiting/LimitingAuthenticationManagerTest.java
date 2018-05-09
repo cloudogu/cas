@@ -10,13 +10,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class LimitingAuthenticationManagerTest {
 
-    private static final String ACCOUNT_ID = "account";
+    private static final String VALID_ACCOUNT_ID = "valid account";
+    private static final String INVALID_ACCOUNT_ID = "invalid account";
+    private static final String LOCKED_ACCOUNT_ID = "locked account";
 
     @Mock
     private AuthenticationManager delegate;
@@ -25,47 +29,52 @@ public class LimitingAuthenticationManagerTest {
     @InjectMocks
     private LimitingAuthenticationManager manager;
 
-    private Credential credential = () -> ACCOUNT_ID;
+    private Credential validCredential = () -> VALID_ACCOUNT_ID;
+    private Credential invalidCredential = () -> INVALID_ACCOUNT_ID;
+    private Credential lockedCredential = () -> LOCKED_ACCOUNT_ID;
+
+    private final Authentication validAuthentication = mock(Authentication.class);
 
     @Test
     public void shouldPassSuccessfulLogin() throws AuthenticationException {
-        doNothing().when(limiter).assertNotLocked(ACCOUNT_ID);
-        Authentication expectedAuthentication = mock(Authentication.class);
-        when(delegate.authenticate(credential)).thenReturn(expectedAuthentication);
+        Authentication actualAuthentication = manager.authenticate(validCredential);
 
-        Authentication actualAuthentication = manager.authenticate(credential);
-
-        assertSame("should return authentication from delegate", expectedAuthentication, actualAuthentication);
-        verify(limiter, never()).loginFailed(ACCOUNT_ID);
+        assertSame("should return authentication from delegate", validAuthentication, actualAuthentication);
+        verify(limiter, never()).loginFailed(VALID_ACCOUNT_ID);
     }
 
     @Test
-    public void shouldReportFailedLogin() throws AuthenticationException {
-        doNothing().when(limiter).assertNotLocked(ACCOUNT_ID);
-        when(delegate.authenticate(credential)).thenThrow(AuthenticationException.class);
-
+    public void shouldReportFailedLogin() {
         try {
-            manager.authenticate(credential);
+            manager.authenticate(invalidCredential);
             fail("authentication exception expected");
         } catch (AuthenticationException e) {
-            verify(limiter).loginFailed(ACCOUNT_ID);
+            verify(limiter).loginFailed(INVALID_ACCOUNT_ID);
         }
     }
 
     @Test
     public void shouldNotProceedLoginWhenLimiterFails() throws AuthenticationException {
-        doThrow(AuthenticationException.class).when(limiter).assertNotLocked(ACCOUNT_ID);
-
         try {
-            manager.authenticate(credential);
+            manager.authenticate(validCredential,lockedCredential);
             fail("authentication exception expected");
         } catch (AuthenticationException e) {
-            verify(delegate, never()).authenticate(credential);
+            verify(delegate, never()).authenticate(lockedCredential);
         }
     }
 
     @Before
-    public void init() {
+    public void init() throws AuthenticationException {
         MockitoAnnotations.initMocks(this);
+
+        when(delegate.authenticate(validCredential)).thenReturn(validAuthentication);
+
+        when(delegate.authenticate(invalidCredential)).thenThrow(AuthenticationException.class);
+
+        doThrow(AuthenticationException.class).when(limiter).assertNotLocked(containsAccountId(LOCKED_ACCOUNT_ID));
+    }
+
+    private String[] containsAccountId(String accountId) {
+        return argThat(argument -> Arrays.stream(argument).anyMatch(accountId::equals));
     }
 }

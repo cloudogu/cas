@@ -5,6 +5,8 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.Credential;
 
+import java.util.Arrays;
+
 /**
  * Limits authentication requests for a specific account to a limited number of attempts in a given time. If this
  * number has been exceeded, a {@link AccountTemporarilyLockedException} will be thrown until another given time has
@@ -22,12 +24,18 @@ public class LimitingAuthenticationManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Credential... credentials) throws AuthenticationException {
-        limiter.assertNotLocked(credentials[0].getId());
+        limiter.assertNotLocked(extractIds(credentials));
         try {
             return delegate.authenticate(credentials);
         } catch (AuthenticationException e) {
-            limiter.loginFailed(credentials[0].getId());
+            Arrays.stream(credentials)
+                    .map(Credential::getId)
+                    .forEach(limiter::loginFailed);
             throw e;
         }
+    }
+
+    private String[] extractIds(Credential[] credentials) {
+        return Arrays.stream(credentials).map(Credential::getId).toArray(String[]::new);
     }
 }
