@@ -11,3 +11,6 @@ src/main/webapp/themes
 
 /nbproject/
 node_modules/
+logs/
+overlays/
+
