@@ -38,6 +38,7 @@ class TimedLoginLimiter {
     }
 
     void assertNotLocked(String[] accounts) throws AuthenticationException {
+        LOG.debug("asserting that the following credentials are not locked: {}", (Object) accounts);
         for (String account : accounts) {
             assertNotLocked(account);
         }
