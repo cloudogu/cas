@@ -10,3 +10,4 @@ src/main/webapp/themes
 *.iws
 
 /nbproject/
+node_modules/

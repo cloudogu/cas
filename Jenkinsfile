@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@8a29499')
+@Library('github.com/cloudogu/ces-build-lib@195e15a')
 import com.cloudogu.ces.cesbuildlib.*
 
 node() { // No specific label
@@ -39,7 +39,6 @@ node() { // No specific label
         stage('SonarQube') {
             def sonarQube = new SonarQube(this, 'ces-sonar')
             sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
-            sonarQube.setExclusions('target/**,src/main/webapp/themes/ces-theme/**/*')
 
             sonarQube.analyzeWith(mvn)
         }

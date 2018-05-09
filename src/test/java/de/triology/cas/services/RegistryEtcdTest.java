@@ -3,21 +3,17 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatchers;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,24 +29,6 @@ public class RegistryEtcdTest {
                     .notifier(new ConsoleNotifier(false))
     );
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Test
-    public void createInstance() {
-        RegistryEtcd registry = new RegistryEtcd();
-        assertNotNull(registry);
-    }
-
-    @Test
-    public void createInstanceWithNodeMasterFile() throws IOException {
-        File file = temporaryFolder.newFile();
-        Files.write("localhost", file, Charsets.UTF_8);
-
-        RegistryEtcd registry = new RegistryEtcd(file.getAbsolutePath());
-        assertNotNull(registry);
-    }
-
     @Test
     public void getFqdn() {
         RegistryEtcd registry = createRegistry();
@@ -65,7 +43,7 @@ public class RegistryEtcdTest {
 
     private RegistryEtcd createRegistry() {
         URI uri = URI.create("http://localhost:" + wireMockRule.port());
-        return new RegistryEtcd(uri);
+        return new RegistryEtcd(new EtcdClientFactory().createEtcdClient(uri));
     }
 
     @Test

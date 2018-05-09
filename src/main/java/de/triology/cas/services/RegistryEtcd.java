@@ -13,9 +13,6 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Default implementation of {@link Registry} using {@link EtcdClient}.
  *
- * The Dogus are queried from etcd: Installed Dogus and the version iformation are stored in a directory
+ * The Dogus are queried from etcd: Installed Dogus and the version information are stored in a directory
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
@@ -42,21 +39,8 @@ class RegistryEtcd implements Registry {
      *
      * @throws RegistryException when the URI cannot be read
      */
-    public RegistryEtcd() {
-        this("/etc/ces/node_master");
-    }
-
-    RegistryEtcd(String nodeMasterFilepath) {
-        try {
-            // TODO when is this resource closed? Can spring be used to call etcd.close()?
-            etcd = new EtcdClient(URI.create(getEtcdUri(nodeMasterFilepath)));
-        } catch (IOException e) {
-            throw new RegistryException(e);
-        }
-    }
-
-    RegistryEtcd(URI uri) {
-        etcd = new EtcdClient(uri);
+    public RegistryEtcd(EtcdClient etcd) {
+        this.etcd = etcd;
     }
 
     @Override
@@ -169,21 +153,6 @@ class RegistryEtcd implements Registry {
     private String normalizeServiceName(String name){
         String[] nameArray = StringUtils.split(name, "/");
         return nameArray[nameArray.length - 1];
-    }
-
-    private String getEtcdUri(String nodeMasterFilePath) throws IOException {
-        File nodeMasterFile = new File(nodeMasterFilePath);
-        if (!nodeMasterFile.exists()) {
-            return "http://localhost:4001";
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(nodeMasterFile))) {
-            String nodeMaster = reader.readLine();
-            if (StringUtils.isBlank(nodeMaster)) {
-                throw new IOException("failed to read node_master file");
-            }
-            return "http://".concat(nodeMaster).concat(":4001");
-        }
     }
 
     private boolean hasCasDependency(JSONObject json) {

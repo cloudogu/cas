@@ -37,13 +37,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+
+
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
@@ -59,7 +57,7 @@
        | interface supports plugging in another implementation, the default PolicyBasedAuthenticationManager should
        | be sufficient in most cases.
        +-->
-    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+    <bean id="delegateAuthenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
             <map>
                 <!--
@@ -92,6 +90,22 @@
         <property name="authenticationPolicy">
             <bean class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
         </property>
+    </bean>
+
+    <bean id="timedLoginLimiterConfiguration" class="de.triology.cas.limiting.TimedLoginLimiterConfiguration">
+        <constructor-arg name="maxNumber" value="${login.limit.maxNumber}"/>
+        <constructor-arg name="failureStoreTime" value="${login.limit.failureStoreTime}"/>
+        <constructor-arg name="lockTime" value="${login.limit.lockTime}"/>
+        <constructor-arg name="maxAccounts" value="${login.limit.maxAccounts}"/>
+    </bean>
+
+    <bean id="timedLoginLimiter" class="de.triology.cas.limiting.TimedLoginLimiter">
+        <constructor-arg ref="timedLoginLimiterConfiguration"/>
+    </bean>
+
+    <bean id="authenticationManager" class="de.triology.cas.limiting.LimitingAuthenticationManager">
+        <constructor-arg name="delegate" ref="delegateAuthenticationManager" />
+        <constructor-arg name="limiter" ref="timedLoginLimiter"/>
     </bean>
 
     <!-- Required for proxy ticket mechanism. -->
