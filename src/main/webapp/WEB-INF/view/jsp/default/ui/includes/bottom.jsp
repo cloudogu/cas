@@ -20,6 +20,12 @@
 --%>
 
     </div>
-  </body>
+    <div class="bottom">
+        <%--this actually cross-links to the NGINX dogu. However, without nginx this page will never be rendered in the first place. --%>
+        <a style="color: white; text-align: center" target="_new" href="/info/about">Cloudogu GmbH -
+            Datenschutzerkl&auml;rung</a>
+    </div>
+
+</body>
 </html>
 
