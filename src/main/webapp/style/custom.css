@@ -55,8 +55,15 @@ and open the template in the editor.
 }
 
 .bottom {
+
     position:absolute;
     width:100%;
-    bottom:0;
+    bottom:10px;
     text-align:center;
+}
+
+.bottom a {
+    color: white;
+
+    margin: 5px 15px;
 }
