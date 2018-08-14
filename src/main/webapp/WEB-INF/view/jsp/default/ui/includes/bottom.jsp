@@ -20,6 +20,13 @@
 --%>
 
     </div>
-  </body>
+    <div class="bottom">
+        <%--this actually cross-links to the NGINX dogu. However, without nginx this page will never be rendered in the first place. --%>
+            <a href="/info/imprint">Imprint</a>
+            <span>|</span>
+            <a href="/info/privacyPolicy">Privacy Policy</a>
+    </div>
+
+</body>
 </html>
 

@@ -53,3 +53,17 @@ and open the template in the editor.
 .logo{
     margin-top:-30px;
 }
+
+.bottom {
+
+    position:absolute;
+    width:100%;
+    bottom:10px;
+    text-align:center;
+}
+
+.bottom a {
+    color: white;
+
+    margin: 5px 15px;
+}
