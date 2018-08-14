@@ -33,7 +33,8 @@
     "Name": "data",
     "Path": "/var/lib/cas",
     "Owner": "1000",
-    "Group": "1000"
+    "Group": "1000",
+    "NeedsBackup": true
   }],
   "ServiceAccounts": [{
     "Type": "ldap",
