@@ -4,7 +4,7 @@
     <groupId>com.cloudogu.ces</groupId>
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
-    <version>4.0.7.19</version>
+    <version>4.0.7.20</version>
 
     <properties>
         <cas.version>4.0.7</cas.version>
