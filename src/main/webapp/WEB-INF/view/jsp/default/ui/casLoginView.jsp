@@ -68,7 +68,7 @@
                 <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
                 <spring:message code="screen.welcome.label.password.placeholder" var="passwordPlaceholder"/>
                 <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "${passwordPlaceholder}" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
-                <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" />
+                <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" javaScriptEscape="true"/>
                 <c:if test="${not empty passwordForgotText}">
                 <a class="link-underlined" onclick="toggleForgotPasswordInfo()"><spring:message code="screen.password.forgot"/></a>
                 </c:if>
