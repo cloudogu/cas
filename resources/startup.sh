@@ -21,6 +21,8 @@ function global_cfg_or_default {
   echo "${VALUE}"
 }
 
+MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/messages.properties"
+
 # general variables for templates
 DOMAIN=$(doguctl config --global domain)
 FQDN=$(doguctl config --global fqdn)
@@ -45,6 +47,7 @@ LDAP_USE_USER_CONNECTION=$(cfg_or_default 'ldap/use_user_connection_to_fetch_att
 
 # replace & with /& because of sed
 LDAP_SEARCH_FILTER=$(echo "(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))" | sed 's@&@\\\&@g')
+FORGOT_PASSWORD_TEXT=$(cfg_or_default 'forgot_password_text' '')
 
 if [[ "$LDAP_TYPE" == 'external' ]]; then
   LDAP_BASE_DN=$(doguctl config ldap/base_dn)
@@ -112,6 +115,13 @@ s@%LOGIN_LIMIT_MAX_NUMBER%@$LOGIN_LIMIT_MAX_NUMBER@g;\
 s@%LOGIN_LIMIT_FAILURE_STORE_TIME%@$LOGIN_LIMIT_FAILURE_STORE_TIME@g;\
 s@%LOGIN_LIMIT_LOCK_TIME%@$LOGIN_LIMIT_LOCK_TIME@g"\
  /opt/apache-tomcat/cas.properties.tpl > /opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties
+
+
+sed -i '/screen.password.forgotText=/d' ${MESSAGES_PROPERTIES_FILE}
+if [[ "$FORGOT_PASSWORD_TEXT" ]]; then
+    echo "configure forgot password text"
+    echo screen.password.forgotText="$FORGOT_PASSWORD_TEXT" >> ${MESSAGES_PROPERTIES_FILE}
+fi
 
 # create truststore, which is used in the setenv.sh
 create_truststore.sh > /dev/null
