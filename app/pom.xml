@@ -66,6 +66,12 @@
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-saml</artifactId>
             <version>${cas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xmldsig</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- fix version conflicts -->
