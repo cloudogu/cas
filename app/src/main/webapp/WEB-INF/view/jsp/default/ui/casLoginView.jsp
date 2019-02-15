@@ -70,28 +70,29 @@
                 <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "${passwordPlaceholder}" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
                 <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" javaScriptEscape="true"/>
                 <c:if test="${not empty passwordForgotText}">
-                <a class="link-underlined" onclick="toggleForgotPasswordInfo()"><spring:message code="screen.password.forgot"/></a>
+                <a id="forgotPassword" class="link-underlined" onclick="toggleForgotPasswordInfo()"><spring:message code="screen.password.forgot"/></a>
                 </c:if>
             </div>
             
             <input type="hidden" name="lt" value="${loginTicket}" />
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
-            
-            <c:if test="${not pageContext.request.secure}">
-            <div class="alert alert-warning warning-msg-https">
-                <spring:message code="screen.welcome.label.httpWarning" />
-                <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
-            </div>
-            </c:if>
-            
+
             <input class="btn btn-primary pull-right" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" />
+            <div class="alert-fields">
+                <c:if test="${not pageContext.request.secure}">
+                    <div class="alert alert-warning">
+                        <spring:message code="screen.welcome.label.httpWarning" />
+                        <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
+                    </div>
+                </c:if>
+                <div style="display:none;" id="forgotPasswordInfo" class="alert alert-info">
+                        ${passwordForgotText}
+                </div>
+            </div>
             <form:errors path="*" id="msg" cssClass="alert alert-danger alert-msg-credentials" element="div" />
         </div>
     </form:form>
-          <div style="display:none" id="forgotPasswordInfo" class="alert alert-info">
-              ${passwordForgotText}
-          </div>
     </div>
   </div>
 
