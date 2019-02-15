@@ -1,10 +1,12 @@
 FROM maven:3.6.0-jdk-8 as builder
-COPY app/pom.xml /cas/pom.xml
+COPY /app/pom.xml /cas/pom.xml
 RUN set -x \
      && cd /cas \
      && mvn dependency:resolve
-COPY app/ /cas
-RUN mvn package
+COPY /app/ /cas
+RUN set -x \
+    && cd /cas \
+    && mvn package
 
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:8u171-1
@@ -19,7 +21,7 @@ ENV CAS_VERSION=4.0.7.20 \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
 	SERVICE_TAGS=webapp
 
-COPY --from=builder /cas/target/cas-*.war /cas.war
+COPY --from=builder /cas/target/cas.war /cas.war
 
 # run installation
 RUN set -x \
