@@ -13,8 +13,7 @@ FROM registry.cloudogu.com/official/java:8u171-1
 LABEL maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
-ENV CAS_VERSION=4.0.7.20 \
-	TOMCAT_MAJOR_VERSION=8 \
+ENV TOMCAT_MAJOR_VERSION=8 \
 	TOMCAT_VERSION=8.0.50 \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
