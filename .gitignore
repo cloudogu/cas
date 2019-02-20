@@ -1,8 +1,8 @@
-/target
+app/target
 /.classpath
 /.project
 /.settings
-src/main/webapp/themes
+app/src/main/webapp/themes
 
 # Intellij
 .idea/
@@ -10,7 +10,7 @@ src/main/webapp/themes
 *.iws
 
 /nbproject/
-node_modules/
-logs/
-overlays/
+app/node_modules/
+app/logs/
+app/overlays/
 

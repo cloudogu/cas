@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-2",
+  "Version": "4.0.7.20-3",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -27,6 +27,10 @@
   }, {
     "Name": "limit/lock_time",
     "Description": "Time to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
+    "Optional": true
+  },{
+    "Name": "forgot_password_text",
+    "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
     "Optional": true
   }],
   "Volumes": [{

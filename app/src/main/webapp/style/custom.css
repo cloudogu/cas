@@ -45,9 +45,10 @@ and open the template in the editor.
     position: absolute;
 }
 
-.warning-msg-https{
+.alert-fields{
     position: absolute;
     margin-top: 70px;
+    width: 100%;
 }
 
 .logo{
@@ -66,4 +67,18 @@ and open the template in the editor.
     color: white;
 
     margin: 5px 15px;
+}
+
+#login {
+    position:relative;
+}
+
+#forgotPassword {
+    cursor: pointer;
+    margin-top: 5px;
+    display: block;
+}
+
+#forgotPasswordInfo {
+    width: 100%;
 }

@@ -45,19 +45,23 @@ class RegistryEtcd implements Registry {
 
     @Override
     public List<String> getDogus() {
+        log.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").recursive().send().get().getNode().getNodes();
             return convertNodesToStringList(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+            log.error("Failed to getDogus: ", e);
             throw new RegistryException(e);
         }
     }
 
     @Override
     public String getFqdn() {
+        log.debug("Get FQDN from registry");
         try {
             return etcd.get("/config/_global/fqdn").send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+            log.error("Failed to getFqdn: ", e);
             throw new RegistryException(e);
         }
     }
@@ -129,11 +133,13 @@ class RegistryEtcd implements Registry {
                 addDoguChangeListener(doguChangeListener);
             });
         } catch (IOException e) {
+            log.error("Failed to addDoguChangeListener: ", e);
             throw new RegistryException(e);
         }
     }
 
     private List<String> convertNodesToStringList(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd) {
+        log.debug("Entered convertNodesToStringList");
         List<String> stringList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode entry : nodesFromEtcd) {
             JSONObject json;

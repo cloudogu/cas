@@ -51,6 +51,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             addCasService();
             registerChangeListener();
             initialized = true;
+            logger.debug("Finished initialization of registered services");
     }
 
     private boolean isInitialized() {
@@ -72,6 +73,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * in {@link #registry} to <code>registeredServices</code>.
      */
     private void synchronizeServicesWithRegistry() {
+        logger.debug("Synchronize services with registry");
         synchronizeServices(registry.getDogus());
         logger.info("Loaded {} services.", registeredServices.size());
     }
@@ -80,9 +82,9 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * Detects when a new dogu is installed or an existing one is removed
      */
     private void registerChangeListener() {
-        logger.debug("entered registerChangeListener");
+        logger.debug("Entered registerChangeListener");
         registry.addDoguChangeListener(()-> {
-            logger.debug("registered change in /dogu");
+            logger.debug("Registered change in /dogu");
             synchronizeServicesWithRegistry();
         });
     }
@@ -91,6 +93,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * Creates and registers a new service for an given name
      */
     void addNewService(String name) {
+        logger.debug("Add new service: " + name);
         String serviceId = "https://" + fqdn + "(:443)?/" + name + "(/.*)?";
         try {
             addNewService(name, serviceId, registry.getCasLogoutUri(name));
