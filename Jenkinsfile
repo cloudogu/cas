@@ -26,21 +26,23 @@ node() { // No specific label
             git.clean("")
         }
 
-        stage('Build') {
-            setupMaven(mvn)
-            mvn 'clean install -DskipTests'
-            archive '**/target/*.jar,**/target/*.zip'
-        }
+        dir('app') {
+            stage('Build') {
+                setupMaven(mvn)
+                mvn 'clean install -DskipTests'
+                archive '**/target/*.jar,**/target/*.zip'
+            }
 
-        stage('Unit Test') {
-            mvn 'test'
-        }
+            stage('Unit Test') {
+                mvn 'test'
+            }
 
-        stage('SonarQube') {
-            def sonarQube = new SonarQube(this, 'ces-sonar')
-            sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
+            stage('SonarQube') {
+                def sonarQube = new SonarQube(this, 'ces-sonar')
+                sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
 
-            sonarQube.analyzeWith(mvn)
+                sonarQube.analyzeWith(mvn)
+            }
         }
     }
 

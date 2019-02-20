@@ -1,15 +1,26 @@
+FROM maven:3.6.0-jdk-8 as builder
+COPY /app/pom.xml /cas/pom.xml
+RUN set -x \
+     && cd /cas \
+     && mvn dependency:resolve
+COPY /app/ /cas
+RUN set -x \
+    && cd /cas \
+    && mvn package
+
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:8u171-1
 LABEL maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
-ENV CAS_VERSION=4.0.7.20 \
-	TOMCAT_MAJOR_VERSION=8 \
+ENV TOMCAT_MAJOR_VERSION=8 \
 	TOMCAT_VERSION=8.0.50 \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
 	SERVICE_TAGS=webapp
+
+COPY --from=builder /cas/target/cas.war /cas.war
 
 # run installation
 RUN set -x \
@@ -26,7 +37,7 @@ RUN set -x \
  && rm -rf ${CATALINA_BASE}/webapps/* \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
- && curl -L https://github.com/cloudogu/cas/releases/download/v${CAS_VERSION}/cas-${CAS_VERSION}.war -o ${CATALINA_BASE}/webapps/cas/cas.war \
+ && mv /cas.war ${CATALINA_BASE}/webapps/cas/cas.war \
  && cd ${CATALINA_BASE}/webapps/cas/ \
  && unzip cas.war \
  && rm -f cas.war \

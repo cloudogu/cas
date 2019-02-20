@@ -37,6 +37,7 @@ public class CesServicesManager implements ReloadableServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
+        logger.debug("Entered getAllServices method");
         return Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values());
     }
 

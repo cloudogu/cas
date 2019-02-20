@@ -22,9 +22,9 @@
     </div>
     <div class="bottom">
         <%--this actually cross-links to the NGINX dogu. However, without nginx this page will never be rendered in the first place. --%>
-            <a href="/info/imprint">Imprint</a>
+            <a href="/info/imprint"><spring:message code="screen.bottom.imprint"/></a>
             <span>|</span>
-            <a href="/info/privacyPolicy">Privacy Policy</a>
+            <a href="/info/privacyPolicy"><spring:message code="screen.bottom.privacyPolicy"/></a>
     </div>
 
 </body>

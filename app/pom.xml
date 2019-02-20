@@ -61,11 +61,23 @@
         </dependency>
 
         <!-- saml support -->
-
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-saml</artifactId>
             <version>${cas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xmldsig</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- dependency of cas-server-support-saml -->
+        <dependency>
+            <groupId>com.sun.xml.wsit</groupId>
+            <artifactId>xmldsig</artifactId>
+            <version>1.1</version>
         </dependency>
 
         <!-- fix version conflicts -->
@@ -194,6 +206,9 @@
                         <classpathDependencyExcludes>log4j:log4j</classpathDependencyExcludes>
                         <classpathDependencyExcludes>org.slf4j:slf4j-log4j12</classpathDependencyExcludes>
                     </classpathDependencyExcludes>
+                    <!-- Can be removed when we use a new jdk version for build.
+                        See: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class?answertab=active#tab-top -->
+                    <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
 

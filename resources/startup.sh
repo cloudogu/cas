@@ -21,11 +21,13 @@ function global_cfg_or_default {
   echo "${VALUE}"
 }
 
-# general variables for templates
+MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/messages.properties"
+
+echo "Getting general variables for templates..."
 DOMAIN=$(doguctl config --global domain)
 FQDN=$(doguctl config --global fqdn)
 
-# ldap settings for template
+echo "Getting ldap settings for template..."
 LDAP_TYPE=$(doguctl config ldap/ds_type)
 LDAP_SERVER=$(doguctl config ldap/server)
 LDAP_HOST=$(doguctl config ldap/host)
@@ -45,13 +47,15 @@ LDAP_USE_USER_CONNECTION=$(cfg_or_default 'ldap/use_user_connection_to_fetch_att
 
 # replace & with /& because of sed
 LDAP_SEARCH_FILTER=$(echo "(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))" | sed 's@&@\\\&@g')
+FORGOT_PASSWORD_TEXT=$(cfg_or_default 'forgot_password_text' '')
 
 if [[ "$LDAP_TYPE" == 'external' ]]; then
+  echo "ldap type is external"
   LDAP_BASE_DN=$(doguctl config ldap/base_dn)
   LDAP_BIND_DN=$(doguctl config ldap/connection_dn)
   LDAP_BIND_PASSWORD=$(doguctl config -e ldap/password | sed 's@/@\\\\/@g')
 else
-  # for embedded ldap
+  echo "ldap type is embedded"
   LDAP_BASE_DN="ou=People,o=${DOMAIN},dc=cloudogu,dc=com"
   LDAP_BIND_DN=$(doguctl config -e sa-ldap/username)
   LDAP_BIND_PASSWORD=$(doguctl config -e sa-ldap/password | sed 's@/@\\\\/@g')
@@ -74,6 +78,7 @@ else
   LDAP_TRUST_MANAGER='org.ldaptive.ssl.DefaultTrustManager'
 fi
 
+echo "Getting stage..."
 STAGE=$(global_cfg_or_default 'stage' '')
 if [[ "$STAGE" != 'development' ]]; then
   STAGE='production'
@@ -87,7 +92,7 @@ LOGIN_LIMIT_MAX_NUMBER=$(cfg_or_default 'limit/max_number' '0')
 LOGIN_LIMIT_FAILURE_STORE_TIME=$(cfg_or_default 'limit/failure_store_time' '0')
 LOGIN_LIMIT_LOCK_TIME=$(cfg_or_default 'limit/lock_time' '0')
 
-# render templates
+echo "Rendering templates..."
 sed "s@%DOMAIN%@$DOMAIN@g;\
 s@%LDAP_STARTTLS%@$LDAP_STARTTLS@g;\
 s@%FQDN%@$FQDN@g;\
@@ -113,11 +118,18 @@ s@%LOGIN_LIMIT_FAILURE_STORE_TIME%@$LOGIN_LIMIT_FAILURE_STORE_TIME@g;\
 s@%LOGIN_LIMIT_LOCK_TIME%@$LOGIN_LIMIT_LOCK_TIME@g"\
  /opt/apache-tomcat/cas.properties.tpl > /opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties
 
-# create truststore, which is used in the setenv.sh
+
+sed -i '/screen.password.forgotText=/d' ${MESSAGES_PROPERTIES_FILE}
+if [[ "$FORGOT_PASSWORD_TEXT" ]]; then
+    echo "configure forgot password text"
+    echo screen.password.forgotText="$FORGOT_PASSWORD_TEXT" >> ${MESSAGES_PROPERTIES_FILE}
+fi
+
+echo "Creating truststore, which is used in the setenv.sh..."
 create_truststore.sh > /dev/null
 
 if [[ "$LDAP_TYPE" == 'embedded' ]]; then
-  # wait until ldap passed all health checks
+  echo "Waiting until ldap passed all health checks..."
   echo "wait until ldap passes all health checks"
   if ! doguctl healthy --wait --timeout 120 ldap; then
     echo "timeout reached by waiting of ldap to get healthy"
@@ -125,5 +137,5 @@ if [[ "$LDAP_TYPE" == 'embedded' ]]; then
   fi
 fi
 
-# startup tomcat
+echo "Starting cas..."
 exec su - cas -c "${CATALINA_SH} run"
