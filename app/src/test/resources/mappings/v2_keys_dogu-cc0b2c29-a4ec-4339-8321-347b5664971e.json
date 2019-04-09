@@ -2,7 +2,7 @@
   "id" : "cc0b2c29-a4ec-4339-8321-347b5664971e",
   "name" : "v2_keys_dogu",
   "request" : {
-    "url" : "/v2/keys/dogu?dir=true",
+    "url" : "/v2/keys/dogu/?dir=true",
     "method" : "GET"
   },
   "response" : {

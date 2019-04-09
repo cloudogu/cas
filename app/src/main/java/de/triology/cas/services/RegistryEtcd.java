@@ -29,6 +29,7 @@ import java.util.concurrent.TimeoutException;
  */
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
+    private static final String DOGU_DIR = "/dogu/";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final EtcdClient etcd;
@@ -46,7 +47,7 @@ class RegistryEtcd implements Registry {
     public List<String> getDogus() throws RegistryException {
         log.debug("Get Dogus from registry");
         try {
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").send().get().getNode().getNodes();
+            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
             return convertNodesToStringList(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getDogus: ", e);
@@ -115,7 +116,7 @@ class RegistryEtcd implements Registry {
 
     protected EtcdKeysResponse.EtcdNode getDoguNodeFromEtcd(String name) throws GetDoguNodeFromEtcdException {
         try {
-            return etcd.getDir("/dogu/" + name).send().get().getNode();
+            return etcd.getDir(DOGU_DIR + name).send().get().getNode();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             log.error(e.toString());
             throw new GetDoguNodeFromEtcdException();
@@ -126,7 +127,7 @@ class RegistryEtcd implements Registry {
     @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
         try {
-            EtcdResponsePromise responsePromise = etcd.getDir("/dogu").recursive().waitForChange().send();
+            EtcdResponsePromise responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
             responsePromise.addListener(promise -> {
                 doguChangeListener.onChange();
                 /* Register again! Why?
@@ -172,11 +173,11 @@ class RegistryEtcd implements Registry {
     protected JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException, RegistryException {
         JSONObject json = null;
         // get used dogu version
-        String doguName = doguNode.getKey().substring("/dogu/".length());
-        String doguVersion = getEtcdValueForKey("/dogu/" + doguName + "/current");
+        String doguName = doguNode.getKey().substring(DOGU_DIR.length());
+        String doguVersion = getEtcdValueForKey(DOGU_DIR + doguName + "/current");
         // empty if dogu isnt used
         if (!doguVersion.isEmpty()) {
-            String doguDescription = getEtcdValueForKey("/dogu/" + doguName + "/" + doguVersion);
+            String doguDescription = getEtcdValueForKey(DOGU_DIR + doguName + "/" + doguVersion);
             json = (JSONObject) PARSER.parse(doguDescription);
         }
         return json;
