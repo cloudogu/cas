@@ -38,7 +38,8 @@ public class RegistryEtcdTest {
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        assertThat(registry.getDogus(), containsInAnyOrder("usermgt", "jenkins", "scm", "smeagol", "redmine"));
+        assertThat(registry.getDogus(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
+        assertEquals(3, registry.getDogus().size());
     }
 
     private RegistryEtcd createRegistry() {

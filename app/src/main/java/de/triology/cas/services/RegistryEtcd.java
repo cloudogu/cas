@@ -27,7 +27,6 @@ import java.util.concurrent.TimeoutException;
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
-// TODO unit test? Difficult because most parts of the CAS API are final without public constructor.
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -44,10 +43,10 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<String> getDogus() {
+    public List<String> getDogus() throws RegistryException {
         log.debug("Get Dogus from registry");
         try {
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").recursive().send().get().getNode().getNodes();
+            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir("/dogu").send().get().getNode().getNodes();
             return convertNodesToStringList(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getDogus: ", e);
@@ -56,12 +55,16 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public String getFqdn() {
-        log.debug("Get FQDN from registry");
+    public String getFqdn() throws RegistryException {
+        return getEtcdValueForKey("/config/_global/fqdn");
+    }
+
+    public String getEtcdValueForKey(String key) throws RegistryException {
+        log.debug("Get " + key + " from registry");
         try {
-            return etcd.get("/config/_global/fqdn").send().get().getNode().getValue();
+            return etcd.get(key).send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getFqdn: ", e);
+            log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
     }
@@ -85,7 +88,7 @@ class RegistryEtcd implements Registry {
 
     private URI getLogoutUriFromProperties(JSONObject properties) throws GetCasLogoutUriException, URISyntaxException {
         Object logoutUri = properties.get("logoutUri");
-        if (logoutUri != null){
+        if (logoutUri != null) {
             String logoutUriString = logoutUri.toString();
             if (logoutUriString != null) {
                 return new URI(logoutUriString);
@@ -112,7 +115,7 @@ class RegistryEtcd implements Registry {
 
     protected EtcdKeysResponse.EtcdNode getDoguNodeFromEtcd(String name) throws GetDoguNodeFromEtcdException {
         try {
-            return etcd.getDir("/dogu/"+name).recursive().send().get().getNode();
+            return etcd.getDir("/dogu/" + name).send().get().getNode();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
             log.error(e.toString());
             throw new GetDoguNodeFromEtcdException();
@@ -150,13 +153,14 @@ class RegistryEtcd implements Registry {
                 }
             } catch (ParseException ex) {
                 log.warn("failed to parse EtcdNode to json", ex);
+            } catch (RegistryException ex) {
+                log.warn("registry exception occurred", ex);
             }
-
         }
         return stringList;
     }
-    
-    private String normalizeServiceName(String name){
+
+    private String normalizeServiceName(String name) {
         String[] nameArray = StringUtils.split(name, "/");
         return nameArray[nameArray.length - 1];
     }
@@ -165,26 +169,16 @@ class RegistryEtcd implements Registry {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
 
-    protected JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException {
-        String version = "";
+    protected JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException, RegistryException {
         JSONObject json = null;
         // get used dogu version
-        for (EtcdKeysResponse.EtcdNode leaf : doguNode.getNodes()) {
-            if (leaf.getKey().equals(doguNode.getKey() + "/current")) {
-                version = leaf.getValue();
-            }
-
-        }
+        String doguName = doguNode.getKey().substring("/dogu/".length());
+        String doguVersion = getEtcdValueForKey("/dogu/" + doguName + "/current");
         // empty if dogu isnt used
-        if (!version.isEmpty()) {
-            for (EtcdKeysResponse.EtcdNode leaf : doguNode.getNodes()) {
-                if (leaf.getKey().equals(doguNode.getKey() + "/" + version)) {
-
-                    json = (JSONObject) PARSER.parse(leaf.getValue());
-                }
-            }
+        if (!doguVersion.isEmpty()) {
+            String doguDescription = getEtcdValueForKey("/dogu/" + doguName + "/" + doguVersion);
+            json = (JSONObject) PARSER.parse(doguDescription);
         }
-
         return json;
     }
 }

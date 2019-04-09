@@ -1,0 +1,23 @@
+{
+  "id" : "fdffaf54-9d43-4e35-8485-2b135e728242",
+  "name" : "v2_keys_dogu_nginx_11311-8",
+  "request" : {
+    "url" : "/v2/keys/dogu/nginx/1.13.11-8",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/nginx/1.13.11-8\",\"value\":\"{\\\"Name\\\":\\\"official/nginx\\\",\\\"Version\\\":\\\"1.13.11-8\\\",\\\"DisplayName\\\":\\\"Nginx\\\",\\\"Description\\\":\\\"Nginx WebServer.\\\",\\\"Category\\\":\\\"Base\\\",\\\"Tags\\\":[\\\"webserver\\\",\\\"proxy\\\",\\\"reverse-proxy\\\"],\\\"Logo\\\":\\\"https://cloudogu.com/images/dogus/nginx.png\\\",\\\"URL\\\":\\\"http://nginx.org/\\\",\\\"Image\\\":\\\"registry.cloudogu.com/official/nginx\\\",\\\"ExposedPorts\\\":[{\\\"Type\\\":\\\"tcp\\\",\\\"Container\\\":80,\\\"Host\\\":80},{\\\"Type\\\":\\\"tcp\\\",\\\"Container\\\":443,\\\"Host\\\":443}],\\\"ExposedCommands\\\":[],\\\"Dependencies\\\":[\\\"registrator\\\"],\\\"OptionalDependencies\\\":[],\\\"Volumes\\\":[],\\\"HealthCheck\\\":{\\\"Type\\\":\\\"\\\",\\\"State\\\":\\\"\\\",\\\"Port\\\":0,\\\"Path\\\":\\\"\\\",\\\"Parameters\\\":{}},\\\"HealthChecks\\\":[{\\\"Type\\\":\\\"tcp\\\",\\\"State\\\":\\\"\\\",\\\"Port\\\":80,\\\"Path\\\":\\\"\\\",\\\"Parameters\\\":{}},{\\\"Type\\\":\\\"tcp\\\",\\\"State\\\":\\\"\\\",\\\"Port\\\":443,\\\"Path\\\":\\\"\\\",\\\"Parameters\\\":{}}],\\\"ServiceAccounts\\\":[],\\\"Privileged\\\":false,\\\"Configuration\\\":[{\\\"Name\\\":\\\"log_level\\\",\\\"Description\\\":\\\"Detail level of logging (debug, info, notice, warn, error, crit, alert, or emerg)\\\",\\\"Optional\\\":true,\\\"Encrypted\\\":false,\\\"Global\\\":false},{\\\"Name\\\":\\\"disable_access_log\\\",\\\"Description\\\":\\\"Disable logging of incoming requests\\\",\\\"Optional\\\":true,\\\"Encrypted\\\":false,\\\"Global\\\":false},{\\\"Name\\\":\\\"google_tracking_id\\\",\\\"Description\\\":\\\"Google Analytics Tracking ID\\\",\\\"Optional\\\":true,\\\"Encrypted\\\":false,\\\"Global\\\":false}],\\\"Properties\\\":{\\\"stopAtBackup\\\":\\\"false\\\"}}\",\"modifiedIndex\":37,\"createdIndex\":37}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "fdffaf54-9d43-4e35-8485-2b135e728242",
+  "persistent" : true,
+  "insertionIndex" : 17
+}
