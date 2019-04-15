@@ -113,15 +113,6 @@ class RegistryEtcd implements Registry {
         }
     }
 
-    protected EtcdKeysResponse.EtcdNode getDoguNodeFromEtcd(String name) throws GetDoguNodeFromEtcdException {
-        try {
-            return etcd.getDir(DOGU_DIR + name).send().get().getNode();
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error(e.toString());
-            throw new GetDoguNodeFromEtcdException();
-        }
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
