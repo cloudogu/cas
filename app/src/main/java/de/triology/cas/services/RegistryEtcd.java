@@ -44,28 +44,28 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<String> getDogus() throws RegistryException {
+    public List<String> getInstalledDogusWhichAreUsingCAS() {
         log.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
-            return convertNodesToStringList(nodes);
+            return extractDogusFromDoguRootDir(nodes);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getDogus: ", e);
+            log.error("Failed to getInstalledDogusWhichAreUsingCAS: ", e);
             throw new RegistryException(e);
         }
     }
 
     @Override
-    public String getFqdn() throws RegistryException {
+    public String getFqdn() {
         return getEtcdValueForKey("/config/_global/fqdn");
     }
 
-    public String getEtcdValueForKey(String key) throws RegistryException {
+    public String getEtcdValueForKey(String key) {
         log.debug("Get " + key + " from registry");
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getEtcdValueForKey: ", e);
+            log.warn("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
     }
@@ -73,8 +73,7 @@ class RegistryEtcd implements Registry {
     public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
         JSONObject doguMetaData;
         try {
-            EtcdKeysResponse.EtcdNode node = getDoguNodeFromEtcd(doguname);
-            doguMetaData = getCurrentDoguNode(node);
+            doguMetaData = getCurrentDoguNode(doguname);
             JSONObject properties;
             if (doguMetaData != null) {
                 properties = getPropertiesFromMetaData(doguMetaData);
@@ -82,7 +81,7 @@ class RegistryEtcd implements Registry {
                 throw new GetCasLogoutUriException("Could not get dogu metadata");
             }
             return getLogoutUriFromProperties(properties);
-        } catch (ClassCastException | NullPointerException | ParseException | URISyntaxException | GetDoguNodeFromEtcdException e) {
+        } catch (ClassCastException | NullPointerException | ParseException | URISyntaxException | RegistryException e) {
             throw new GetCasLogoutUriException(e.toString());
         }
     }
@@ -142,13 +141,15 @@ class RegistryEtcd implements Registry {
         }
     }
 
-    private List<String> convertNodesToStringList(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd) {
-        log.debug("Entered convertNodesToStringList");
+
+    private List<String> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd) {
+        log.debug("Entered extractDogusFromDoguRootDir");
         List<String> stringList = new ArrayList<>();
-        for (EtcdKeysResponse.EtcdNode entry : nodesFromEtcd) {
+        for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
             JSONObject json;
             try {
-                json = getCurrentDoguNode(entry);
+                String doguName = dogu.getKey().substring(DOGU_DIR.length());
+                json = getCurrentDoguNode(doguName);
                 if (hasCasDependency(json)) {
                     stringList.add(normalizeServiceName(json.get("Name").toString()));
                 }
@@ -170,10 +171,9 @@ class RegistryEtcd implements Registry {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
 
-    protected JSONObject getCurrentDoguNode(EtcdKeysResponse.EtcdNode doguNode) throws ParseException, RegistryException {
+    protected JSONObject getCurrentDoguNode(String doguName) throws ParseException {
         JSONObject json = null;
         // get used dogu version
-        String doguName = doguNode.getKey().substring(DOGU_DIR.length());
         String doguVersion = getEtcdValueForKey(DOGU_DIR + doguName + "/current");
         // empty if dogu isnt used
         if (!doguVersion.isEmpty()) {

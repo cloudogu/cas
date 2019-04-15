@@ -74,7 +74,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      */
     private void synchronizeServicesWithRegistry() {
         logger.debug("Synchronize services with registry");
-        synchronizeServices(registry.getDogus());
+        synchronizeServices(registry.getInstalledDogusWhichAreUsingCAS());
         logger.info("Loaded {} services.", registeredServices.size());
     }
 

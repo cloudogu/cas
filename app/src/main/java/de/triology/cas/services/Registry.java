@@ -9,10 +9,10 @@ import java.util.List;
 interface Registry {
 
     /**
-     * @return the url of all dogus
+     * @return the names of all installed dogus wich are using CAS without the namespace
      * @throws RegistryException wrapper for all technical exceptions
      */
-    List<String> getDogus();
+    List<String> getInstalledDogusWhichAreUsingCAS();
 
     /**
      * @return the fully qualified domain name

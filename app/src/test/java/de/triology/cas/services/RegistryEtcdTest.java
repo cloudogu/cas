@@ -38,8 +38,8 @@ public class RegistryEtcdTest {
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        assertThat(registry.getDogus(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
-        assertEquals(3, registry.getDogus().size());
+        assertThat(registry.getInstalledDogusWhichAreUsingCAS(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
+        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS().size());
     }
 
     private RegistryEtcd createRegistry() {

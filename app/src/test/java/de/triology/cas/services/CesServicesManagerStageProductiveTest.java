@@ -39,7 +39,7 @@ public class CesServicesManagerStageProductiveTest {
     @Before
     public void setUp() {
         when(registry.getFqdn()).thenReturn(EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME);
-        when(registry.getDogus()).thenReturn(Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2));
+        when(registry.getInstalledDogusWhichAreUsingCAS()).thenReturn(Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2));
         expectedServices = new LinkedList<>(Arrays.asList(
                 new ExpectedService().name(EXPECTED_SERVICE_NAME_1)
                                      .serviceId("https://fully/qualified(:443)?/nexus(/.*)?")
@@ -62,7 +62,7 @@ public class CesServicesManagerStageProductiveTest {
 
         // Add service
         String expectedServiceName3 = "scm";
-        when(registry.getDogus()).thenReturn(new LinkedList<>(
+        when(registry.getInstalledDogusWhichAreUsingCAS()).thenReturn(new LinkedList<>(
                 Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
         expectedServices.add(new ExpectedService().name(expectedServiceName3)
                                                   .serviceId("https://fully/qualified(:443)?/scm(/.*)?"));
@@ -89,7 +89,7 @@ public class CesServicesManagerStageProductiveTest {
         stage.initRegisteredServices();
         // Add service
         String expectedServiceName3 = "scm";
-        when(registry.getDogus()).thenReturn(new LinkedList<>(
+        when(registry.getInstalledDogusWhichAreUsingCAS()).thenReturn(new LinkedList<>(
                 Arrays.asList(EXPECTED_SERVICE_NAME_1, EXPECTED_SERVICE_NAME_2, expectedServiceName3)));
         ExpectedService service3 = new ExpectedService().name(expectedServiceName3)
                 .serviceId("https://"+EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME+"(:443)?/scm(/.*)?");
@@ -154,7 +154,7 @@ public class CesServicesManagerStageProductiveTest {
         // Initialize expectedServices
         DoguChangeListener doguChangeListener = initialize();
         // Remove service
-        when(registry.getDogus()).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_NAME_1)));
+        when(registry.getInstalledDogusWhichAreUsingCAS()).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_NAME_1)));
         expectedServices = expectedServices.stream().filter(expectedService -> !EXPECTED_SERVICE_NAME_2
                 .equals(expectedService.name)).collect(Collectors.toList());
         
