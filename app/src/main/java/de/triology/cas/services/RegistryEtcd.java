@@ -125,22 +125,22 @@ class RegistryEtcd implements Registry {
     @Override
     @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
-        try {
-            EtcdResponsePromise responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
-            responsePromise.addListener(promise -> {
-                doguChangeListener.onChange();
-                /* Register again! Why?
-                 * The promise is like some kind of long polling. Once the promise is fulfilled, the connection is
-                 * gone. The listener, however, expects to be called on all following  changes, so just get a new
-                 * promise. */
-                addDoguChangeListener(doguChangeListener);
-            });
-        } catch (IOException e) {
-            log.error("Failed to addDoguChangeListener: ", e);
-            throw new RegistryException(e);
-        }
-    }
+        Thread t = new Thread(() -> {
+            try {
+                while (true) {
+                    EtcdResponsePromise responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
+                    log.info("wait for changes under /dogu");
+                    responsePromise.get();
+                    doguChangeListener.onChange();
+                }
+            } catch (IOException | EtcdException | TimeoutException | EtcdAuthenticationException e) {
+                log.error("Failed to addDoguChangeListener: ", e);
+                throw new RegistryException(e);
+            }
+        });
 
+        t.start();
+    }
 
     private List<String> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd) {
         log.debug("Entered extractDogusFromDoguRootDir");
