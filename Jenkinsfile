@@ -42,6 +42,9 @@ node() { // No specific label
                 sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
 
                 sonarQube.analyzeWith(mvn)
+                if (!sonarQube.waitForQualityGateWebhookToBeCalled()) {
+                    currentBuild.result ='UNSTABLE'
+                }
             }
         }
     }
