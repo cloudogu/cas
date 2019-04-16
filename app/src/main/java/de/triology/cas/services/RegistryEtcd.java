@@ -82,7 +82,7 @@ class RegistryEtcd implements Registry {
             }
             return getLogoutUriFromProperties(properties);
         } catch (ClassCastException | NullPointerException | ParseException | URISyntaxException | RegistryException e) {
-            throw new GetCasLogoutUriException(e.toString());
+            throw new GetCasLogoutUriException(e);
         }
     }
 
