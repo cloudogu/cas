@@ -1,0 +1,23 @@
+{
+  "id" : "c9697b52-387b-4432-b043-8aee7fd65ed2",
+  "name" : "v2_keys_dogu_postgresql_current",
+  "request" : {
+    "url" : "/v2/keys/dogu/postgresql/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/postgresql/current\",\"value\":\"9.6.6-4\",\"modifiedIndex\":33,\"createdIndex\":33}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "c9697b52-387b-4432-b043-8aee7fd65ed2",
+  "persistent" : true,
+  "insertionIndex" : 22
+}

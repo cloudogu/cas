@@ -1,0 +1,23 @@
+{
+  "id" : "b3efdd77-bf1e-4d50-a601-028592bda155",
+  "name" : "v2_keys_dogu_ldap_current",
+  "request" : {
+    "url" : "/v2/keys/dogu/ldap/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/ldap/current\",\"value\":\"2.4.44-5\",\"modifiedIndex\":26,\"createdIndex\":26}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "b3efdd77-bf1e-4d50-a601-028592bda155",
+  "persistent" : true,
+  "insertionIndex" : 10
+}

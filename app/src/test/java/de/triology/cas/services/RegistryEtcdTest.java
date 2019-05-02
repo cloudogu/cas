@@ -3,17 +3,21 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import mousio.etcd4j.EtcdClient;
+import mousio.etcd4j.promises.EtcdResponsePromise;
+import mousio.etcd4j.requests.EtcdKeyGetRequest;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +42,8 @@ public class RegistryEtcdTest {
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        assertThat(registry.getDogus(), containsInAnyOrder("usermgt", "jenkins", "scm", "smeagol", "redmine"));
+        assertThat(registry.getInstalledDogusWhichAreUsingCAS(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
+        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS().size());
     }
 
     private RegistryEtcd createRegistry() {
@@ -60,18 +65,49 @@ public class RegistryEtcdTest {
         assertEquals("testDogu/logout", logoutURI.toString());
     }
 
+    @Test
+    public void addDoguChangeListener() throws InterruptedException, IOException {
+        EtcdClient client = mock(EtcdClient.class);
+        EtcdResponsePromise responsePromise = mock(EtcdResponsePromise.class);
+        EtcdKeyGetRequest request = mock(EtcdKeyGetRequest.class);
+        when(client.getDir(ArgumentMatchers.any())).thenReturn(request);
+        when(request.recursive()).thenReturn(request);
+        when(request.waitForChange()).thenReturn(request);
+        when(request.send()).thenReturn(responsePromise);
+        RegistryEtcd registry = new RegistryEtcd(client);
+        ArrayList<String> dogus = new ArrayList<>();
+
+        registry.addDoguChangeListener(()-> {
+            synchronized (dogus) {
+                if (dogus.contains("dogu")) {
+                    try {
+                        when(request.send()).thenThrow(new IOException("second call"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                dogus.add("dogu");
+                dogus.notify();
+            }
+        });
+
+        synchronized (dogus) {
+            dogus.wait();
+        }
+        assertTrue(dogus.contains("dogu"));
+    }
+
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromNonexistentDogu() throws GetDoguNodeFromEtcdException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromNonexistentDogu() throws GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
 
-        when(registry.getDoguNodeFromEtcd("NonexistentDogu")).thenThrow(GetCasLogoutUriException.class);
         when(registry.getCasLogoutUri("NonexistentDogu")).thenCallRealMethod();
 
         registry.getCasLogoutUri("NonexistentDogu");
     }
 
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithoutProperties() throws ParseException, GetDoguNodeFromEtcdException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromDoguWithoutProperties() throws ParseException, GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
         JSONObject doguMetaData = new JSONObject();
         when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
@@ -81,7 +117,7 @@ public class RegistryEtcdTest {
     }
 
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithmalformedProperties() throws ParseException, GetDoguNodeFromEtcdException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromDoguWithmalformedProperties() throws ParseException, GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
         JSONObject doguMetaData = new JSONObject();
         doguMetaData.put("Properties", "malformedPropertiesData");
@@ -93,7 +129,7 @@ public class RegistryEtcdTest {
     }
 
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithoutLogoutUriInProperties() throws ParseException, GetDoguNodeFromEtcdException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromDoguWithoutLogoutUriInProperties() throws ParseException, GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
         JSONObject properties = new JSONObject();
         JSONObject doguMetaData = new JSONObject();
@@ -105,7 +141,7 @@ public class RegistryEtcdTest {
     }
 
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithEmptyLogoutUriInProperties() throws ParseException, GetDoguNodeFromEtcdException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromDoguWithEmptyLogoutUriInProperties() throws ParseException, GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
         JSONObject properties = new JSONObject();
         properties.put("logoutUri", null);
