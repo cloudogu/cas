@@ -83,7 +83,8 @@ public class MemberGroupResolver implements GroupResolver {
   /**
    * Sets the LDAP search filter used to query for groups.
    *
-   * @param filter Search filter of the form "(member={0})" where {0} is replaced with the dn of the ldap entry.
+   * @param filter Search filter of the form "(member={0})" where {0} is replaced with the dn of the ldap entry,
+   *               {1} is replaced with id of the principal.
    */
   public void setSearchFilter(final String filter) {
     this.searchFilter = filter;
@@ -137,7 +138,7 @@ public class MemberGroupResolver implements GroupResolver {
       return Collections.emptySet();
     }
     LOG.debug("resolve groups for {}", ldapEntry.getDn());
-    SearchFilter filter = createFilter(ldapEntry);
+    SearchFilter filter = createFilter(principal, ldapEntry);
     return resolveGroupsByLdapFilter(filter);
   }
 
@@ -175,8 +176,8 @@ public class MemberGroupResolver implements GroupResolver {
     return entry.getAttribute(nameAttribute).getStringValue();
   }
 
-  private SearchFilter createFilter(LdapEntry ldapEntry) {
-    return new SearchFilter(searchFilter, new Object[]{ldapEntry.getDn()});
+  SearchFilter createFilter(Principal principal, LdapEntry ldapEntry) {
+    return new SearchFilter(searchFilter, new Object[]{ldapEntry.getDn(), principal.getId()});
   }
 
   private SearchRequest createRequest(final SearchFilter filter) {
