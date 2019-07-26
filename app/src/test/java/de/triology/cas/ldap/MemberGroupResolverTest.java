@@ -2,6 +2,7 @@ package de.triology.cas.ldap;
 
 
 import org.jasig.cas.authentication.principal.Principal;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
@@ -21,17 +22,29 @@ public class MemberGroupResolverTest {
     @Mock
     private LdapEntry entry;
 
-    @Test
-    public void testSearchFilter() {
+    private final MemberGroupResolver resolver = new MemberGroupResolver();
+
+    @Before
+    public void setUp() {
         when(principal.getId()).thenReturn("trillian");
         when(entry.getDn()).thenReturn("cn=Tricia,ou=People,dc=hitchhiker,dc=com");
+    }
 
-        MemberGroupResolver resolver = new MemberGroupResolver();
-        resolver.setSearchFilter("(&(objectClass=group)(member={1}))");
+    @Test
+    public void testSearchFilterWithPrincipalId() {
+        resolver.setSearchFilter("(&(objectClass=posixGroup)(memberUid={1}))");
+        assertFilter("(&(objectClass=posixGroup)(memberUid=trillian))");
+    }
 
+    private void assertFilter(String expected) {
         SearchFilter filter = resolver.createFilter(principal, entry);
-        assertEquals("cn=Tricia,ou=People,dc=hitchhiker,dc=com", filter.getParameters().get("0"));
-        assertEquals("trillian", filter.getParameters().get("1"));
+        assertEquals(expected, filter.format());
+    }
+
+    @Test
+    public void testSearchFilterWithPrincipalDN() {
+        resolver.setSearchFilter("(&(objectClass=inetOrgPerson)(member={0}))");
+        assertFilter("(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
     }
 
 }
