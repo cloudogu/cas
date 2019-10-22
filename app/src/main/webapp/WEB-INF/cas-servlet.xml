@@ -58,7 +58,7 @@
       </util:list>
     </property>
   </bean>
-  
+
   <!-- Locale Resolver -->
   <!-- Without a given default locale the CookieLocaleResolver takes the locale from the accept-header -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/>
@@ -70,7 +70,7 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="1"/>
-  
+
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -82,10 +82,10 @@
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        
+
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
-        
+
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
@@ -183,13 +183,13 @@
       </util:list>
     </property>
   </bean>
-  
-  <!--  CAS 2 Protocol service/proxy validation -->     
+
+  <!--  CAS 2 Protocol service/proxy validation -->
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
         p:argumentExtractor-ref="casArgumentExtractor"/>
-  
+
   <bean id="proxyValidateController" parent="abstractValidateController"/>
 
   <bean id="serviceValidateController" parent="abstractValidateController"
@@ -199,13 +199,13 @@
   <bean id="v3AbstractValidateController" parent="abstractValidateController" abstract="true"
         p:successView="cas3ServiceSuccessView"
         p:failureView="cas3ServiceFailureView" />
-        
+
   <bean id="v3ProxyValidateController" parent="v3AbstractValidateController" />
 
   <bean id="v3ServiceValidateController" parent="v3AbstractValidateController"
         p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"/>
- 
-  <!--  CAS 1 legacy validation -->       
+
+  <!--  CAS 1 legacy validation -->
   <bean id="legacyValidateController" parent="abstractValidateController"
         p:proxyHandler-ref="proxy10Handler"
         p:successView="cas1ServiceSuccessView"
@@ -268,9 +268,9 @@
         c:cas-ref="centralAuthenticationService"
         c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
-  
+
   <!-- saml support -->
-  
+
   <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
         p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
         p:centralAuthenticationService-ref="centralAuthenticationService"
@@ -278,5 +278,5 @@
         p:argumentExtractor-ref="samlArgumentExtractor"
         p:successView="casSamlServiceSuccessView"
         p:failureView="casSamlServiceFailureView"/>
-  
+
 </beans>

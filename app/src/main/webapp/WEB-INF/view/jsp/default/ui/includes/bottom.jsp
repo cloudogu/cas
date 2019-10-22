@@ -1,3 +1,6 @@
+<%@ page import="de.triology.cas.services.LegalLinkProducer" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="static org.springframework.web.servlet.support.RequestContextUtils.getWebApplicationContext" %>
 <%--
 
     Licensed to Jasig under one or more contributor license
@@ -19,14 +22,38 @@
 
 --%>
 
-    </div>
-    <div class="bottom">
-        <%--this actually cross-links to the NGINX dogu. However, without nginx this page will never be rendered in the first place. --%>
-            <a href="/info/imprint"><spring:message code="screen.bottom.imprint"/></a>
-            <span>|</span>
-            <a href="/info/privacyPolicy"><spring:message code="screen.bottom.privacyPolicy"/></a>
-    </div>
+</div>
+<div class="bottom"><%
+    ApplicationContext ctx = getWebApplicationContext(request);
+    LegalLinkProducer lp = (LegalLinkProducer) ctx.getBean("linkProducer");
+    pageContext.setAttribute("tos", lp.getTermsOfServiceLink());
+    pageContext.setAttribute("imprint", lp.getImprintLink());
+    pageContext.setAttribute("privacy", lp.getPrivacyPolicyLink());
+    pageContext.setAttribute("delimiterTos", lp.getTermsOfServiceLinkDelimiter());
+    pageContext.setAttribute("delimiterImprint", lp.getImprintLinkDelimiter());
+%>
+    <c:if test="${not empty tos}">
+        <a href="<c:out value="${tos}" escapeXml="false" />" target="_blank">
+            <spring:message code="screen.bottom.termsOfService"/>
+        </a>
+    </c:if>
+
+    <c:out value="${delimiterTos}" escapeXml="false"/>
+
+    <c:if test="${not empty imprint}">
+        <a href="<c:out value="${imprint}" escapeXml="false" />" target="_blank">
+            <spring:message code="screen.bottom.imprint"/>
+        </a>
+    </c:if>
+
+    <c:out value="${delimiterImprint}" escapeXml="false"/>
+
+    <c:if test="${not empty privacy}">
+        <a href="<c:out value="${privacy}" escapeXml="false" />" target="_blank">
+            <spring:message code="screen.bottom.privacyPolicy"/>
+        </a>
+    </c:if>
+</div>
 
 </body>
 </html>
-
