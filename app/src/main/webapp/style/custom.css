@@ -35,6 +35,7 @@ and open the template in the editor.
 
 .mid{
     height:400px;
+    justify-content: center;
 }
 
 .vertical-align {
