@@ -34,15 +34,15 @@
     "Optional": true
   },{
     "Name": "legal_urls/terms_of_service",
-    "Description": "This URL links to the Terms of Service and will be be the first link in bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
     "Optional": true
   },{
     "Name": "legal_urls/imprint",
-    "Description": "This URL links the Imprint and will be be the second link in bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
     "Optional": true
   },{
     "Name": "legal_urls/privacy_policy",
-    "Description": "This URL links the Privacy Policy and will be be the last link in bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
     "Optional": true
   }],
   "Volumes": [{
