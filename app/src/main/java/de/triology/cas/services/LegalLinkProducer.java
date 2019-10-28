@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * This class provides links from the etcd registry for the bottom fragment of every view that uses it. If one link is
- * not set or available no respective link should be seen.
+ * not set or unavailable no respective link should be seen.
  * <p>
  * The sequence of these links is tackled down to
  *     <ol>
@@ -28,7 +28,7 @@ public class LegalLinkProducer {
     /**
      * This field provides a simple cache in order to reduce the strong etcd interaction latency.
      * <h1>Note on cache invalidation</h1>
-     * Neither this class provide any means of cache invalidation mechanism because these data are
+     * This class does not provide any means of cache invalidation mechanism because these data are
      * supposed not to change frequently. Instead it is supposed to restart the CAS container after the etcd values are
      * correctly set.
      */
