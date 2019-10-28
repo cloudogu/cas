@@ -102,7 +102,7 @@ public class LegalLinkProducer {
             try {
                 value = registry.getEtcdValueForKey(key);
             } catch (Exception e) {
-                LOG.warn("Could not access registry for key {}. This key will be ignored from now on. {}", key, e);
+                LOG.warn("Could not access registry for key {}. This key will be ignored from now on. {}", key, e.getMessage());
             }
             etcdKeyToValueCache.put(key, value);
         } else {
