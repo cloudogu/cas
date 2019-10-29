@@ -28,7 +28,7 @@ RUN set -x \
  && addgroup -S -g 1000 cas \
  && adduser -S -h /var/lib/cas -s /bin/bash -G cas -u 1000 cas \
  # install tomcat
- && mkdir /opt \
+ && mkdir -p /opt \
  && curl --fail --silent --location --retry 3 \
  		http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz \
  | gunzip \
