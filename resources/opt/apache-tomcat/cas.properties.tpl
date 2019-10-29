@@ -19,7 +19,7 @@
 
 ##
 # Services Management Web UI Security
-server.name=https://{{ .GlobalConfig.Get "fqdn" }}
+server.name=https://%FQDN%
 server.prefix=${server.name}/cas
 cas.securityContext.serviceProperties.service=${server.prefix}/services/j_acegi_cas_security_check
 # Names of roles allowed to access the CAS service manager
@@ -37,8 +37,7 @@ cas.viewResolver.basename=default_views
 # Unique CAS node name
 # host.name is used to generate unique Service Ticket IDs and SAMLArtifacts.  This is usually set to the specific
 # hostname of the machine running the CAS node, but it could be any label so long as it is unique in the cluster.
-{{ $domain := (.GlobalConfig.Get "domain") }}
-host.name=cas.{{ $domain }}
+host.name=cas.%DOMAIN%
 
 ##
 # Database flavors for Hibernate
@@ -111,36 +110,13 @@ host.name=cas.{{ $domain }}
 #========================================
 # General properties
 #========================================
-{{ $ldapProtocol := "" }}{{ $ldapUseStartTLS := "" }}{{ $ldapTrustManager := "" }}
-{{- $ldapEncryption := (.Config.Get "ldap/encryption") -}}
-{{- if eq $ldapEncryption "startTLS" -}}
-    {{- $ldapProtocol = "ldap" -}}
-    {{- $ldapUseStartTLS = "true" -}}
-    {{- $ldapTrustManager = "org.ldaptive.ssl.DefaultTrustManager" -}}
-{{- else if eq $ldapEncryption "startTLSAny" -}}
-    {{- $ldapProtocol = "ldap" -}}
-    {{- $ldapUseStartTLS = "true" -}}
-    {{- $ldapTrustManager = "org.ldaptive.ssl.AllowAnyTrustManager" -}}
-{{- else if eq $ldapEncryption "ssl" -}}
-    {{- $ldapProtocol = "ldaps" -}}
-    {{- $ldapUseStartTLS = "false" -}}
-    {{- $ldapTrustManager = "org.ldaptive.ssl.DefaultTrustManager" -}}
-{{- else if eq $ldapEncryption "sslAny" -}}
-    {{- $ldapProtocol = "ldaps" -}}
-    {{- $ldapUseStartTLS = "false" -}}
-    {{- $ldapTrustManager = "org.ldaptive.ssl.AllowAnyTrustManager" -}}
-{{- else -}}
-    {{- $ldapProtocol = "ldap" -}}
-    {{- $ldapUseStartTLS = "false" -}}
-    {{- $ldapTrustManager = "org.ldaptive.ssl.DefaultTrustManager" -}}
-{{- end -}}
-ldap.url={{ $ldapProtocol}}://{{ .Config.Get "ldap/host" }}:{{ .Config.Get "ldap/port" }}
+ldap.url=%LDAP_PROTOCOL%://%LDAP_HOST%:%LDAP_PORT%
 
 # LDAP connection timeout in milliseconds
 ldap.connectTimeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
-ldap.useStartTLS={{ $ldapUseStartTLS }}
+ldap.useStartTLS=%LDAP_STARTTLS%
 
 #========================================
 # LDAP connection pool configuration
@@ -169,84 +145,60 @@ ldap.pool.idleTime=600
 # Authentication
 #========================================
 
-{{ $ldapBaseDn := "" }}
-{{- $ldapBindDn := "" -}}
-{{- $ldapBindPassword := "" -}}
-{{- if eq (.Config.Get "ldap/ds_type") "external" -}}
-    {{- $ldapBaseDn = (.Config.Get "ldap/base_dn") -}}
-    {{- $ldapBindDn = (.Config.Get "ldap/connection_dn") -}}
-    {{- $ldapBindPassword = (.Config.GetAndDecrypt "ldap/password") -}}
-{{- else -}}
-    {{- $ldapBaseDn = printf "%s,%s,%s" "ou=People,o=" $domain ",dc=cloudogu,dc=com" -}}
-    {{- $ldapBindDn = (.Config.GetAndDecrypt "sa-ldap/username") -}}
-    {{- $ldapBindPassword = (.Config.GetAndDecrypt "sa-ldap/password") -}}
-{{- end -}}
-
 # Base DN of users to be authenticated
-ldap.authn.baseDn={{ $ldapBaseDn }}
+ldap.authn.baseDn=%LDAP_BASE_DN%
 
 # Manager DN for authenticated searches
-ldap.authn.managerDN={{ $ldapBindDn }}
+ldap.authn.managerDN=%LDAP_BIND_DN%
 
 # Manager password for authenticated searches
-ldap.authn.managerPassword={{ $ldapBindPassword }}
+ldap.authn.managerPassword=%LDAP_BIND_PASSWORD%
 
 # Search filter used for configurations that require searching for DNs
 #ldap.authn.searchFilter=(&(uid={user})(accountState=active))
-{{ $searchFilter := printf "(&%s(%s={user}))" (.Config.Get "ldap/search_filter") (.Config.Get "ldap/attribute_id") }}
-
-ldap.authn.searchFilter=(&{{ .Config.Get "ldap/search_filter" }}({{ .Config.Get "ldap/attribute_id" }}={user}))
+ldap.authn.searchFilter=%LDAP_SEARCH_FILTER%
 
 # Search filter used for configurations that require searching for DNs
 #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
-ldap.authn.format=uid=%s,ou=Accounts,{{ .Config.Get "ldap/base_dn" }}
+ldap.authn.format=uid=%s,ou=Accounts,%LDAP_BASE_DN%
 
 #Ldap mapping of result attributes
-ldap.authn.attribute.username={{ .Config.Get "ldap/attribute_id" }}
+ldap.authn.attribute.username=%LDAP_ATTRIBUTE_USERNAME%
 ldap.authn.attribute.cn=cn
-ldap.authn.attribute.mail={{ .Config.Get "ldap/attribute_mail" }}
+ldap.authn.attribute.mail=%LDAP_ATTRIBUTE_MAIL%
 ldap.authn.attribute.givenName=givenName
 ldap.authn.attribute.surname=sn
 ldap.authn.attribute.displayName=displayName
-ldap.authn.attribute.groups={{ .Config.Get "ldap/attribute_group" }}
+ldap.authn.attribute.groups=%LDAP_ATTRIBUTE_GROUP%
 
 # member search settings
 
 # settings for ldap group search by member
 # base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com
-ldap.authn.groups.baseDn={{ .Config.GetOrDefault "ldap/group_base_dn" ""}}
+ldap.authn.groups.baseDn=%LDAP_GROUP_BASE_DN%
 
 # search filter for group search {0} will be replaced with the dn of the user
 # e.g.: (member={0})
 # if this property is empty, group search by member will be skipped
-ldap.authn.groups.searchFilter={{ .Config.GetOrDefault "ldap/group_search_filter" ""}}
+ldap.authn.groups.searchFilter=%LDAP_GROUP_SEARCH_FILTER%
 
 # name attribute of groups e.g.: cn
-ldap.authn.groups.attribute.name={{ .Config.GetOrDefault "ldap/group_attribute_name" ""}}
+ldap.authn.groups.attribute.name=%LDAP_GROUP_ATTRIBUTE_NAME%
 
 # use the connection after bind with user dn to fetch attributes
-ldap.authn.useUserConnectionToFetchAttributes = {{ .Config.GetOrDefault "ldap/use_user_connection_to_fetch_attributes" "true"}}
+ldap.authn.useUserConnectionToFetchAttributes = %LDAP_USE_USER_CONNECTION%
 
-ldap.trustManager={{ $ldapTrustManager }}
-
+ldap.trustManager=%LDAP_TRUST_MANAGER%
 # set deployment stage
-{{ $requireSecure := "true" }}
-{{- $stage := (.GlobalConfig.GetOrDefault "stage" "") -}}
-{{- if ne $stage "development" -}}
-    {{ $stage = "production" }}
-{{- else -}}
-    {{ $requireSecure = "false" }}
-{{- end -}}
-
-stage={{ $stage }}
-requireSecure={{ $requireSecure }}
+stage = %STAGE%
+requireSecure = %REQUIRE_SECURE%
 
 #========================================
 # Limit Login Attempts
 #========================================
 # set login.limit.maxNumber to 0 to disable feature
 # time parameters are configured in seconds
-login.limit.maxNumber={{ .Config.GetOrDefault "limit/max_number" "0" }}
-login.limit.failureStoreTime={{ .Config.GetOrDefault "limit/failure_store_time" "0" }}
-login.limit.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0" }}
+login.limit.maxNumber=%LOGIN_LIMIT_MAX_NUMBER%
+login.limit.failureStoreTime=%LOGIN_LIMIT_FAILURE_STORE_TIME%
+login.limit.lockTime=%LOGIN_LIMIT_LOCK_TIME%
 login.limit.maxAccounts=10000
