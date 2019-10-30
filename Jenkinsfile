@@ -30,7 +30,7 @@ node() { // No specific label
             stage('Build') {
                 setupMaven(mvn)
                 mvn 'clean install -DskipTests'
-                archive '**/target/*.jar,**/target/*.zip'
+                archiveArtifacts '**/target/*.jar,**/target/*.zip'
             }
 
             stage('Unit Test') {
