@@ -102,6 +102,10 @@
         <constructor-arg ref="etcdClient"/>
     </bean>
 
+    <bean id="legalLinkProducer" name="linkProducer" class="de.triology.cas.services.LegalLinkProducer">
+        <constructor-arg ref="etcdRegistry"/>
+    </bean>
+
     <!--
         Job to periodically reload services from service registry.
         This job is needed for a clustered CAS environment since service changes
@@ -167,5 +171,4 @@
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
     <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
-
 </beans>

@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-5",
+  "Version": "4.0.7.20-6",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -31,6 +31,18 @@
   },{
     "Name": "forgot_password_text",
     "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
+    "Optional": true
+  },{
+    "Name": "legal_urls/terms_of_service",
+    "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Optional": true
+  },{
+    "Name": "legal_urls/imprint",
+    "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Optional": true
+  },{
+    "Name": "legal_urls/privacy_policy",
+    "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
     "Optional": true
   }],
   "Volumes": [{
