@@ -25,6 +25,7 @@ MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/message
 CAS_PROPERTIES_TEMPLATE="/opt/apache-tomcat/cas.properties.conf.tpl"
 CAS_PROPERTIES="/opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties"
 
+# use the doguctl templating mechanism for new configuration entries (sed is deprecated and should be migrated)
 doguctl template ${CAS_PROPERTIES_TEMPLATE} ${CAS_PROPERTIES}
 
 echo "Getting general variables for templates..."
