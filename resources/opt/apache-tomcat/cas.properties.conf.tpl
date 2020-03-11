@@ -22,19 +22,12 @@
 #
 # Maximum session timeout - TGT will expire in maxTimeToLiveInSeconds regardless of usage
 
-{{ if .Config.Exists "session_tgt/max_time_to_live_in_seconds" }}
-tgt.maxTimeToLiveInSeconds={{ .Config.Get "session_tgt/max_time_to_live_in_seconds"}}
-{{ else }}
 # default value 24h
-tgt.maxTimeToLiveInSeconds=90000
-{{ end }}
+tgt.maxTimeToLiveInSeconds= {{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
 
 # Idle session timeout -  TGT will expire sooner than maxTimeToLiveInSeconds if no further requests
 # for STs occur within timeToKillInSeconds
 
-{{ if .Config.Exists "session_tgt/time_to_kill_in_seconds" }}
-tgt.timeToKillInSeconds={{ .Config.Get "session_tgt/time_to_kill_in_seconds"}}
-{{ else }}
 # default value 10h
-tgt.timeToKillInSeconds=36000
-{{ end }}
+tgt.timeToKillInSeconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
+
