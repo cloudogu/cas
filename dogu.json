@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-6",
+  "Version": "4.0.7.20-7",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -43,6 +43,15 @@
   },{
     "Name": "legal_urls/privacy_policy",
     "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+    "Optional": true
+  },{
+    "Name": "session_tgt/max_time_to_live_in_seconds",
+    "Description": "Maximum session timeout - TGT will expire after defined timespan regardless the usage",
+    "Optional": true
+  },
+  {
+    "Name": "session_tgt/time_to_kill_in_seconds",
+    "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
     "Optional": true
   }],
   "Volumes": [{
