@@ -1,5 +1,5 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@195e15a')
+@Library('github.com/cloudogu/ces-build-lib@a5799c2')
 import com.cloudogu.ces.cesbuildlib.*
 
 node() { // No specific label
@@ -38,12 +38,19 @@ node() { // No specific label
             }
 
             stage('SonarQube') {
-                def sonarQube = new SonarQube(this, 'ces-sonar')
-                sonarQube.updateAnalysisResultOfPullRequestsToGitHub('sonarqube-gh-token')
-
-                sonarQube.analyzeWith(mvn)
-                if (!sonarQube.waitForQualityGateWebhookToBeCalled()) {
-                    currentBuild.result ='UNSTABLE'
+                withSonarQubeEnv {
+                    def mvnSonarParameters = "-Dsonar.host.url=${env.SONAR_HOST_URL} " +
+                            "-Dsonar.exclusions=target/**,src/main/webapp/**/* " +
+                            "-Dsonar.projectKey=cas:${env.BRANCH_NAME} -Dsonar.projectName=cas:${env.BRANCH_NAME} " +
+                            "-Dsonar.github.repository=cloudogu/cas " +
+                            "-Dsonar.github.oauth=${env.SONAR_AUTH_TOKEN}"
+                    mvn "${env.SONAR_MAVEN_GOAL} ${mvnSonarParameters}"
+                }
+                timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
+                    def qGate = waitForQualityGate()
+                    if (qGate.status != 'OK') {
+                        unstable("Pipeline unstable due to SonarQube quality gate failure")
+                    }
                 }
             }
         }

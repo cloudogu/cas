@@ -22,6 +22,11 @@ function global_cfg_or_default {
 }
 
 MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/messages.properties"
+CAS_PROPERTIES_TEMPLATE="/opt/apache-tomcat/cas.properties.conf.tpl"
+CAS_PROPERTIES="/opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties"
+
+# use the doguctl templating mechanism for new configuration entries (sed is deprecated and should be migrated)
+doguctl template ${CAS_PROPERTIES_TEMPLATE} ${CAS_PROPERTIES}
 
 echo "Getting general variables for templates..."
 DOMAIN=$(doguctl config --global domain)
@@ -116,7 +121,7 @@ s@%LDAP_USE_USER_CONNECTION%@$LDAP_USE_USER_CONNECTION@g;\
 s@%LOGIN_LIMIT_MAX_NUMBER%@$LOGIN_LIMIT_MAX_NUMBER@g;\
 s@%LOGIN_LIMIT_FAILURE_STORE_TIME%@$LOGIN_LIMIT_FAILURE_STORE_TIME@g;\
 s@%LOGIN_LIMIT_LOCK_TIME%@$LOGIN_LIMIT_LOCK_TIME@g"\
- /opt/apache-tomcat/cas.properties.tpl > /opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties
+ /opt/apache-tomcat/cas.properties.tpl >> /opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties
 
 
 sed -i '/screen.password.forgotText=/d' ${MESSAGES_PROPERTIES_FILE}
