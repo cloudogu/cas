@@ -31,3 +31,13 @@ tgt.maxTimeToLiveInSeconds= {{ .Config.GetOrDefault "session_tgt/max_time_to_liv
 # default value 10h
 tgt.timeToKillInSeconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
 
+
+# Control log levels via properties this overrides the log4j.xml config
+# default log level is WARN and can be changed via key /logging/root see dogu.json for further details
+logging.config=classpath:log4j.xml
+server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
+logging.level.org.apereo.cas={{ .Config.GetOrDefault "logging/root" "WARN"}}
+logging.level.org.apache.catalina={{ .Config.GetOrDefault "logging/root" "WARN"}}
+logging.level.de.triology.cas={{ .Config.GetOrDefault "logging/root" "WARN"}}
+logging.level.de.org.jasig={{ .Config.GetOrDefault "logging/root" "WARN"}}
+

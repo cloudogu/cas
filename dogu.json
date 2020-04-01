@@ -53,6 +53,11 @@
     "Name": "session_tgt/time_to_kill_in_seconds",
     "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
     "Optional": true
+  },
+  {
+    "Name": "logging/root",
+    "Description": "Configure the logging behaviour - Supported log levels are [ERROR, WARN, INFO, DEBUG] the default value is WARN",
+    "Optional": true
   }],
   "Volumes": [{
     "Name": "data",
