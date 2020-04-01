@@ -21,7 +21,7 @@ function global_cfg_or_default {
   echo "${VALUE}"
 }
 
-# configure logging behaviour using the etcd property /cas/logging/root <ERROR,WARN,INFO,DEBUG>
+# configure logging behaviour using the etcd property logging/root <ERROR,WARN,INFO,DEBUG>
 source ./logging.sh
 
 MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/messages.properties"

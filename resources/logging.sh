@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# logging behaviour can be configured in /cas/logging/root with the following options <ERROR,WARN,INFO,DEBUG>
+# logging behaviour can be configured in logging/root with the following options <ERROR,WARN,INFO,DEBUG>
 DEFAULT_LOGGING_KEY="logging/root"
 LOG_LEVEL_ERROR="ERROR"; LOG_LEVEL_WARN="WARN"; LOG_LEVEL_INFO="INFO"; LOG_LEVEL_DEBUG="DEBUG"
 
