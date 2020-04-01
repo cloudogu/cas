@@ -55,7 +55,7 @@ function validateDoguLogLevel() {
     return
   else
     echo "Found unsupported log level ${uppercaseLogLevel}. These log levels are supported: ${VALID_LOG_LEVELS[@]}"
-    resetDoguLogLevel ${uppercaseLogLevel} ${defaultLogLevel}
+    resetDoguLogLevel ${uppercaseLogLevel} ${DEFAULT_LOG_LEVEL}
     return
   fi
 }
