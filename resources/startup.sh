@@ -155,5 +155,7 @@ if [[ "$LDAP_TYPE" == 'embedded' ]]; then
   fi
 fi
 
+doguctl state ready
+
 echo "Starting cas..."
 exec su - cas -c "${CATALINA_SH} run"
