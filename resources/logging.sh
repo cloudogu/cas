@@ -67,7 +67,7 @@ function validateDoguLogLevel() {
   if [[ "${logLevel}" == "" ]]; then
     echo "${SCRIPT_LOG_PREFIX} Found empty root log level. Setting log level default to ${DEFAULT_LOG_LEVEL}"
     # note the quotations to force bash to use it as the first argument.
-    resetDoguLogLevel "${logLevel}" ${DEFAULT_LOG_LEVEL}
+    resetDoguLogLevel "${logLevel}" "${DEFAULT_LOG_LEVEL}"
     return
   fi
 
@@ -83,7 +83,7 @@ function validateDoguLogLevel() {
 
   # Things really got weird: Falling back to default
   echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${logLevel}. These log levels are supported: ${VALID_LOG_LEVELS[@]}"
-  resetDoguLogLevel ${logLevel} ${DEFAULT_LOG_LEVEL}
+  resetDoguLogLevel "${logLevel}" "${DEFAULT_LOG_LEVEL}"
   return
 }
 
