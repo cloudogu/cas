@@ -41,36 +41,69 @@ function mapDoguLogLevel() {
   esac
 }
 
-# validate key entries and correct them if needed
 function validateDoguLogLevel() {
   echo "${SCRIPT_LOG_PREFIX} Validate root log level"
-  logLevel=$(doguctl config --default "${DEFAULT_LOG_LEVEL}" "${DEFAULT_LOGGING_KEY}")
-  # "config --default" accepts a set key with an empty value
+
+  logLevelExitCode=0
+  logLevel=$(doguctl config "${DEFAULT_LOGGING_KEY}") || logLevelExitCode=$?
+
+  if [[ ${logLevelExitCode} -ne 0 ]]; then
+    if [[ "${logLevel}" =~ "100: Key not found" ]]; then
+      echo "${SCRIPT_LOG_PREFIX} Did not find root log level. Log level will default to ${DEFAULT_LOG_LEVEL}"
+      return
+    else
+      echo "ERROR: ${SCRIPT_LOG_PREFIX} Error while accessing registry key ${DEFAULT_LOGGING_KEY}. Command returned with ${logLevelExitCode}: ${logLevel}"
+      doguctl state "ErrorRootLogLevelKey"
+      sleep 3000
+      exit 2
+    fi
+  fi
+
+  # fast return
+  if containsValidLogLevel "${logLevel}" ; then
+    return
+  fi
+
+  # Start weird log lovel handling
+  # check empty string because "config --default" accepts a set key with an empty value as a valid value.
   if [[ "${logLevel}" == "" ]]; then
-    echo "${SCRIPT_LOG_PREFIX} Did not find missing log level."
-    resetDoguLogLevel ${logLevel} ${DEFAULT_LOG_LEVEL}
+    echo "${SCRIPT_LOG_PREFIX} Found empty root log level. Setting log level default to ${DEFAULT_LOG_LEVEL}"
+    # note the quotations to force bash to use it as the first argument.
+    resetDoguLogLevel "${logLevel}" ${DEFAULT_LOG_LEVEL}
     return
   fi
 
   uppercaseLogLevel=${logLevel^^}
   if [[ "${logLevel}" != "${uppercaseLogLevel}" ]]; then
-    echo "${SCRIPT_LOG_PREFIX} Found lowercase log level. Converting ${logLevel} to ${uppercaseLogLevel}..."
+    echo "${SCRIPT_LOG_PREFIX} Log level contains lowercase characters. Converting '${logLevel}' to '${uppercaseLogLevel}'..."
+    if containsValidLogLevel "${uppercaseLogLevel}" ; then
+      echo "${SCRIPT_LOG_PREFIX} Log level seems valid..."
+      resetDoguLogLevel "${logLevel}" "${uppercaseLogLevel}"
+      return
+    fi
   fi
 
+  # Things really got weird: Falling back to default
+  echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${logLevel}. These log levels are supported: ${VALID_LOG_LEVELS[@]}"
+  resetDoguLogLevel ${logLevel} ${DEFAULT_LOG_LEVEL}
+  return
+}
+
+function containsValidLogLevel() {
+  foundLogLevel="${1}"
+
   # The added spaces in this test avoid partial matches. F. ex., the invalid value "ERR" could falsely match "ERROR"
-  if [[ " ${VALID_LOG_LEVELS[@]} " =~ " ${uppercaseLogLevel} " ]]; then
-    echo "${SCRIPT_LOG_PREFIX} Using log level ${uppercaseLogLevel}..."
-    return
+  if [[ " ${VALID_LOG_LEVELS[@]} " =~ " ${foundLogLevel} " ]]; then
+    return 0
   else
-    echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${uppercaseLogLevel}. These log levels are supported: ${VALID_LOG_LEVELS[@]}"
-    resetDoguLogLevel ${uppercaseLogLevel} ${DEFAULT_LOG_LEVEL}
-    return
+    return 1
   fi
 }
 
 function resetDoguLogLevel() {
-  targetLogLevel=${2}
-  echo "${SCRIPT_LOG_PREFIX} Resetting dogu log level from ${1} to ${targetLogLevel}..."
+  oldLogLevel="${1}"
+  targetLogLevel="${2}"
+  echo "${SCRIPT_LOG_PREFIX} Resetting dogu log level from '${oldLogLevel}' to '${targetLogLevel}'..."
   doguctl config "${DEFAULT_LOGGING_KEY}" "${targetLogLevel}"
 }
 
