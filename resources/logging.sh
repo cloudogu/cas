@@ -18,7 +18,7 @@ SCRIPT_LOG_PREFIX="Log level mapping:"
 
 # create a mapping because apache uses different log levels than log4j eg. ERROR=>SEVERE
 function mapDoguLogLevel() {
-  echo "${SCRIPT_LOG_PREFIX} Mapping dogu specifig log level"
+  echo "${SCRIPT_LOG_PREFIX} Mapping dogu specific log level"
   currentLogLevel=$(doguctl config --default "${DEFAULT_LOG_LEVEL}" "${DEFAULT_LOGGING_KEY}")
   if [[ "$?" != "0" ]] ; then
     currentLogLevel="not found"
