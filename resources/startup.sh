@@ -22,8 +22,19 @@ function global_cfg_or_default {
 }
 
 # configure logging behaviour using the etcd property logging/root <ERROR,WARN,INFO,DEBUG>
-source ./logging.sh
 
+# If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
+# leads to an zero exit code which enables further error handling.
+loggingExitCode=0
+source ./logging.sh || loggingExitCode=$?
+if [[ ${loggingExitCode} -ne 0 ]]; then
+  echo "ERROR: An error occurred during the root log level evaluation.";
+  doguctl state "ErrorRootLogLevelMapping"
+  sleep 300
+  exit 2
+fi
+
+echo "Continuing start up..."
 MESSAGES_PROPERTIES_FILE="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/messages.properties"
 CAS_PROPERTIES_TEMPLATE="/opt/apache-tomcat/cas.properties.conf.tpl"
 CAS_PROPERTIES="/opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties"
@@ -41,7 +52,6 @@ LDAP_SERVER=$(doguctl config ldap/server)
 LDAP_HOST=$(doguctl config ldap/host)
 LDAP_PORT=$(doguctl config ldap/port)
 LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
-# TODO: use fullname ??
 LDAP_ATTRIBUTE_FULLNAME=$(doguctl config ldap/attribute_fullname)
 LDAP_ATTRIBUTE_MAIL=$(doguctl config ldap/attribute_mail)
 LDAP_ATTRIBUTE_GROUP=$(doguctl config ldap/attribute_group)

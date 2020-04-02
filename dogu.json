@@ -70,8 +70,13 @@
     "Type": "ldap",
     "Params": ["ro"]
   }],
-  "HealthCheck": {
-    "Type": "tcp",
-    "Port": 8080
-  }
+  "HealthChecks": [
+    {
+      "Type": "tcp",
+      "Port": 8080
+    },
+    {
+      "Type": "state"
+    }
+  ]
 }
