@@ -49,7 +49,8 @@ COPY resources /
 # expose tomcat port
 EXPOSE 8080
 
+HEALTHCHECK CMD doguctl healthy cas || exit 1
+
 # start tomcat as user tomcat
 CMD /startup.sh
 
-HEALTHCHECK CMD [ $(doguctl healthy cas; echo $?) == 0 ]
