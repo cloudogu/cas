@@ -20,9 +20,7 @@ SCRIPT_LOG_PREFIX="Log level mapping:"
 function mapDoguLogLevel() {
   echo "${SCRIPT_LOG_PREFIX} Mapping dogu specific log level"
   currentLogLevel=$(doguctl config --default "${DEFAULT_LOG_LEVEL}" "${DEFAULT_LOGGING_KEY}")
-  if [[ "$?" != "0" ]] ; then
-    currentLogLevel="not found"
-  fi
+
   echo "${SCRIPT_LOG_PREFIX} Mapping ${currentLogLevel} to Catalina"
   case "${currentLogLevel}" in
     "${LOG_LEVEL_ERROR}")
