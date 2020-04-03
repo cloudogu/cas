@@ -13,30 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-handlers = 1catalina.org.apache.juli.AsyncFileHandler, 2localhost.org.apache.juli.AsyncFileHandler, 3manager.org.apache.juli.AsyncFileHandler, 4host-manager.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler
-
-.handlers = 1catalina.org.apache.juli.AsyncFileHandler, java.util.logging.ConsoleHandler
+handlers = java.util.logging.ConsoleHandler
+.handlers = java.util.logging.ConsoleHandler
 
 ############################################################
 # Handler specific properties.
 # Describes specific configuration info for Handlers.
 ############################################################
-
-1catalina.org.apache.juli.AsyncFileHandler.level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-1catalina.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs
-1catalina.org.apache.juli.AsyncFileHandler.prefix = catalina.
-
-2localhost.org.apache.juli.AsyncFileHandler.level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-2localhost.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs
-2localhost.org.apache.juli.AsyncFileHandler.prefix = localhost.
-
-3manager.org.apache.juli.AsyncFileHandler.level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-3manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs
-3manager.org.apache.juli.AsyncFileHandler.prefix = manager.
-
-4host-manager.org.apache.juli.AsyncFileHandler.level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-4host-manager.org.apache.juli.AsyncFileHandler.directory = ${catalina.base}/logs
-4host-manager.org.apache.juli.AsyncFileHandler.prefix = host-manager.
 
 java.util.logging.ConsoleHandler.level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
 java.util.logging.ConsoleHandler.formatter = org.apache.juli.OneLineFormatter
@@ -47,14 +30,6 @@ java.util.logging.ConsoleHandler.formatter = org.apache.juli.OneLineFormatter
 # Provides extra control for each logger.
 ############################################################
 
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].handlers = 2localhost.org.apache.juli.AsyncFileHandler
-
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/manager].handlers = 3manager.org.apache.juli.AsyncFileHandler
-
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].level = {{ .Env.Get "CATALINA_LOGLEVEL" }}
-org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/host-manager].handlers = 4host-manager.org.apache.juli.AsyncFileHandler
 
 # For example, set the org.apache.catalina.util.LifecycleBase logger to log
 # each component that extends LifecycleBase changing state:

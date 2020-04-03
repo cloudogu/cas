@@ -16,6 +16,8 @@ TOMCAT_LOGGING_TEMPLATE="/opt/apache-tomcat/conf/logging.properties.conf.tpl"
 TOMCAT_LOGGING="/opt/apache-tomcat/conf/logging.properties"
 SCRIPT_LOG_PREFIX="Log level mapping:"
 
+CAS_LOGGING_TEMPLATE="/etc/cas/conf/log4j.xml.tpl"
+CAS_LOGGING="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/log4j.xml"
 # create a mapping because apache uses different log levels than log4j eg. ERROR=>SEVERE
 function mapDoguLogLevel() {
   echo "${SCRIPT_LOG_PREFIX} Mapping dogu specific log level"
@@ -111,4 +113,5 @@ mapDoguLogLevel
 echo "Log level mapping ended successfully..."
 
 echo "Rendering logging configuration..."
+doguctl template ${CAS_LOGGING_TEMPLATE} ${CAS_LOGGING}
 doguctl template ${TOMCAT_LOGGING_TEMPLATE} ${TOMCAT_LOGGING}
