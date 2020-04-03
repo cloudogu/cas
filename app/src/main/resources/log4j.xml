@@ -49,17 +49,9 @@
     -->
     <appender name="CoalescingStatistics" class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
         <param name="TimeSlice" value="60000"/>
-        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="console"/>
         <appender-ref ref="graphExecutionTimes"/>
         <appender-ref ref="graphExecutionTPS"/>
-    </appender>
-
-    <!-- This file appender is used to output aggregated performance statistics -->
-    <appender name="fileAppender" class="org.apache.log4j.FileAppender">
-        <param name="File" value="logs/perfStats.log"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%m%n"/>
-        </layout>
     </appender>
 
     <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
