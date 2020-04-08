@@ -26,6 +26,7 @@ function global_cfg_or_default {
 # If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
 # leads to an zero exit code which enables further error handling.
 loggingExitCode=0
+# shellcheck disable=SC1091
 source ./logging.sh || loggingExitCode=$?
 if [[ ${loggingExitCode} -ne 0 ]]; then
   echo "ERROR: An error occurred during the root log level evaluation.";
