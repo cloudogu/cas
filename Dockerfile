@@ -9,7 +9,7 @@ RUN set -x \
     && mvn package
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:8u212-1
+FROM registry.cloudogu.com/official/java:8u242-1
 
 LABEL NAME="official/cas" \
     VERSION="4.0.7.20-7" \
