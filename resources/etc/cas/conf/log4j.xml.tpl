@@ -28,7 +28,7 @@
     -->
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p [%c] - &lt;%m&gt;%n"/>
+            <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss.SSS} %p [%c] - %m%n"/>
         </layout>
     </appender>
 
@@ -37,7 +37,7 @@
         <param name="MaxFileSize" value="512KB" />
         <param name="MaxBackupIndex" value="3" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
+            <param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss.SSS} %p [%c] - %m%n"/>
         </layout>
     </appender>
 
@@ -49,17 +49,9 @@
     -->
     <appender name="CoalescingStatistics" class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
         <param name="TimeSlice" value="60000"/>
-        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="console"/>
         <appender-ref ref="graphExecutionTimes"/>
         <appender-ref ref="graphExecutionTPS"/>
-    </appender>
-
-    <!-- This file appender is used to output aggregated performance statistics -->
-    <appender name="fileAppender" class="org.apache.log4j.FileAppender">
-        <param name="File" value="logs/perfStats.log"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%m%n"/>
-        </layout>
     </appender>
 
     <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
@@ -83,7 +75,7 @@
       upstream loggers.
     -->
     <logger name="org.perf4j.TimingLogger" additivity="false">
-        <level value="INFO" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
         <appender-ref ref="CoalescingStatistics" />
     </logger>
 
@@ -94,26 +86,28 @@
         apply DEBUG level logging on a an org.springframework.* package level (i.e. org.springframework.dao)
     -->
     <logger name="org.springframework">
-        <level value="WARN" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <logger name="org.springframework.webflow">
-        <level value="WARN" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <logger name="de.triology" additivity="true">
-        <level value="TRACE" />
-        <appender-ref ref="cas" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="INFO" />
-        <appender-ref ref="cas" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
-        <level value="INFO" />
-        <appender-ref ref="cas" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <!--
@@ -121,8 +115,8 @@
         The code [xxx] cannot be found in the language bundle for the locale [en_US]
     -->
     <logger name="org.jasig.cas.web.view.CasReloadableMessageBundle">
-        <level value="ERROR" />
-        <appender-ref ref="cas" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <!--
@@ -131,8 +125,8 @@
         cleartext authentication credentials
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
-        <level value="INFO" />
-        <appender-ref ref="cas" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <appender-ref ref="console" />
     </logger>
 
     <!--
@@ -140,7 +134,9 @@
       logger to System.out.
     -->
     <root>
-        <level value="ERROR" />
+        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
         <appender-ref ref="console" />
     </root>
 </log4j:configuration>
+
+

@@ -30,4 +30,3 @@ tgt.maxTimeToLiveInSeconds= {{ .Config.GetOrDefault "session_tgt/max_time_to_liv
 
 # default value 10h
 tgt.timeToKillInSeconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
-
