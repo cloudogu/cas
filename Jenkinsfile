@@ -1,6 +1,7 @@
 #!groovy
-@Library('github.com/cloudogu/ces-build-lib@a5799c2')
+@Library(['github.com/cloudogu/ces-build-lib@a5799c2', 'github.com/cloudogu/dogu-build-lib@414bdfd5']) _
 import com.cloudogu.ces.cesbuildlib.*
+import com.cloudogu.ces.dogubuildlib.*
 
 node() { // No specific label
 
@@ -24,6 +25,15 @@ node() { // No specific label
         stage('Checkout') {
             checkout scm
             git.clean("")
+        }
+
+        stage('Lint') {
+            lintDockerfile()
+        }
+
+        stage('Shellcheck'){
+            // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
+            shellCheck("./resources/startup.sh ./resources/logging.sh")
         }
 
         dir('app') {
