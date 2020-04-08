@@ -49,11 +49,9 @@ FQDN=$(doguctl config --global fqdn)
 
 echo "Getting ldap settings for template..."
 LDAP_TYPE=$(doguctl config ldap/ds_type)
-LDAP_SERVER=$(doguctl config ldap/server)
 LDAP_HOST=$(doguctl config ldap/host)
 LDAP_PORT=$(doguctl config ldap/port)
 LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
-LDAP_ATTRIBUTE_FULLNAME=$(doguctl config ldap/attribute_fullname)
 LDAP_ATTRIBUTE_MAIL=$(doguctl config ldap/attribute_mail)
 LDAP_ATTRIBUTE_GROUP=$(doguctl config ldap/attribute_group)
 LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none

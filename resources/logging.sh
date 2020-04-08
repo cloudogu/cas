@@ -84,7 +84,7 @@ function validateDoguLogLevel() {
   fi
 
   # Things really got weird: Falling back to default
-  echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${logLevel}. These log levels are supported: ${VALID_LOG_LEVELS[@]}"
+  echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${logLevel}. These log levels are supported: ${VALID_LOG_LEVELS[*]}"
   resetDoguLogLevel "${logLevel}" "${DEFAULT_LOG_LEVEL}"
   return
 }
@@ -92,12 +92,13 @@ function validateDoguLogLevel() {
 function containsValidLogLevel() {
   foundLogLevel="${1}"
 
-  # The added spaces in this test avoid partial matches. F. ex., the invalid value "ERR" could falsely match "ERROR"
-  if [[ " ${VALID_LOG_LEVELS[@]} " =~ " ${foundLogLevel} " ]]; then
-    return 0
-  else
-    return 1
-  fi
+  for value in "${VALID_LOG_VALUES[@]}"; do
+    if [[ "${value}" == "${foundLogLevel}" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
 }
 
 function resetDoguLogLevel() {
