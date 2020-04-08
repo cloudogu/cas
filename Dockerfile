@@ -10,7 +10,10 @@ RUN set -x \
 
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:8u212-1
-LABEL maintainer="michael.behlendorf@cloudogu.com"
+
+LABEL NAME="official/cas" \
+    VERSION="4.0.7.20-7" \
+    maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=8 \
