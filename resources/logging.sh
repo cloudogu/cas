@@ -92,7 +92,7 @@ function validateDoguLogLevel() {
 function containsValidLogLevel() {
   foundLogLevel="${1}"
 
-  for value in "${VALID_LOG_VALUES[@]}"; do
+  for value in "${VALID_LOG_LEVELS[@]}"; do
     if [[ "${value}" == "${foundLogLevel}" ]]; then
       return 0
     fi
