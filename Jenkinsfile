@@ -1,9 +1,17 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@a5799c2', 'github.com/cloudogu/dogu-build-lib@414bdfd5']) _
+@Library(['github.com/cloudogu/ces-build-lib@1.44.2', 'github.com/cloudogu/dogu-build-lib@v1.1.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
 node() { // No specific label
+    Git git = new Git(this, "cesmarvin")
+    git.committerName = 'cesmarvin'
+    git.committerEmail = 'cesmarvin@cloudogu.com'
+    GitFlow gitflow = new GitFlow(this, git)
+    GitHub github = new GitHub(this, git)
+    Changelog changelog = new Changelog(this)
+    EcoSystem ecoSystem = new EcoSystem(this, "gcloud-ces-operations-internal-packer", "jenkins-gcloud-ces-operations-internal")
+
     timestamps {
         properties([
                 // Keep only the last 10 build to preserve space
@@ -20,7 +28,6 @@ node() { // No specific label
             def javaHome = tool 'JDK8'
 
             Maven mvn = new MavenLocal(this, mvnHome, javaHome)
-            Git git = new Git(this)
 
             stage('Checkout') {
                 checkout scm
@@ -64,6 +71,54 @@ node() { // No specific label
                     }
                 }
             }
+
+            try {
+
+                stage('Provision') {
+                    ecoSystem.provision("/dogu");
+                }
+
+                stage('Setup') {
+                    ecoSystem.loginBackend('cesmarvin-setup')
+                    ecoSystem.setup()
+                }
+
+                stage('Wait for dependencies') {
+                    timeout(15) {
+                        ecoSystem.waitForDogu("nginx")
+                    }
+                }
+
+                stage('Build') {
+                    ecoSystem.build("/dogu")
+                }
+
+                stage('Verify') {
+                    ecoSystem.verify("/dogu")
+                }
+
+                if (gitflow.isReleaseBranch()) {
+                    String releaseVersion = git.getSimpleBranchName();
+
+                    stage('Finish Release') {
+                        gitflow.finishRelease(releaseVersion)
+                    }
+
+                    stage('Push Dogu to registry') {
+                        ecoSystem.push("/dogu")
+                    }
+
+                    stage ('Add Github-Release'){
+                        github.createReleaseWithChangelog(releaseVersion, changelog)
+                    }
+                }
+            } finally {
+                stage('Clean') {
+                    ecoSystem.destroy()
+                }
+            }
+
+
         }
 
         // Archive Unit and integration test results, if any
