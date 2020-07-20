@@ -8,7 +8,6 @@ DEFAULT_LOGGING_KEY="logging/root"
 LOG_LEVEL_ERROR="ERROR"; LOG_LEVEL_WARN="WARN"; LOG_LEVEL_INFO="INFO"; LOG_LEVEL_DEBUG="DEBUG"
 
 # list of accepted log levels
-VALID_LOG_LEVELS=( "${LOG_LEVEL_ERROR}" "${LOG_LEVEL_WARN}" "${LOG_LEVEL_INFO}" "${LOG_LEVEL_DEBUG}" )
 DEFAULT_LOG_LEVEL=${LOG_LEVEL_WARN}
 
 # logging configuration used to configure the apache-tomcat logging mechanism
