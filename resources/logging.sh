@@ -18,6 +18,7 @@ SCRIPT_LOG_PREFIX="Log level mapping:"
 
 CAS_LOGGING_TEMPLATE="/etc/cas/conf/log4j.xml.tpl"
 CAS_LOGGING="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/log4j.xml"
+
 # create a mapping because apache uses different log levels than log4j eg. ERROR=>SEVERE
 function mapDoguLogLevel() {
   echo "${SCRIPT_LOG_PREFIX} Mapping dogu specific log level"
@@ -44,68 +45,16 @@ function mapDoguLogLevel() {
 function validateDoguLogLevel() {
   echo "${SCRIPT_LOG_PREFIX} Validate root log level"
 
-  logLevelExitCode=0
-  logLevel=$(doguctl config "${DEFAULT_LOGGING_KEY}") || logLevelExitCode=$?
+  validateExitCode=0
+  doguctl validate "${DEFAULT_LOGGING_KEY}" || validateExitCode=$?
 
-  if [[ ${logLevelExitCode} -ne 0 ]]; then
-    if [[ "${logLevel}" =~ "100: Key not found" ]]; then
-      echo "${SCRIPT_LOG_PREFIX} Did not find root log level. Log level will default to ${DEFAULT_LOG_LEVEL}"
-      return
-    else
-      echo "ERROR: ${SCRIPT_LOG_PREFIX} Error while accessing registry key ${DEFAULT_LOGGING_KEY}. Command returned with ${logLevelExitCode}: ${logLevel}"
-      doguctl state "ErrorRootLogLevelKey"
-      sleep 3000
-      exit 2
-    fi
+  if [[ ${validateExitCode} -ne 0 ]]; then
+      echo "${SCRIPT_LOG_PREFIX} WARNING: The loglevel configured in ${DEFAULT_LOGGING_KEY} is invalid."
+      echo "${SCRIPT_LOG_PREFIX} WARNING: Removing misconfigured value."
+      doguctl config --rm "${DEFAULT_LOGGING_KEY}"
   fi
 
-  # fast return
-  if containsValidLogLevel "${logLevel}" ; then
-    return
-  fi
-
-  # Start weird log lovel handling
-  # check empty string because "config --default" accepts a set key with an empty value as a valid value.
-  if [[ "${logLevel}" == "" ]]; then
-    echo "${SCRIPT_LOG_PREFIX} Found empty root log level. Setting log level default to ${DEFAULT_LOG_LEVEL}"
-    # note the quotations to force bash to use it as the first argument.
-    resetDoguLogLevel "${logLevel}" "${DEFAULT_LOG_LEVEL}"
-    return
-  fi
-
-  uppercaseLogLevel=${logLevel^^}
-  if [[ "${logLevel}" != "${uppercaseLogLevel}" ]]; then
-    echo "${SCRIPT_LOG_PREFIX} Log level contains lowercase characters. Converting '${logLevel}' to '${uppercaseLogLevel}'..."
-    if containsValidLogLevel "${uppercaseLogLevel}" ; then
-      echo "${SCRIPT_LOG_PREFIX} Log level seems valid..."
-      resetDoguLogLevel "${logLevel}" "${uppercaseLogLevel}"
-      return
-    fi
-  fi
-
-  # Things really got weird: Falling back to default
-  echo "${SCRIPT_LOG_PREFIX} Found unsupported log level ${logLevel}. These log levels are supported: ${VALID_LOG_LEVELS[*]}"
-  resetDoguLogLevel "${logLevel}" "${DEFAULT_LOG_LEVEL}"
   return
-}
-
-function containsValidLogLevel() {
-  foundLogLevel="${1}"
-
-  for value in "${VALID_LOG_LEVELS[@]}"; do
-    if [[ "${value}" == "${foundLogLevel}" ]]; then
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-function resetDoguLogLevel() {
-  oldLogLevel="${1}"
-  targetLogLevel="${2}"
-  echo "${SCRIPT_LOG_PREFIX} Resetting dogu log level from '${oldLogLevel}' to '${targetLogLevel}'..."
-  doguctl config "${DEFAULT_LOGGING_KEY}" "${targetLogLevel}"
 }
 
 echo "Starting log level mapping..."
