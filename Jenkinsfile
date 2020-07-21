@@ -25,7 +25,7 @@ node() { // No specific label
         catchError {
 
             def mvnHome = tool 'M3'
-            def javaHome = tool 'JDK8'
+            def javaHome = tool 'OpenJDK-8'
 
             Maven mvn = new MavenLocal(this, mvnHome, javaHome)
 
