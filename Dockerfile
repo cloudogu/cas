@@ -1,30 +1,18 @@
-FROM maven:3.6.0-jdk-8 as builder
-COPY /app/pom.xml /cas/pom.xml
-RUN set -x \
-     && cd /cas \
-     && mvn dependency:resolve
-COPY /app/ /cas
-RUN set -x \
-    && cd /cas \
-    && mvn package
-
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:8u242-1
+FROM registry.cloudogu.com/official/java:11.0.5-2
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-8" \
+    VERSION="6.2.0.1-1" \
     maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=8 \
-	TOMCAT_VERSION=8.0.53 \
+	TOMCAT_VERSION=8.5.57 \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
 	SERVICE_TAGS=webapp \
-	TOMCAT_TARGZ_SHA256=19a047c4425c4ea796215d397b7caeda958c764981624ea5c4f763d98d2db7fa
-
-COPY --from=builder /cas/target/cas.war /cas.war
+	TOMCAT_TARGZ_SHA512=720de36bb3e40a4c67bdf0137b12ae0fd733aef772d81a4b8dab00f29924ddd17ecb2a7217b9551fc0ca51bd81d1da13ad63b6694c445e5c0e42dfa7f279ede1
 
 # run installation
 RUN set -x \
@@ -34,13 +22,18 @@ RUN set -x \
  # install tomcat
  && mkdir -p /opt \
  && wget --progress=bar:force:noscroll "http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
- && echo "${TOMCAT_TARGZ_SHA256} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha256sum -c - \
+ && echo "${TOMCAT_TARGZ_SHA512} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha512sum -c - \
  && tar -C /opt -xzvf "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
  && rm -f "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
  && mv /opt/apache-tomcat-* ${CATALINA_BASE} \
  && rm -rf ${CATALINA_BASE}/webapps/* \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
+ && mkdir -p /etc/cas/config \
+ && mkdir -p /etc/cas/saml
+
+COPY app6/build/libs/cas.war /cas.war
+RUN set -x \
  && mv /cas.war ${CATALINA_BASE}/webapps/cas/cas.war \
  && cd ${CATALINA_BASE}/webapps/cas/ \
  && unzip cas.war \

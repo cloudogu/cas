@@ -1,0 +1,10 @@
+{
+    "admin": {
+        "username":["admin"],
+        "cn":["Admin"],
+        "mail":["admin@admin.local"],
+        "givenName":["Adam"],
+        "surname":["Strator"],
+        "groups":["adminGr"]
+    }
+}
