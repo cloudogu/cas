@@ -6,7 +6,9 @@
   "Url": "http://jasig.github.io/cas",
   "Category": "Base",
   "Tags": [
-    "authentication", "sso", "cas"
+    "authentication",
+    "sso",
+    "cas"
   ],
   "Logo": "https://cloudogu.com/images/dogus/cas.png",
   "Image": "registry.cloudogu.com/official/cas",
@@ -16,60 +18,85 @@
   "OptionalDependencies": [
     "ldap"
   ],
-  "Configuration": [{
-    "Name": "limit/max_number",
-    "Description": "Max number of login retries (0 means disabled)",
-    "Optional": true
-  }, {
-    "Name": "limit/failure_store_time",
-    "Description": "Max time to store failed logins (in seconds); has to be set > 0 when limit/max_number is > 0",
-    "Optional": true
-  }, {
-    "Name": "limit/lock_time",
-    "Description": "Time to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
-    "Optional": true
-  },{
-    "Name": "forgot_password_text",
-    "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
-    "Optional": true
-  },{
-    "Name": "legal_urls/terms_of_service",
-    "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
-    "Optional": true
-  },{
-    "Name": "legal_urls/imprint",
-    "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
-    "Optional": true
-  },{
-    "Name": "legal_urls/privacy_policy",
-    "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
-    "Optional": true
-  },{
-    "Name": "session_tgt/max_time_to_live_in_seconds",
-    "Description": "Maximum session timeout - TGT will expire after defined timespan regardless the usage",
-    "Optional": true
-  },
-  {
-    "Name": "session_tgt/time_to_kill_in_seconds",
-    "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
-    "Optional": true
-  },
-  {
-    "Name": "logging/root",
-    "Description": "Configure the logging behaviour - Supported log levels are [ERROR, WARN, INFO, DEBUG] the default value is WARN",
-    "Optional": true
-  }],
-  "Volumes": [{
-    "Name": "data",
-    "Path": "/var/lib/cas",
-    "Owner": "1000",
-    "Group": "1000",
-    "NeedsBackup": true
-  }],
-  "ServiceAccounts": [{
-    "Type": "ldap",
-    "Params": ["ro"]
-  }],
+  "Configuration": [
+    {
+      "Name": "limit/max_number",
+      "Description": "Max number of login retries (0 means disabled)",
+      "Optional": true
+    },
+    {
+      "Name": "limit/failure_store_time",
+      "Description": "Max time to store failed logins (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Optional": true
+    },
+    {
+      "Name": "limit/lock_time",
+      "Description": "Time to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Optional": true
+    },
+    {
+      "Name": "forgot_password_text",
+      "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
+      "Optional": true
+    },
+    {
+      "Name": "legal_urls/terms_of_service",
+      "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Optional": true
+    },
+    {
+      "Name": "legal_urls/imprint",
+      "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Optional": true
+    },
+    {
+      "Name": "legal_urls/privacy_policy",
+      "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Optional": true
+    },
+    {
+      "Name": "session_tgt/max_time_to_live_in_seconds",
+      "Description": "Maximum session timeout - TGT will expire after defined timespan regardless the usage",
+      "Optional": true
+    },
+    {
+      "Name": "session_tgt/time_to_kill_in_seconds",
+      "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
+      "Optional": true
+    },
+    {
+      "Name": "logging/root",
+      "Description": "Set the root log level to one of ERROR, WARN, INFO, DEBUG.",
+      "Optional": true,
+      "Default": "WARN",
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "WARN",
+          "DEBUG",
+          "INFO",
+          "ERROR"
+        ]
+      }
+    }
+  ],
+  "Volumes": [
+    {
+      "Name": "data",
+      "Path": "/var/lib/cas",
+      "Owner": "1000",
+      "Group": "1000",
+      "NeedsBackup": true
+    }
+  ],
+  "ServiceAccounts": [
+    {
+      "Type": "ldap",
+      "Params": [
+        "ro"
+      ]
+    }
+  ],
   "HealthChecks": [
     {
       "Type": "tcp",
