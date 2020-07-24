@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [v4.0.7.20-9](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-9) - 2020-07-24
+
+### Changed
+- Use doguctl validation for log level
+
+### Added
+- Add modular makefiles
+- Add automated release flow
+
 ## [v4.0.7.20-8](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-8) - 2020-04-08
 
 ### Added 

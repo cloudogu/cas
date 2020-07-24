@@ -1,0 +1,56 @@
+file:
+  /startup.sh:
+    exists: true
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+  /logging.sh:
+    exists: true
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+  /opt/apache-tomcat/bin:
+    exists: true
+    owner: root
+    group: root
+    filetype: directory
+  /opt/apache-tomcat/bin/setenv.sh:
+    exists: true
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+  /opt/apache-tomcat/conf:
+    exists: true
+    owner: root
+    group: root
+    filetype: directory
+  /opt/apache-tomcat/conf/server.xml:
+    exists: true
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+  /opt/apache-tomcat/conf/logging.properties:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+user:
+  cas:
+    exists: true
+    uid: 1000
+    gid: 1000
+    groups:
+    - cas
+    home: /var/lib/cas
+    shell: /bin/bash
+group:
+  cas:
+    exists: true
+    gid: 1000
+port:
+  tcp:8080:
+    listening: true
