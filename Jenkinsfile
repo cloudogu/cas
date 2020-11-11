@@ -51,22 +51,10 @@ node() { // No specific label
                     mvn 'test'
                 }
 
-//                stage('SonarQube') {
-//                    withSonarQubeEnv {
-//                        def mvnSonarParameters = "-Dsonar.host.url=${env.SONAR_HOST_URL} " +
-//                                "-Dsonar.exclusions=target/**,src/main/webapp/**/* " +
-//                                "-Dsonar.projectKey=cas:${env.BRANCH_NAME} -Dsonar.projectName=cas:${env.BRANCH_NAME} " +
-//                                "-Dsonar.github.repository=cloudogu/cas " +
-//                                "-Dsonar.github.oauth=${env.SONAR_AUTH_TOKEN}"
-//                        mvn "${env.SONAR_MAVEN_GOAL} ${mvnSonarParameters}"
-//                    }
-//                    timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
-//                        def qGate = waitForQualityGate()
-//                        if (qGate.status != 'OK') {
-//                            unstable("Pipeline unstable due to SonarQube quality gate failure")
-//                        }
-//                    }
-//                }
+                stage('SonarQube') {
+                    def sonarQube = new SonarQube(this, [sonarQubeEnv: 'ces-sonar'])
+                    sonarQube.analyzeWith(mvn)
+                }
             }
 
             try {
