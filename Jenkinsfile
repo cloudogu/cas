@@ -50,13 +50,13 @@ node() { // No specific label
                 stage('Unit Test') {
                     mvn 'test'
                 }
-
-                stage('SonarQube') {
-                    def sonarQube = new SonarQube(this, [sonarQubeEnv: 'ces-sonar'])
-                    sonarQube.analyzeWith(mvn)
-                }
             }
 
+            stage('SonarQube') {
+                def sonarQube = new SonarQube(this, [sonarQubeEnv: 'ces-sonar'])
+                mvn.additionalArgs += ' -f ./app '
+                sonarQube.analyzeWith(mvn)
+            }
 
             try {
 
