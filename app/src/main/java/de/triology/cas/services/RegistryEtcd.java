@@ -3,6 +3,7 @@ package de.triology.cas.services;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
+import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.commons.lang.StringUtils;
@@ -65,6 +66,31 @@ class RegistryEtcd implements Registry {
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+            log.warn("Failed to getEtcdValueForKey: ", e);
+            throw new RegistryException(e);
+        }
+    }
+
+    /**
+     * Retrieves the value of a given key from the etcd. If the key does not exists then an empty string is returned.
+     * @param key Identifier for the wanted value
+     * @return the value for the given key if present, otherwise an empty string.
+     */
+    public String getEtcdValueForKeyIfPresent(String key) {
+        log.debug("Get " + key + " from registry");
+        try {
+            return etcd.get(key).send().get().getNode().getValue();
+        } catch (EtcdException e) {
+            if(e.isErrorCode(EtcdErrorCode.KeyNotFound)){
+                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"" + key + "\" not found");
+                //Valid case if key is not found return an empty string
+                return "";
+            } else {
+                log.warn("Failed to getEtcdValueForKey: ", e);
+                throw new RegistryException(e);
+            }
+        }
+         catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.warn("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
@@ -165,7 +191,7 @@ class RegistryEtcd implements Registry {
     protected JSONObject getCurrentDoguNode(String doguName) throws ParseException {
         JSONObject json = null;
         // get used dogu version
-        String doguVersion = getEtcdValueForKey(DOGU_DIR + doguName + "/current");
+        String doguVersion = getEtcdValueForKeyIfPresent(DOGU_DIR + doguName + "/current");
         // empty if dogu isnt used
         if (!doguVersion.isEmpty()) {
             String doguDescription = getEtcdValueForKey(DOGU_DIR + doguName + "/" + doguVersion);

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+
+### Fixed
+- CAS bloated the log file after a dogu was uninstalled or marked as `absent` during a blueprint upgrade. (#54)
+
 ## [v4.0.7.20-9](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-9) - 2020-07-24
 
 ### Changed
