@@ -20,7 +20,7 @@
     -->
     <scm>
         <connection>scm:git:https://github.com/cloudogu/cas</connection>
-        <developerConnection>scm:git@github.com:cloudogu/cas.git</developerConnection>
+        <developerConnection>scm:git:git@github.com/cloudogu/cas.git</developerConnection>
         <url>https://github.com/cloudogu/cas</url>
         <tag>HEAD</tag>
     </scm>
