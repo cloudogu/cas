@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add locales for de_DE and en_US
+
 ### Fixed
 
 - change server encoding so special characters will be decoded correctly (#56)
