@@ -33,6 +33,24 @@
     </param-value>
   </context-param>
 
+  <!-- enforce UTF-8 encoding see: https://stackoverflow.com/a/5928162 -->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <filter>
     <filter-name>CAS Client Info Logging Filter</filter-name>
     <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
