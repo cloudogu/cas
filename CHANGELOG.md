@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-11] - 2020-11-19
+
+### Added
+
+- add locales for de_DE and en_US
+
+### Fixed
+
+- change server encoding so special characters will be decoded correctly (#56)
+
 ## [v4.0.7.20-10] - 2020-11-12
 
 ### Fixed
