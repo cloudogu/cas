@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-12] - 2020-12-14
+
 ### Added
 
 - Ability to set memory limit via `cesapp edit-config`
