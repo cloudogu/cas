@@ -16,3 +16,10 @@ cas.authn.attributeRepository.stub.attributes.groups=adminGr
 #cas.authn.attribute-repository.json[0].order=0
 #cas.authn.attribute-repository.json[0].location=file://etc/cas/attribute-repository.json
 #cas.authn.attribute-repository.json[0].id=2
+
+## for testing
+
+cas.ticket.st.numberOfUses=100
+cas.ticket.st.timeToKillInSeconds=10000
+cas.ticket.pt.numberOfUses=100
+cas.ticket.pt.timeToKillInSeconds=10000

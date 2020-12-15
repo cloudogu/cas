@@ -74,6 +74,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-saml:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
 }
 
 tasks.findByName("jibDockerBuild")
