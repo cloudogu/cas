@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- bug where the `forgot_password_text`-key was never applied for some browsers(#60)
+
 ## [v4.0.7.20-12] - 2020-12-14
 
 ### Added
