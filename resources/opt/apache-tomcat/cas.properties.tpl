@@ -11,6 +11,7 @@ cas.authn.attributeRepository.stub.attributes.mail=admin@properties.local
 cas.authn.attributeRepository.stub.attributes.cn=Admin
 cas.authn.attributeRepository.stub.attributes.givenName=Adam
 cas.authn.attributeRepository.stub.attributes.surname=Strator
+cas.authn.attributeRepository.stub.attributes.displayName=adminDN
 cas.authn.attributeRepository.stub.attributes.groups=adminGr
 
 #cas.authn.attribute-repository.json[0].order=0
