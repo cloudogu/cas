@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-13] - 2020-12-17
+
+### Fixed
+- bug where the `forgot_password_text`-key was never applied for some browsers (#60)
+
+### Changed
+- update java base image to 8u252-1
+
 ## [v4.0.7.20-12] - 2020-12-14
 
 ### Added

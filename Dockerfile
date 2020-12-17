@@ -9,10 +9,10 @@ RUN set -x \
     && mvn package
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:8u242-2
+FROM registry.cloudogu.com/official/java:8u252-1
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-12" \
+    VERSION="4.0.7.20-13" \
     maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
