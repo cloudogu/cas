@@ -67,6 +67,8 @@
     </appender>
 
     <!-- Loggers -->
+    {{$loglevel := .Config.GetOrDefault "logging/root" "WARN"}}
+    {{if eq $loglevel "INFO" "DEBUG"}}
     <!--
       The Perf4J logger. Note that org.perf4j.TimingLogger is the value of the
       org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that
@@ -75,10 +77,10 @@
       upstream loggers.
     -->
     <logger name="org.perf4j.TimingLogger" additivity="false">
-        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <level value="{{ $loglevel }}" />
         <appender-ref ref="CoalescingStatistics" />
     </logger>
-
+    {{end}}
     <!--
         WARNING: Setting the org.springframework logger to DEBUG displays debug information about
         the request parameter values being bound to the command objects.  This could expose your
