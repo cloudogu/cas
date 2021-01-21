@@ -52,6 +52,14 @@
             <version>${cas.version}</version>
         </dependency>
 
+        <!-- oauth support -->
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-oauth</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+
         <!-- rest support -->
 
         <dependency>
