@@ -92,7 +92,7 @@
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
         <!-- oauth support -->
-        <prop key="/oauth2.0/*">oauth20WrapperController</prop>
+        <!-- <prop key="/oauth2.0/*">oauth20WrapperController</prop> -->
         <!-- saml support -->
         <prop key="/samlValidate">samlValidateController</prop>
       </util:properties>
@@ -186,7 +186,7 @@
     </property>
   </bean>
 
-  <!-- oauth controller -->
+  <!-- oauth controller
 
   <bean id="oauth20WrapperController"
         class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
@@ -198,14 +198,13 @@
   <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
     <property name="registeredServices">
       <list>
-        <!-- A dedicated component to recognize OAuth Callback Authorization requests -->
         <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService">
           <property name="id" value="0" />
           <property name="name" value="HTTP" />
           <property name="description" value="oauth wrapper callback url" />
-          <!-- By default, only support regex patterns if/when needed -->
     <property name="serviceId" value="${server.prefix}/oauth2.0/callbackAuthorize" />
   </bean>
+ <! -->
 
   <!--  CAS 2 Protocol service/proxy validation -->
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
