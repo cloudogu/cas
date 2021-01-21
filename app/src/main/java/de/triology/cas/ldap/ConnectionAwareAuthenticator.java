@@ -5,22 +5,11 @@
  */
 package de.triology.cas.ldap;
 
-import javax.validation.constraints.NotNull;
 import org.jasig.cas.util.LdapUtils;
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.ReturnAttributes;
-import org.ldaptive.auth.AuthenticationCriteria;
-import org.ldaptive.auth.AuthenticationHandler;
-import org.ldaptive.auth.AuthenticationHandlerResponse;
-import org.ldaptive.auth.AuthenticationRequest;
-import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.DnResolver;
-import org.ldaptive.auth.EntryResolver;
-import org.ldaptive.auth.NoOpEntryResolver;
-import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.*;
+import org.ldaptive.auth.*;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Authenticator which is able to resolve attributes with the user connection or with the system connection.

@@ -131,6 +131,18 @@
       ]
     }
   ],
+  "ExposedCommands": [
+    {
+      "Name": "service-account-create",
+      "Description": "Creates a new service account",
+      "Command": "/create-sa.sh"
+    },
+    {
+      "Name": "service-account-remove",
+      "Description": "Removes an existing service account",
+      "Command": "/remove-sa.sh"
+    }
+  ],
   "HealthChecks": [
     {
       "Type": "tcp",

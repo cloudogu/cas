@@ -1,10 +1,12 @@
 package de.triology.cas.services;
 
 
+import org.jasig.cas.services.RegexRegisteredService;
+
 import java.util.List;
 
 /**
- * Special stage in which a {@link CesServiceManager} operates during development.
+ * Special stage in which a {@link CesServicesManager} operates during development.
  *
  * <p><b>Never use in production</b>, as it accepts <b>all</b> requests from https imaps.</p>
  */
@@ -29,6 +31,10 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
      * The dev service accepts all services
      */
     private void addDevService() {
-        addNewService("10000001", "^(https?|imaps?)://.*");
+        RegexRegisteredService devService = new RegexRegisteredService();
+        devService.setId(createId());
+        devService.setServiceId("^(https?|imaps?)://.*");
+        devService.setName("10000001");
+        addNewService(devService);
     }
 }

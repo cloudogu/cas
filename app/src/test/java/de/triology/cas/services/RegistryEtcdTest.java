@@ -6,25 +6,32 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link RegistryEtcd}.
  */
 public class RegistryEtcdTest {
+
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(
@@ -42,8 +49,11 @@ public class RegistryEtcdTest {
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        assertThat(registry.getInstalledDogusWhichAreUsingCAS(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
-        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS().size());
+        CesDoguServiceFactory factory = new CesDoguServiceFactory();
+        List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
+                .stream().map(CesServiceData::getName).collect(Collectors.toList());
+        assertThat(installedDogus, containsInAnyOrder("nexus", "usermgt", "cockpit"));
+        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS(factory).size());
     }
 
     private RegistryEtcd createRegistry() {
@@ -153,4 +163,19 @@ public class RegistryEtcdTest {
         registry.getCasLogoutUri("testDogu");
     }
 
+    @Test
+    public void testReadPrivateKey() {
+        try {
+            Process process = new ProcessBuilder("cat", "/home/jsprey/Documents/GIT/ecosystem/containers/cas/app/docker-compose.yml").start();
+
+            String output = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+            String err = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
+
+            //log.error("Output:", new Exception(output.toString()));
+            //return output.toString();
+        } catch (Exception e) {
+            //log.error("Failed to read private key: ", e);
+            //log.error("Failed to retrieve client secret for {} : {}", clientID, e);
+        }
+    }
 }

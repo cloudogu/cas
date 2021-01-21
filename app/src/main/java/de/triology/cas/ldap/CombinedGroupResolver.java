@@ -6,14 +6,15 @@
 
 package de.triology.cas.ldap;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.jasig.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Combines the result of multiple {@link GroupResolver}.

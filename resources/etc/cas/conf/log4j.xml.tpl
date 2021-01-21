@@ -117,7 +117,7 @@
         The code [xxx] cannot be found in the language bundle for the locale [en_US]
     -->
     <logger name="org.jasig.cas.web.view.CasReloadableMessageBundle">
-        <level value='{{ .Config.GetOrDefault "logging/root" "WARN"}}' />
+        <level value='ERROR' />
         <appender-ref ref="console" />
     </logger>
 

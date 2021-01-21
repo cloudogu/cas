@@ -251,7 +251,14 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/samlValidate</url-pattern>
   </servlet-mapping>
-  
+
+  <!-- oauth support -->
+
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/oauth2.0/*</url-pattern>
+  </servlet-mapping>
+
   <!-- rest support -->
  
   <servlet-mapping>

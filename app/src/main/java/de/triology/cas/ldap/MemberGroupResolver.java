@@ -5,31 +5,19 @@
  */
 package de.triology.cas.ldap;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.LdapUtils;
+import org.ldaptive.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.StringUtils;
-
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.util.LdapUtils;
-
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SearchScope;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.

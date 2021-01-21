@@ -6,9 +6,10 @@
 
 package de.triology.cas.ldap;
 
-import java.util.Set;
 import org.jasig.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
+
+import java.util.Set;
 
 /**
  * Resolves groups for an principal.

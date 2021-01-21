@@ -183,3 +183,16 @@ login.limit.maxNumber=%LOGIN_LIMIT_MAX_NUMBER%
 login.limit.failureStoreTime=%LOGIN_LIMIT_FAILURE_STORE_TIME%
 login.limit.lockTime=%LOGIN_LIMIT_LOCK_TIME%
 login.limit.maxAccounts=10000
+
+#========================================
+# OAuth Settings
+#========================================
+# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.code.timeToKillInSeconds=30
+# cas.authn.oauth.code.numberOfUses=1
+# cas.authn.oauth.accessToken.releaseProtocolAttributes=true
+# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
+# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+# cas.authn.oauth.userProfileViewType=NESTED|FLAT
+# cas.authn.oauth.throttler=neverThrottle|authenticationThrottle
