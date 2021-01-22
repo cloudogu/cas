@@ -80,6 +80,21 @@
       }
     },
     {
+      "Name": "logging/translation_messages",
+      "Description": "Set the log level of translation concerned logs to one of ERROR, WARN, INFO, DEBUG.",
+      "Optional": true,
+      "Default": "ERROR",
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "WARN",
+          "DEBUG",
+          "INFO",
+          "ERROR"
+        ]
+      }
+    },
+    {
       "Name": "container_config/memory_limit",
       "Description": "Limits the container's memory usage. Use a positive integer value followed by one of these units [b,k,m,g] (byte, kibibyte, mebibyte, gibibyte).",
       "Optional": true,
