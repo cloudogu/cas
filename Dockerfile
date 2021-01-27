@@ -2,7 +2,7 @@ FROM maven:3.6.0-jdk-8 as builder
 COPY /app/pom.xml /cas/pom.xml
 RUN set -x \
      && cd /cas \
-     && mvn dependency:resolve -Dmaven.artifact.threads=30
+     && mvn dependency:resolve
 COPY /app/ /cas
 RUN set -x \
     && cd /cas \

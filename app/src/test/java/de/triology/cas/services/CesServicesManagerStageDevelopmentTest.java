@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CesServicesManagerStageDevelopmentTest {
     /**
-     * ID of the service used in development mode.allServices
+     * ID of the service used in development mode.
      */
     private static final long DEVELOPMENT_SERVICE_ID = 1;
     /**

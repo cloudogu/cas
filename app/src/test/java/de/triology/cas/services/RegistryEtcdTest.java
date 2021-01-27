@@ -14,10 +14,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,21 +157,5 @@ public class RegistryEtcdTest {
         when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
 
         registry.getCasLogoutUri("testDogu");
-    }
-
-    @Test
-    public void testReadPrivateKey() {
-        try {
-            Process process = new ProcessBuilder("cat", "/home/jsprey/Documents/GIT/ecosystem/containers/cas/app/docker-compose.yml").start();
-
-            String output = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
-            String err = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-
-            //log.error("Output:", new Exception(output.toString()));
-            //return output.toString();
-        } catch (Exception e) {
-            //log.error("Failed to read private key: ", e);
-            //log.error("Failed to retrieve client secret for {} : {}", clientID, e);
-        }
     }
 }

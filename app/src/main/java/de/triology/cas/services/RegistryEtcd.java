@@ -225,12 +225,6 @@ class RegistryEtcd implements Registry {
         t.start();
     }
 
-
-    private String normalizeServiceName(String name) {
-        String[] nameArray = StringUtils.split(name, "/");
-        return nameArray[nameArray.length - 1];
-    }
-
     private boolean hasCasDependency(JSONObject json) {
         return json != null && json.get("Dependencies") != null && ((JSONArray) json.get("Dependencies")).contains("cas");
     }
@@ -248,24 +242,6 @@ class RegistryEtcd implements Registry {
     }
 
     /**
-     * sanitize the clientId.
-     * <p>
-     * The clientId should only consists out of letters and numbers, no whitespace or other special characters.
-     * We sanitize the clientId because we call doguctl in getCurrentOAuthClientSecret() with the clientId as an argument.
-     *
-     * @param clientID
-     * @return the clientId if everything is ok, otherwise an empty string
-     */
-    private String sanitizeClientID(String clientID) throws IllegalArgumentException {
-        if (!clientID.matches("^[a-zA-Z0-9_]*$")) {
-            // clientId is "unclean"
-            return "";
-        }
-        return clientID;
-    }
-
-
-    /**
      * Retrieves the client secret for a given clientId and encrypts the secret accordingly.
      *
      * @param clientID Identifier for the OAuth client
@@ -273,62 +249,6 @@ class RegistryEtcd implements Registry {
      * <p>
      */
     protected String getCurrentOAuthClientSecret(String clientID) {
-
-            /*
-            TODO
-        // we sanitize the client id to close potential code injection attacks
-        String sanitizedClientId = sanitizeClientID(clientID);
-        if (sanitizedClientId == "") {
-            log.error("client Id could not be sanatized, aborting getCurrentOauthClientSecret");
-            return "";
-        }
-
-        try {
-            //Process process = new ProcessBuilder("doguctl", "config", "-e", CAS_SERVICE_ACCOUNT_DIR_IN_DOGU + sanitizedClientId).start();
-            log.info("OAuthO Start:" + "Start process for oauth: " + sanitizedClientId);
-            ProcessBuilder builder = new ProcessBuilder("/usr/bin/doguctl", "config", "-e", CAS_SERVICE_ACCOUNT_DIR_IN_DOGU + sanitizedClientId);
-            //ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", "doguctl config -e " + CAS_SERVICE_ACCOUNT_DIR_IN_DOGU + sanitizedClientId);
-
-            builder.redirectInput(ProcessBuilder.Redirect.PIPE); // #
-            builder.redirectErrorStream(true);
-            builder.directory(new File("/")); // #
-            Process process = builder.start();
-
-            process.getInputStream().close(); // #
-            process.waitFor();
-
-            return "";
-
-            final StringWriter writer = new StringWriter();
-
-            new Thread(() -> {
-                try {
-                    IOUtils.copy(process.getInputStream(), writer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-
-            final int exitValue = process.waitFor();
-            final String output = writer.toString();
-
-
-            log.info("OAuthO Output: " + output);
-
-            log.info("OAuthO Exit Code:" + exitValue);
-
-             return output;
-
-             TODO ProcessBuilder	inheritIO() Sets the source and destination for subprocess standard I/O to be the same as those of the current Java process.
-            */
-
-
-        try {
-            return getEtcdValueForKeyIfPresent(CAS_SERVICE_ACCOUNT_DIR + "/" + clientID);
-        } catch (Exception e) {
-            log.error("Failed to read private key: ", e);
-            log.error("Failed to retrieve client secret for {} : {}", clientID, e);
-        }
-        return "";
+        return getEtcdValueForKeyIfPresent(CAS_SERVICE_ACCOUNT_DIR + "/" + clientID);
     }
 }
