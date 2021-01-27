@@ -73,6 +73,6 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         }
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
-        return createOAuthClientService(id, serviceData.getName(), serviceId, clientID, clientSecret);
+        return createOAuthClientService(id, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
     }
 }
