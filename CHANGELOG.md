@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-15] - 2021-01-22
+### Changed
+- Add own log level configuration for translation logs; #64
+- Set default log level for translation related logs to ERROR; #64
+
 ## [v4.0.7.20-14] - 2021-01-11
 ### Fixed
 - Activate Perf4J logger only if log level is INFO or DEBUG; #62

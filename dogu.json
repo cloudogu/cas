@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-14",
+  "Version": "4.0.7.20-15",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -69,6 +69,21 @@
       "Description": "Set the root log level to one of ERROR, WARN, INFO, DEBUG.",
       "Optional": true,
       "Default": "WARN",
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "WARN",
+          "DEBUG",
+          "INFO",
+          "ERROR"
+        ]
+      }
+    },
+    {
+      "Name": "logging/translation_messages",
+      "Description": "Set the log level of translation concerned logs to one of ERROR, WARN, INFO, DEBUG.",
+      "Optional": true,
+      "Default": "ERROR",
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
