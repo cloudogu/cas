@@ -1,6 +1,7 @@
 # Entwicklungen am CAS
-Der CAS (Central Authentification Service) ist eine Java Applikation die im Cloudogu Ecosystem die Rolle einenes SSO einnimmt.
-Der CAS implementiert einen Client für die verschiedenen CAS Bibliotheken von jasig . Die derzeit benutzte Java JDK die ist 1.8 verwendet (Nachzulesen in [pom.xml](../app/pom.xml)).
+Der CAS (Central Authentification Service) ist eine Java Applikation die im Cloudogu Ecosystem die Rolle eines SSO einnimmt.
+Der CAS implementiert einen Client für die verschiedenen CAS Bibliotheken von jasig.
+Die derzeit benutzte Java JDK die ist 1.8 verwendet (Nachzulesen in [pom.xml](../app/pom.xml)).
 
 Der Sourcecode des CAS liegt im Verzeichnis `app/src/main/java`.
 
@@ -8,10 +9,15 @@ Der Sourcecode des CAS liegt im Verzeichnis `app/src/main/java`.
 Die Tests des CAS liegt im Verzeichnis `app/src/test/java`. Getestet wird mit [JUnit4](https://junit.org/junit5/docs/current/user-guide/#writing-tests) in verbindung mit [Mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html). Die Verzeichnisstruktur bildet die des Sourcecodes an.
 
 ## Logging
-Das Loglevel des CAS wird über den Parameter `"logging/root"`dogu.json eingestellt. Seit Issue [#64](https://github.com/cloudogu/cas/pull/66) wird außerdem das Log-Level für Übersetzungsstrings durch `"logging/translation_messages"` gesteuert. `"logging/translation_messages"` ist per default auf `Error` eingestellt.
+Das Loglevel des CAS wird über den Parameter `"logging/root"`dogu.json eingestellt. 
+Seit Issue [#64](https://github.com/cloudogu/cas/pull/66) wird außerdem das Log-Level für Übersetzungsstrings durch `"logging/translation_messages"` gesteuert.
+`"logging/translation_messages"` ist per default auf `Error` eingestellt.
 
 ## OAuth
-Für die implementierung von OAuth musste der Prozess wie Services erstellt werden umgestellt werden. Eintrittspunkt der Entwicklung ist die `CesServicesManagerStage.addNewService` Methode. Diese nimmt nicht mehr einen name, serviceId und logoutUri entgegen, sondern direkt einen Service. Ausgehend davon werden in den beiden Stages `CesServicesManagerStageDevelopment` und `CesServicesManagerStageProductive` die neuen Factories die das Interface `ICESServiceFactory` implementiert genutzt um Services für OAuth, PersistantServices und DoguServices zu erstellen.
+Für die implementierung von OAuth musste der Prozess wie Services erstellt werden umgestellt werden. 
+Eintrittspunkt der Entwicklung ist die `CesServicesManagerStage.addNewService` Methode. 
+Diese nimmt nicht mehr einen name, serviceId und logoutUri entgegen, sondern direkt einen Service. 
+Ausgehend davon werden in den beiden Stages `CesServicesManagerStageDevelopment` und `CesServicesManagerStageProductive` die neuen Factories die das Interface `ICESServiceFactory` implementiert genutzt um Services für OAuth, PersistantServices und DoguServices zu erstellen.
 Neu ist ebenfalls das Package [de.triology.cas.services.oauth](../app/src/main/java/de/triology/cas/services/oauth). Die enthaltenden Controller verwalten die Requests an die Endpunkte für OAuth-Requests (`oauth20/authorize`, `oauth20/accesstoken` usw.). Um alle nötigen Informationen abzuziehen wurde außerdem die Klasse `RegestryEtcd` dahingehend erwetert, dass die Informationen die für OAuth Services benötigt werden (ClientId und Secret-Hash) aus dem etcd abgezogen werden können.
 
 <!---
