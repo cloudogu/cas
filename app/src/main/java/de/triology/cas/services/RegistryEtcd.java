@@ -84,7 +84,7 @@ class RegistryEtcd implements Registry {
                 attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
                 serviceAccountNames.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
-                log.warn("registry exception occurred", ex);
+                log.error("registry exception occurred", ex);
             }
         }
         return serviceAccountNames;
@@ -102,9 +102,9 @@ class RegistryEtcd implements Registry {
                     doguServices.add(new CesServiceData(doguName, factory));
                 }
             } catch (ParseException ex) {
-                log.warn("failed to parse EtcdNode to json", ex);
+                log.error("failed to parse EtcdNode to json", ex);
             } catch (RegistryException ex) {
-                log.warn("registry exception occurred", ex);
+                log.error("registry exception occurred", ex);
             }
         }
         return doguServices;
@@ -132,7 +132,7 @@ class RegistryEtcd implements Registry {
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.warn("Failed to getEtcdValueForKey: ", e);
+            log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
     }

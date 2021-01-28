@@ -30,7 +30,6 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         service.setName(CesOAuthServiceFactory.class.getSimpleName() + " " + SERVICE_OAUTH_CALLBACK_IDENTIFIER);
         String serviceId = "https://" + fqdn + "(:443)?/" + "oauth2.0/callbackAuthorize";
         service.setServiceId(serviceId);
-        service.setAllowedToProxy(true);
         return service;
     }
 

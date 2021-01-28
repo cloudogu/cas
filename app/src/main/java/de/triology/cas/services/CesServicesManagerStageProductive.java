@@ -122,7 +122,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             }
         }
         catch (Exception e) {
-            logger.info("Could not create service " + serviceData.getName() + ": " + e);
+            logger.error("Could not create service " + serviceData.getName() + ": " + e);
         }
     }
 
