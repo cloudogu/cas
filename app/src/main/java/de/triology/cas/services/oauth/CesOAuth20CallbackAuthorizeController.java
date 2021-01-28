@@ -37,8 +37,7 @@ import java.util.Map;
  * redirects user to the callback url of the OAuth application. A code is
  * added which is the service ticket retrieved from previous authentication.
  *
- * @author Jerome Leleu
- * @since 3.5.0
+ * We skip the authorization of the user and redirect directly to the application.
  */
 public final class CesOAuth20CallbackAuthorizeController extends AbstractController {
 
@@ -76,14 +75,6 @@ public final class CesOAuth20CallbackAuthorizeController extends AbstractControl
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
 
-        /*
-        // retrieve service name from session
-        final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
-        logger.debug("serviceName : {}", serviceName);
-        model.put("serviceName", serviceName);
-
-        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
-        */
         response.setHeader("Location", callbackUrl);
         return OAuthUtils.writeText(response, "", 303);
     }
