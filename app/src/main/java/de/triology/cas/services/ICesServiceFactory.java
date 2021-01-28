@@ -4,6 +4,9 @@ import org.jasig.cas.services.RegexRegisteredService;
 
 import java.net.URI;
 
+/**
+ * Interface for Factories which create Services
+ */
 public interface ICesServiceFactory {
 
     /**
