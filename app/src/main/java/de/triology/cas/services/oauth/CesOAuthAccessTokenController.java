@@ -33,6 +33,7 @@ public final class CesOAuthAccessTokenController extends AbstractController {
 
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String TOKEN_TYPE = "token_type";
+    private static final String TOKEN_EXPIRES = "expires_in";
     private static final String TOKEN_TYPE_VALUE = "Bearer";
 
     public CesOAuthAccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
@@ -80,7 +81,7 @@ public final class CesOAuthAccessTokenController extends AbstractController {
         JSONObject json = new JSONObject();
         json.put(OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId());
         json.put(TOKEN_TYPE, TOKEN_TYPE_VALUE);
-        json.put(OAuthConstants.EXPIRES, expires);
+        json.put(TOKEN_EXPIRES, expires);
         LOGGER.debug("{} : {}", "respond", json.toJSONString());
         return OAuthUtils.writeText(response, json.toJSONString(), 200);
     }

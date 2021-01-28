@@ -5,6 +5,8 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.jasig.cas.support.oauth.web.OAuth20AuthorizeController;
 import org.jasig.cas.support.oauth.web.OAuth20ProfileController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -30,13 +32,15 @@ public final class CesOAuth20WrapperController extends BaseOAuthWrapperControlle
 
     private AbstractController profileController;
 
+    private final Logger logger = LoggerFactory.getLogger(CesOAuth20CallbackAuthorizeController.class);
+
     @Override
     public void afterPropertiesSet() throws Exception {
         authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
         callbackAuthorizeController = new CesOAuth20CallbackAuthorizeController();
         // Use custom token controller
         accessTokenController = new CesOAuthAccessTokenController(servicesManager, ticketRegistry, timeout);
-        profileController = new OAuth20ProfileController(ticketRegistry);
+        profileController = new CesOAuth20ProfileController(ticketRegistry);
     }
 
     @Override
