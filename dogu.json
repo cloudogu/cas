@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-14",
+  "Version": "4.0.7.20-15",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -80,6 +80,21 @@
       }
     },
     {
+      "Name": "logging/translation_messages",
+      "Description": "Set the log level of translation concerned logs to one of ERROR, WARN, INFO, DEBUG.",
+      "Optional": true,
+      "Default": "ERROR",
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "WARN",
+          "DEBUG",
+          "INFO",
+          "ERROR"
+        ]
+      }
+    },
+    {
       "Name": "container_config/memory_limit",
       "Description": "Limits the container's memory usage. Use a positive integer value followed by one of these units [b,k,m,g] (byte, kibibyte, mebibyte, gibibyte).",
       "Optional": true,
@@ -129,6 +144,18 @@
       "Params": [
         "ro"
       ]
+    }
+  ],
+  "ExposedCommands": [
+    {
+      "Name": "service-account-create",
+      "Description": "Creates a new service account",
+      "Command": "/create-sa.sh"
+    },
+    {
+      "Name": "service-account-remove",
+      "Description": "Removes an existing service account",
+      "Command": "/remove-sa.sh"
     }
   ],
   "HealthChecks": [

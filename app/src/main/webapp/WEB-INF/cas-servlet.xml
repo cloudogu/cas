@@ -97,6 +97,7 @@
         <prop key="/samlValidate">samlValidateController</prop>
       </util:properties>
     </property>
+    <property name="alwaysUseFullPath" value="true" />
     <!--
      uncomment this to enable sending PageRequest events.
      <property
@@ -189,24 +190,11 @@
   <!-- oauth controller -->
 
   <bean id="oauth20WrapperController"
-        class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
+        class="de.triology.cas.services.oauth.CesOAuth20WrapperController"
         p:loginUrl="${server.prefix}/login"
         p:servicesManager-ref="servicesManager"
         p:ticketRegistry-ref="ticketRegistry"
         p:timeout="7200" />
-
-  <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
-    <property name="registeredServices">
-      <list>
-        <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService">
-          <property name="id" value="0" />
-          <property name="name" value="HTTP" />
-          <property name="description" value="oauth wrapper callback url" />
-          <property name="serviceId" value="${server.prefix}/oauth2.0/callbackAuthorize" />
-        </bean>
-      </list>
-    </property>
-  </bean>
 
   <!--  CAS 2 Protocol service/proxy validation -->
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"

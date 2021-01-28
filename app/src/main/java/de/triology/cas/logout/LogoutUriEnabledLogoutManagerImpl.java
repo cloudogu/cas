@@ -18,14 +18,6 @@
  */
 package de.triology.cas.logout;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-
-import javax.validation.constraints.NotNull;
-
 import de.triology.cas.services.LogoutUriEnabledRegexRegisteredService;
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
@@ -40,6 +32,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -128,6 +127,12 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         return logoutRequests;
     }
 
+    /**
+     *
+     * @param singleLogoutService
+     * @param logoutRequest
+     * @param registeredService
+     */
     void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
         boolean isLogoutUriEnabledService = registeredService instanceof LogoutUriEnabledRegexRegisteredService;
         LogoutUriEnabledRegexRegisteredService serviceWithLogoutUri;

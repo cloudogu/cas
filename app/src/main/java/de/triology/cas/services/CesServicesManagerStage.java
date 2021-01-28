@@ -1,20 +1,20 @@
 package de.triology.cas.services;
 
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * An abstract class that encapsulates the stages {@link CesServiceManager} operates in.
+ * An abstract class that encapsulates the stages {@link CesServicesManager} operates in.
  * It provides it's registered services via {@link #getRegisteredServices()}.
  * <p>
  * Implementations must initialize their registered services by implementing the template method
- * {@link #initRegisteredServices(Map)}.
+ * {@link #initRegisteredServices()}.
  */
 abstract class CesServicesManagerStage {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -50,41 +50,21 @@ abstract class CesServicesManagerStage {
     protected abstract void updateRegisteredServices();
 
     /**
-     * Creates and registers a new service with a specific logout URI
+     * Registers a new service
      *
-     * @param name      name of the service
-     * @param serviceId regex to match requests against
-     * @param logoutUri service specific logout URI
+     * @param service service object to register
      */
-    protected void addNewService(String name, String serviceId, URI logoutUri) {
-        LogoutUriEnabledRegexRegisteredService service = new LogoutUriEnabledRegexRegisteredService();
-        service.setName(name);
-        service.setServiceId(serviceId);
+    protected void addNewService(RegexRegisteredService service) {
         service.setAllowedToProxy(true);
-        // TODO Why set this to the initial ID value of the Service? --> Same order for each service!
         service.setEvaluationOrder((int) service.getId());
         service.setAllowedAttributes(allowedAttributes);
-        service.setId(createId());
-        if (logoutUri != null){
-            service.setLogoutUri(logoutUri);
-        }
         registeredServices.put(service.getId(), service);
-    }
-
-    /**
-     * Creates and registers a new service
-     *
-     * @param name      name of the service
-     * @param serviceId regex to match requests against
-     */
-    protected void addNewService(String name, String serviceId) {
-        addNewService(name, serviceId, null);
     }
 
     /**
      * @return a new numeric ID for a registered service
      */
-    private long createId() {
+    protected long createId() {
         // TODO Wouldn't it be simpler an less error prone to use an AtomicLong instead?
         return findHighestId(registeredServices) + 1;
     }

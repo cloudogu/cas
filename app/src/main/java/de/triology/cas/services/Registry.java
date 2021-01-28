@@ -12,7 +12,13 @@ interface Registry {
      * @return the names of all installed dogus wich are using CAS without the namespace
      * @throws RegistryException wrapper for all technical exceptions
      */
-    List<String> getInstalledDogusWhichAreUsingCAS();
+    List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
+
+    /**
+     * @return the names of all installed OAuth service accounts
+     * @throws RegistryException wrapper for all technical exceptions
+     */
+    List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name
