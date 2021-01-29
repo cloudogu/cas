@@ -4,6 +4,12 @@ https://cloudogu.com
 
 This repository consists of the CAS server. CAS stands for Central Authentication Service. It provides Single Sign On either via Legacy LDAP-connection or via own user management system.
 
+### More Information for the CAS-Dogu:
+
+[Deutsch] [Home](docs/de/index.md)
+
+[English] [Home](docs/en/index.md)
+
 ---
 ### What is the Cloudogu EcoSystem?
 The Cloudogu EcoSystem is an open platform, which lets you choose how and where your team creates great software. Each service or tool is delivered as a Dogu, a Docker container. Each Dogu can easily be integrated in your environment just by pulling it from our registry. We have a growing number of ready-to-use Dogus, e.g. SCM-Manager, Jenkins, Nexus, SonarQube, Redmine and many more. Every Dogu can be tailored to your specific needs. Take advantage of a central authentication service, a dynamic navigation, that lets you easily switch between the web UIs and a smart configuration magic, which automatically detects and responds to dependencies between Dogus. The Cloudogu EcoSystem is open source and it runs either on-premises or in the cloud. The Cloudogu EcoSystem is developed by Cloudogu GmbH under [MIT License](https://cloudogu.com/license.html).
