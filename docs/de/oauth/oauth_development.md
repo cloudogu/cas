@@ -1,6 +1,6 @@
 
 ## OAuth
-Für die Implementierung von OAuth wurde das vorhandenen OAuth Plugins von CAS eingebunden.
+Für die Implementierung von OAuth wurde das vorhandenen OAuth Plugin von CAS eingebunden.
 
 Wir benutzen zur Erstellung der Services im CAS einen eigenen ServiceManager ausschließlich für Dogu-Services. 
 Dieser wurde um das Interface `ICESServiceFactory` erweitert um die Erstellung verschiedene Arten von Services leicht und einfach austauschbar zu realisieren.
