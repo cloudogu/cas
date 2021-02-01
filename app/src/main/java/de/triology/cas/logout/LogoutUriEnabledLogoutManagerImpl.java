@@ -18,14 +18,6 @@
  */
 package de.triology.cas.logout;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-
-import javax.validation.constraints.NotNull;
-
 import de.triology.cas.services.LogoutUriEnabledRegexRegisteredService;
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.Service;
@@ -40,6 +32,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.NotNull;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -162,7 +161,8 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
         if (registeredService != null && registeredService.getLogoutUri() != null){
-            String serviceName = registeredService.getName();
+            //Extract the correct service name. Example Service name is "CesDoguServiceFactory redmine"
+            String serviceName = registeredService.getName().split(" ")[1];
             String cesUrl = originalUrl.split(serviceName)[0];
             String logoutUrl = cesUrl + serviceName + registeredService.getLogoutUri().toString();
             LOGGER.debug("Found LogoutUriEnabledRegexRegisteredService; will use cas logout URL: "+logoutUrl);

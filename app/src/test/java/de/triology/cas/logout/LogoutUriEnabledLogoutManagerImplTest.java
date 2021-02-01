@@ -66,7 +66,7 @@ public class LogoutUriEnabledLogoutManagerImplTest {
         LogoutRequest request = new LogoutRequest("ST-123", sls);
 
         LogoutUriEnabledRegexRegisteredService registeredService = mock(LogoutUriEnabledRegexRegisteredService.class);
-        when(registeredService.getName()).thenReturn("serviceName");
+        when(registeredService.getName()).thenReturn("CesDoguServiceFactory serviceName");
         when(registeredService.getLogoutUri()).thenReturn(new URI("/logoutUri"));
         logoutManager.performBackChannelLogout(request, registeredService);
         verify(httpClient).sendMessageToEndPoint("fqdn/serviceName/logoutUri",null,true);

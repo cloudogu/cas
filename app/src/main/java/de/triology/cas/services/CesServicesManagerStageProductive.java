@@ -1,23 +1,27 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.oauth.CesOAuthServiceFactory;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 
-import java.util.Iterator;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * The stage in which a {@link CesServiceManager} operates in production.
+ * The stage in which a {@link CesServicesManager} operates in production.
  * Services accesible via CAS ({@link RegisteredService}s) are queried from a {@link Registry}.
  * For each Dogu that is accessible via CAS, one {@link RegisteredService} is returned. An additional service allows
  * CAS to access itself.
+ * For each OAuth client that is accessuble via CAS, one {@link RegisteredService} is returned. An additional service
+ * for the OAuth callback is also created.
  */
 class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     /**
-     * Name of the special service that allows cas to access itself. See {@link #addCasService()}.
+     * Name of the special service that allows cas to access itself
      */
     private static final String SERVICE_NAME_CAS = "cas";
 
@@ -25,11 +29,19 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private Registry registry;
 
+    private List<CesServiceData> persistentServices;
+
+    private final CesOAuthServiceFactory oAuthServiceFactory;
+    private final CesDoguServiceFactory doguServiceFactory;
+
     private boolean initialized = false;
 
     CesServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
         super(allowedAttributes);
         this.registry = registry;
+        this.persistentServices = new ArrayList<>();
+        this.oAuthServiceFactory = new CesOAuthServiceFactory();
+        this.doguServiceFactory = new CesDoguServiceFactory();
     }
 
     /**
@@ -45,13 +57,13 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             logger.info("Already initialized CesServicesManager. Doing nothing.");
             return;
         }
-            logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
-            fqdn = registry.getFqdn();
-            synchronizeServicesWithRegistry();
-            addCasService();
-            registerChangeListener();
-            initialized = true;
-            logger.debug("Finished initialization of registered services");
+        logger.debug("Cas started in production stage. Only installed dogus can get an ST.");
+        fqdn = registry.getFqdn();
+        addPersistentServices();
+        synchronizeServicesWithRegistry();
+        registerChangeListener();
+        initialized = true;
+        logger.debug("Finished initialization of registered services");
     }
 
     private boolean isInitialized() {
@@ -60,7 +72,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     @Override
     protected void updateRegisteredServices() {
-        if (isInitialized()){
+        if (isInitialized()) {
             synchronizeServicesWithRegistry();
         } else {
             initRegisteredServices();
@@ -74,8 +86,11 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      */
     private void synchronizeServicesWithRegistry() {
         logger.debug("Synchronize services with registry");
-        synchronizeServices(registry.getInstalledDogusWhichAreUsingCAS());
-        logger.info("Loaded {} services.", registeredServices.size());
+        List<CesServiceData> newServices = new ArrayList<>(persistentServices);
+        newServices.addAll(registry.getInstalledOAuthCASServiceAccounts(oAuthServiceFactory));
+        newServices.addAll(registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory));
+        synchronizeServices(newServices);
+        logger.info("Loaded {} services!", registeredServices.size());
     }
 
     /**
@@ -83,7 +98,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      */
     private void registerChangeListener() {
         logger.debug("Entered registerChangeListener");
-        registry.addDoguChangeListener(()-> {
+        registry.addDoguChangeListener(() -> {
             logger.debug("Registered change in /dogu");
             synchronizeServicesWithRegistry();
         });
@@ -92,15 +107,22 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     /**
      * Creates and registers a new service for an given name
      */
-    void addNewService(String name) {
-        logger.debug("Add new service: " + name);
-        String serviceId = "https://" + fqdn + "(:443)?/" + name + "(/.*)?";
+    void addNewService(CesServiceData serviceData) {
+        logger.debug("Add new service: " + serviceData.getName());
         try {
-            addNewService(name, serviceId, registry.getCasLogoutUri(name));
-        } catch (GetCasLogoutUriException e) {
-            logger.info("GetCasLogoutUriException: CAS logout URI of service "+ name +" could not be retrieved: "+e);
-            logger.info("Adding service without CAS logout URI");
-            addNewService(name, serviceId);
+            try {
+                URI logoutUri = registry.getCasLogoutUri(serviceData.getName());
+                RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
+                addNewService(service);
+            } catch (GetCasLogoutUriException e) {
+                logger.info("GetCasLogoutUriException: CAS logout URI of service " + serviceData.getName() + " could not be retrieved: " + e);
+                logger.info("Adding service without CAS logout URI");
+                RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
+                addNewService(service);
+            }
+        }
+        catch (Exception e) {
+            logger.error("Could not create service " + serviceData.getName() + ": " + e);
         }
     }
 
@@ -109,7 +131,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * That is, remove the ones that are not present in <code>newServices</code> and add the ones that are only present
      * in <code>newServices</code> to <code>registeredServices</code>.
      */
-    private void synchronizeServices(List<String> newServiceNames) {
+    private void synchronizeServices(List<CesServiceData> newServiceNames) {
         removeServicesThatNoLongerExist(newServiceNames);
         addServicesThatDoNotExistYet(newServiceNames);
     }
@@ -118,37 +140,48 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * First operation of {@link #synchronizeServices(List)}: Remove Services that are not present in
      * <code>newServices</code> from <code>registeredServices</code>.
      */
-    private void removeServicesThatNoLongerExist(List<String> newServiceNames) {
-        for (Iterator<Map.Entry<Long, RegisteredService>> existingServiceIterator =
-             registeredServices.entrySet().iterator(); existingServiceIterator.hasNext(); ) {
-            Map.Entry<Long, RegisteredService> existingServiceEntry = existingServiceIterator.next();
+    private void removeServicesThatNoLongerExist(List<CesServiceData> newServiceNames) {
+        List<String> newServicesIdentifiers = newServiceNames.stream()
+                .map(CesServiceData::getIdentifier)
+                .collect(Collectors.toList());
 
-            if (!newServiceNames.contains(existingServiceEntry.getValue().getName()) &&
-                // Special case: Cas service is not added via registry. Don't delete it!
-                !SERVICE_NAME_CAS.equals(existingServiceEntry.getValue().getName())) {
-                existingServiceIterator.remove();
-            }
-        }
+        List<String>  toBeRemovedServices = registeredServices.values()
+                .stream().map(RegisteredService::getName)
+                .filter(serviceName -> !newServicesIdentifiers.contains(serviceName))
+                .collect(Collectors.toList());
+
+        registeredServices.values().stream()
+                .filter(service -> toBeRemovedServices.contains(service.getName()))
+                .forEach(service -> registeredServices.remove(service.getId()));
     }
-
     /**
      * Second operation of {@link #synchronizeServices(List)}: Add services that are only present in
      * <code>newServices</code> to <code>registeredServices</code>.
      */
-    private void addServicesThatDoNotExistYet(List<String> newServiceNames) {
+    private void addServicesThatDoNotExistYet(List<CesServiceData> newServiceNames) {
         Set<String> existingServiceNames =
                 registeredServices.values().stream().map(RegisteredService::getName).collect(Collectors.toSet());
 
-        newServiceNames.stream()
-                       .filter(newServiceName -> !existingServiceNames.contains(newServiceName))
-                       .forEach(this::addNewService);
+        Set<String> newServices = newServiceNames.stream()
+                .map(CesServiceData::getIdentifier)
+                .filter(serviceName -> !existingServiceNames.contains(serviceName))
+                .collect(Collectors.toSet());
+
+        newServiceNames.stream().filter(service -> newServices.contains(service.getIdentifier()))
+                .forEach(this::addNewService);
     }
 
     /**
-     * This is necessary since cas needs a ST in clearPass workflow
+     * persistent services will not be removed
      */
-    private void addCasService() {
-        addNewService(SERVICE_NAME_CAS, "https://" + fqdn + "/cas/.*");
-    }
+    public void addPersistentServices() {
+        //This is necessary since cas needs a Service Ticket in clearPass workflow
+        logger.info("Creating cas service for clearPass workflow");
+        addNewService(doguServiceFactory.createCASService(createId(), fqdn));
+        persistentServices.add( new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
 
+        logger.info("Creating callback service for OAuth integration");
+        addNewService(oAuthServiceFactory.createCallbackService(createId(), fqdn));
+        persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OAUTH_CALLBACK_IDENTIFIER, oAuthServiceFactory));
+    }
 }

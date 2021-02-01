@@ -18,16 +18,15 @@
  */
 package de.triology.cas.clearpass;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Decorator that captures tickets and attempts to map them.

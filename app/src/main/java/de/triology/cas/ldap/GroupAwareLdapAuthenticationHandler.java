@@ -5,15 +5,16 @@
  */
 package de.triology.cas.ldap;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import javax.security.auth.login.LoginException;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
+
+import javax.security.auth.login.LoginException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Ldap authentication handler which appends resolved groups to the principal attributes.

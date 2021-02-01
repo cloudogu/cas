@@ -6,13 +6,14 @@
 
 package de.triology.cas.ldap;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.jasig.cas.authentication.principal.Principal;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Resolve groups by reading an attribute from the ldap entry. <strong>Note</strong> you
