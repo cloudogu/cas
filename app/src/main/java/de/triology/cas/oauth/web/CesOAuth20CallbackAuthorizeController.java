@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package de.triology.cas.services.oauth;
+package de.triology.cas.oauth.web;
 
+import de.triology.cas.oauth.CesOAuthConstants;
+import de.triology.cas.oauth.CesOAuthUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -47,35 +47,32 @@ public final class CesOAuth20CallbackAuthorizeController extends AbstractControl
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         // get CAS ticket
-        final String ticket = request.getParameter(OAuthConstants.TICKET);
-        logger.debug("{} : {}", OAuthConstants.TICKET, ticket);
+        final String ticket = request.getParameter(CesOAuthConstants.TICKET);
+        logger.debug("{} : {}", CesOAuthConstants.TICKET, ticket);
 
         // retrieve callback url from session
         final HttpSession session = request.getSession();
-        String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
-        logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
-        session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        String callbackUrl = (String) session.getAttribute(CesOAuthConstants.OAUTH20_CALLBACKURL);
+        logger.debug("{} : {}", CesOAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
+        session.removeAttribute(CesOAuthConstants.OAUTH20_CALLBACKURL);
 
         if (StringUtils.isBlank(callbackUrl)) {
-            logger.error("{} is missing from the session and can not be retrieved.", OAuthConstants.OAUTH20_CALLBACKURL);
-            return new ModelAndView(OAuthConstants.ERROR_VIEW);
+            logger.error("{} is missing from the session and can not be retrieved.", CesOAuthConstants.OAUTH20_CALLBACKURL);
+            return new ModelAndView(CesOAuthConstants.ERROR_VIEW);
         }
         // and state
-        final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
-        logger.debug("{} : {}", OAuthConstants.OAUTH20_STATE, state);
-        session.removeAttribute(OAuthConstants.OAUTH20_STATE);
+        final String state = (String) session.getAttribute(CesOAuthConstants.OAUTH20_STATE);
+        logger.debug("{} : {}", CesOAuthConstants.OAUTH20_STATE, state);
+        session.removeAttribute(CesOAuthConstants.OAUTH20_STATE);
 
         // return callback url with code & state
-        callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
+        callbackUrl = CesOAuthUtils.addParameter(callbackUrl, CesOAuthConstants.CODE, ticket);
         if (state != null) {
-            callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
+            callbackUrl = CesOAuthUtils.addParameter(callbackUrl, CesOAuthConstants.STATE, state);
         }
-        logger.debug("{} : {}", OAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
-
-        final Map<String, Object> model = new HashMap<String, Object>();
-        model.put("callbackUrl", callbackUrl);
+        logger.debug("{} : {}", CesOAuthConstants.OAUTH20_CALLBACKURL, callbackUrl);
 
         response.setHeader("Location", callbackUrl);
-        return OAuthUtils.writeText(response, "", 303);
+        return CesOAuthUtils.writeText(response, "", 303);
     }
 }

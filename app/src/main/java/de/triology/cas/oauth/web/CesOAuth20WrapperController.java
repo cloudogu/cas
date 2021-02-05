@@ -1,10 +1,7 @@
-package de.triology.cas.services.oauth;
+package de.triology.cas.oauth.web;
 
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.web.BaseOAuthWrapperController;
-import org.jasig.cas.support.oauth.web.OAuth20AuthorizeController;
-import org.jasig.cas.support.oauth.web.OAuth20ProfileController;
+import de.triology.cas.oauth.CesOAuthConstants;
+import de.triology.cas.oauth.CesOAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * We need a custom controller as CAS the original controller only supports plain text responds.
  * However, we require JSON support.
  */
-public final class CesOAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
+public final class CesOAuth20WrapperController extends CesBaseOAuthWrapperController implements InitializingBean {
 
     private AbstractController authorizeController;
 
@@ -36,10 +33,9 @@ public final class CesOAuth20WrapperController extends BaseOAuthWrapperControlle
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
+        authorizeController = new CesOAuth20AuthorizeController(servicesManager, loginUrl);
         callbackAuthorizeController = new CesOAuth20CallbackAuthorizeController();
-        // Use custom token controller
-        accessTokenController = new CesOAuthAccessTokenController(servicesManager, ticketRegistry, timeout);
+        accessTokenController = new CesOAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
         profileController = new CesOAuth20ProfileController(ticketRegistry);
     }
 
@@ -48,25 +44,25 @@ public final class CesOAuth20WrapperController extends BaseOAuthWrapperControlle
                                                  final HttpServletResponse response) throws Exception {
 
         // authorize
-        if (OAuthConstants.AUTHORIZE_URL.equals(method)) {
+        if (CesOAuthConstants.AUTHORIZE_URL.equals(method)) {
             return authorizeController.handleRequest(request, response);
         }
         // callback on authorize
-        if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
+        if (CesOAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
             return callbackAuthorizeController.handleRequest(request, response);
         }
         //get access token
-        if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
+        if (CesOAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
             return accessTokenController.handleRequest(request, response);
         }
         // get profile
-        if (OAuthConstants.PROFILE_URL.equals(method)) {
+        if (CesOAuthConstants.PROFILE_URL.equals(method)) {
             return profileController.handleRequest(request, response);
         }
 
         // else error
         logger.error("Unknown method : {}", method);
-        OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+        CesOAuthUtils.writeTextError(response, CesOAuthConstants.INVALID_REQUEST, 200);
         return null;
     }
 }

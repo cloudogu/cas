@@ -1,4 +1,4 @@
-package de.triology.cas.services.oauth;
+package de.triology.cas.oauth.web;
 
 
         import java.util.Map;
@@ -6,10 +6,10 @@ package de.triology.cas.services.oauth;
         import javax.servlet.http.HttpServletRequest;
         import javax.servlet.http.HttpServletResponse;
 
+        import de.triology.cas.oauth.CesOAuthConstants;
         import org.apache.commons.io.IOUtils;
         import org.apache.commons.lang.StringUtils;
         import org.jasig.cas.authentication.principal.Principal;
-        import org.jasig.cas.support.oauth.OAuthConstants;
         import org.jasig.cas.ticket.TicketGrantingTicket;
         import org.jasig.cas.ticket.registry.TicketRegistry;
         import org.slf4j.Logger;
@@ -49,9 +49,9 @@ public final class CesOAuth20ProfileController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
 
-        //final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        //final String accessToken = request.getParameter(CesOAuthConstants.ACCESS_TOKEN);
         final String authHeader = request.getHeader("authorization");
-        LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, authHeader);
+        LOGGER.debug("{} : {}", CesOAuthConstants.ACCESS_TOKEN, authHeader);
         String accessToken = authHeader.split(" ")[1];
 
         final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter());
@@ -61,9 +61,9 @@ public final class CesOAuth20ProfileController extends AbstractController {
 
             // accessToken is required
             if (StringUtils.isBlank(accessToken)) {
-                LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+                LOGGER.error("Missing {}", CesOAuthConstants.ACCESS_TOKEN);
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+                jsonGenerator.writeStringField("error", CesOAuthConstants.MISSING_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
                 return null;
             }
@@ -73,7 +73,7 @@ public final class CesOAuth20ProfileController extends AbstractController {
             if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
                 LOGGER.error("expired accessToken : {}", accessToken);
                 jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
+                jsonGenerator.writeStringField("error", CesOAuthConstants.EXPIRED_ACCESS_TOKEN);
                 jsonGenerator.writeEndObject();
                 return null;
             }
