@@ -18,8 +18,17 @@
  */
 package de.triology.cas.logout;
 
-import de.triology.cas.services.LogoutUriEnabledRegexRegisteredService;
+import de.triology.cas.oauth.CesOAuthConstants;
+import de.triology.cas.oauth.logout.CesOAuthLogoutMessageBuilder;
+import de.triology.cas.oauth.service.CesOAuthRegisteredService;
+import de.triology.cas.services.dogu.LogoutUriEnabledRegexRegisteredService;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutMessageCreator;
@@ -34,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,30 +59,44 @@ import java.util.zip.Deflater;
  */
 public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.logout.LogoutManager {
 
-    /** The logger. */
+    /**
+     * The logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutUriEnabledLogoutManagerImpl.class);
 
-    /** ASCII character set. */
+    /**
+     * ASCII character set.
+     */
     private static final Charset ASCII = Charset.forName("ASCII");
 
-    /** The services manager. */
+    /**
+     * The services manager.
+     */
     @NotNull
     private final ServicesManager servicesManager;
 
-    /** An HTTP client. */
+    /**
+     * An HTTP client.
+     */
     @NotNull
     private final HttpClient httpClient;
 
     @NotNull
     private final LogoutMessageCreator logoutMessageBuilder;
 
-    /** Whether single sign out is disabled or not. */
+    @NotNull
+    private CesOAuthLogoutMessageBuilder oAuthlogoutMessageBuilder;
+
+    /**
+     * Whether single sign out is disabled or not.
+     */
     private boolean disableSingleSignOut = false;
 
     /**
      * Build the logout manager.
-     * @param servicesManager the services manager.
-     * @param httpClient an HTTP client.
+     *
+     * @param servicesManager      the services manager.
+     * @param httpClient           an HTTP client.
      * @param logoutMessageBuilder the builder to construct logout messages.
      */
     public LogoutUriEnabledLogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
@@ -79,6 +104,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         this.servicesManager = servicesManager;
         this.httpClient = httpClient;
         this.logoutMessageBuilder = logoutMessageBuilder;
+        this.oAuthlogoutMessageBuilder = new CesOAuthLogoutMessageBuilder();
     }
 
     /**
@@ -92,6 +118,7 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         final Map<String, Service> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups
+        this.oAuthlogoutMessageBuilder.setTicket(ticket);
         synchronized (ticket) {
             services = ticket.getServices();
             ticket.removeAllServices();
@@ -112,12 +139,22 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
                         final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
                         // always add the logout request
                         logoutRequests.add(logoutRequest);
-                        final RegisteredService registeredService = servicesManager.findServiceBy(service);
-                        // the service is no more defined, or the logout type is not defined or is back channel
-                        if (registeredService == null || registeredService.getLogoutType() == null
-                                || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
-                            // perform back channel logout
-                            performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
+                        if (service.getId().contains(CesOAuthConstants.CALLBACK_AUTHORIZE_URL)) {
+                            //For the callback authorize, logout every o auth service separately
+                            for (RegisteredService aService : servicesManager.getAllServices()) {
+                                if (aService instanceof CesOAuthRegisteredService) {
+                                    final CesOAuthRegisteredService oAuthService = (CesOAuthRegisteredService) aService;
+                                    // perform back channel logout
+                                    performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, oAuthService);
+                                }
+                            }
+                        } else {
+                            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+                            // the service is no more defined, or the logout type is not defined or is back channel
+                            if (registeredService == null || registeredService.getLogoutType() == null
+                                    || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
+                                performTypeDependentBackChannelLogout(singleLogoutService, logoutRequest, registeredService);
+                            }
                         }
                     }
                 }
@@ -128,14 +165,15 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
     }
 
     void performTypeDependentBackChannelLogout(SingleLogoutService singleLogoutService, LogoutRequest logoutRequest, RegisteredService registeredService) {
-        boolean isLogoutUriEnabledService = registeredService instanceof LogoutUriEnabledRegexRegisteredService;
-        LogoutUriEnabledRegexRegisteredService serviceWithLogoutUri;
-        if (isLogoutUriEnabledService) {
-            serviceWithLogoutUri = ((LogoutUriEnabledRegexRegisteredService) registeredService);
+        boolean successfulLogout;
+        if (registeredService instanceof CesOAuthRegisteredService) {
+            successfulLogout = performOAuthServiceLogout(logoutRequest, (CesOAuthRegisteredService) registeredService);
+        } else if (registeredService instanceof LogoutUriEnabledRegexRegisteredService) {
+            successfulLogout = performBackChannelLogout(logoutRequest, (LogoutUriEnabledRegexRegisteredService) registeredService);
         } else {
-            serviceWithLogoutUri = null;
+            successfulLogout = performBackChannelLogout(logoutRequest, null);
         }
-        boolean successfulLogout = performBackChannelLogout(logoutRequest, serviceWithLogoutUri);
+
         final LogoutRequestStatus logoutRequestStatus;
         if (successfulLogout) {
             logoutRequestStatus = LogoutRequestStatus.SUCCESS;
@@ -160,17 +198,45 @@ public final class LogoutUriEnabledLogoutManagerImpl implements org.jasig.cas.lo
         String originalUrl = request.getService().getOriginalUrl();
 
         LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        if (registeredService != null && registeredService.getLogoutUri() != null){
+        if (registeredService != null && registeredService.getLogoutUri() != null) {
             //Extract the correct service name. Example Service name is "CesDoguServiceFactory redmine"
             String serviceName = registeredService.getName().split(" ")[1];
             String cesUrl = originalUrl.split(serviceName)[0];
             String logoutUrl = cesUrl + serviceName + registeredService.getLogoutUri().toString();
-            LOGGER.debug("Found LogoutUriEnabledRegexRegisteredService; will use cas logout URL: "+logoutUrl);
-            return this.httpClient.sendMessageToEndPoint(logoutUrl, logoutRequest, true);
+            LOGGER.debug("Found LogoutUriEnabledRegexRegisteredService; will use cas logout URL: " + logoutUrl);
+            return this.sendMessageToEndPoint(logoutUrl, logoutRequest, true);
         } else {
-            LOGGER.debug("Found normal service; will use originalUrl: "+originalUrl);
-            return this.httpClient.sendMessageToEndPoint(originalUrl, logoutRequest, true);
+            LOGGER.debug("Found normal service; will use originalUrl: " + originalUrl);
+            return this.sendMessageToEndPoint(originalUrl, logoutRequest, true);
         }
+    }
+
+    /**
+     * Log out of a service through back channel.
+     *
+     * @param request the logout request.
+     * @return if the logout has been performed.
+     */
+    boolean performOAuthServiceLogout(final LogoutRequest request, CesOAuthRegisteredService registeredService) {
+        final String logoutRequest = this.oAuthlogoutMessageBuilder.create(request);
+        request.getService().setLoggedOutAlready(true);
+        String originalUrl = request.getService().getOriginalUrl();
+
+        //Extract the correct service name. Example Service name is "CesDoguServiceFactory redmine"
+        String serviceName = registeredService.getName().split(" ")[1];
+        String cesUrl = originalUrl.split("cas")[0];
+
+        String logoutUrl = cesUrl + serviceName;
+        if (registeredService.getLogoutUri() != null) {
+            logoutUrl += registeredService.getLogoutUri().toString();
+        }
+        LOGGER.debug("Found CesOAuthRegisteredService; will use OAuth logout URL: " + logoutUrl);
+        LOGGER.debug("Request " + logoutRequest);
+        return sendMessageToEndPoint(logoutUrl, logoutRequest, true);
+    }
+
+    public boolean sendMessageToEndPoint(String logoutUrl, String logoutRequest, boolean async) {
+        return this.httpClient.sendMessageToEndPoint(logoutUrl, logoutRequest, async);
     }
 
     /**
