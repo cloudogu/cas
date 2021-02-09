@@ -1,15 +1,12 @@
 package de.triology.cas.logout;
 
 import de.triology.cas.oauth.service.CesOAuthRegisteredService;
-import de.triology.cas.oauth.service.CesOAuthServiceFactory;
-import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.LogoutUriEnabledRegexRegisteredService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutMessageCreator;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
-import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;

@@ -1,25 +1,23 @@
 package de.triology.cas.oauth.web;
 
 
-        import java.util.Map;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.triology.cas.oauth.CesOAuthConstants;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
-        import javax.servlet.http.HttpServletRequest;
-        import javax.servlet.http.HttpServletResponse;
-
-        import de.triology.cas.oauth.CesOAuthConstants;
-        import org.apache.commons.io.IOUtils;
-        import org.apache.commons.lang.StringUtils;
-        import org.jasig.cas.authentication.principal.Principal;
-        import org.jasig.cas.ticket.TicketGrantingTicket;
-        import org.jasig.cas.ticket.registry.TicketRegistry;
-        import org.slf4j.Logger;
-        import org.slf4j.LoggerFactory;
-        import org.springframework.web.servlet.ModelAndView;
-        import org.springframework.web.servlet.mvc.AbstractController;
-
-        import com.fasterxml.jackson.core.JsonFactory;
-        import com.fasterxml.jackson.core.JsonGenerator;
-        import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This controller returns a profile for the authenticated user

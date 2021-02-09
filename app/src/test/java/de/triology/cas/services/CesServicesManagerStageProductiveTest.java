@@ -1,8 +1,8 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oauth.service.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
-import de.triology.cas.oauth.service.CesOAuthServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.junit.Assert;
 import org.junit.Before;
