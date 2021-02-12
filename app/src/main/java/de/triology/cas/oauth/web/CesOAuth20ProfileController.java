@@ -79,14 +79,12 @@ public final class CesOAuth20ProfileController extends AbstractController {
             final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField(ID, principal.getId());
-            jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+            jsonGenerator.writeObjectFieldStart(ATTRIBUTES);
             final Map<String, Object> attributes = principal.getAttributes();
             for (final String key : attributes.keySet()) {
-                jsonGenerator.writeStartObject();
                 jsonGenerator.writeObjectField(key, attributes.get(key));
-                jsonGenerator.writeEndObject();
             }
-            jsonGenerator.writeEndArray();
+            jsonGenerator.writeEndObject();
             jsonGenerator.writeEndObject();
             return null;
         } finally {
