@@ -1,6 +1,7 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.oauth.CesOAuthServiceFactory;
+import de.triology.cas.oauth.service.CesOAuthServiceFactory;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 

@@ -190,7 +190,7 @@
   <!-- oauth controller -->
 
   <bean id="oauth20WrapperController"
-        class="de.triology.cas.services.oauth.CesOAuth20WrapperController"
+        class="de.triology.cas.oauth.web.CesOAuth20WrapperController"
         p:loginUrl="${server.prefix}/login"
         p:servicesManager-ref="servicesManager"
         p:ticketRegistry-ref="ticketRegistry"

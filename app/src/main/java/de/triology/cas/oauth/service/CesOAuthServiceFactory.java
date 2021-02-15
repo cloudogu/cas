@@ -1,10 +1,8 @@
-package de.triology.cas.services.oauth;
+package de.triology.cas.oauth.service;
 
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.ICesServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 
 import java.net.URI;
 
@@ -24,8 +22,8 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
      * @param id Internal ID of the service
      * @return a new OAuth callback authorisation service
      */
-    public OAuthCallbackAuthorizeService createCallbackService(long id, String fqdn) {
-        OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+    public CesOAuthCallbackAuthorizeService createCallbackService(long id, String fqdn) {
+        CesOAuthCallbackAuthorizeService service = new CesOAuthCallbackAuthorizeService();
         service.setId(id);
         service.setName(CesOAuthServiceFactory.class.getSimpleName() + " " + SERVICE_OAUTH_CALLBACK_IDENTIFIER);
         String serviceId = "https://" + fqdn + "(:443)?/" + "oauth2.0/callbackAuthorize";
@@ -45,14 +43,15 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
      * @param clientSecret secret key from the OAuth application used for authentication
      * @return a new client server for the given information of the OAuth application
      */
-    private OAuthRegisteredService createOAuthClientService(long id, String name, String serviceID, String clientID, String clientSecret) {
-        OAuthRegisteredService service = new OAuthRegisteredService();
+    private CesOAuthRegisteredService createOAuthClientService(long id, URI logoutURI, String name, String serviceID, String clientID, String clientSecret) {
+        CesOAuthRegisteredService service = new CesOAuthRegisteredService();
         service.setId(id);
         service.setName(name);
         service.setServiceId(serviceID);
         service.setAllowedToProxy(true);
         service.setClientId(clientID);
         service.setClientSecret(clientSecret);
+        service.setLogoutUri(logoutURI);
         return service;
     }
 
@@ -72,6 +71,6 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         }
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
-        return createOAuthClientService(id, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+        return createOAuthClientService(id, casLogoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
     }
 }

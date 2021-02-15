@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
 
 import java.net.URI;
