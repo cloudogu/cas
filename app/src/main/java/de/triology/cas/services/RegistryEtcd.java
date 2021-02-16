@@ -7,6 +7,7 @@ import mousio.etcd4j.responses.EtcdAuthenticationException;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,12 +15,10 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -256,6 +255,23 @@ class RegistryEtcd implements Registry {
     }
 
     /**
+     * sanitize the clientId.
+     * <p>
+     * The clientId should only consists out of letters and numbers, no whitespace or other special characters.
+     * We sanitize the clientId because we call doguctl in getCurrentOAuthClientSecret() with the clientId as an argument.
+     *
+     * @param clientID
+     * @return the clientId if everything is ok, otherwise an empty string
+     */
+    private String sanitizeClientID(String clientID) throws IllegalArgumentException {
+        if (!clientID.matches("^[a-zA-Z0-9_]*$")) {
+            // clientId is "unclean"
+            return "";
+        }
+        return clientID;
+    }
+
+    /**
      * Retrieves the client secret for a given clientId and encrypts the secret accordingly.
      *
      * @param clientID Identifier for the OAuth client
@@ -263,6 +279,41 @@ class RegistryEtcd implements Registry {
      * <p>
      */
     protected String getCurrentOAuthClientSecret(String clientID) {
-        return getEtcdValueForKeyIfPresent(CAS_SERVICE_ACCOUNT_DIR + "/" + clientID);
+        // we sanitize the client id to close potential code injection attacks
+        final String sanitizedClientId = sanitizeClientID(clientID);
+        if (sanitizedClientId.equals("")) {
+            log.error("client Id could not be sanitized, aborting getCurrentOauthClientSecret");
+            return "";
+        }
+
+        try {
+            ProcessBuilder builder = new ProcessBuilder("/usr/bin/doguctl", "config", "-e", CAS_SERVICE_ACCOUNT_DIR_IN_DOGU + sanitizedClientId);
+            Process proc = builder.start();
+
+            proc.getOutputStream().flush();
+            proc.getOutputStream().close();
+            final StringWriter writer = new StringWriter();
+            new Thread(() -> {
+                try {
+                    IOUtils.copy(proc.getInputStream(), writer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            final StringWriter err = new StringWriter();
+            new Thread(() -> {
+                try {
+                    IOUtils.copy(proc.getErrorStream(), err);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+            proc.waitFor();
+            return writer.toString().trim();
+        } catch (Exception e) {
+            log.error("failed to read encrypted client_id due to error: " + e.getMessage());
+            return getEtcdValueForKeyIfPresent(CAS_SERVICE_ACCOUNT_DIR_IN_DOGU + sanitizedClientId);
+        }
     }
 }

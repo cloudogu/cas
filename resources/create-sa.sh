@@ -15,7 +15,7 @@ set -o pipefail
 
   CLIENT_SECRET_HASH=$(echo -n "${CLIENT_SECRET}" | sha256sum | awk '{print $1}')
 
-  doguctl config "service_accounts/${SERVICE}" "${CLIENT_SECRET_HASH}"
+  doguctl config -e "service_accounts/${SERVICE}" "${CLIENT_SECRET_HASH}"
 
 } >/dev/null 2>&1
 
