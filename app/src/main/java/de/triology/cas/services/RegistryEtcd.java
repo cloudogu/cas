@@ -135,7 +135,7 @@ class RegistryEtcd implements Registry {
         return getEtcdValueForKey("/config/_global/fqdn");
     }
 
-public String getEtcdValueForKey(String key) {
+    public String getEtcdValueForKey(String key) {
         log.debug("Get " + key + " from registry");
         try {
             return etcd.get(key).send().get().getNode().getValue();
