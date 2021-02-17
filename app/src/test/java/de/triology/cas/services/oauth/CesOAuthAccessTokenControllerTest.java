@@ -29,8 +29,7 @@ import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CesOAuthAccessTokenControllerTest {
 
@@ -47,7 +46,7 @@ public class CesOAuthAccessTokenControllerTest {
 
         OAuthRegisteredService mockService = new OAuthRegisteredService();
         mockService.setClientId("123");
-        mockService.setServiceId("/321");
+        mockService.setServiceId("https://local.cloudogu.com/portainer/API/.*");
         mockService.setClientSecret("bccfe0b37c0a147f5335243f11894faaeeaf67d02039fb74e42716d8b54b892e");
         when(servicesManager.getAllServices()).thenReturn(new HashSet<>(Arrays.asList(mockService)));
 
@@ -64,18 +63,38 @@ public class CesOAuthAccessTokenControllerTest {
     }
 
     @Test
-    public void handleRequestInternal() throws IOException {
-
+    public void handleRequestInternalShouldFail() throws IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameter(OAuthConstants.REDIRECT_URI)).thenReturn("/321"); //will be matched against serviceId
+        when(request.getParameter(OAuthConstants.REDIRECT_URI)).thenReturn("https://local.cloudogu.com/portainer/callback"); //will be matched against serviceId
         when(request.getParameter(OAuthConstants.CLIENT_ID)).thenReturn("123");
         when(request.getParameter(OAuthConstants.CLIENT_SECRET)).thenReturn("secret_123");
         when(request.getParameter(OAuthConstants.CODE)).thenReturn("code");
 
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletResponse response = mock(org.eclipse.jetty.server.Response.class);
+        doCallRealMethod().when(response).setStatus(any(Integer.class));
+        doCallRealMethod().when(response).getStatus();
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter(), false));
 
         // a successful write operation returns null
         assertNull(cesOAuthAccessTokenController.handleRequestInternal(request, response));
+        assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    public void handleRequestInternal() throws IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter(OAuthConstants.REDIRECT_URI)).thenReturn("https://local.cloudogu.com/portainer/API/test"); //will be matched against serviceId
+        when(request.getParameter(OAuthConstants.CLIENT_ID)).thenReturn("123");
+        when(request.getParameter(OAuthConstants.CLIENT_SECRET)).thenReturn("secret_123");
+        when(request.getParameter(OAuthConstants.CODE)).thenReturn("code");
+
+        HttpServletResponse response = mock(org.eclipse.jetty.server.Response.class);
+        doCallRealMethod().when(response).setStatus(any(Integer.class));
+        doCallRealMethod().when(response).getStatus();
+        when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter(), false));
+
+        // a successful write operation returns null
+        assertNull(cesOAuthAccessTokenController.handleRequestInternal(request, response));
+        assertEquals(200, response.getStatus());
     }
 }
