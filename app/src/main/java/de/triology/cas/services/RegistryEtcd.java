@@ -59,7 +59,16 @@ class RegistryEtcd implements Registry {
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
             return extractOAuthClientsFromSADir(nodes, factory);
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+        }
+        catch (EtcdException e) {
+            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                return new ArrayList<>();
+            } else {
+                log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+                throw new RegistryException(e);
+            }
+        }
+        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
             throw new RegistryException(e);
         }
@@ -130,7 +139,15 @@ class RegistryEtcd implements Registry {
         log.debug("Get " + key + " from registry");
         try {
             return etcd.get(key).send().get().getNode().getValue();
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (EtcdException e) {
+            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                log.error("Failed to getEtcdValueForKey: " + key);
+            } else {
+                log.error("Failed to getEtcdValueForKey: ", e);
+            }
+            throw new RegistryException(e);
+        }
+        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
