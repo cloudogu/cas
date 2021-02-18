@@ -1,13 +1,12 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.oauth.CesOAuthServiceFactory;
+import de.triology.cas.oauth.service.CesOAuthServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
-import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -60,7 +59,16 @@ class RegistryEtcd implements Registry {
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
             return extractOAuthClientsFromSADir(nodes, factory);
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+        }
+        catch (EtcdException e) {
+            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                return new ArrayList<>();
+            } else {
+                log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+                throw new RegistryException(e);
+            }
+        }
+        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
             throw new RegistryException(e);
         }
@@ -131,7 +139,15 @@ class RegistryEtcd implements Registry {
         log.debug("Get " + key + " from registry");
         try {
             return etcd.get(key).send().get().getNode().getValue();
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (EtcdException e) {
+            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                log.error("Failed to getEtcdValueForKey: " + key);
+            } else {
+                log.error("Failed to getEtcdValueForKey: ", e);
+            }
+            throw new RegistryException(e);
+        }
+        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
@@ -223,6 +239,21 @@ class RegistryEtcd implements Registry {
         });
 
         t.start();
+        Thread t2 = new Thread(() -> {
+            try {
+                while (true) {
+                    EtcdResponsePromise responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
+                    log.info("wait for changes under /config/cas/service_accounts");
+                    responsePromise.get();
+                    doguChangeListener.onChange();
+                }
+            } catch (IOException | EtcdException | TimeoutException | EtcdAuthenticationException e) {
+                log.error("Failed to addDoguChangeListener: ", e);
+                throw new RegistryException(e);
+            }
+        });
+
+        t2.start();
     }
 
     private boolean hasCasDependency(JSONObject json) {

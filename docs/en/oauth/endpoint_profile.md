@@ -29,32 +29,18 @@ authorization: Bearer TGT-1-m2gUNJwEqXyV7aAEXekihcVnFc5iI4mpfdZGOTSiiHzEbwr1cr-c
 ``` json
 {
   "id": "cesadmin",
-  "attributes": [
-    {
-      "username": "cesadmin"
-    },
-    {
-      "cn": "admin"
-    },
-    {
-      "mail": "cesadmin@localhost.de"
-    },
-    {
-      "givenName": "admin"
-    },
-    {
-      "surname": "admin"
-    },
-    {
-      "displayName": "admin"
-    },
-    {
-      "groups": [
-        "cesManager",
-        "cesadmin"
-      ]
-    }
-  ]
+  "attributes": {
+    "username": "cesadmin",
+    "cn": "admin",
+    "mail": "cesadmin@localhost.de",
+    "givenName": "admin",
+    "surname": "admin",
+    "displayName": "admin",
+    "groups": [
+      "cesManager",
+      "cesadmin"
+    ]
+  }
 }
 ``` 
 

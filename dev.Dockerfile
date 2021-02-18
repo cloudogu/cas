@@ -1,18 +1,9 @@
-FROM maven:3.6.0-jdk-8 as builder
-COPY /app/pom.xml /cas/pom.xml
-RUN set -x \
-     && cd /cas \
-     && mvn dependency:resolve -Dmaven.artifact.threads=30
-COPY /app/ /cas
-RUN set -x \
-    && cd /cas \
-    && mvn package
-
+# Development image - Build locally via maven and copy binary
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:8u252-1
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-16" \
+    VERSION="4.0.7.20-15" \
     maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
@@ -24,7 +15,7 @@ ENV TOMCAT_MAJOR_VERSION=8 \
 	SERVICE_TAGS=webapp \
 	TOMCAT_TARGZ_SHA256=19a047c4425c4ea796215d397b7caeda958c764981624ea5c4f763d98d2db7fa
 
-COPY --from=builder /cas/target/cas.war /cas.war
+COPY /app/target/cas.war /cas.war
 
 # run installation
 RUN set -x \

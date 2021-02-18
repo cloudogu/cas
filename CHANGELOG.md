@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-16] - 2021-02-18
+### Added
+- Adds verification via OAuth to the CAS
+### Fixed
+- Return empty service account list if account directory is missing in registry
+
 ## [v4.0.7.20-15] - 2021-01-22
 ### Changed
 - Add own log level configuration for translation logs; #64
