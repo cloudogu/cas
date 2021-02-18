@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v4.0.7.20-16] - 2021-02-18
+### Added
+- Adds verification via OAuth to the CAS
 ### Fixed
 - Return empty service account list if account directory is missing in registry
 
