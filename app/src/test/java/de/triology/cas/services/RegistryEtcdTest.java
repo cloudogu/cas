@@ -3,6 +3,7 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
@@ -15,6 +16,8 @@ import org.mockito.ArgumentMatchers;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
@@ -25,6 +28,7 @@ import static org.mockito.Mockito.when;
  * Tests for {@link RegistryEtcd}.
  */
 public class RegistryEtcdTest {
+
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(
@@ -42,8 +46,11 @@ public class RegistryEtcdTest {
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        assertThat(registry.getInstalledDogusWhichAreUsingCAS(), containsInAnyOrder("nexus", "usermgt", "cockpit"));
-        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS().size());
+        CesDoguServiceFactory factory = new CesDoguServiceFactory();
+        List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
+                .stream().map(CesServiceData::getName).collect(Collectors.toList());
+        assertThat(installedDogus, containsInAnyOrder("nexus", "usermgt", "cockpit"));
+        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS(factory).size());
     }
 
     private RegistryEtcd createRegistry() {
@@ -152,5 +159,4 @@ public class RegistryEtcdTest {
 
         registry.getCasLogoutUri("testDogu");
     }
-
 }

@@ -91,10 +91,13 @@
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
+        <!-- oauth support -->
+        <prop key="/oauth2.0/*">oauth20WrapperController</prop>
         <!-- saml support -->
         <prop key="/samlValidate">samlValidateController</prop>
       </util:properties>
     </property>
+    <property name="alwaysUseFullPath" value="true" />
     <!--
      uncomment this to enable sending PageRequest events.
      <property
@@ -183,6 +186,15 @@
       </util:list>
     </property>
   </bean>
+
+  <!-- oauth controller -->
+
+  <bean id="oauth20WrapperController"
+        class="de.triology.cas.oauth.web.CesOAuth20WrapperController"
+        p:loginUrl="${server.prefix}/login"
+        p:servicesManager-ref="servicesManager"
+        p:ticketRegistry-ref="ticketRegistry"
+        p:timeout="7200" />
 
   <!--  CAS 2 Protocol service/proxy validation -->
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"

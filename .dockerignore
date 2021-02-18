@@ -3,3 +3,4 @@ app/logs/
 app/overlays/
 app/src/main/webapp/themes
 app/target
+!app/target/cas.war

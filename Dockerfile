@@ -2,7 +2,7 @@ FROM maven:3.6.0-jdk-8 as builder
 COPY /app/pom.xml /cas/pom.xml
 RUN set -x \
      && cd /cas \
-     && mvn dependency:resolve
+     && mvn dependency:resolve -Dmaven.artifact.threads=30
 COPY /app/ /cas
 RUN set -x \
     && cd /cas \
@@ -12,7 +12,7 @@ RUN set -x \
 FROM registry.cloudogu.com/official/java:8u252-1
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-15" \
+    VERSION="4.0.7.20-16" \
     maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment
