@@ -1,4 +1,4 @@
-## Limiting login attempts
+# Limiting login attempts
 
 Login attempts can be limited by temporarily blocking user accounts after a given number of failed logins in a
 given time. In case the account is blocked, login attempts are redirected to a appropriate page. For this it is
