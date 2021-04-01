@@ -6,7 +6,7 @@ Die derzeit benutzte Java JDK die ist 1.8 verwendet (Nachzulesen in [pom.xml](..
 Der Sourcecode des CAS liegt im Verzeichnis `app/src/main/java`.
 
 ## Tests
-Die Tests des CAS liegen im Verzeichnis `app/src/test/java`. Getestet wird mit [JUnit4](https://junit.org/junit5/docs/current/user-guide/#writing-tests) in verbindung mit [Mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html). Die Verzeichnisstruktur bildet die des Sourcecodes an.
+Die Tests des CAS liegen im Verzeichnis `app/src/test/java`. Getestet wird mit [JUnit4](https://junit.org/junit5/docs/current/user-guide/#writing-tests) in verbindung mit [Mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html). Die Verzeichnisstruktur bildet die des Sourcecodes ab.
 
 ## Logging
 Das Loglevel des CAS wird über den Parameter `"logging/root"`dogu.json eingestellt. 
