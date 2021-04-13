@@ -22,6 +22,6 @@
 
     <div class="row mid vertical-align">
       <div class="col-md-3 col-md-offset-2 logo">
-        <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="" class="spacer-top pull-right">
+        <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="Cloudogu Logo" class="spacer-top pull-right" aria-hidden="true">
       </div>
       <div class="col-md-3">
