@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@1.44.3', 'github.com/cloudogu/dogu-build-lib@v1.1.1'])
+@Library(['github.com/cloudogu/ces-build-lib@bdde6ddb', 'github.com/cloudogu/dogu-build-lib@v1.1.1'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -23,8 +23,8 @@ node() { // No specific label
         String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
         catchError {
-            def mvnDockerName = '3.6-openjdk-8'
-            Maven mvn = new MavenInDocker(this, mvnDockerName)
+            def gradleDockerImage = 'openjdk11:alpine-slim'
+            Gradle gradlew = new GradleWrapperInDocker(this, gradleDockerImage)
 
             stage('Checkout') {
                 checkout scm
@@ -42,20 +42,43 @@ node() { // No specific label
 
             dir('app') {
                 stage('Build') {
-                    setupMaven(mvn)
-                    mvn 'clean install -DskipTests'
-                    archiveArtifacts '**/target/*.jar,**/target/*.zip'
+                    gradlew "clean build"
                 }
 
                 stage('Unit Test') {
-                    mvn 'test'
+                    gradlew 'test'
                 }
             }
 
             stage('SonarQube') {
-                def sonarQube = new SonarQube(this, [sonarQubeEnv: 'ces-sonar'])
-                mvn.additionalArgs += ' -f ./app '
-                sonarQube.analyzeWith(mvn)
+                def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                withSonarQubeEnv {
+                    sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
+                    gitWithCredentials("fetch --all")
+
+                    if (branch == "master") {
+                        echo "This branch has been detected as the master branch."
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                    } else if (branch == "develop") {
+                        echo "This branch has been detected as the develop branch."
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=master"
+                    } else if (env.CHANGE_TARGET) {
+                        echo "This branch has been detected as a pull request."
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.CHANGE_BRANCH}-PR${env.CHANGE_ID} -Dsonar.branch.target=${env.CHANGE_TARGET}"
+                    } else if (branch.startsWith("feature/")) {
+                        echo "This branch has been detected as a feature branch."
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=develop"
+                    } else {
+                        echo "This branch has been detected as a miscellaneous branch."
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=develop"
+                    }
+                }
+                timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
+                    def qGate = waitForQualityGate()
+                    if (qGate.status != 'OK') {
+                        unstable("Pipeline unstable due to SonarQube quality gate failure")
+                    }
+                }
             }
 
             try {
@@ -94,7 +117,7 @@ node() { // No specific label
                         ecoSystem.push("/dogu")
                     }
 
-                    stage ('Add Github-Release'){
+                    stage('Add Github-Release') {
                         github.createReleaseWithChangelog(releaseVersion, changelog)
                     }
                 }
@@ -111,12 +134,5 @@ node() { // No specific label
         junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml,**/target/surefire-reports/TEST-*.xml'
 
         mailIfStatusChanged(findEmailRecipients(defaultEmailRecipients))
-    }
-}
-
-def setupMaven(mvn) {
-    if ("master".equals(env.BRANCH_NAME)) {
-        mvn.additionalArgs = "-DperformRelease"
-        currentBuild.description = mvn.getVersion()
     }
 }
