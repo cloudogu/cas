@@ -21,25 +21,6 @@ cas.securityContext.status.allowedSubnet=127.0.0.1
 host.name=cas.{{ .GlobalConfig.Get "domain" }}
 
 #========================================
-# Single Sign-On Session Timeouts
-#========================================
-# Maximum session timeout - TGT will expire in maxTimeToLiveInSeconds regardless of usage - default value 24h
-tgt.maxTimeToLiveInSeconds= {{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
-
-# Idle session timeout -  TGT will expire sooner than maxTimeToLiveInSeconds if no further requests for STs occur within timeToKillInSeconds - default value 10h
-tgt.timeToKillInSeconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
-
-#========================================
-# Limit Login Attempts
-#========================================
-# set login.limit.maxNumber to 0 to disable feature
-# time parameters are configured in seconds
-login.limit.maxNumber={{ .Config.GetOrDefault "limit/max_number" "0"}}
-login.limit.failureStoreTime={{ .Config.GetOrDefault "limit/failure_store_time" ""}}
-login.limit.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0"}}
-login.limit.maxAccounts=10000
-
-#========================================
 # Auto-initialize the registry from default JSON service definitions (TODO: needs to be removed for release)
 #========================================
 cas.service-registry.json.location=file:/etc/cas/services
