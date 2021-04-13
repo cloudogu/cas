@@ -3,19 +3,33 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-CAS_PROPERTIES_TEMPLATE="/opt/apache-tomcat/cas.properties.conf.tpl"
-CAS_PROPERTIES="/opt/apache-tomcat/webapps/cas/WEB-INF/cas.properties"
+# shellcheck disable=SC1091
+source util.sh
 
-echo "Getting general variables for templates..."
-DOMAIN=$(doguctl config --global domain)
-FQDN=$(doguctl config --global fqdn)
+echo "                                     ./////,                    "
+echo "                                 ./////==//////*                "
+echo "                                ////.  ___   ////.              "
+echo "                         ,**,. ////  ,////A,  */// ,**,.        "
+echo "                    ,/////////////*  */////*  *////////////A    "
+echo "                   ////'        \VA.   '|'   .///'       '///*  "
+echo "                  *///  .*///*,         |         .*//*,   ///* "
+echo "                  (///  (//////)**--_./////_----*//////)   ///) "
+echo "                   V///   '°°°°      (/////)      °°°°'   ////  "
+echo "                    V/////(////////\. '°°°' ./////////(///(/'   "
+echo "                       'V/(/////////////////////////////V'      "
 
-echo "Rendering templates..."
-sed "s@%DOMAIN%@$DOMAIN@g;\
-s@%FQDN%@$FQDN@g"\
- /opt/apache-tomcat/cas.properties.tpl >> /etc/cas/config/cas.properties
+# If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
+# leads to an zero exit code which enables further error handling.
+loggingExitCode=0
+# shellcheck disable=SC1091
+source ./logging.sh || loggingExitCode=$?
+if [[ ${loggingExitCode} -ne 0 ]]; then
+  exitOnErrorWithMessage "ErrorRootLogLevelMapping" "ERROR: An error occurred during the root log level evaluation."
+fi
 
-cp -r /opt/apache-tomcat/services /opt/apache-tomcat/webapps/cas/WEB-INF/services
+# from utils.sh - configures the cas server
+echo "Create general configuration..."
+configureCAS
 
 echo "Creating truststore, which is used in the setenv.sh..."
 create_truststore.sh > /dev/null

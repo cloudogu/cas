@@ -4,16 +4,16 @@ buildscript {
         gradlePluginPortal()
         mavenCentral()
         jcenter()
-        maven { 
-            url "https://repo.spring.io/libs-milestone" 
+        maven {
+            url "https://repo.spring.io/libs-milestone"
             mavenContent { releasesOnly() }
         }
-        maven { 
-            url "https://repo.spring.io/libs-snapshot" 
+        maven {
+            url "https://repo.spring.io/libs-snapshot"
             mavenContent { snapshotsOnly() }
         }
-        maven { 
-            url "https://plugins.gradle.org/m2/" 
+        maven {
+            url "https://plugins.gradle.org/m2/"
             mavenContent { releasesOnly() }
         }
     }
@@ -30,25 +30,25 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { 
-        url "https://oss.sonatype.org/content/repositories/snapshots" 
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
         mavenContent { snapshotsOnly() }
     }
-    maven { 
+    maven {
         mavenContent { releasesOnly() }
-        url "https://build.shibboleth.net/nexus/content/repositories/releases/" 
+        url "https://build.shibboleth.net/nexus/content/repositories/releases/"
     }
-    maven { 
+    maven {
         mavenContent { releasesOnly() }
-        url "https://repo.spring.io/milestone/" 
+        url "https://repo.spring.io/milestone/"
     }
-    maven { 
-        url "https://repo.spring.io/snapshot/" 
+    maven {
+        url "https://repo.spring.io/snapshot/"
         mavenContent { snapshotsOnly() }
     }
-    maven { 
+    maven {
         mavenContent { snapshotsOnly() }
-        url "https://oss.jfrog.org/artifactory/oss-snapshot-local" 
+        url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
     }
 }
 
@@ -70,27 +70,20 @@ apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/dockerjib.gradle")
 
 dependencies {
-    // Add modules in format compatible with overlay casModules property
-    if (project.hasProperty("casModules")) {
-        def dependencies = project.getProperty("casModules").split(",")
-        dependencies.each {
-            def projectsToAdd = rootProject.subprojects.findAll {project ->
-                project.name == "cas-server-core-${it}" || project.name == "cas-server-support-${it}"
-            }
-            projectsToAdd.each {implementation it}
-        }
-    }
-    // CAS dependencies/modules may be listed here statically...
-    implementation "org.apereo.cas:cas-server-webapp-init:${casServerVersion}"
+    // Other CAS dependencies/modules may be listed here...
+    implementation "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-saml:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
 }
 
 tasks.findByName("jibDockerBuild")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
+        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
+        .finalizedBy(deleteWebAppFromJib)
 
 tasks.findByName("jib")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
+        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
+        .finalizedBy(deleteWebAppFromJib)
 
 configurations.all {
     resolutionStrategy {
@@ -108,8 +101,8 @@ configurations.all {
 
 eclipse {
     classpath {
-       downloadSources = true
-       downloadJavadoc = true
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
 

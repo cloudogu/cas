@@ -50,10 +50,9 @@ RUN set -x \
  && mkdir -p /etc/cas/saml
 
 # copy overlay
-COPY --from=overlay cas-overlay/build/libs/cas.war /cas.war
+COPY --from=overlay cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
 
 RUN set -x \
- && mv /cas.war ${CATALINA_BASE}/webapps/cas/cas.war \
  && cd ${CATALINA_BASE}/webapps/cas/ \
  && unzip cas.war \
  && rm -f cas.war \
