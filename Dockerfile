@@ -58,6 +58,7 @@ RUN set -x \
  && rm -f cas.war \
  && chown -R cas:cas ${CATALINA_BASE}
 
+# TODO: change permission to user and adjust goss-tests
 # copy resources
 COPY resources /
 
