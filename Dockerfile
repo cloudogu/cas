@@ -14,7 +14,7 @@ RUN ./gradlew clean build --parallel --no-daemon
 
 # Copy source code and build overlay
 COPY ./app/src cas-overlay/src/
-RUN ./gradlew clean build --parallel --no-daemon;
+RUN ./gradlew clean build --parallel --no-daemon
 
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:11.0.5-2
