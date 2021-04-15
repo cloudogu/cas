@@ -1,19 +1,20 @@
-FROM adoptopenjdk/openjdk11:alpine-slim AS overlay
+FROM adoptopenjdk/openjdk11:alpine-slim AS overlay-builder
 
-RUN mkdir -p cas-overlay
-COPY ./app/src cas-overlay/src/
-COPY ./app/gradle/ cas-overlay/gradle/
+RUN mkdir -p /cas-overlay
+COPY ./app/gradle/ /cas-overlay/gradle/
 COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
+WORKDIR /cas-overlay
 
-RUN mkdir -p ~/.gradle \
-    && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties \
-    && echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties \
-    && cd cas-overlay \
-    && chmod 750 ./gradlew \
-    && ./gradlew --version;
+# Cache gradle
+RUN chmod 750 ./gradlew \
+    && ./gradlew --version
 
-RUN cd cas-overlay \
-    && ./gradlew clean build --parallel --no-daemon;
+# Cache dependencies
+RUN ./gradlew clean build --parallel --no-daemon
+
+# Copy source code and build overlay
+COPY ./app/src cas-overlay/src/
+RUN ./gradlew clean build --parallel --no-daemon;
 
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:11.0.5-2
@@ -50,7 +51,7 @@ RUN set -x \
  && mkdir -p /etc/cas/saml
 
 # copy overlay
-COPY --from=overlay cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
+COPY --from=overlay-builder cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
 
 RUN set -x \
  && cd ${CATALINA_BASE}/webapps/cas/ \
