@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Changes to button and alert-dialogues on the login- and logout-page to increase accessibility
+
 ## [v4.0.7.20-16] - 2021-02-18
 ### Added
 - Adds verification via OAuth to the CAS

@@ -33,25 +33,25 @@
             }
         }
     </script>
-    
+
     <div class="row mid vertical-align">
       <div class="col-md-3 col-md-offset-2 logo">
-        <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="" class="spacer-top pull-right">
+        <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="Cloudogu Logo" class="spacer-top pull-right" aria-hidden="true">
       </div>
       <div class="col-md-3">
 
     <form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true" onsubmit="return prepareSubmit(this);">
-        
+
         <div id="login">
 
             <c:if test="${not empty sessionScope.openIdLocalId}">
             <strong>${sessionScope.openIdLocalId}</strong>
             <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
             </c:if>
-            
+
             <c:if test="${empty sessionScope.openIdLocalId}">
             <div class="form-group">
-                            
+
                 <label for="username">
                     <spring:message code="screen.welcome.label.netid" />
                 </label>
@@ -62,6 +62,7 @@
             </c:if>
 
             <div class="form-group">
+
                 <label for="password">
                     <spring:message code="screen.welcome.label.password" />
                 </label>
@@ -70,15 +71,17 @@
                 <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "${passwordPlaceholder}" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
                 <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" javaScriptEscape="true"/>
                 <c:if test="${not empty passwordForgotText}">
-                <a id="forgotPassword" class="link-underlined" onclick="toggleForgotPasswordInfo()"><spring:message code="screen.password.forgot"/></a>
+                    <spring:message code="screen.password.forgot" var="passwordForgot" text="" javaScriptEscape="true"/>
+                    <button id="forgotPassword" class="link-underlined btn btn-primary" aria-label="${passwordForgot}" onclick="toggleForgotPasswordInfo()">${passwordForgot}</button>
                 </c:if>
             </div>
-            
+
             <input type="hidden" name="lt" value="${loginTicket}" />
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
 
-            <input class="btn btn-primary pull-right" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" />
+            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login" />
+
             <div class="alert-fields">
                 <c:if test="${not pageContext.request.secure}">
                     <div class="alert alert-warning">
@@ -90,7 +93,7 @@
                         ${passwordForgotText}
                 </div>
             </div>
-            <form:errors path="*" id="msg" cssClass="alert alert-danger alert-msg-credentials" element="div" />
+            <form:errors path="*" id="msg" role="alert" cssClass="alert alert-danger alert-msg-credentials" element="div" />
         </div>
     </form:form>
     </div>

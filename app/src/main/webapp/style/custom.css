@@ -46,7 +46,7 @@ and open the template in the editor.
 }
 
 .alert-fields{
-    position: absolute;
+    position: inherit;
     margin-top: 70px;
     width: 100%;
 }
