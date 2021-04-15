@@ -11,12 +11,12 @@ LOG_LEVEL_ERROR="ERROR"; LOG_LEVEL_WARN="WARN"; LOG_LEVEL_INFO="INFO"; LOG_LEVEL
 DEFAULT_LOG_LEVEL=${LOG_LEVEL_WARN}
 
 # logging configuration used to configure the apache-tomcat logging mechanism
-TOMCAT_LOGGING_TEMPLATE="/opt/apache-tomcat/conf/logging.properties.conf.tpl"
+TOMCAT_LOGGING_TEMPLATE="/opt/apache-tomcat/conf/logging.properties.tpl"
 TOMCAT_LOGGING="/opt/apache-tomcat/conf/logging.properties"
 SCRIPT_LOG_PREFIX="Log level mapping:"
 
-CAS_LOGGING_TEMPLATE="/etc/cas/conf/log4j.xml.tpl"
-CAS_LOGGING="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/log4j.xml"
+CAS_LOGGING_TEMPLATE="/etc/cas/config/log4j2.xml.tpl"
+CAS_LOGGING="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/log4j2.xml"
 
 # create a mapping because apache uses different log levels than log4j eg. ERROR=>SEVERE
 function mapDoguLogLevel() {

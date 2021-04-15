@@ -1,30 +1,36 @@
-FROM maven:3.6.0-jdk-8 as builder
-COPY /app/pom.xml /cas/pom.xml
-RUN set -x \
-     && cd /cas \
-     && mvn dependency:resolve -Dmaven.artifact.threads=30
-COPY /app/ /cas
-RUN set -x \
-    && cd /cas \
-    && mvn package
+FROM adoptopenjdk/openjdk11:alpine-slim AS builder
+
+RUN mkdir -p /cas-overlay
+COPY ./app/gradle/ /cas-overlay/gradle/
+COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
+WORKDIR /cas-overlay
+
+# Cache gradle
+RUN chmod 750 ./gradlew \
+    && ./gradlew --version
+
+# Cache dependencies
+RUN ./gradlew clean build --parallel --no-daemon
+
+# Copy source code and build overlay
+COPY ./app/src cas-overlay/src/
+RUN ./gradlew clean build --parallel --no-daemon
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:8u252-1
+FROM registry.cloudogu.com/official/java:11.0.5-2
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-16" \
-    maintainer="michael.behlendorf@cloudogu.com"
+    VERSION="6.4.0.1-1" \
+    maintainer="hello@cloudogu.com"
 
 # configure environment
-ENV TOMCAT_MAJOR_VERSION=8 \
-	TOMCAT_VERSION=8.0.53 \
+ENV TOMCAT_MAJOR_VERSION=9 \
+	TOMCAT_VERSION=9.0.41 \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
 	SERVICE_TAGS=webapp \
-	TOMCAT_TARGZ_SHA256=19a047c4425c4ea796215d397b7caeda958c764981624ea5c4f763d98d2db7fa
-
-COPY --from=builder /cas/target/cas.war /cas.war
+	TOMCAT_TARGZ_SHA256=6a5fc1f79f002f25480e3a50daa1fb16fdb2f0a969bc2f806c88bc550002cf71
 
 # run installation
 RUN set -x \
@@ -41,12 +47,19 @@ RUN set -x \
  && rm -rf ${CATALINA_BASE}/webapps/* \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
- && mv /cas.war ${CATALINA_BASE}/webapps/cas/cas.war \
+ && mkdir -p /etc/cas/config \
+ && mkdir -p /etc/cas/saml
+
+# copy overlay
+COPY --from=builder cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
+
+RUN set -x \
  && cd ${CATALINA_BASE}/webapps/cas/ \
  && unzip cas.war \
  && rm -f cas.war \
  && chown -R cas:cas ${CATALINA_BASE}
 
+# TODO: change permission to user and adjust goss-tests
 # copy resources
 COPY resources /
 
