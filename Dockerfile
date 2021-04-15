@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine-slim AS overlay-builder
+FROM adoptopenjdk/openjdk11:alpine-slim AS builder
 
 RUN mkdir -p /cas-overlay
 COPY ./app/gradle/ /cas-overlay/gradle/
@@ -51,7 +51,7 @@ RUN set -x \
  && mkdir -p /etc/cas/saml
 
 # copy overlay
-COPY --from=overlay-builder cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
+COPY --from=builder cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
 
 RUN set -x \
  && cd ${CATALINA_BASE}/webapps/cas/ \
