@@ -80,7 +80,7 @@
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
 
-            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login" />
+            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login">Login</button>
 
             <div class="alert-fields">
                 <c:if test="${not pageContext.request.secure}">
