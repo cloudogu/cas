@@ -56,9 +56,15 @@ public final class CesOAuth20AccessTokenController extends AbstractController {
         this.timeout = timeout;
     }
 
+    /**
+     * gets parameters from a request and forms a ModelAndView from json Data
+     *
+     * @param request
+     * @param response
+     * @return
+     */
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
 
         final String redirectUri = request.getParameter(CesOAuthConstants.REDIRECT_URI);
         LOGGER.debug("{} : {}", CesOAuthConstants.REDIRECT_URI, redirectUri);
@@ -71,71 +77,135 @@ public final class CesOAuth20AccessTokenController extends AbstractController {
         final String code = request.getParameter(CesOAuthConstants.CODE);
         LOGGER.debug("{} : {}", CesOAuthConstants.CODE, code);
 
-        final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
-        if (!isVerified) {
+        //verify all components of the request are valid
+        if (!verifyAccessTokenRequest(redirectUri, clientId, clientSecret, code)) {
             return CesOAuthUtils.writeTextError(response, CesOAuthConstants.INVALID_REQUEST, 400);
         }
 
+        final ServiceTicket serviceTicket = getServiceTicketFromTicketRegistry(code);
+        if (serviceTicket == null) {
+            CesOAuthUtils.writeTextError(response, CesOAuthConstants.INVALID_GRANT, 400);
+        }
+
+        JSONObject json = makeJsonResponse(serviceTicket);
+        // Send response as json
+        response.setContentType(CesOAuthConstants.CONTENT_TYPE_JSON);
+
+        LOGGER.debug("{} : {}", "respond", json.toJSONString());
+        return CesOAuthUtils.writeText(response, json.toJSONString(), 200);
+    }
+
+    /**
+     * gets a ServiceTicket from the ticket Registry
+     *
+     * @param code
+     * @return a ServiceTicket or null
+     */
+    private ServiceTicket getServiceTicketFromTicketRegistry(String code) {
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.error("Code expired : {}", code);
-            return CesOAuthUtils.writeTextError(response, CesOAuthConstants.INVALID_GRANT, 400);
+            return null; //
         }
+        return serviceTicket;
+    }
+
+    /**
+     * creates a json which can be sent as an response
+     *
+     * @param serviceTicket
+     * @return json Object
+     */
+    private JSONObject makeJsonResponse(ServiceTicket serviceTicket) {
+        JSONObject json = new JSONObject();
+
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
-        // remove service ticket
+        // remove service ticket as it is not needed anymore
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
         final int expires = (int) (timeout - (System.currentTimeMillis()
                 - ticketGrantingTicket.getCreationTime()) / 1000);
 
-        // Send response as json
-        response.setContentType(CesOAuthConstants.CONTENT_TYPE_JSON);
-        JSONObject json = new JSONObject();
         json.put(CesOAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId());
         json.put(CesOAuthConstants.TOKEN_TYPE, CesOAuthConstants.TOKEN_TYPE_VALUE);
-        json.put(CesOAuthConstants.EXPIRES, expires);
         json.put(CesOAuthConstants.TOKEN_EXPIRES, expires);
-        LOGGER.debug("{} : {}", "respond", json.toJSONString());
-        return CesOAuthUtils.writeText(response, json.toJSONString(), 200);
+
+        return json;
     }
 
-    private boolean verifyAccessTokenRequest(final HttpServletResponse response, final String redirectUri,
+    /**
+     * ensures that various parts of the AccessToken Request are present and valid.
+     *
+     * @param redirectUri
+     * @param clientId
+     * @param clientSecret
+     * @param code
+     * @return true if everything is valid
+     */
+    private boolean verifyAccessTokenRequest(final String redirectUri,
                                              final String clientId, final String clientSecret, final String code) {
 
-        // clientId is required
+        final CesOAuthRegisteredService service = CesOAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+
+        return verifyClientId(clientId) &&
+                verifyRedirctUir(redirectUri) &&
+                verifyClientSecret(clientSecret) &&
+                verifyCode(code) &&
+                verifyHasRegisteredOAuthService(service, clientId) &&
+                verifyRedirectUirMatchesServiceId(service, redirectUri) &&
+                verifySecretHash(service, clientSecret);
+    }
+
+    private boolean verifyClientId(String clientId) {
         if (StringUtils.isBlank(clientId)) {
             LOGGER.error("Missing {}", CesOAuthConstants.CLIENT_ID);
             return false;
         }
-        // redirectUri is required
+        return true;
+    }
+
+    private boolean verifyRedirctUir(String redirectUri) {
         if (StringUtils.isBlank(redirectUri)) {
             LOGGER.error("Missing {}", CesOAuthConstants.REDIRECT_URI);
             return false;
         }
-        // clientSecret is required
+        return true;
+    }
+
+    private boolean verifyClientSecret(String clientSecret) {
         if (StringUtils.isBlank(clientSecret)) {
             LOGGER.error("Missing {}", CesOAuthConstants.CLIENT_SECRET);
             return false;
         }
-        // code is required
+        return true;
+    }
+
+    private boolean verifyCode(String code) {
         if (StringUtils.isBlank(code)) {
             LOGGER.error("Missing {}", CesOAuthConstants.CODE);
             return false;
         }
+        return true;
+    }
 
-        final CesOAuthRegisteredService service = CesOAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+    private boolean verifyHasRegisteredOAuthService(CesOAuthRegisteredService service, String clientId) {
         if (service == null) {
             LOGGER.error("Unknown {} : {}", CesOAuthConstants.CLIENT_ID, clientId);
             return false;
         }
+        return true;
+    }
 
-        final String serviceId = service.getServiceId();
-        if (!redirectUri.matches(serviceId)) {
-            LOGGER.error("Unsupported {} : {} for serviceId : {}", CesOAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+    private boolean verifyRedirectUirMatchesServiceId(CesOAuthRegisteredService service, String redirectUri) {
+        if (!redirectUri.matches(service.getServiceId())) {
+            LOGGER.error("Unsupported {} : {} for serviceId : {}", CesOAuthConstants.REDIRECT_URI, redirectUri, service.getServiceId());
             return false;
         }
+        return true;
+    }
 
+    private boolean verifySecretHash(CesOAuthRegisteredService service, String clientSecret) {
         // clientSecretHash is a hash from cas over the clientSecretHash, therefore we need to encrypt the clientSecretHash to perform the check
         String clientSecretHash = org.apache.commons.codec.digest.DigestUtils.sha256Hex(clientSecret);
         if (!StringUtils.equals(service.getClientSecret(), clientSecretHash)) {
