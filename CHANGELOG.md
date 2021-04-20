@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Changes the positioning of alert-fields and the login button
+
 ## [v4.0.7.20-17] - 2021-04-19
 
 ### Changed
