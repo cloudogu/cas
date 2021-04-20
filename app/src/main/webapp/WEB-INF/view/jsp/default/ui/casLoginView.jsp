@@ -72,15 +72,13 @@
                 <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" javaScriptEscape="true"/>
                 <c:if test="${not empty passwordForgotText}">
                     <spring:message code="screen.password.forgot" var="passwordForgot" text="" javaScriptEscape="true"/>
-                    <button id="forgotPassword" class="link-underlined btn btn-primary" aria-label="${passwordForgot}" onclick="toggleForgotPasswordInfo()">${passwordForgot}</button>
+                    <button type="button" id="forgotPassword" class="link-underlined btn btn-primary" aria-label="${passwordForgot}" onclick="toggleForgotPasswordInfo(); return false;">${passwordForgot}</button>
                 </c:if>
             </div>
 
             <input type="hidden" name="lt" value="${loginTicket}" />
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
-
-            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login">Login</button>
 
             <div class="alert-fields">
                 <c:if test="${not pageContext.request.secure}">
@@ -94,6 +92,8 @@
                 </div>
             </div>
             <form:errors path="*" id="msg" role="alert" cssClass="alert alert-danger alert-msg-credentials" element="div" />
+            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login">Login</button>
+
         </div>
     </form:form>
     </div>
