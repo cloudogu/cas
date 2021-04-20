@@ -41,13 +41,14 @@ and open the template in the editor.
     display: flex;
     align-items: center;
 }
+
 .alert-msg-credentials{
-    position: absolute;
+    position: inherit;
 }
 
 .alert-fields{
     position: inherit;
-    margin-top: 70px;
+    margin-top: 0px;
     width: 100%;
 }
 
