@@ -21,11 +21,6 @@ cas.securityContext.status.allowedSubnet=127.0.0.1
 host.name=cas.{{ .GlobalConfig.Get "domain" }}
 
 #========================================
-# Auto-initialize the registry from default JSON service definitions (TODO: needs to be removed for release)
-#========================================
-cas.service-registry.json.location=file:/etc/cas/services
-
-#========================================
 # static user (TODO: needs to be removed for release)
 #========================================
 cas.authn.accept.users=cesadmin::cesadmin
@@ -35,3 +30,5 @@ cas.authn.attributeRepository.stub.attributes.givenName=Adam
 cas.authn.attributeRepository.stub.attributes.surname=Strator
 cas.authn.attributeRepository.stub.attributes.displayName=adminDN
 cas.authn.attributeRepository.stub.attributes.groups=cesadmin
+
+ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
