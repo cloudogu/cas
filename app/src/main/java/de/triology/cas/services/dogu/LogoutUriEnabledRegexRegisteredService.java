@@ -4,7 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.net.URI;
 
-public class LogoutUriEnabledRegexRegisteredService extends org.jasig.cas.services.RegexRegisteredService {
+public class LogoutUriEnabledRegexRegisteredService extends org.apereo.cas.services.RegexRegisteredService {
 
     private URI logoutUri;
 

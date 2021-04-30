@@ -5,22 +5,24 @@
  */
 package de.triology.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ReloadableServicesManager;
+import groovy.util.logging.Slf4j;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Manages the Dogus that are accessible via CAS within the Cloudogu Ecosystem.
  * Depending on the {@link CesServicesManagerStage} ({@link CesServicesManagerStageDevelopment} or
  * {@link CesServicesManagerStageProductive}), a number of {@link RegisteredService}s is returned.
  */
-public class CesServicesManager implements ReloadableServicesManager {
+public class CesServicesManager implements ServicesManager {
 
     /**
      * This triggers operation in development stage.
@@ -42,6 +44,13 @@ public class CesServicesManager implements ReloadableServicesManager {
     }
 
     @Override
+    public Collection<RegisteredService> load() {
+        logger.info("Cas wants to reload registered services.");
+        serviceStage.updateRegisteredServices();
+        return serviceStage.getRegisteredServices().values();
+    }
+
+    @Override
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
 
@@ -55,25 +64,24 @@ public class CesServicesManager implements ReloadableServicesManager {
     }
 
     @Override
+    public Collection<RegisteredService> findServiceBy(Predicate<RegisteredService> clazz) {
+        throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
+    }
+
+    @Override
+    public <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz) {
+        throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
+    }
+
+    @Override
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = serviceStage.getRegisteredServices().get(id);
-
-        try {
-            return r == null ? null : r.clone();
-        } catch (final CloneNotSupportedException e) {
-            return r;
-        }
+        // TODO: clone?
+        return serviceStage.getRegisteredServices().get(id);
     }
 
     @Override
-    public boolean matchesExistingService(final Service service) {
-        return findServiceBy(service) != null;
-    }
-
-    @Override
-    public void reload() {
-        logger.info("Cas wants to reload registered services.");
-        serviceStage.updateRegisteredServices();
+    public RegisteredService findServiceByName(String name) {
+        throw new UnsupportedOperationException("Operation findServiceByName is not supported.");
     }
 
     @Override
@@ -82,7 +90,22 @@ public class CesServicesManager implements ReloadableServicesManager {
     }
 
     @Override
+    public RegisteredService save(RegisteredService registeredService, boolean publishEvent) {
+        throw new UnsupportedOperationException("Operation save is not supported.");
+    }
+
+    @Override
+    public void deleteAll() {
+        throw new UnsupportedOperationException("Operation deleteAll is not supported.");
+    }
+
+    @Override
     public RegisteredService delete(final long id) {
+        throw new UnsupportedOperationException("Operation delete is not supported.");
+    }
+
+    @Override
+    public RegisteredService delete(RegisteredService svc) {
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 

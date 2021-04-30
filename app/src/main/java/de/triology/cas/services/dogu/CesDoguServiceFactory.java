@@ -2,7 +2,7 @@ package de.triology.cas.services.dogu;
 
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.ICesServiceFactory;
-import org.jasig.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
 
 import java.net.URI;
 

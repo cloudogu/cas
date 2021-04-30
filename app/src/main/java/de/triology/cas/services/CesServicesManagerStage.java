@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +55,9 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(RegexRegisteredService service) {
-        service.setAllowedToProxy(true);
+        // service.setAllowedToProxy(true);
         service.setEvaluationOrder((int) service.getId());
-        service.setAllowedAttributes(allowedAttributes);
+        // service.setAllowedAttributes(allowedAttributes);
         registeredServices.put(service.getId(), service);
     }
 

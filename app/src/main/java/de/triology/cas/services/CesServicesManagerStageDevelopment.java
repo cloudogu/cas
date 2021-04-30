@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
 
-import org.jasig.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
 
 import java.util.List;
 

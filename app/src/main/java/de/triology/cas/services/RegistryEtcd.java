@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.service.CesOAuthServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -13,6 +12,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +31,7 @@ import java.util.concurrent.TimeoutException;
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
+@Component
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu/";
@@ -43,6 +46,7 @@ class RegistryEtcd implements Registry {
      *
      * @throws RegistryException when the URI cannot be read
      */
+    @Autowired
     public RegistryEtcd(EtcdClient etcd) {
         this.etcd = etcd;
     }
@@ -59,16 +63,14 @@ class RegistryEtcd implements Registry {
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
             return extractOAuthClientsFromSADir(nodes, factory);
-        }
-        catch (EtcdException e) {
+        } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 return new ArrayList<>();
             } else {
                 log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
                 throw new RegistryException(e);
             }
-        }
-        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
             throw new RegistryException(e);
         }
@@ -88,8 +90,8 @@ class RegistryEtcd implements Registry {
                 String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
                 String clientSecret = this.getCurrentOAuthClientSecret(clientID);
                 HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
+                // attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
+                // attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
                 serviceAccountNames.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
                 log.error("registry exception occurred", ex);
@@ -110,9 +112,9 @@ class RegistryEtcd implements Registry {
                     doguServices.add(new CesServiceData(doguName, factory));
                 }
             } catch (ParseException ex) {
-                log.error("failed to parse EtcdNode to json", ex);
+                log.error("failed to parse EtcdNode to json: " + ex);
             } catch (RegistryException ex) {
-                log.error("registry exception occurred", ex);
+                log.error("registry exception occurred: " + ex);
             }
         }
         return doguServices;
@@ -125,7 +127,7 @@ class RegistryEtcd implements Registry {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
             return extractDogusFromDoguRootDir(nodes, factory);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getInstalledDogusWhichAreUsingCAS: ", e);
+            log.error("Failed to getInstalledDogusWhichAreUsingCAS: " + e);
             throw new RegistryException(e);
         }
     }
@@ -146,8 +148,7 @@ class RegistryEtcd implements Registry {
                 log.error("Failed to getEtcdValueForKey: ", e);
             }
             throw new RegistryException(e);
-        }
-        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
