@@ -2,6 +2,7 @@ package de.triology.cas.services;
 
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +56,10 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(RegexRegisteredService service) {
-        // service.setAllowedToProxy(true);
         service.setEvaluationOrder((int) service.getId());
-        // service.setAllowedAttributes(allowedAttributes);
+        ReturnAllowedAttributeReleasePolicy attributePolicy = new ReturnAllowedAttributeReleasePolicy();
+        attributePolicy.setAllowedAttributes(allowedAttributes);
+        service.setAttributeReleasePolicy(attributePolicy);
         registeredServices.put(service.getId(), service);
     }
 

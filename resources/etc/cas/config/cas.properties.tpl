@@ -32,3 +32,4 @@ cas.authn.attributeRepository.stub.attributes.displayName=adminDN
 cas.authn.attributeRepository.stub.attributes.groups=cesadmin
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
+ces.services.allowedAttributes=username,cn,mail,groups,givenName,surname,displayName

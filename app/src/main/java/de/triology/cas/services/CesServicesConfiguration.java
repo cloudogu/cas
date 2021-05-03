@@ -9,6 +9,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration("CesServicesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.services")
@@ -20,8 +22,11 @@ public class CesServicesConfiguration implements ServicesManagerExecutionPlanCon
     @Value("${ces.services.stage:production}")
     private String stage;
 
+    @Value("${ces.services.allowedAttributes}")
+    private List<String> allowedAttributes;
+
     @Override
     public ServicesManager configureServicesManager() {
-        return new CesServicesManager(null, stage, registry);
+        return new CesServicesManager(allowedAttributes, stage, registry);
     }
 }
