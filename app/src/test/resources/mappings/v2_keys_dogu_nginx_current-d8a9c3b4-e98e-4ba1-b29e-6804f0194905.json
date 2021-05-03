@@ -1,0 +1,23 @@
+{
+  "id" : "d8a9c3b4-e98e-4ba1-b29e-6804f0194905",
+  "name" : "v2_keys_dogu_nginx_current",
+  "request" : {
+    "url" : "/v2/keys/dogu/nginx/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/nginx/current\",\"value\":\"1.13.11-8\",\"modifiedIndex\":39,\"createdIndex\":39}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "d8a9c3b4-e98e-4ba1-b29e-6804f0194905",
+  "persistent" : true,
+  "insertionIndex" : 16
+}
