@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -102,39 +102,6 @@ public class CesServicesManagerTest {
     }
 
     /**
-     * Test for {@link CesServicesManager#matchesExistingService(Service)}.
-     */
-    @Test
-    public void matchesExistingService() throws Exception {
-        RegisteredService expectedRegisteredService = mock(RegisteredService.class);
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
-            put(0L, mock(RegisteredService.class));
-            put(23L, expectedRegisteredService);
-        }};
-        when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
-
-        Service service = mock(Service.class);
-        when(expectedRegisteredService.matches(service)).thenReturn(true);
-
-        assertTrue("Unexpected value for matchesExistingService()", etcdServicesManger.matchesExistingService(service));
-    }
-
-    /**
-     * Test for {@link CesServicesManager#findServiceBy(Service)} for a services that does not exist.
-     */
-    @Test
-    public void matchesExistingServiceNegative() throws Exception {
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
-            put(0L, mock(RegisteredService.class));
-            put(23L, mock(RegisteredService.class));
-        }};
-        when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
-
-        assertFalse("Unexpected value for matchesExistingService()",
-                    etcdServicesManger.matchesExistingService(mock(Service.class)));
-    }
-
-    /**
      * Test for {@link CesServicesManager#findServiceBy(Service)}.
      */
     @Test
@@ -175,11 +142,9 @@ public class CesServicesManagerTest {
     @Test
     public void findServiceById() throws Exception {
         RegisteredService expectedService = mock(RegisteredService.class);
-        RegisteredService serviceToClone = mock(RegisteredService.class);
-        when(serviceToClone.clone()).thenReturn(expectedService);
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, mock(RegisteredService.class));
-            put(23L, serviceToClone);
+            put(23L, expectedService);
         }};
         when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
         RegisteredService actualService = etcdServicesManger.findServiceBy(23);
@@ -201,11 +166,11 @@ public class CesServicesManagerTest {
     }
 
     /**
-     * Test for {@link CesServicesManager#reload()}.
+     * Test for {@link CesServicesManager#load()}.
      */
     @Test
-    public void reload() throws Exception {
-        etcdServicesManger.reload();
+    public void load() throws Exception {
+        etcdServicesManger.load();
         verify(etcdServicesManger.createStage(null,null,null)).updateRegisteredServices();
     }
 
