@@ -37,6 +37,15 @@ def explodedResourcesDir = "${buildDir}/cas-resources"
 def resourcesJarName = "cas-server-webapp-resources"
 def templateViewsJarName = "cas-server-support-thymeleaf"
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+test.finalizedBy jacocoTestReport
+tasks['sonarqube'].dependsOn test
+
+
 task copyCasConfiguration(type: Copy, group: "CAS", description: "Copy the CAS configuration from this project to /etc/cas/config") {
     from "etc/cas/config"
     into new File('/etc/cas/config').absolutePath
