@@ -20,18 +20,12 @@ import java.util.stream.Collectors;
  */
 class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
-    /**
-     * Name of the special service that allows cas to access itself
-     */
-    private static final String SERVICE_NAME_CAS = "cas";
-
     private String fqdn;
 
     private Registry registry;
 
     private List<CesServiceData> persistentServices;
 
-    //private final CesOAuthServiceFactory oAuthServiceFactory;
     private final CesDoguServiceFactory doguServiceFactory;
 
     private boolean initialized = false;
@@ -40,7 +34,6 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         super(allowedAttributes);
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
-      //  this.oAuthServiceFactory = new CesOAuthServiceFactory();
         this.doguServiceFactory = new CesDoguServiceFactory();
     }
 
@@ -87,7 +80,6 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void synchronizeServicesWithRegistry() {
         logger.debug("Synchronize services with registry");
         List<CesServiceData> newServices = new ArrayList<>(persistentServices);
-        // newServices.addAll(registry.getInstalledOAuthCASServiceAccounts(oAuthServiceFactory));
         newServices.addAll(registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory));
         synchronizeServices(newServices);
         logger.info("Loaded {} services!", registeredServices.size());
@@ -108,21 +100,22 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * Creates and registers a new service for an given name
      */
     void addNewService(CesServiceData serviceData) {
-        logger.debug("Add new service: " + serviceData.getName());
+        String serviceName = serviceData.getName();
+        logger.debug("Add new service: {}", serviceName);
         try {
             try {
-                URI logoutUri = registry.getCasLogoutUri(serviceData.getName());
+                URI logoutUri = registry.getCasLogoutUri(serviceName);
                 RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
                 addNewService(service);
             } catch (GetCasLogoutUriException e) {
-                logger.info("GetCasLogoutUriException: CAS logout URI of service " + serviceData.getName() + " could not be retrieved: " + e);
+                logger.debug("GetCasLogoutUriException: CAS logout URI of service {} could not be retrieved: {}", serviceName, e);
                 logger.info("Adding service without CAS logout URI");
                 RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
                 addNewService(service);
             }
         }
         catch (Exception e) {
-            logger.error("Could not create service " + serviceData.getName() + ": " + e);
+            logger.error("Could not create service {}: {}", serviceName, e);
         }
     }
 
@@ -181,7 +174,5 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         persistentServices.add( new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
 
         logger.info("Creating callback service for OAuth integration");
-        // addNewService(oAuthServiceFactory.createCallbackService(createId(), fqdn));
-        // persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OAUTH_CALLBACK_IDENTIFIER, oAuthServiceFactory));
     }
 }

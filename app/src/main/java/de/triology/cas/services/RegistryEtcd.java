@@ -13,14 +13,12 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -36,7 +34,6 @@ class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu/";
     private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts/";
-    private static final String CAS_SERVICE_ACCOUNT_DIR_IN_DOGU = "service_accounts/";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final EtcdClient etcd;
@@ -51,55 +48,6 @@ class RegistryEtcd implements Registry {
         this.etcd = etcd;
     }
 
-
-    /**
-     * Retrieves all CAS Services Accounts which are currently registered in etcd.
-     *
-     * @return a list containing the identifier for all registered service accounts of cas
-     */
-    @Override
-    public List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory) {
-        log.debug("Get CAS-OAuth service accounts from registry");
-        try {
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
-            return extractOAuthClientsFromSADir(nodes, factory);
-        } catch (EtcdException e) {
-            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                return new ArrayList<>();
-            } else {
-                log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
-                throw new RegistryException(e);
-            }
-        } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
-            throw new RegistryException(e);
-        }
-    }
-
-    /**
-     * Iterates over all available etcd-Keys of CASs service accounts.
-     *
-     * @param nodesFromEtcd a list containing all child nodes of the `service_accounts` directory of the cas in the etcd
-     * @return a list containing the identifier for all registered service accounts of cas
-     */
-    private List<CesServiceData> extractOAuthClientsFromSADir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
-        log.debug("Entered extractOAuthClientsFromSADir");
-        List<CesServiceData> serviceAccountNames = new ArrayList<>();
-        for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
-            try {
-                String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
-                String clientSecret = this.getCurrentOAuthClientSecret(clientID);
-                HashMap<String, String> attributes = new HashMap<>();
-                // attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                // attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
-                serviceAccountNames.add(new CesServiceData(clientID, factory, attributes));
-            } catch (RegistryException ex) {
-                log.error("registry exception occurred", ex);
-            }
-        }
-        return serviceAccountNames;
-    }
-
     private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
         log.debug("Entered extractDogusFromDoguRootDir");
         List<CesServiceData> doguServices = new ArrayList<>();
@@ -112,9 +60,9 @@ class RegistryEtcd implements Registry {
                     doguServices.add(new CesServiceData(doguName, factory));
                 }
             } catch (ParseException ex) {
-                log.error("failed to parse EtcdNode to json: " + ex);
+                log.error("failed to parse EtcdNode to json: ", ex);
             } catch (RegistryException ex) {
-                log.error("registry exception occurred: " + ex);
+                log.error("registry exception occurred: ", ex);
             }
         }
         return doguServices;
@@ -127,7 +75,7 @@ class RegistryEtcd implements Registry {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
             return extractDogusFromDoguRootDir(nodes, factory);
         } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getInstalledDogusWhichAreUsingCAS: " + e);
+            log.error("Failed to getInstalledDogusWhichAreUsingCAS: ", e);
             throw new RegistryException(e);
         }
     }
@@ -138,12 +86,12 @@ class RegistryEtcd implements Registry {
     }
 
     public String getEtcdValueForKey(String key) {
-        log.debug("Get " + key + " from registry");
+        log.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.error("Failed to getEtcdValueForKey: " + key);
+                log.error("Failed to getEtcdValueForKey: {}",  key);
             } else {
                 log.error("Failed to getEtcdValueForKey: ", e);
             }
@@ -161,12 +109,12 @@ class RegistryEtcd implements Registry {
      * @return the value for the given key if present, otherwise an empty string.
      */
     public String getEtcdValueForKeyIfPresent(String key) {
-        log.debug("Get " + key + " from registry");
+        log.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"" + key + "\" not found");
+                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"{}\" not found", key);
                 //Valid case if key is not found return an empty string
                 return "";
             } else {
@@ -228,7 +176,7 @@ class RegistryEtcd implements Registry {
         Thread t = new Thread(() -> {
             try {
                 while (true) {
-                    EtcdResponsePromise responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
+                    EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
                     log.info("wait for changes under /dogu");
                     responsePromise.get();
                     doguChangeListener.onChange();
@@ -243,7 +191,7 @@ class RegistryEtcd implements Registry {
         Thread t2 = new Thread(() -> {
             try {
                 while (true) {
-                    EtcdResponsePromise responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
+                    EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
                     log.info("wait for changes under /config/cas/service_accounts");
                     responsePromise.get();
                     doguChangeListener.onChange();

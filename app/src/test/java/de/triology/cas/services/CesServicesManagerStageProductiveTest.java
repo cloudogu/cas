@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -265,10 +264,9 @@ public class CesServicesManagerStageProductiveTest {
                     + services, 1, matchingServices.size());
             RegisteredService actualService = matchingServices.get(0);
 
-            assertTrue("Service \" + name \": ID is not unique",
-                    1 == services.stream()
-                            .filter(registeredService -> actualService.getId() == registeredService.getId())
-                            .count());
+            assertEquals("Service \" + name \": ID is not unique", 1, services.stream()
+                    .filter(registeredService -> actualService.getId() == registeredService.getId())
+                    .count());
             assertEqualsService(actualService);
         }
 

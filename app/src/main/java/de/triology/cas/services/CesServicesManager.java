@@ -5,7 +5,6 @@
  */
 package de.triology.cas.services;
 
-import groovy.util.logging.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -75,7 +74,6 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        // TODO: clone?
         return serviceStage.getRegisteredServices().get(id);
     }
 

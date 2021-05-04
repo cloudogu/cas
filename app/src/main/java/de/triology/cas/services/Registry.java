@@ -15,12 +15,6 @@ interface Registry {
     List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
 
     /**
-     * @return the names of all installed OAuth service accounts
-     * @throws RegistryException wrapper for all technical exceptions
-     */
-    List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory);
-
-    /**
      * @return the fully qualified domain name
      * @throws RegistryException wrapper for all technical exceptions
      */
