@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 
 .btn-primary{
-    border-color:#FFFFFF;   
+    border-color:#FFFFFF;
 }
 
 .link-underlined{
@@ -82,4 +82,8 @@ and open the template in the editor.
 
 #forgotPasswordInfo {
     width: 100%;
+}
+
+.alert-warning{
+    background-color: #c9344b;
 }
