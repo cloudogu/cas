@@ -3,6 +3,7 @@
 #========================================
 cas.server.name=https://{{ .GlobalConfig.Get "fqdn" }}
 cas.server.prefix=${cas.server.name}/cas
+logging.config=file:/etc/cas/config/log4j2.xml
 
 #========================================
 # Security configuration

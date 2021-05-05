@@ -3,8 +3,8 @@
 <Configuration monitorInterval="5" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">logs</Property>
-        <Property name="ces.log.level">{{ .Config.GetOrDefault "logging/root" "WARN"}}</Property>
-        <Property name="ces.translation.messages.log.level">{{ .Config.GetOrDefault "logging/translation_messages" "ERROR"}}</Property>
+        <Property name="ces.log.level">{{ .Config.GetOrDefault "logging/root" "warn"}}</Property>
+        <Property name="ces.translation.messages.log.level">{{ .Config.GetOrDefault "logging/translation_messages" "error"}}</Property>
     </Properties>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
@@ -40,27 +40,27 @@
         </CasAppender>
     </Appenders>
     <Loggers>
-        <!-- If adding a Logger with level set higher than ${sys:cas.log.level}, make category as selective as possible -->
+        <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
         <!-- Loggers inherit appenders from Root Logger unless additivity is false -->
-        <AsyncLogger name="org.apereo" level="${sys:cas.log.level}" includeLocation="true"/>
+        <AsyncLogger name="org.apereo" level="${sys:ces.log.level}" includeLocation="true"/>
         <AsyncLogger name="org.apereo.cas.web.view.CasReloadableMessageBundle" level="${sys:ces.translation.messages.log.level}" includeLocation="true"/>
 
-        <AsyncLogger name="org.apache" level="${sys:cas.log.level}" />
+        <AsyncLogger name="org.apache" level="${sys:ces.log.level}" />
 
-        <AsyncLogger name="org.springframework" level="${sys:cas.log.level}" includeLocation="true" />
-        <AsyncLogger name="org.springframework.webflow" level="${sys:cas.log.level}" includeLocation="true" />
+        <AsyncLogger name="org.springframework" level="${sys:ces.log.level}" includeLocation="true" />
+        <AsyncLogger name="org.springframework.webflow" level="${sys:ces.log.level}" includeLocation="true" />
 
-        <AsyncLogger name="de.triology" level="${sys:cas.log.level}" includeLocation="true"/>
+        <AsyncLogger name="de.triology" level="${sys:ces.log.level}" includeLocation="true"/>
 
-        <AsyncLogger name="org.pac4j" level="${sys:cas.log.level}" includeLocation="true"/>
+        <AsyncLogger name="org.pac4j" level="${sys:ces.log.level}" includeLocation="true"/>
 
         <!-- Log audit to all root appenders, and also to audit log (additivity is not false) -->
-        <AsyncLogger name="org.apereo.inspektr.audit.support" level="${sys:cas.log.level}" includeLocation="true" >
+        <AsyncLogger name="org.apereo.inspektr.audit.support" level="${sys:ces.log.level}" includeLocation="true" >
             <AppenderRef ref="casAudit"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
-        <AsyncRoot level="${sys:cas.log.level}">
+        <AsyncRoot level="${sys:ces.log.level}">
             <AppenderRef ref="casFile"/>
             <!-- 
                  For deployment to an application server running as service, 
