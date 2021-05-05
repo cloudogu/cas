@@ -37,7 +37,7 @@ parallel(
 
                         stage('Unit Test') {
                             gradlew 'test'
-                            //TODO: achieve test results when they exist
+                            junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
                         }
 
                         stage('SonarQube') {
