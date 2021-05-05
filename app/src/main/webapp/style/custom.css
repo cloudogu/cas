@@ -80,10 +80,6 @@ and open the template in the editor.
     display: block;
 }
 
-#forgotPasswordInfo {
-    width: 100%;
-}
-
 .alert-warning{
     background-color: #c9344b;
 }

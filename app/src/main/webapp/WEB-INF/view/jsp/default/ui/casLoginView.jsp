@@ -95,12 +95,6 @@
             <input type="hidden" name="execution" value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
 
-            <div class="forgot-password-message-area">
-                <div style="display:none;" id="forgotPasswordInfo" class="alert alert-info">
-                        ${passwordForgotText}
-                </div>
-            </div>
-
             <div class="alert-area">
                 <c:if test="${not pageContext.request.secure}">
                     <div class="alert alert-warning">
@@ -113,6 +107,11 @@
                              cssClass="alert alert-danger alert-msg-credentials"
                              element="div"/>
             </div>
+
+            <div class="forgot-password-message-area">
+                <p style="display:none;" id="forgotPasswordInfo">${passwordForgotText}</p>
+            </div>
+
         </form:form>
     </div>
 
@@ -175,33 +174,40 @@
             margin: 0;
         }
 
-        .forgot-password-message-area, .alert-area{
+        .forgot-password-message-area, .alert-area {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
-        .forgot-password-message-area > *, .alert-area > *{
+        .forgot-password-message-area > *, .alert-area > * {
             margin-bottom: 0;
             margin-top: 0;
-            height: 100%;
+        }
+
+        .forgot-password-message-area > p {
+            color: #1b7daa;
         }
 
         .forgot-password-message-area {
-            grid-row-start: 7;
-            grid-row-end: 8;
-            grid-column-start: 1;
-            grid-column-end: 5;
-
-        }
-
-        .alert-area {
             grid-row-start: 8;
             grid-row-end: 9;
             grid-column-start: 1;
             grid-column-end: 5;
+        }
+
+        .alert-area {
+            grid-row-start: 7;
+            grid-row-end: 8;
+            grid-column-start: 3;
+            grid-column-end: 5;
+        }
+
+        .alert-msg-credentials {
+            line-height: 25%;
         }
 
         @media (min-width: 961px) {
@@ -213,7 +219,7 @@
             .login-form {
                 display: grid;
                 grid-template-columns: 160px 30px auto 70px;
-                grid-template-rows:  114px 18px 49px 18px 49px 35px 55px 55px auto;
+                grid-template-rows:  94px 22px 49px 22px 49px 35px 55px 55px auto;
                 height: 100%;
             }
         }
@@ -227,7 +233,7 @@
             .login-form {
                 display: grid;
                 grid-template-columns: 160px 30px auto 70px;
-                grid-template-rows:  114px 18px 49px 18px 49px 35px 55px 55px auto;
+                grid-template-rows:  94px 22px 49px 22px 49px 35px 55px 55px auto;
                 height: 100%;
             }
         }
@@ -240,9 +246,21 @@
 
             .login-form {
                 display: grid;
-                grid-template-columns: 160px 5px auto 70px;
-                grid-template-rows:  114px 18px 49px 18px 49px 35px 55px 55px auto;
+                grid-template-columns: 0 0 auto 70px;
+                grid-template-rows:  208px 22px 49px 22px 49px 35px 55px 55px auto;
                 height: 100%;
+            }
+
+            .cloudogu-icon {
+                grid-row-start: 1;
+                grid-row-end: 2;
+                grid-column-start: 3;
+                grid-column-end: 5;
+                margin: auto;
+            }
+
+            .mid{
+                height:514px;
             }
         }
     </style>
