@@ -108,14 +108,14 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
                 RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
                 addNewService(service);
             } catch (GetCasLogoutUriException e) {
-                logger.debug("GetCasLogoutUriException: CAS logout URI of service {} could not be retrieved: ", serviceName, e);
+                logger.debug("GetCasLogoutUriException: CAS logout URI of service {} could not be retrieved: {}", serviceName, e.toString());
                 logger.info("Adding service without CAS logout URI");
                 RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
                 addNewService(service);
             }
         }
         catch (Exception e) {
-            logger.error("Could not create service {}: ", serviceName, e);
+            logger.error("Could not create service {}: {}", serviceName, e.toString());
         }
     }
 
