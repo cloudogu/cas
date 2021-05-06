@@ -97,14 +97,14 @@
 
             <div class="alert-area">
                 <c:if test="${not pageContext.request.secure}">
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning login-page-error">
                         <spring:message code="screen.welcome.label.httpWarning"/>
                         <a class="link-underlined" href="#"
                            onclick="location.href=URLsecure;">HTTPS</a>.
                     </div>
                 </c:if>
                 <form:errors path="*" id="msg" role="alert"
-                             cssClass="alert alert-danger alert-msg-credentials"
+                             cssClass="alert alert-danger login-page-error"
                              element="div"/>
             </div>
 

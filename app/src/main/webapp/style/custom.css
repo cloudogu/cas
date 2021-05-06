@@ -42,10 +42,6 @@ and open the template in the editor.
     align-items: center;
 }
 
-.alert-msg-credentials {
-    position: inherit;
-}
-
 .alert-fields {
     position: inherit;
     margin-top: 0px;
@@ -173,10 +169,12 @@ and open the template in the editor.
     grid-row-end: 8;
     grid-column-start: 3;
     grid-column-end: 5;
+    padding: 15px;
 }
 
-.alert-msg-credentials {
-    line-height: 25%;
+.login-page-error{
+    line-height: 1em;
+    padding: 8px;
 }
 
 @media (min-width: 961px) {
