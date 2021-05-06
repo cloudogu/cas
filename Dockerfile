@@ -13,7 +13,7 @@ RUN chmod 750 ./gradlew \
 RUN ./gradlew clean build --parallel --no-daemon
 
 # Copy source code and build overlay
-COPY ./app/src cas-overlay/src/
+COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
 # registry.cloudogu.com/official/cas

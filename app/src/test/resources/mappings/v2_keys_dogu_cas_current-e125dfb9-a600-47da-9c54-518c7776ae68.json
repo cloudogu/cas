@@ -1,0 +1,23 @@
+{
+  "id" : "e125dfb9-a600-47da-9c54-518c7776ae68",
+  "name" : "v2_keys_dogu_cas_current",
+  "request" : {
+    "url" : "/v2/keys/dogu/cas/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/cas/current\",\"value\":\"4.0.7.20-3\",\"modifiedIndex\":1392,\"createdIndex\":1392}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "e125dfb9-a600-47da-9c54-518c7776ae68",
+  "persistent" : true,
+  "insertionIndex" : 18
+}

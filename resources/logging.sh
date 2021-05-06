@@ -3,6 +3,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# shellcheck disable=SC1091
+source util.sh
+
 # logging behaviour can be configured in logging/root with the following options <ERROR,WARN,INFO,DEBUG>
 DEFAULT_LOGGING_KEY="logging/root"
 LOG_LEVEL_ERROR="ERROR"; LOG_LEVEL_WARN="WARN"; LOG_LEVEL_INFO="INFO"; LOG_LEVEL_DEBUG="DEBUG"
@@ -16,7 +19,7 @@ TOMCAT_LOGGING="/opt/apache-tomcat/conf/logging.properties"
 SCRIPT_LOG_PREFIX="Log level mapping:"
 
 CAS_LOGGING_TEMPLATE="/etc/cas/config/log4j2.xml.tpl"
-CAS_LOGGING="/opt/apache-tomcat/webapps/cas/WEB-INF/classes/log4j2.xml"
+CAS_LOGGING="/etc/cas/config/log4j2.xml"
 
 # create a mapping because apache uses different log levels than log4j eg. ERROR=>SEVERE
 function mapDoguLogLevel() {
@@ -63,4 +66,15 @@ echo "Log level mapping ended successfully..."
 
 echo "Rendering logging configuration..."
 doguctl template ${CAS_LOGGING_TEMPLATE} ${CAS_LOGGING}
+templatingSuccessful=$?
+
+if [[ "${templatingSuccessful}" != 0 ]];  then
+  exitOnErrorWithMessage "invalidConfiguration" "Could not template ${CAS_LOGGING_TEMPLATE} file."
+fi
+
 doguctl template ${TOMCAT_LOGGING_TEMPLATE} ${TOMCAT_LOGGING}
+templatingSuccessful=$?
+
+if [[ "${templatingSuccessful}" != 0 ]];  then
+  exitOnErrorWithMessage "invalidConfiguration" "Could not template ${TOMCAT_LOGGING_TEMPLATE} file."
+fi

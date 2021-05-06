@@ -1,0 +1,23 @@
+{
+  "id" : "435e276b-8f23-435b-9242-9f61ee6439f8",
+  "name" : "v2_keys_dogu_registrator_current",
+  "request" : {
+    "url" : "/v2/keys/dogu/registrator/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"action\":\"get\",\"node\":{\"key\":\"/dogu/registrator/current\",\"value\":\"0.7.0-1\",\"modifiedIndex\":36,\"createdIndex\":36}}\n",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "1752",
+      "X-Raft-Index" : "64308",
+      "X-Raft-Term" : "5",
+      "Date" : "Tue, 09 Apr 2019 10:53:32 GMT"
+    }
+  },
+  "uuid" : "435e276b-8f23-435b-9242-9f61ee6439f8",
+  "persistent" : true,
+  "insertionIndex" : 14
+}
