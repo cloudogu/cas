@@ -169,13 +169,15 @@ and open the template in the editor.
     grid-row-end: 8;
     grid-column-start: 3;
     grid-column-end: 5;
-    padding: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
-.login-page-error{
+.login-page-error {
     line-height: 1em;
     padding: 8px;
     background-color: #c9344b;
+    width: 100%;
 }
 
 @media (min-width: 961px) {
@@ -215,7 +217,7 @@ and open the template in the editor.
     .login-form {
         display: grid;
         grid-template-columns: 0 0 auto 70px;
-        grid-template-rows:  208px 22px 49px 22px 49px 35px 55px 55px auto;
+        grid-template-rows:  208px 22px 49px 22px 49px 35px 55px 75px auto;
         height: 100%;
     }
 
@@ -228,6 +230,6 @@ and open the template in the editor.
     }
 
     .mid {
-        height: 514px;
+        height: 534px;
     }
 }
