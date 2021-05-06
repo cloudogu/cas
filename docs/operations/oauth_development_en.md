@@ -1,6 +1,6 @@
 **Note: This file is automatically translated!**
 
-## OAuth
+# OAuth
 Für die Implementierung von OAuth wurde das vorhandenen OAuth Plugins von CAS eingebunden.
 
 Wir benutzen zur Erstellung der Services im CAS einen eigenen ServiceManager ausschließlich für Dogu-Services. 

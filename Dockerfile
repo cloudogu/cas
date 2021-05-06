@@ -12,7 +12,7 @@ RUN set -x \
 FROM registry.cloudogu.com/official/java:8u252-1
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-18" \
+    VERSION="4.0.7.20-19" \
     maintainer="michael.behlendorf@cloudogu.com"
 
 # configure environment

@@ -18,85 +18,106 @@
     under the License.
 
 --%>
-<jsp:directive.include file="includes/top.jsp" />
+<jsp:directive.include file="includes/top.jsp"/>
 
-    <script>
-        var URL=document.URL;
-        var URLsecure=URL.replace("http","https");
+<script>
+    var URL = document.URL;
+    var URLsecure = URL.replace("http", "https");
 
-        function toggleForgotPasswordInfo() {
-            var x = document.getElementById("forgotPasswordInfo");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
+    function toggleForgotPasswordInfo() {
+        var x = document.getElementById("forgotPasswordInfo");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
         }
-    </script>
+    }
+</script>
 
-    <div class="row mid vertical-align">
-      <div class="col-md-3 col-md-offset-2 logo">
-        <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-white-160px.png" />" alt="Cloudogu Logo" class="spacer-top pull-right" aria-hidden="true">
-      </div>
-      <div class="col-md-3">
+<div class="row mid vertical-align">
+    <div class="login-container">
+        <form:form method="post" id="fm1"
+                   cssClass="fm-v clearfix login-form col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"
+                   commandName="${commandName}" htmlEscape="true"
+                   onsubmit="return prepareSubmit(this);">
 
-    <form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true" onsubmit="return prepareSubmit(this);">
+            <%--Left column - cloudogu logo--%>
+            <img src="<c:url value="/themes/ces-theme/dist/images/logo/logo-blue-160px.png" />" alt="Cloudogu Logo"
+                 class="spacer-top pull-right cloudogu-icon" aria-hidden="true">
 
-        <div id="login">
-
+            <%--Right column - Username label & input--%>
+            <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey"/>
+            <spring:message code="screen.welcome.label.netid.placeholder" var="userPlaceholder"/>
             <c:if test="${not empty sessionScope.openIdLocalId}">
-            <strong>${sessionScope.openIdLocalId}</strong>
-            <input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
+                <strong>${sessionScope.openIdLocalId}</strong>
+                <input type="hidden" id="username" name="username"
+                       value="${sessionScope.openIdLocalId}"/>
             </c:if>
-
             <c:if test="${empty sessionScope.openIdLocalId}">
-            <div class="form-group">
-
-                <label for="username">
-                    <spring:message code="screen.welcome.label.netid" />
+                <label for="username" class="username-label right">
+                    <spring:message code="screen.welcome.label.netid"/>
                 </label>
-                <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
-                <spring:message code="screen.welcome.label.netid.placeholder" var="userPlaceholder"/>
-                <form:input cssClass="form-control" cssErrorClass="error" id="username" placeholder="${userPlaceholder}" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="false" htmlEscape="true" />
-            </div>
+                <form:input cssClass="form-control username-input right" cssErrorClass="error" id="username"
+                            placeholder="${userPlaceholder}" size="25" tabindex="1"
+                            accesskey="${userNameAccessKey}" path="username" autocomplete="false"
+                            htmlEscape="true"/>
             </c:if>
 
-            <div class="form-group">
+            <%--Right column - Password label & input--%>
+            <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey"/>
+            <spring:message code="screen.welcome.label.password.placeholder" var="passwordPlaceholder"/>
+            <label for="password" class="password-label right">
+                <spring:message code="screen.welcome.label.password"/>
+            </label>
+            <form:password cssClass="form-control password-input right" cssErrorClass="error" id="password"
+                           placeholder="${passwordPlaceholder}" size="25" tabindex="2" path="password"
+                           accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off"/>
+            <spring:message code="screen.password.forgotText" var="passwordForgotText" text=""
+                            javaScriptEscape="true"/>
 
-                <label for="password">
-                    <spring:message code="screen.welcome.label.password" />
-                </label>
-                <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
-                <spring:message code="screen.welcome.label.password.placeholder" var="passwordPlaceholder"/>
-                <form:password cssClass="form-control" cssErrorClass="error" id="password" placeholder= "${passwordPlaceholder}" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
-                <spring:message code="screen.password.forgotText" var="passwordForgotText" text="" javaScriptEscape="true"/>
-                <c:if test="${not empty passwordForgotText}">
-                    <spring:message code="screen.password.forgot" var="passwordForgot" text="" javaScriptEscape="true"/>
-                    <button type="button" id="forgotPassword" class="link-underlined btn btn-primary" aria-label="${passwordForgot}" onclick="toggleForgotPasswordInfo(); return false;">${passwordForgot}</button>
-                </c:if>
-            </div>
+            <%--password forget--%>
+            <c:if test="${not empty passwordForgotText}">
+                <spring:message code="screen.password.forgot" var="passwordForgot" text=""
+                                javaScriptEscape="true"/>
+                <button type="button" id="forgotPassword" class="link-underlined btn btn-primary right"
+                        aria-label="${passwordForgot}"
+                        onclick="toggleForgotPasswordInfo(); return false;">${passwordForgot}</button>
+            </c:if>
 
-            <input type="hidden" name="lt" value="${loginTicket}" />
-            <input type="hidden" name="execution" value="${flowExecutionKey}" />
-            <input type="hidden" name="_eventId" value="submit" />
+            <%--Right column - Submit button--%>
+            <button class="btn btn-primary pull-right submit-button" role="button" name="submit" accesskey="l"
+                    value="Login"
+                    tabindex="4" type="submit" aria-label="Login">Login
+            </button>
 
-            <div class="alert-fields">
+            <%--Hidden in any case - necessary inputs for login--%>
+            <input type="hidden" name="lt" value="${loginTicket}"/>
+            <input type="hidden" name="execution" value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="submit"/>
+
+            <div class="alert-area">
                 <c:if test="${not pageContext.request.secure}">
-                    <div class="alert alert-warning">
-                        <spring:message code="screen.welcome.label.httpWarning" />
-                        <a class="link-underlined" href="#" onclick="location.href=URLsecure;">HTTPS</a>.
+                    <div class="alert alert-warning login-page-error">
+                        <spring:message code="screen.welcome.label.httpWarning"/>
+                        <a class="link-underlined" href="#"
+                           onclick="location.href=URLsecure;">HTTPS</a>.
                     </div>
                 </c:if>
-                <div style="display:none;" id="forgotPasswordInfo" class="alert alert-info">
-                        ${passwordForgotText}
-                </div>
+                <form:errors path="*" id="msg" role="alert"
+                             cssClass="alert alert-danger login-page-error"
+                             element="div"/>
             </div>
-            <form:errors path="*" id="msg" role="alert" cssClass="alert alert-danger alert-msg-credentials" element="div" />
-            <button class="btn btn-primary pull-right" role="button" name="submit" accesskey="l" value="Login" tabindex="4" type="submit" aria-label="Login">Login</button>
 
-        </div>
-    </form:form>
+            <div class="forgot-password-message-area">
+                <p style="display:none;" id="forgotPasswordInfo">${passwordForgotText}</p>
+            </div>
+
+        </form:form>
     </div>
-  </div>
 
-<jsp:directive.include file="includes/bottom.jsp" />
+    <style>
+
+    </style>
+</div>
+
+<jsp:directive.include file="includes/bottom.jsp"/>

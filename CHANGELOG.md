@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.7.20-19] - 2021-05-06
+
+### Changed
+- Improve accessibility of login mask by changing design (#80)
+
 ## [v4.0.7.20-18] - 2021-04-20
 
 ### Changed
