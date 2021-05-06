@@ -175,6 +175,7 @@ and open the template in the editor.
 .login-page-error{
     line-height: 1em;
     padding: 8px;
+    background-color: #c9344b;
 }
 
 @media (min-width: 961px) {
