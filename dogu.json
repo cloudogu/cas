@@ -13,10 +13,8 @@
   "Logo": "https://cloudogu.com/images/dogus/cas.png",
   "Image": "registry.cloudogu.com/official/cas",
   "Dependencies": [
-    "nginx"
-  ],
-  "OptionalDependencies": [
-    "ldap"
+    "nginx",
+    "ldap-mapper"
   ],
   "Configuration": [
     {
@@ -136,14 +134,6 @@
       "Owner": "1000",
       "Group": "1000",
       "NeedsBackup": true
-    }
-  ],
-  "ServiceAccounts": [
-    {
-      "Type": "ldap",
-      "Params": [
-        "ro"
-      ]
     }
   ],
   "ExposedCommands": [
