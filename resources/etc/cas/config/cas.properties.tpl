@@ -21,6 +21,9 @@ cas.securityContext.status.allowedSubnet=127.0.0.1
 #========================================
 host.name=cas.{{ .GlobalConfig.Get "domain" }}
 
+# Disable static users
+cas.authn.accept.enabled=false
+
 #========================================
 # LDAP
 #========================================
@@ -30,8 +33,8 @@ cas.authn.ldap[0].base-dn=ou=People,dc=cloudogu,dc=com
 cas.authn.ldap[0].type=DIRECT
 cas.authn.ldap[0].dn-format=uid=%s,ou=People,dc=cloudogu,dc=com
 cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
-cas.authn.ldap[0].additional-attributes=username,cn,mail,groups,givenName,surname,displayName
+cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
 cas.authn.ldap[0].disable-pooling=true
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
-ces.services.allowedAttributes=username,cn,mail,groups,givenName,surname,displayName
+ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
