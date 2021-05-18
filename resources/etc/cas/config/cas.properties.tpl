@@ -21,16 +21,20 @@ cas.securityContext.status.allowedSubnet=127.0.0.1
 #========================================
 host.name=cas.{{ .GlobalConfig.Get "domain" }}
 
+# Disable static users
+cas.authn.accept.enabled=false
+
 #========================================
-# static user (TODO: needs to be removed for release)
+# LDAP
 #========================================
-cas.authn.accept.users=cesadmin::cesadmin
-cas.authn.attributeRepository.stub.attributes.mail=admin@properties.local
-cas.authn.attributeRepository.stub.attributes.cn=Admin
-cas.authn.attributeRepository.stub.attributes.givenName=Adam
-cas.authn.attributeRepository.stub.attributes.surname=Strator
-cas.authn.attributeRepository.stub.attributes.displayName=adminDN
-cas.authn.attributeRepository.stub.attributes.groups=cesadmin
+
+cas.authn.ldap[0].ldap-url=ldap://ldap-mapper:3893/
+cas.authn.ldap[0].base-dn=ou=People,dc=cloudogu,dc=com
+cas.authn.ldap[0].type=DIRECT
+cas.authn.ldap[0].dn-format=uid=%s,ou=People,dc=cloudogu,dc=com
+cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
+cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
+cas.authn.ldap[0].disable-pooling=true
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
-ces.services.allowedAttributes=username,cn,mail,groups,givenName,surname,displayName
+ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups

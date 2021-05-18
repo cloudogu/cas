@@ -27,6 +27,12 @@ if [[ ${loggingExitCode} -ne 0 ]]; then
   exitOnErrorWithMessage "ErrorRootLogLevelMapping" "ERROR: An error occurred during the root log level evaluation."
 fi
 
+echo "Waiting until ldap-mapper passed all health checks..."
+if ! doguctl healthy --wait --timeout 120 ldap-mapper; then
+  echo "timeout reached by waiting of ldap-mapper to get healthy"
+  exit 1
+fi
+
 # from utils.sh - configures the cas server
 echo "Create general configuration..."
 configureCAS
