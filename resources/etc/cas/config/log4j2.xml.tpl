@@ -39,8 +39,8 @@
             <AppenderRef ref="console" />
         </CasAppender>
 
-        <Rewrite name="rewrite" >
-            <PasswordRewritePolicy />
+        <Rewrite name="defaultMappingPasswordRewrite" >
+            <DefaultMappingPasswordRewritePolicy />
             <AppenderRef ref="casConsole" />
             <AppenderRef ref="casFile" />
         </Rewrite>
@@ -55,9 +55,6 @@
 
         <AsyncLogger name="org.springframework" level="${sys:ces.log.level}" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:ces.log.level}" includeLocation="true" />
-        <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="rewrite"/>
-        </AsyncLogger>
 
         <AsyncLogger name="de.triology" level="${sys:ces.log.level}" includeLocation="true"/>
 
@@ -66,6 +63,11 @@
         <!-- Log audit to all root appenders, and also to audit log (additivity is not false) -->
         <AsyncLogger name="org.apereo.inspektr.audit.support" level="${sys:ces.log.level}" includeLocation="true" >
             <AppenderRef ref="casAudit"/>
+        </AsyncLogger>
+
+        <!-- Rewrite messages with passwords in plain text - The following classes would otherwise output passwords in plain text at log level debug.-->
+        <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="DefaultMappingPasswordRewrite"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
