@@ -42,6 +42,7 @@
         <Rewrite name="rewrite" >
             <PasswordRewritePolicy />
             <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
         </Rewrite>
     </Appenders>
     <Loggers>
