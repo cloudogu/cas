@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5" packages="org.apereo.cas.logging,de.triology.cas.logging">
     <Properties>
         <Property name="baseDir">logs</Property>
         <Property name="ces.log.level">{{ .Config.GetOrDefault "logging/root" "warn"}}</Property>
@@ -38,6 +38,11 @@
         <CasAppender name="casConsole">
             <AppenderRef ref="console" />
         </CasAppender>
+
+        <Rewrite name="rewrite" >
+            <PasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -49,6 +54,9 @@
 
         <AsyncLogger name="org.springframework" level="${sys:ces.log.level}" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:ces.log.level}" includeLocation="true" />
+        <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="rewrite"/>
+        </AsyncLogger>
 
         <AsyncLogger name="de.triology" level="${sys:ces.log.level}" includeLocation="true"/>
 
@@ -62,8 +70,8 @@
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
         <AsyncRoot level="${sys:ces.log.level}">
             <AppenderRef ref="casFile"/>
-            <!-- 
-                 For deployment to an application server running as service, 
+            <!--
+                 For deployment to an application server running as service,
                  delete the casConsole appender below
             -->
             <AppenderRef ref="casConsole"/>
