@@ -36,7 +36,7 @@ public final class StringConverterPasswordRewritePolicy implements RewritePolicy
         if (originMessage != null) {
             String modifiedMessage = removeValue(originMessage);
 
-            Builder builder = new Builder(source);
+            var builder = new Builder(source);
             builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(modifiedMessage));
 
             return builder.build();

@@ -32,9 +32,9 @@ public final class LoggingHandlerPasswordRewritePolicy implements RewritePolicy 
     public LogEvent rewrite(LogEvent source) {
         if (canContainPasswordText(source)) {
             String originMessage = LogUtils.getFormattedMessage(source);
-            String modifiedMessage = originMessage != null ? truncateLogMessage(originMessage) : originMessage;
+            String modifiedMessage = truncateLogMessage(originMessage);
 
-            Builder builder = new Builder(source);
+            var builder = new Builder(source);
             builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(modifiedMessage));
 
             return builder.build();
