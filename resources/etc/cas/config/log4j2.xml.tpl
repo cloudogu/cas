@@ -44,6 +44,11 @@
             <AppenderRef ref="casConsole" />
             <AppenderRef ref="casFile" />
         </Rewrite>
+        <Rewrite name="abstractMvcViewPasswordRewrite" >
+            <AbstractMvcViewPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
         <Rewrite name="stringConverterPasswordRewrite" >
             <StringConverterPasswordRewritePolicy />
             <AppenderRef ref="casConsole" />
@@ -78,6 +83,9 @@
         <!-- Rewrite messages with passwords in plain text - The following classes would otherwise output passwords in plain text at log level debug.-->
         <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="defaultMappingPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.webflow.mvc.view.AbstractMvcView" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="abstractMvcViewPasswordRewrite"/>
         </AsyncLogger>
         <AsyncLogger name="org.apache.commons.beanutils.converters.StringConverter" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="stringConverterPasswordRewrite"/>
