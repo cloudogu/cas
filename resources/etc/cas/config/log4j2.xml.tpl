@@ -49,6 +49,11 @@
             <AppenderRef ref="casConsole" />
             <AppenderRef ref="casFile" />
         </Rewrite>
+        <Rewrite name="loggingHandlerPasswordRewritePolicy" >
+            <LoggingHandlerPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -76,6 +81,9 @@
         </AsyncLogger>
         <AsyncLogger name="org.apache.commons.beanutils.converters.StringConverter" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="stringConverterPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.netty.handler.logging.LoggingHandler" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="loggingHandlerPasswordRewritePolicy"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
