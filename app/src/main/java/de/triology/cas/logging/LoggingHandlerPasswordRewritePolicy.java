@@ -61,7 +61,7 @@ public final class LoggingHandlerPasswordRewritePolicy implements RewritePolicy 
          if (originMessage != null) {
              // There is no unique pattern for recognising the password. Therefore, the log message is truncated here
              // after the 1st line break. The password is only in one of the following lines.
-             int firstLineBreak = originMessage.indexOf("\n");
+             int firstLineBreak = originMessage.indexOf('\n');
              truncatedMessage = originMessage.substring(0, firstLineBreak);
          }
 
