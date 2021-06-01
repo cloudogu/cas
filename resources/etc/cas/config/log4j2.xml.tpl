@@ -44,6 +44,11 @@
             <AppenderRef ref="casConsole" />
             <AppenderRef ref="casFile" />
         </Rewrite>
+        <Rewrite name="stringConverterPasswordRewrite" >
+            <StringConverterPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -67,7 +72,10 @@
 
         <!-- Rewrite messages with passwords in plain text - The following classes would otherwise output passwords in plain text at log level debug.-->
         <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="DefaultMappingPasswordRewrite"/>
+            <AppenderRef ref="defaultMappingPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.commons.beanutils.converters.StringConverter" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="stringConverterPasswordRewrite"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
