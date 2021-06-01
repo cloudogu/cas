@@ -15,7 +15,7 @@ import org.apache.logging.log4j.message.SimpleMessageFactory;
         printObject = true
 )
 /*
-  Password rewriter for class org.springframework.binding.mapping.impl.DefaultMapping.
+ * Password rewriter for class org.springframework.binding.mapping.impl.DefaultMapping.
  */
 public final class DefaultMappingPasswordRewritePolicy implements RewritePolicy {
     private static final String PARAMETER_PASSWORD_TEXT = "parameter:'password'";

@@ -29,20 +29,20 @@ public final class StringConverterPasswordRewritePolicy implements RewritePolicy
     }
 
     @Override
-    public LogEvent rewrite(LogEvent event) {
-        String originMessage = LogUtils.getFormattedMessage(event);
+    public LogEvent rewrite(LogEvent source) {
+        String originMessage = LogUtils.getFormattedMessage(source);
 
         // Since there is no unique pattern for recognising passwords, the value is removed from all log messages.
         if (originMessage != null) {
             String modifiedMessage = removeValue(originMessage);
 
-            Builder builder = new Builder(event);
+            Builder builder = new Builder(source);
             builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(modifiedMessage));
 
             return builder.build();
         }
 
-        return event;
+        return source;
     }
 
     /**
