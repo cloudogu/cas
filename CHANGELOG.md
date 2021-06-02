@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Add autofocus attribute to username (#83)
 
+### Fixed
+- At log level debug, the password has been output in plain text in some classes. The password is now no longer output
+  in plain text anywhere. (#86)
+  
 ## [v4.0.7.20-19] - 2021-05-06
 
 ### Changed
