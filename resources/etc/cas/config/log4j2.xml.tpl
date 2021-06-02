@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5" packages="org.apereo.cas.logging,de.triology.cas.logging">
     <Properties>
         <Property name="baseDir">logs</Property>
         <Property name="ces.log.level">{{ .Config.GetOrDefault "logging/root" "warn"}}</Property>
@@ -38,6 +38,27 @@
         <CasAppender name="casConsole">
             <AppenderRef ref="console" />
         </CasAppender>
+
+        <Rewrite name="defaultMappingPasswordRewrite" >
+            <DefaultMappingPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
+        <Rewrite name="abstractMvcViewPasswordRewrite" >
+            <AbstractMvcViewPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
+        <Rewrite name="stringConverterPasswordRewrite" >
+            <StringConverterPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
+        <Rewrite name="loggingHandlerPasswordRewritePolicy" >
+            <LoggingHandlerPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+            <AppenderRef ref="casFile" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -59,11 +80,25 @@
             <AppenderRef ref="casAudit"/>
         </AsyncLogger>
 
+        <!-- Rewrite messages with passwords in plain text - The following classes would otherwise output passwords in plain text at log level debug.-->
+        <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="defaultMappingPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.webflow.mvc.view.AbstractMvcView" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="abstractMvcViewPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.commons.beanutils.converters.StringConverter" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="stringConverterPasswordRewrite"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.netty.handler.logging.LoggingHandler" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="loggingHandlerPasswordRewritePolicy"/>
+        </AsyncLogger>
+
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
         <AsyncRoot level="${sys:ces.log.level}">
             <AppenderRef ref="casFile"/>
-            <!-- 
-                 For deployment to an application server running as service, 
+            <!--
+                 For deployment to an application server running as service,
                  delete the casConsole appender below
             -->
             <AppenderRef ref="casConsole"/>
