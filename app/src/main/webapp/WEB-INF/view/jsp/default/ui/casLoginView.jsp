@@ -60,7 +60,7 @@
                 <form:input cssClass="form-control username-input right" cssErrorClass="error" id="username"
                             placeholder="${userPlaceholder}" size="25" tabindex="1"
                             accesskey="${userNameAccessKey}" path="username" autocomplete="false"
-                            htmlEscape="true"/>
+                            htmlEscape="true" autofocus="autofocus"/>
             </c:if>
 
             <%--Right column - Password label & input--%>
