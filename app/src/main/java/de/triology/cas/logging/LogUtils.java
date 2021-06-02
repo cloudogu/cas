@@ -13,7 +13,10 @@ public class LogUtils {
     }
 
     /**
-     * @return the formatted message of the given log event
+     * Returns the formatted message of the passed log event.
+     *
+     * @param logEvent the log event to get the formatted message from
+     * @return the formatted message of the passed log event
      */
     public static String getFormattedMessage(LogEvent logEvent) {
         Message message = logEvent != null ? logEvent.getMessage() : null;

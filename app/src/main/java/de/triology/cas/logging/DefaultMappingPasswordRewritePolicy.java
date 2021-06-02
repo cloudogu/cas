@@ -1,6 +1,5 @@
 package de.triology.cas.logging;
 
-import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
@@ -26,10 +25,8 @@ public final class DefaultMappingPasswordRewritePolicy extends AbstractCASPasswo
     }
 
     @Override
-    protected boolean containsPassword(LogEvent source) {
-        String formattedMessage = LogUtils.getFormattedMessage(source);
-
-        return formattedMessage != null && formattedMessage.contains(PARAMETER_PASSWORD_TEXT);
+    protected String getPasswordFlag() {
+        return PARAMETER_PASSWORD_TEXT;
     }
 
     @Override

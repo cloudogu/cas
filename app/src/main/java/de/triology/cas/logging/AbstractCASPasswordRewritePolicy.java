@@ -7,6 +7,9 @@ import org.apache.logging.log4j.message.SimpleMessageFactory;
 
 /*
  * Abstract class for rewriting password outputs.
+ * <p>
+ * In order to ensure data protection, the passwords of CAS must not be logged in plain text.
+ * </p>
  */
 public abstract class AbstractCASPasswordRewritePolicy implements RewritePolicy {
 
@@ -26,15 +29,27 @@ public abstract class AbstractCASPasswordRewritePolicy implements RewritePolicy 
     }
 
     /**
+     * Checks whether the passed log event contains the password.
+     *
+     * @param source the log event to be checked
      * @return true if the message of the given log content contains information about the password
      */
-    protected abstract boolean containsPassword(LogEvent source);
+    protected boolean containsPassword(LogEvent source) {
+        String formattedMessage = LogUtils.getFormattedMessage(source);
+
+        return formattedMessage != null && formattedMessage.contains(getPasswordFlag());
+    }
+
+
+    /**
+     * Returns the flag to identify the password part of the log message.
+     *
+     * @return the flag to identify the password part of the log message.
+     */
+    protected abstract String getPasswordFlag();
 
     /**
      * Replaces the value of a password.
-     * <p>
-     * In order to ensure data protection, the passwords of CAS must not be logged in plain text.
-     * </p>
      *
      * @param originMessage the origin log message
      * @return the modified log message with replaced password value.
