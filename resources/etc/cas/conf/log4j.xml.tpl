@@ -101,7 +101,7 @@
         At log level debug, the password would be output in plain text.
         Therefore, the following class is never logged on debug.
     -->
-    {{if $loglevel eq "DEBUG"}}
+    {{if eq $loglevel "DEBUG"}}
     <logger name="org.springframework.binding.mapping.impl.DefaultMapping">
         <level value='INFO' />
         <appender-ref ref="console" />
