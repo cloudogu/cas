@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oauth.service.CesOAuthServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -26,6 +27,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private List<CesServiceData> persistentServices;
 
+    private final CesOAuthServiceFactory oAuthServiceFactory;
     private final CesDoguServiceFactory doguServiceFactory;
 
     private boolean initialized = false;
@@ -34,6 +36,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         super(allowedAttributes);
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
+        this.oAuthServiceFactory = new CesOAuthServiceFactory();
         this.doguServiceFactory = new CesDoguServiceFactory();
     }
 
@@ -80,6 +83,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void synchronizeServicesWithRegistry() {
         logger.debug("Synchronize services with registry");
         List<CesServiceData> newServices = new ArrayList<>(persistentServices);
+        newServices.addAll(registry.getInstalledOAuthCASServiceAccounts(oAuthServiceFactory));
         newServices.addAll(registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory));
         synchronizeServices(newServices);
         logger.info("Loaded {} services!", registeredServices.size());
@@ -174,5 +178,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         persistentServices.add( new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
 
         logger.info("Creating callback service for OAuth integration");
+        addNewService(oAuthServiceFactory.createCallbackService(createId(), fqdn));
+        persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OAUTH_CALLBACK_IDENTIFIER, oAuthServiceFactory));
     }
 }

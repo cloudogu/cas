@@ -83,7 +83,17 @@ public final class CesOAuth20ProfileController extends AbstractController {
             jsonGenerator.writeObjectFieldStart(ATTRIBUTES);
             final Map<String, List<Object>> attributes = principal.getAttributes();
             for (final String key : attributes.keySet()) {
-                jsonGenerator.writeObjectField(key, attributes.get(key));
+                if(key.equals("groups")) {
+                    jsonGenerator.writeArrayFieldStart("groups");
+                    for (Object entry : attributes.get(key)){
+                        String entryValue = String.valueOf(entry);
+                        jsonGenerator.writeString(entryValue.split(",")[0].split("=")[1] );
+                    }
+                    jsonGenerator.writeEndArray();
+                } else {
+                    String entryValue = String.valueOf(attributes.get(key).get(0));
+                    jsonGenerator.writeStringField(key, entryValue);
+                }
             }
             jsonGenerator.writeEndObject();
             jsonGenerator.writeEndObject();

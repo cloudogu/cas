@@ -1,1 +1,4 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=de.triology.cas.services.CesServicesConfiguration
+# Automatically configure our beans
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  de.triology.cas.services.CesServicesConfiguration,\
+  de.triology.cas.oauth.CesOAuthConfiguration

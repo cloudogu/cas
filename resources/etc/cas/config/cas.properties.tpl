@@ -38,3 +38,8 @@ cas.authn.ldap[0].disable-pooling=true
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
+
+#========================================
+# OAuth
+#========================================
+ces.services.oauth.sessionTimeout=3600 # 3600 = 1 hour

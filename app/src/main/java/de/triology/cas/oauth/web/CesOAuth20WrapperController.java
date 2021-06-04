@@ -2,6 +2,8 @@ package de.triology.cas.oauth.web;
 
 import de.triology.cas.oauth.CesOAuthConstants;
 import de.triology.cas.oauth.CesOAuthUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,11 +17,11 @@ import javax.servlet.http.HttpServletResponse;
  * This controller is the main entry point for OAuth version 2.0
  * wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
  * request to specific controllers : authorize, accessToken...
- *
+ * <p>
  * We need a custom controller as CAS the original controller only supports plain text responds.
  * However, we require JSON support.
  */
-public final class CesOAuth20WrapperController extends CesBaseOAuthWrapperController implements InitializingBean {
+public class CesOAuth20WrapperController extends CesBaseOAuthWrapperController implements InitializingBean {
 
     private AbstractController authorizeController;
 
@@ -30,6 +32,10 @@ public final class CesOAuth20WrapperController extends CesBaseOAuthWrapperContro
     private AbstractController profileController;
 
     private final Logger logger = LoggerFactory.getLogger(CesOAuth20CallbackAuthorizeController.class);
+
+    public CesOAuth20WrapperController(ServicesManager servicesManager, TicketRegistry ticketRegistry, String loginUrl, long timeout) {
+        super(servicesManager, ticketRegistry, loginUrl, timeout);
+    }
 
     @Override
     public void afterPropertiesSet() {
@@ -42,7 +48,6 @@ public final class CesOAuth20WrapperController extends CesBaseOAuthWrapperContro
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
-
         // authorize
         if (CesOAuthConstants.AUTHORIZE_URL.equals(method)) {
             return authorizeController.handleRequest(request, response);

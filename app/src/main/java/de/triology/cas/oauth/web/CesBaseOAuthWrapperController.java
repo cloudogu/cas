@@ -50,6 +50,13 @@ public abstract class CesBaseOAuthWrapperController extends AbstractController {
     @NotNull
     protected long timeout;
 
+    public CesBaseOAuthWrapperController(ServicesManager servicesManager, TicketRegistry ticketRegistry, String loginUrl, long timeout) {
+        this.servicesManager = servicesManager;
+        this.ticketRegistry = ticketRegistry;
+        this.loginUrl = loginUrl;
+        this.timeout = timeout;
+    }
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {

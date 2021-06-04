@@ -54,7 +54,7 @@ public interface CesOAuthConstants {
 
     String CONFIRM_VIEW = "oauthConfirmView";
 
-    String ERROR_VIEW = "viewServiceErrorView";
+    String ERROR_VIEW = "casServiceErrorView";
 
     String INVALID_REQUEST = "invalid_request";
 
