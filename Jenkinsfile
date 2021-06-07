@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@v1.1.1'])
+@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@v1.3.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -86,7 +86,9 @@ parallel(
                             // Parameter to activate dogu upgrade test on demand
                             parameters([
                                     booleanParam(defaultValue: false, description: 'Test dogu upgrade from latest release or optionally from defined version below', name: 'TestDoguUpgrade'),
-                                    string(defaultValue: '', description: 'Old Dogu version for the upgrade test (optional; e.g. 3.23.0-1)', name: 'OldDoguVersionForUpgradeTest')
+                                    string(defaultValue: '', description: 'Old Dogu version for the upgrade test (optional; e.g. 3.23.0-1)', name: 'OldDoguVersionForUpgradeTest'),
+                                    booleanParam(defaultValue: true, description: 'Enables cypress to record video of the integration tests.', name: 'EnableVideoRecording'),
+                                    booleanParam(defaultValue: true, description: 'Enables cypress to take screenshots of failing integration tests.', name: 'EnableScreenshotRecording')
                             ])
                     ])
 
@@ -117,6 +119,14 @@ parallel(
                                         "host": "ldap",
                                         "port": "389"
                                     }
+                                },
+                                "cas" : {
+                                    "service_accounts": {
+                                        "integrationTestClient": "9e4a414957a0c1f5446b522fb7703e7b761ce904986de7904bf5504f92d143d9"
+                                    }
+                                },
+                                "_global" : {
+                                    "stage": "development"
                                 }
                             '''])
                         }
@@ -135,7 +145,10 @@ parallel(
                             }
                         }
 
-                        //TODO: integration tests
+                        stage('Integration Tests') {
+                            ecoSystem.runCypressIntegrationTests([enableVideo      : params.EnableVideoRecording,
+                                                                  enableScreenshots: params.EnableScreenshotRecording])
+                        }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
                             stage('Upgrade dogu') {
