@@ -77,4 +77,6 @@ public interface CesOAuthConstants {
     String EXPIRES = "expires";
 
     String TOKEN_TYPE_VALUE = "Bearer";
+
+    String OAUTH_AUTHORIZATION_SERVICE_ID = "https://oauthdebugger.com/debug";
 }

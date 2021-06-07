@@ -42,4 +42,5 @@ ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,gr
 #========================================
 # OAuth
 #========================================
-ces.services.oauth.sessionTimeout=3600 # 3600 = 1 hour
+# 86400 = 1 day
+ces.services.oauth.sessionTimeout=86400

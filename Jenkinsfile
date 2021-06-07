@@ -50,7 +50,7 @@ parallel(
                                     parameters += " -Dsonar.branch.name=${env.BRANCH_NAME}"
                                 } else if (branch == "develop") {
                                     echo "This branch has been detected as the develop branch."
-                                    parameters +=  " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=" + productionReleaseBranch
+                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=" + productionReleaseBranch
                                 } else if (env.CHANGE_TARGET) {
                                     echo "This branch has been detected as a pull request."
                                     parameters += " -Dsonar.branch.name=${env.CHANGE_BRANCH}-PR${env.CHANGE_ID} -Dsonar.branch.target=${env.CHANGE_TARGET}"
@@ -112,7 +112,7 @@ parallel(
 
                         stage('Setup') {
                             ecoSystem.loginBackend('cesmarvin-setup')
-                            ecoSystem.setup([additionalDependencies:["official/ldap-mapper"], registryConfig:'''
+                            ecoSystem.setup([additionalDependencies: ["official/ldap-mapper"], registryConfig: '''
                                 "ldap-mapper": {
                                     "backend": {
                                         "type": "embedded",
@@ -122,11 +122,8 @@ parallel(
                                 },
                                 "cas" : {
                                     "service_accounts": {
-                                        "integrationTestClient": "9e4a414957a0c1f5446b522fb7703e7b761ce904986de7904bf5504f92d143d9"
+                                        "inttest": "9e4a414957a0c1f5446b522fb7703e7b761ce904986de7904bf5504f92d143d9"
                                     }
-                                },
-                                "_global" : {
-                                    "stage": "development"
                                 }
                             '''])
                         }
@@ -146,8 +143,15 @@ parallel(
                         }
 
                         stage('Integration Tests') {
-                            ecoSystem.runCypressIntegrationTests([enableVideo      : params.EnableVideoRecording,
-                                                                  enableScreenshots: params.EnableScreenshotRecording])
+                            echo "Create custom dogu to access OAuth endpoints for the integration tests"
+                            sh "etcdctl mkdir /dogu/inttest"
+                            sh 'etcdctl set /dogu/inttest/0.0.1 \'{"Name":"official/inttest","Dependencies":["cas"]}\''
+                            sh "etcdctl set /dogu/inttest/current \"0.0.1\""
+
+                            ecoSystem.runCypressIntegrationTests([
+                                    cypressImage     : "cypress/included:7.4.0",
+                                    enableVideo      : params.EnableVideoRecording,
+                                    enableScreenshots: params.EnableScreenshotRecording])
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
@@ -168,6 +172,13 @@ parallel(
 
                                 // Wait for upgraded dogu to get healthy
                                 ecoSystem.waitForDogu(doguName)
+                            }
+
+                            stage('Integration Tests - After Upgrade') {
+                                ecoSystem.runCypressIntegrationTests([
+                                        cypressImage     : "cypress/included:7.4.0",
+                                        enableVideo      : params.EnableVideoRecording,
+                                        enableScreenshots: params.EnableScreenshotRecording])
                             }
                         }
 

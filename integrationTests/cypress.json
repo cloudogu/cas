@@ -2,10 +2,12 @@
   "baseUrl": "https://192.168.56.2",
   "env": {
     "DoguName": "cas",
-    "MaxLoginRetries": 3,
+    "MaxLoginRetries": -1,
     "AdminUsername":  "ces-admin",
     "AdminPassword":  "ecosystem2016",
-    "AdminGroup":  "CesAdministrators"
+    "AdminGroup":  "CesAdministrators",
+    "ClientID" : "inttest",
+    "ClientSecret"  : "integrationTestClientSecret"
   },
   "videoCompression": false,
   "nonGlobalStepBaseDir": false

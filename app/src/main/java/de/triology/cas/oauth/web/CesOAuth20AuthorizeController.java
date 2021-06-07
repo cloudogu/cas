@@ -80,7 +80,9 @@ public final class CesOAuth20AuthorizeController extends AbstractController {
         }
 
         final String serviceId = service.getServiceId();
-        if (!redirectUri.matches(serviceId)) {
+        if (redirectUri.contains(CesOAuthConstants.OAUTH_AUTHORIZATION_SERVICE_ID)){
+            LOGGER.error("Redirect to OAuth debugger {}", serviceId);
+        } else if (!redirectUri.matches(serviceId)) {
             LOGGER.error("Unsupported {} : {} for serviceId : {}", CesOAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return new ModelAndView(CesOAuthConstants.ERROR_VIEW);
         }
