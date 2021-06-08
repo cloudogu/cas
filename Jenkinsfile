@@ -144,9 +144,9 @@ parallel(
 
                         stage('Integration Tests') {
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"
-                            sh "etcdctl mkdir /dogu/inttest"
-                            sh 'etcdctl set /dogu/inttest/0.0.1 \'{"Name":"official/inttest","Dependencies":["cas"]}\''
-                            sh "etcdctl set /dogu/inttest/current \"0.0.1\""
+                            ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
+                            ecoSystem.vagrant.sshOut 'etcdctl set /dogu/inttest/0.0.1 \'{"Name":"official/inttest","Dependencies":["cas"]}\''
+                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
                             ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:7.4.0",
