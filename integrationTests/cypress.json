@@ -1,0 +1,12 @@
+{
+  "baseUrl": "https://192.168.56.2",
+  "env": {
+    "DoguName": "cas",
+    "MaxLoginRetries": -1,
+    "AdminUsername":  "cesadmin",
+    "AdminPassword":  "cesadmin",
+    "AdminGroup":  "cesadmin"
+  },
+  "videoCompression": false,
+  "nonGlobalStepBaseDir": false
+}
