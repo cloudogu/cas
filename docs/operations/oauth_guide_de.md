@@ -15,7 +15,7 @@ Dafür kann die Aufforderung eines CAS-Service Account in der `dogu.json` des be
 ]
 ```
 
-Die Credentials des Service Accounts werden zufällig generiert (siehe [create-sa.sh](../../resources/create-sa.sh)) 
+Die Credentials des Service Accounts werden zufällig generiert (siehe [create-sa.sh](https://github.com/cloudogu/cas/blob/develop/resources/create-sa.sh)) 
 und verschlüsselt im etcd unter dem Pfad `/config/<dogu>/sa-cas/oauth_client_id` und `/config/<dogu>/sa-cas/oauth_client_secret` hinterlegt.
 Die credentials setzten sich aus der `CLIENT_ID` und dem `CLIENT_SECRET` zusammen. 
 Für den CAS wird das `CLIENT_SECRET` als Hash im __etcd__ unter dem Pfad `/config/cas/service_accounts/<CLIENT_ID>` abgelegt.
