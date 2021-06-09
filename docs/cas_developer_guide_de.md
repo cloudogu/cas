@@ -1,7 +1,7 @@
 # Entwicklungen am CAS
 Der CAS (Central Authentification Service) ist eine Java Applikation die im Cloudogu Ecosystem die Rolle eines SSO einnimmt.
 Der CAS implementiert einen Client für die verschiedenen CAS Bibliotheken von jasig.
-Die derzeit benutzte Java JDK die ist 1.8 verwendet (Nachzulesen in [pom.xml](../app/pom.xml)).
+Die derzeit benutzte Java JDK die ist 1.8 verwendet (Nachzulesen in [pom.xml](https://github.com/cloudogu/cas/blob/develop/app/pom.xml)).
 
 Der Sourcecode des CAS liegt im Verzeichnis `app/src/main/java`.
 
