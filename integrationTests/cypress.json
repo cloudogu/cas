@@ -3,9 +3,9 @@
   "env": {
     "DoguName": "cas",
     "MaxLoginRetries": -1,
-    "AdminUsername":  "cesadmin",
-    "AdminPassword":  "cesadmin",
-    "AdminGroup":  "cesadmin"
+    "AdminUsername":  "ces-admin",
+    "AdminPassword":  "ecosystem2016",
+    "AdminGroup":  "CesAdministrators"
   },
   "videoCompression": false,
   "nonGlobalStepBaseDir": false
