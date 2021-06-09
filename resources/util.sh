@@ -28,4 +28,5 @@ function configureCAS() {
   if [[ "${templatingSuccessful}" != 0 ]];  then
     exitOnErrorWithMessage "invalidConfiguration" "Could not template cas.properties.tpl file."
   fi
+  chown -R cas:cas ${CAS_PROPERTIES}
 }

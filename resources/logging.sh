@@ -71,6 +71,7 @@ templatingSuccessful=$?
 if [[ "${templatingSuccessful}" != 0 ]];  then
   exitOnErrorWithMessage "invalidConfiguration" "Could not template ${CAS_LOGGING_TEMPLATE} file."
 fi
+chown -R cas:cas ${CAS_LOGGING}
 
 doguctl template ${TOMCAT_LOGGING_TEMPLATE} ${TOMCAT_LOGGING}
 templatingSuccessful=$?
@@ -78,3 +79,4 @@ templatingSuccessful=$?
 if [[ "${templatingSuccessful}" != 0 ]];  then
   exitOnErrorWithMessage "invalidConfiguration" "Could not template ${TOMCAT_LOGGING_TEMPLATE} file."
 fi
+chown -R cas:cas ${TOMCAT_LOGGING}

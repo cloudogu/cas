@@ -3,9 +3,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# shellcheck disable=SC1091
-source util.sh
-
 echo "                                     ./////,                    "
 echo "                                 ./////==//////*                "
 echo "                                ////.  ___   ////.              "
@@ -17,6 +14,9 @@ echo "                  (///  (//////)**--_./////_----*//////)   ///) "
 echo "                   V///   '°°°°      (/////)      °°°°'   ////  "
 echo "                    V/////(////////\. '°°°' ./////////(///(/'   "
 echo "                       'V/(/////////////////////////////V'      "
+
+# shellcheck disable=SC1091
+source util.sh
 
 # If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
 # leads to an zero exit code which enables further error handling.
