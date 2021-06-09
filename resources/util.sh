@@ -29,3 +29,17 @@ function configureCAS() {
     exitOnErrorWithMessage "invalidConfiguration" "Could not template cas.properties.tpl file."
   fi
 }
+
+# Sets configured legal URLs for the cas UI
+function configureLegalURLs() {
+  CUSTOM_MESSAGES_TEMPLATE="/etc/cas/config/custom_messages.properties.tpl"
+  CUSTOM_MESSAGES="/etc/cas/config/custom_messages.properties"
+
+  doguctl template "${CUSTOM_MESSAGES_TEMPLATE}" "${CUSTOM_MESSAGES}"
+  templatingSuccessful=$?
+
+  if [[ "${templatingSuccessful}" != 0 ]];  then
+    exitOnErrorWithMessage "invalidConfiguration" "Could not template custom_messages.properties.tpl file."
+  fi
+}
+
