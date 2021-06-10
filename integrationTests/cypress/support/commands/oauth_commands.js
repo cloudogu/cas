@@ -7,15 +7,16 @@ const env = require('@cloudogu/dogu-integration-test-library/lib/environment_var
  * @returns The response of the request.
  */
 const getOAuth20Authorize = (clientID, exitOnFail = false) => {
-    cy.request({
+    cy.visit({
         method: "GET",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/authorize",
         qs: {
             client_id: clientID,
-            redirect_uri: 'https://oauthdebugger.com/debug',
-            response_type: 'code',
-            state: '673bac67-cb29-47b4-beed-dc26aa70eaeb',
+            redirect_uri: Cypress.config().baseUrl + "/" + clientID,
+            response_type: "code",
+            state: "673bac67-cb29-47b4-beed-dc26aa70eaeb",
         },
+        followRedirect: true,
         failOnStatusCode: exitOnFail
     })
 }
@@ -57,7 +58,7 @@ const getOAuth20Profile = (ticketGrantingTicket, exitOnFail = false) => {
             "Content-Type": 'application/json',
             "Authorization": 'Bearer ' + ticketGrantingTicket
         },
-        failOnStatusCode: false
+        failOnStatusCode: exitOnFail
     })
 }
 

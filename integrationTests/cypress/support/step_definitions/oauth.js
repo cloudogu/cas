@@ -5,7 +5,7 @@ const {
 } = require("cypress-cucumber-preprocessor/steps");
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
 
-const CasServiceTicketPattern = "OC-[0-9]*-[a-zA-Z0-9-]*s"
+const CasServiceTicketPattern = "OC-[0-9]*-[a-zA-Z0-9-]*"
 let latestOAuthCode = ""
 let latestAccessToken = ""
 let latestProfile = ""
@@ -19,9 +19,10 @@ function resetData() {
 }
 
 function serviceRequestsAuthorizationEndpoint(clientID) {
-    cy.getOAuth20Authorize(clientID, true).then(function (response) {
-        latestBody = response.body
-        latestOAuthCode = latestBody.match(CasServiceTicketPattern)
+    // this always fails and returns a window
+    cy.getOAuth20Authorize(clientID, false).then(function (window) {
+        let href = window.location.href
+        latestOAuthCode = href.match(CasServiceTicketPattern)
         console.log("Set OC to : " + latestOAuthCode)
     })
 }
@@ -35,26 +36,37 @@ function serviceRequestsAccessTokenEndpoint(clientID, serviceTicket, failOnError
 }
 
 function serviceRequestsProfileEndpoint(ticketGrantingTicket) {
-    cy.getOAuth20Profile(ticketGrantingTicket, true).then(function (response) {
+    cy.getOAuth20Profile(ticketGrantingTicket, false).then(function (response) {
         latestBody = response.body
         latestProfile = latestBody
         console.log("Set profile to : " + JSON.stringify(latestProfile))
     })
 }
 
+function casAdminLogin() {
+    cy.visit("/cas/logout")
+    cy.visit("/cas/login")
+    cy.clickWarpMenuCheckboxIfPossible()
+
+    cy.get('input[name="username"]').type(env.GetAdminUsername())
+    cy.get('input[name="password"]').type(env.GetAdminPassword())
+    cy.get('button[name="submit"]').click()
+}
+
 Given(/^the admin logs into the ces$/, function () {
-    cy.loginAdmin()
+    casAdminLogin()
 });
 
 Given(/^a valid service ticket is currently available$/, function () {
-    cy.loginAdmin()
+    casAdminLogin()
     serviceRequestsAuthorizationEndpoint(Cypress.env("ClientID"))
 });
 
 Given(/^a valid ticket granting ticket is currently available$/, function () {
-    cy.loginAdmin()
-    cy.getOAuth20Authorize(Cypress.env("ClientID"), true).then(function (response) {
-        latestOAuthCode = response.body.match(CasServiceTicketPattern)
+    casAdminLogin()
+    cy.getOAuth20Authorize(Cypress.env("ClientID"), false).then(function (response) {
+        let href = response.location.href
+        latestOAuthCode = href.match(CasServiceTicketPattern)
         console.log("Set OC to : " + latestOAuthCode)
         serviceRequestsAccessTokenEndpoint(Cypress.env("ClientID"), latestOAuthCode, true)
     })
@@ -115,6 +127,12 @@ Then(/^cas shows that the service is not authorized to access this endpoint$/, f
 });
 
 Then(/^an invalid request respond is send$/, function () {
-    assert(latestBody.toString() === "error=invalid_request", "body should contain invalid request")
+    assert(JSON.stringify(latestBody) === '{"error":"invalid_request"}', "body should contain invalid request")
+    resetData()
+});
+
+Then(/^an unauthorized json respond is send$/, function () {
+    assert(latestBody.status === 401, "body should have 401 status code")
+    assert(latestBody.error === "Unauthorized", "error should be 'Unauthorized'")
     resetData()
 });
