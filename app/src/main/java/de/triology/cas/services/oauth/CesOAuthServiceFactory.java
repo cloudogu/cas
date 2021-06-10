@@ -60,7 +60,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
             throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
         }
 
-        String serviceId = "(https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?)|(https://oauthdebugger.com/debug)";
+        String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
         return createOAuthClientService(id, casLogoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
     }
 }
