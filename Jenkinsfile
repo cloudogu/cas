@@ -119,7 +119,12 @@ parallel(
                                         "host": "ldap",
                                         "port": "389"
                                     }
-                                }
+                                },
+                                "cas" : {
+                                    "service_accounts": {
+                                        "integrationTestClient": "integrationTestClientSecret"
+                                    }
+                                },
                             '''])
                         }
 
@@ -139,6 +144,11 @@ parallel(
                         }
 
                         stage('Integration Tests') {
+                            echo "Create custom dogu to access OAuth endpoints for the integration tests"
+                            ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
+                            ecoSystem.vagrant.sshOut 'etcdctl set /dogu/inttest/0.0.1 \'{"Name":"official/inttest","Dependencies":["cas"]}\''
+                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
+
                             ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:7.4.0",
                                     enableVideo      : params.EnableVideoRecording,
