@@ -4,6 +4,8 @@ import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.ICesServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
@@ -12,6 +14,7 @@ import java.net.URI;
  */
 public class CesOAuthServiceFactory implements ICesServiceFactory {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_ID = "oauth_client_id";
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET = "oauth_client_secret";
 
@@ -31,11 +34,14 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         OAuthRegisteredService service = new OAuthRegisteredService();
         service.setId(id);
         service.setName(name);
-//        service.setServiceId(serviceID);
-        service.setServiceId("https://oauthdebugger.com/debug");
+        service.setServiceId(serviceID);
+        service.getSupportedResponseTypes().add("application/json");
+        service.getSupportedResponseTypes().add("code");
+        service.getSupportedGrantTypes().add("authorization_code");
         service.setClientId(clientID);
         service.setClientSecret(clientSecret);
         service.setBypassApprovalPrompt(true);
+        logger.debug("Created OAuthService: N:{} - ID:{} - Sec:{} - SID:{}", name, clientID, clientSecret, serviceID);
         return service;
     }
 
@@ -54,7 +60,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
             throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
         }
 
-        String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
+        String serviceId = "(https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?)|(https://oauthdebugger.com/debug)";
         return createOAuthClientService(id, casLogoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
     }
 }

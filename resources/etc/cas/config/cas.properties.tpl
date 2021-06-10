@@ -40,16 +40,12 @@ ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
-# LDAP
+# OAuth
 #========================================
+# Time for the code to expire
+cas.authn.oauth.code.timeToKillInSeconds=30
+cas.authn.oauth.code.numberOfUses=1
 
-# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.code.timeToKillInSeconds=30
-# cas.authn.oauth.code.numberOfUses=1
-# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
-# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
-# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
-# cas.authn.oauth.deviceToken.refreshInterval=PT15S
-# cas.authn.oauth.deviceToken.userCodeLength=8
-# cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
-# cas.authn.oauth.userProfileViewType=NESTED|FLAT
+# Access Token (Session) is valid for 1 day = 86000 seconds
+cas.authn.oauth.accessToken.timeToKillInSeconds=86000
+cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000

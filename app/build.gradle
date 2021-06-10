@@ -85,6 +85,8 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oauth-services:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-oauth-core-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-oauth-api:${casServerVersion}"
 
     implementation 'org.mousio:etcd4j:2.11.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
