@@ -1,7 +1,6 @@
 package de.triology.cas.oauth;
 
 import lombok.val;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     /**
      * The group attributes that contains all groups of a user.
@@ -26,7 +25,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
 
     @Override
     public ResponseEntity render(Map<String, Object> model, OAuth20AccessToken accessToken, HttpServletResponse response) {
-        logger.error("Using custom profile renderer {}", model);
+        LOGGER.error("Using custom profile renderer {}", model);
         val userProfile = getRenderedUserProfile(model, accessToken, response);
         return renderProfileForModel(userProfile, accessToken, response);
     }
@@ -56,7 +55,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
-        logger.debug("Before - Profile: {}", model);
+        LOGGER.debug("Before - Profile: {}", model);
         val customModel = new LinkedHashMap<String, Object>();
 
         // Add all entries other than the attributes
@@ -71,14 +70,14 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
             LinkedList<String> newGroups = new LinkedList<String>();
             if (attributes.containsKey(MODEL_ATTRIBUTES_GROUPS)) {
                 Object groupsObject = attributes.get(MODEL_ATTRIBUTES_GROUPS);
-                logger.debug("Class of object: {}", groupsObject);
+                LOGGER.debug("Class of object: {}", groupsObject);
                 List<String> groups = (List<String>) groupsObject;
                 groups.forEach(o -> newGroups.add(o.split(",")[0].split("=")[1]));
             }
             attributes.put(MODEL_ATTRIBUTES_GROUPS, newGroups);
             customModel.put(MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
         }
-        logger.debug("After - Profile: {}", customModel);
+        LOGGER.debug("After - Profile: {}", customModel);
         return customModel;
     }
 }

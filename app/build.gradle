@@ -79,6 +79,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-services:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-swagger:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-rest:${casServerVersion}"
@@ -91,6 +92,7 @@ dependencies {
     implementation 'org.mousio:etcd4j:2.11.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.pac4j:pac4j-core:4.3.1'
 
     testCompile 'org.mockito:mockito-core:2.2.9'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
