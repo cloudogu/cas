@@ -36,6 +36,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientId
      * @param registeredService the registered service
      * @param context           the context
      */
+    @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context) {
