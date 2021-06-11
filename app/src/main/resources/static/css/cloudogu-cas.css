@@ -590,3 +590,28 @@ button.close {
     background-color: #17a3b844;
     border-radius: 4px;
 }
+
+.bg-primary {
+    background-color: #26a3dd;
+}
+
+.footer-list {
+    list-style: none;
+    display: flex;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.footer-list li {
+    display: block;
+    font-size: 1.4rem;
+}
+
+.footer-list li a{
+    color: #fff;
+}
+
+.footer-list li:not(:first-child)::before {
+    content: "|";
+    margin-left:4px;
+}
