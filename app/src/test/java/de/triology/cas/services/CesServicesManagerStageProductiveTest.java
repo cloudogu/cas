@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -23,8 +24,10 @@ public class CesServicesManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
+    private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
+    private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
@@ -92,11 +95,20 @@ public class CesServicesManagerStageProductiveTest {
         String expectedServiceName3 = "scm";
         CesServiceData serviceDataSCM = new CesServiceData(expectedServiceName3, doguServiceFactory);
 
+        HashMap<String, String> attributes = new HashMap<>();
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, EXPECTED_OAUTH_SERVICE_DATA.getName());
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, "supersecret");
+        CesServiceData correctOAuthService = new CesServiceData(EXPECTED_OAUTH_SERVICE_DATA.getName(), oAuthServiceFactory, attributes);
+
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
+        doReturn(new LinkedList<>(Collections.singletonList(correctOAuthService)))
+                .when(registry).getInstalledOAuthCASServiceAccounts(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
+        expectedServices.add(new ExpectedService().name(correctOAuthService.getIdentifier())
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/portainer(/.*)?"));
 
         // Notify manager of change
         doguChangeListener.onChange();
@@ -286,7 +298,7 @@ public class CesServicesManagerStageProductiveTest {
          */
         void assertEqualsService(RegisteredService actualService) {
             assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                    ((ReturnAllowedAttributeReleasePolicy)actualService.getAttributeReleasePolicy()).getAllowedAttributes());
+                    ((ReturnAllowedAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
             assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
                     actualService.getServiceId());
         }

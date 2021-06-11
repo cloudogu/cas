@@ -1,4 +1,4 @@
-package de.triology.cas.services.oauth;
+package de.triology.cas.oauth.services;
 
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.ICesServiceFactory;

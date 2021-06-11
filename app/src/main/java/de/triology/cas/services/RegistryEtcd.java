@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.oauth.CesOAuthServiceFactory;
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;

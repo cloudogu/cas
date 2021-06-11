@@ -1,4 +1,4 @@
-package de.triology.cas.oauth;
+package de.triology.cas.oauth.beans;
 
 import lombok.val;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -15,6 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Currently we need the custom renderer to transform the LDAP-Groups such as
+ * `cn=cesManager,ou=Groups,dc=cloudogu,dc=com` into a simplified form consisting only of the groups name.
+ */
 public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -67,7 +71,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
         if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
             Map<String, Object> attributes = (Map<String, Object>) model.get(MODEL_ATTRIBUTE_ATTRIBUTES);
 
-            LinkedList<String> newGroups = new LinkedList<String>();
+            LinkedList<String> newGroups = new LinkedList<>();
             if (attributes.containsKey(MODEL_ATTRIBUTES_GROUPS)) {
                 Object groupsObject = attributes.get(MODEL_ATTRIBUTES_GROUPS);
                 LOGGER.debug("Class of object: {}", groupsObject);

@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
-import de.triology.cas.services.oauth.CesOAuthServiceFactory;
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
