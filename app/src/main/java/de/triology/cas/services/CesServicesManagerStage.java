@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -56,6 +57,7 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(RegexRegisteredService service) {
+        service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
         ReturnAllowedAttributeReleasePolicy attributePolicy = new ReturnAllowedAttributeReleasePolicy();
         attributePolicy.setAllowedAttributes(allowedAttributes);
