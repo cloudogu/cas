@@ -621,16 +621,29 @@ body {
     background-color: #26a3dd;
 }
 
-#logo {
+.cloudogu-logo {
     display: flex;
     align-items: center;
+    padding: 1.5rem;
 }
-#logo img {
-    max-width: 250px;
+.cloudogu-logo img {
+    max-width: 180px;
 }
-
+.mdc-card {
+    border-radius: 2rem;
+}
 @media all and (min-width: 992px) {
     #logo {
         max-width:33.33%
+    }
+    .align-items-center {
+        height: 100%;
+        align-items: center;
+    }
+    .cloudogu-logo img {
+        max-width: 250px;
+    }
+    .cloudogu-logo {
+        padding: 2.5rem 0 2.5rem 2rem;
     }
 }
