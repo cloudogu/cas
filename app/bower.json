@@ -8,8 +8,5 @@
     "authentication",
     "sso"
   ],
-  "license": "MIT",
-  "devDependencies": {
-    "ces-theme": "git+https://github.com/cloudogu/ces-theme.git"
-  }
+  "license": "MIT"
 }
