@@ -104,8 +104,8 @@ header>nav .cas-brand .cas-logo {
 }
 
 .login-section {
-    border-right: 1px solid rgba(0, 0, 0, .2);
-    border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
+    /*border-right: 1px solid rgba(0, 0, 0, .2);*/
+    /*border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));*/
     padding: 2rem 2.5rem;
     flex: 1;
 }
@@ -615,4 +615,22 @@ button.close {
 .footer-list li:not(:first-child)::before {
     content: "|";
     margin-left:4px;
+}
+
+body {
+    background-color: #26a3dd;
+}
+
+#logo {
+    display: flex;
+    align-items: center;
+}
+#logo img {
+    max-width: 250px;
+}
+
+@media all and (min-width: 992px) {
+    #logo {
+        max-width:33.33%
+    }
 }
