@@ -113,11 +113,16 @@ parallel(
                         stage('Setup') {
                             ecoSystem.loginBackend('cesmarvin-setup')
                             ecoSystem.setup([additionalDependencies:["official/ldap-mapper"], registryConfig:'''
-                                "ldap-mapper": {
-                                    "backend": {
-                                        "type": "embedded",
-                                        "host": "ldap",
-                                        "port": "389"
+                                {
+                                    "cas": {
+                                        "forgot_password_text": "Contact your admin"
+                                    },
+                                    "ldap-mapper": {
+                                        "backend": {
+                                            "type": "embedded",
+                                            "host": "ldap",
+                                            "port": "389"
+                                        }
                                     }
                                 }
                             '''])
