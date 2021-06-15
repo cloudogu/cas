@@ -192,8 +192,6 @@ public class CesServicesManagerStageProductiveTest {
             productiveStage.addNewService(
                     doguServiceFactory.createNewService(
                             productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testService));
-        } catch (GetCasLogoutUriException e) {
-            throw e;
         } catch (Exception e) {
             // should not happen
         }
