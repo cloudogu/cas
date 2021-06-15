@@ -43,4 +43,4 @@ create_truststore.sh > /dev/null
 doguctl state ready
 
 echo "Starting cas..."
-exec su - cas -c "${CATALINA_SH} run"
+${CATALINA_SH} run
