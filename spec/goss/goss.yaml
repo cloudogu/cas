@@ -1,39 +1,64 @@
 file:
-  /startup.sh:
+  /etc/cas:
     exists: true
-    owner: root
-    group: root
-    filetype: file
-    contains: []
-  /logging.sh:
+    owner: cas
+    group: cas
+  /etc/cas/config/cas.properties:
     exists: true
-    owner: root
-    group: root
+    owner: cas
+    group: cas
     filetype: file
-    contains: []
+  /etc/cas/config/log4j2.xml:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
   /opt/apache-tomcat/bin:
     exists: true
-    owner: root
-    group: root
+    owner: cas
+    group: cas
     filetype: directory
   /opt/apache-tomcat/bin/setenv.sh:
     exists: true
-    owner: root
-    group: root
+    owner: cas
+    group: cas
     filetype: file
-    contains: []
   /opt/apache-tomcat/conf:
     exists: true
-    owner: root
-    group: root
+    owner: cas
+    group: cas
     filetype: directory
   /opt/apache-tomcat/conf/server.xml:
     exists: true
-    owner: root
-    group: root
+    owner: cas
+    group: cas
     filetype: file
-    contains: []
   /opt/apache-tomcat/conf/logging.properties:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+  /startup.sh:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+  /logging.sh:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+  /util.sh:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+  /create-sa.sh:
+    exists: true
+    owner: cas
+    group: cas
+    filetype: file
+  /remove-sa.sh:
     exists: true
     owner: cas
     group: cas

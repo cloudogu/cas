@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@v1.1.1'])
+@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@v1.3.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -86,7 +86,9 @@ parallel(
                             // Parameter to activate dogu upgrade test on demand
                             parameters([
                                     booleanParam(defaultValue: false, description: 'Test dogu upgrade from latest release or optionally from defined version below', name: 'TestDoguUpgrade'),
-                                    string(defaultValue: '', description: 'Old Dogu version for the upgrade test (optional; e.g. 3.23.0-1)', name: 'OldDoguVersionForUpgradeTest')
+                                    string(defaultValue: '', description: 'Old Dogu version for the upgrade test (optional; e.g. 3.23.0-1)', name: 'OldDoguVersionForUpgradeTest'),
+                                    booleanParam(defaultValue: true, description: 'Enables cypress to record video of the integration tests.', name: 'EnableVideoRecording'),
+                                    booleanParam(defaultValue: true, description: 'Enables cypress to take screenshots of failing integration tests.', name: 'EnableScreenshotRecording')
                             ])
                     ])
 
@@ -132,10 +134,16 @@ parallel(
                         stage('Wait for dependencies') {
                             timeout(15) {
                                 ecoSystem.waitForDogu("nginx")
+                                ecoSystem.waitForDogu("cas")
                             }
                         }
 
-                        //TODO: integration tests
+                        stage('Integration Tests') {
+                            ecoSystem.runCypressIntegrationTests([
+                                    cypressImage     : "cypress/included:7.4.0",
+                                    enableVideo      : params.EnableVideoRecording,
+                                    enableScreenshots: params.EnableScreenshotRecording])
+                        }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
                             stage('Upgrade dogu') {
@@ -155,6 +163,13 @@ parallel(
 
                                 // Wait for upgraded dogu to get healthy
                                 ecoSystem.waitForDogu(doguName)
+                            }
+
+                            stage('Integration Tests - After Upgrade') {
+                                ecoSystem.runCypressIntegrationTests([
+                                        cypressImage     : "cypress/included:7.4.0",
+                                        enableVideo      : params.EnableVideoRecording,
+                                        enableScreenshots: params.EnableScreenshotRecording])
                             }
                         }
 
