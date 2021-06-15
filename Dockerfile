@@ -72,7 +72,7 @@ EXPOSE 8080
 
 HEALTHCHECK CMD doguctl healthy cas || exit 1
 
-USER ${USER}
+USER cas
 
 CMD /startup.sh
 
