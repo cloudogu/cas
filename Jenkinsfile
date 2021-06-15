@@ -115,7 +115,12 @@ parallel(
                             ecoSystem.setup([additionalDependencies:["official/ldap-mapper"], registryConfig:'''
                                 {
                                     "cas": {
-                                        "forgot_password_text": "Contact your admin"
+                                        "forgot_password_text": "Contact your admin",
+                                        "legal_urls": {
+                                            "privacy_policy": "https://www.triology.de/"
+                                            "terms_of_service": "https://www.itzbund.de/"
+                                            "imprint": "https://cloudogu.com/"
+                                        }
                                     },
                                     "ldap-mapper": {
                                         "backend": {
