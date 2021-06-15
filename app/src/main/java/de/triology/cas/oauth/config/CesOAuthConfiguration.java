@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
 
-@Configuration("MyOAuthConfiguration")
+@Configuration("CesOAuthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.oauth")
 public class CesOAuthConfiguration {

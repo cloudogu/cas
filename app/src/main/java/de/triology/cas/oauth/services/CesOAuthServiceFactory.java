@@ -3,6 +3,7 @@ package de.triology.cas.oauth.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.ICesServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,14 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
      * @param clientSecret secret key from the OAuth application used for authentication
      * @return a new client server for the given information of the OAuth application
      */
-    private OAuthRegisteredService createOAuthClientService(long id, URI logoutURI, String name, String serviceID, String clientID, String clientSecret) {
+    private OAuthRegisteredService createOAuthClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecret) {
         OAuthRegisteredService service = new OAuthRegisteredService();
         service.setId(id);
         service.setName(name);
         service.setServiceId(serviceID);
+        if (logoutURI != null) {
+            service.setLogoutUrl(logoutURI);
+        }
         service.getSupportedResponseTypes().add("application/json");
         service.getSupportedResponseTypes().add("code");
         service.getSupportedGrantTypes().add("authorization_code");
@@ -50,17 +54,22 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
     public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws Exception {
         // Get client id
         String clientID = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_ID);
-        if(clientID == null) {
+        if (clientID == null) {
             throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_ID);
         }
 
         // Get client secret
         String clientSecret = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
-        if(clientSecret == null) {
+        if (clientSecret == null) {
             throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
         }
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
-        return createOAuthClientService(id, casLogoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+        if (casLogoutUri != null) {
+            String logoutUri = "https://" + fqdn + "/" + serviceData.getName() + casLogoutUri;
+            return createOAuthClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+        } else {
+            return createOAuthClientService(id, null, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+        }
     }
 }

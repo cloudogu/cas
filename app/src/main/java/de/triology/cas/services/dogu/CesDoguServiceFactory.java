@@ -19,16 +19,17 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
     }
 
     @Override
-    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutURI, CesServiceData serviceData) throws Exception {
-        LogoutUriEnabledRegexRegisteredService service = new LogoutUriEnabledRegexRegisteredService();
+    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutURI, CesServiceData serviceData) {
+        RegexRegisteredService service = new RegexRegisteredService();
         service.setId(id);
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
         service.setServiceId(serviceId);
         service.setName(serviceData.getIdentifier());
 
-        if (casLogoutURI != null){
-            service.setLogoutUri(casLogoutURI);
+        if (casLogoutURI != null) {
+            String logoutUri = "https://" + fqdn + "/" + serviceData.getName() + casLogoutURI;
+            service.setLogoutUrl(logoutUri);
         }
 
         return service;
