@@ -4,6 +4,7 @@ import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Assert;
@@ -14,7 +15,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -184,14 +185,22 @@ public class CesServicesManagerStageProductiveTest {
 
     @Test
     public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException, CesServiceCreationException {
+        // given
         RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
         CesServicesManagerStageProductive productiveStage =
                 new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
-        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(new GetCasLogoutUriException("expected exception"));
-        CesServiceData testService = new CesServiceData("testService", doguServiceFactory);
-        productiveStage.addNewService(
-                doguServiceFactory.createNewService(
-                        productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testService));
+        GetCasLogoutUriException expectedException = new GetCasLogoutUriException("expected exception");
+        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(expectedException);
+        CesServiceData testServiceData = new CesServiceData("testService", doguServiceFactory);
+        RegexRegisteredService testService = doguServiceFactory.createNewService(
+                productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testServiceData);
+
+        // when
+        productiveStage.addNewService(testService);
+
+        // then
+        RegisteredService registeredService = productiveStage.getRegisteredServices().get(1L);
+        assertNull(registeredService.getLogoutUrl());
     }
 
     /**

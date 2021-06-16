@@ -3,6 +3,7 @@ package de.triology.cas.logout;
 import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
+import de.triology.cas.services.dogu.CesServiceCreationException;
 import junit.framework.TestCase;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -91,7 +92,7 @@ public class CesServiceLogoutMessageBuilderTest {
     }
 
     @Test
-    public void test_create_service_message_successfully() {
+    public void test_create_service_message_successfully() throws CesServiceCreationException {
         // given
         CesServiceLogoutMessageBuilder builder = new CesServiceLogoutMessageBuilder();
 
