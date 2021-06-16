@@ -114,6 +114,10 @@ header>nav .cas-brand .cas-logo {
     border: none;
 }
 
+.logout-section {
+    padding: 2rem 2.5rem;
+}
+
 @media screen and (max-width: 767.99px) {
     .login-section {
         border-right: none;
@@ -601,6 +605,7 @@ p {
 
 .banner-danger p {
     color: #fff;
+    margin: 10px 0;
 }
 
 kbd, code {
@@ -668,6 +673,7 @@ body {
 
 .mdc-button {
     height: 34px;
+    font-size: 1.4rem;
     font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
@@ -686,6 +692,7 @@ body {
 
 .mdc-floating-label {
     font-size: 1.4rem;
+    line-height: inherit;
     font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
