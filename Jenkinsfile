@@ -119,6 +119,9 @@ parallel(
                                         "privacy_policy": "https://www.triology.de/",
                                         "terms_of_service": "https://www.itzbund.de/",
                                         "imprint": "https://cloudogu.com/"
+                                   },
+                                   "service_accounts": {
+                                        "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
                                    }
                                 },
                                 "ldap-mapper": {
@@ -126,11 +129,6 @@ parallel(
                                         "type": "embedded",
                                         "host": "ldap",
                                         "port": "389"
-                                    }
-                                },
-                                "cas" : {
-                                    "service_accounts": {
-                                        "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
                                     }
                                 }
                             '''])
