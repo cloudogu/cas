@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.apereo.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +20,6 @@ public class CesServiceLogoutMessageBuilder extends DefaultSingleLogoutMessageCr
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CesServiceLogoutMessageBuilder.class);
-
-    /**
-     * A ticket Id generator.
-     */
-    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
