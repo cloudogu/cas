@@ -5,7 +5,11 @@
     "MaxLoginRetries": -1,
     "AdminUsername":  "ces-admin",
     "AdminPassword":  "ecosystem2016",
-    "AdminGroup":  "CesAdministrators"
+    "AdminGroup":  "CesAdministrators",
+    "PasswordHintText": "Contact your admin",
+    "PrivacyPolicyURL": "https://www.triology.de/",
+    "TermsOfServiceURL": "https://www.itzbund.de/",
+    "ImprintURL": "https://cloudogu.com/"
   },
   "videoCompression": false,
   "nonGlobalStepBaseDir": false

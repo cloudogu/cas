@@ -8,5 +8,5 @@ When(/^the user clicks on the forgot password button$/, function () {
 });
 
 Then(/^cas shows a hint text$/, function () {
-    cy.get('p[id="forgotPasswordInfo"]')
+    cy.get('p[id="forgotPasswordInfo"]').contains(Cypress.env('PasswordHintText'))
 });
