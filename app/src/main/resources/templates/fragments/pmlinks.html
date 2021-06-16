@@ -45,12 +45,11 @@
         }
     </script>
     <div th:unless="${passwordManagementEnabled}">
-        <br/>
-        <span class="fa fa-question-circle"></span>
+
         <div th:if="${#messages.msgOrNull('forgot.password.text') != null
                 && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
 
-            <button type="button" id="forgotPassword" class="link-underlined btn btn-primary right"
+            <button type="button" id="forgotPassword" class="link-underlined btn btn-default right"
                     aria-label="${passwordForgot}"
                     onclick="toggleForgotPasswordInfo(); return false;"
                     th:text="#{passwordForgot}">

@@ -27,10 +27,6 @@
                     <span id="existingSsoMsg" class="mdc-button__label"
                           th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
                 </div>
-<!--                <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">-->
-<!--                    <i class="mdi mdi-security"></i>-->
-<!--                    <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>-->
-<!--                </h3>-->
                 
                 <section class="cas-field my-3" id="usernameSection">
                     <div class="d-flex">
@@ -258,8 +254,6 @@
                    th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
             </div>
 
-            <hr class="my-4"/>
-
             <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
                     <script type="text/javascript">
                         $("#fm1 #username").on("input", function () {
@@ -273,7 +267,7 @@
                     </script>
 
                     <div th:replace="fragments/webAuthnLogin :: webAuthnLogin"/>
-<!--                    <hr class="my-4"/>-->
+                    <hr class="my-4"/>
                 </span>
 
             <div th:replace="fragments/pmlinks :: pmlinks"/>
@@ -297,7 +291,6 @@
             </script>
 
         </div>
-<!--        <div th:replace="fragments/loginsidebar :: loginsidebar"/>-->
     </div>
     </div>
 </main>

@@ -591,9 +591,20 @@ button.close {
     background-color: #17a3b844;
     border-radius: 4px;
 }
-
+/*custom styling*/
 .bg-primary {
     background-color: #26a3dd;
+}
+p {
+    color: #333;
+}
+
+.banner-danger p {
+    color: #fff;
+}
+
+kbd, code {
+    font-size: 1.4rem !important;
 }
 
 .footer-list {
@@ -646,6 +657,11 @@ body {
     width: 100%;
 }
 
+.align-items-center {
+    max-height: 100%;
+    align-items: center;
+}
+
 .login-form {
     width: 100%
 }
@@ -659,9 +675,9 @@ body {
     border-color: #1b7daa;
 }
 
-
 .mdc-text-field__input {
     font-family: "Droid Sans";
+    font-size: 1.4rem;
 }
 
 .mdc-text-field--outlined {
@@ -700,10 +716,6 @@ body {
 
 
 @media all and (min-width: 992px) {
-    .align-items-center {
-        height: 100%;
-        align-items: center;
-    }
     .full-width {
         max-width: 850px;
     }
