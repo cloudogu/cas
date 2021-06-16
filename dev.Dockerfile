@@ -14,7 +14,8 @@ ENV TOMCAT_MAJOR_VERSION=9 \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
 	SERVICE_TAGS=webapp \
 	USER=cas \
-    GROUP=cas
+    GROUP=cas \
+    SSL_BASE_DIRECTORY="/etc/ssl"
 
 # run installation
 RUN set -x \
@@ -32,7 +33,8 @@ RUN set -x \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
  && mkdir -p /etc/cas/config \
- && mkdir -p /etc/cas/saml
+ && mkdir -p /etc/cas/saml \
+ && mkdir -p /logs
 
 # copy overlay
 COPY --chown=${USER}:${GROUP} app/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
@@ -46,12 +48,14 @@ RUN set -x \
 # copy resources
 COPY --chown=${USER}:${GROUP} resources /
 
-RUN chown -R ${USER}:${GROUP} /etc/cas
+RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 
 # expose tomcat port
 EXPOSE 8080
 
 HEALTHCHECK CMD doguctl healthy cas || exit 1
+
+USER cas
 
 CMD /startup.sh
 

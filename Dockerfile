@@ -51,7 +51,8 @@ RUN set -x \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
  && mkdir -p /etc/cas/config \
- && mkdir -p /etc/cas/saml
+ && mkdir -p /etc/cas/saml \
+ && mkdir -p /logs
 
 # copy overlay
 COPY --from=builder --chown=${USER}:${GROUP} cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
@@ -65,7 +66,7 @@ RUN set -x \
 # copy resources
 COPY --chown=${USER}:${GROUP} resources /
 
-RUN chown -R ${USER}:${GROUP} /etc/cas ${SSL_BASE_DIRECTORY}
+RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 
 # expose tomcat port
 EXPOSE 8080
