@@ -640,6 +640,11 @@ body {
     align-content: stretch;
 }
 
+.auto-margin-top-bottom{
+    margin-bottom: auto;
+    margin-top: auto;
+}
+
 .cloudogu-logo {
     display: flex;
     align-items: center;
@@ -655,11 +660,6 @@ body {
 
 .full-width {
     width: 100%;
-}
-
-.align-items-center {
-    max-height: 100%;
-    align-items: center;
 }
 
 .login-form {
