@@ -1,5 +1,8 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.dogu.ICesServiceFactory;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class CesServiceData {
@@ -7,16 +10,16 @@ public class CesServiceData {
     private ICesServiceFactory factory;
     private Map<String, String> attributes;
 
-    CesServiceData(String name, ICesServiceFactory factory, Map<String, String> attributes) {
+    public CesServiceData(String name, ICesServiceFactory factory, Map<String, String> attributes) {
         this.name = name;
         this.factory = factory;
         this.attributes = attributes;
     }
 
-    CesServiceData(String name, ICesServiceFactory factory) {
+    public CesServiceData(String name, ICesServiceFactory factory) {
         this.name = name;
         this.factory = factory;
-        this.attributes = null;
+        this.attributes = new HashMap<>();
     }
 
     public String getName() {

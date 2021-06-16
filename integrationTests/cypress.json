@@ -6,6 +6,8 @@
     "AdminUsername":  "ces-admin",
     "AdminPassword":  "ecosystem2016",
     "AdminGroup":  "CesAdministrators",
+    "ClientID" : "inttest",
+    "ClientSecret"  : "integrationTestClientSecret"
     "PasswordHintText": "Contact your admin",
     "PrivacyPolicyURL": "https://www.triology.de/",
     "TermsOfServiceURL": "https://www.itzbund.de/",

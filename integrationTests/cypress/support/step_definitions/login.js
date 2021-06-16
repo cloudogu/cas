@@ -5,7 +5,7 @@ const {
 } = require("cypress-cucumber-preprocessor/steps");
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
 
-Given(/^the browser shows the cas login page$/, function () {
+Given(/^the browser shows the CAS login page$/, function () {
     cy.visit("/cas/login")
 });
 
@@ -18,7 +18,7 @@ When(/^the user logs into the CES with the admin credentials$/, function () {
     cy.login(env.GetAdminUsername(), env.GetAdminPassword());
 });
 
-Then(/^cas shows the profile page of the user$/, function () {
+Then(/^CAS shows the profile page of the user$/, function () {
     cy.get('h2').contains("Log In Successful")
     cy.get(':nth-child(2) > strong').contains(env.GetAdminUsername())
 });

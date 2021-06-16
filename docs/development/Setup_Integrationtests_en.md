@@ -20,13 +20,9 @@ In order for all integration tests to work properly, some data must be configure
 - `MaxLoginRetries` - Determines the number of login attempts before a test fails.
 - `AdminUsername` - The username of the CES admin.
 - `AdminPassword` - The password of the CES admin.
-- `AdminGroup` - the user group for CES administrators.
+- `AdminGroup" - the user group for CES administrators.
 - `ClientID` - The client ID of the integration test client (default:`inttest`).
 - `ClientSecret` - The client secret in plain text form (default:`integrationTestClientSecret`).
-- `PasswordHintText` - The expected text displayed when the Forgot Password button is clicked.
-- `PrivacyPolicyURL` - The expected link for the privacy policy.
-- `TermsOfServiceURL` - The expected link for the terms of service.
-- `ImprintURL` - The expected link for the imprint
 
 A sample `cypress.json` looks like this:
 ```json
@@ -39,11 +35,7 @@ A sample `cypress.json` looks like this:
       "AdminPassword": "ecosystem2016",
       "AdminGroup": "cesAdministrators",
       "ClientID" : "inttest",
-      "ClientSecret" : "integrationTestClientSecret",
-      "PasswordHintText": "Contact your admin",
-      "PrivacyPolicyURL": "https://www.triology.de/",
-      "TermsOfServiceURL": "https://www.itzbund.de/",
-      "ImprintURL": "https://cloudogu.com/"
+      "ClientSecret" : "integrationTestClientSecret"
    }
 }
 ```
@@ -54,7 +46,7 @@ In order for the integration tests for CAS to run successfully, the following st
 
 **Step 1:**
 
-A registered service must be created for CAS to allow the tests to communicate with CAS endpoints. This can be easily simulated by writing the following keys to etcd:
+A registered service must be created for CAS to allow the tests to communicate with CAS endpoints. This can be easily simulated by writing the following keys to etcd: 
 ```bash
    etcdctl mkdir /dogu/inttest
    etcdctl set /dogu/inttest/0.0.1 '{"Name": "official/inttest", "Dependencies":["cas"]}'
@@ -70,30 +62,6 @@ etcdctl set /config/cas/service_accounts/inttest "9e4a414957a0c1f5446b522fb7703e
 ```
 Here `inttest` must correspond to the name of the "empty" dogus from the first step. The value is the configured client secret from the `cypress.json` as SHA-256 hash.
 
-**Step 3**
-
-In order for our tests for the password forgetting functionality to be carried out, we must define a text in the CAS that is to be displayed when the password forgetting button is clicked.
-A corresponding entry in etcd can be configured in the following way:
-
-```bash
-etcdctl set /config/cas/forgot_password_text 'Contact your admin'
-```
-
-The value expected by the tests is defined in `cypress.json` under the attribute `PasswordHintText`.
-
-**Step 4**
-
-In order to run our tests for the legal URLs like the imprint, corresponding URLs must be defined in the CAS to be displayed in the footer.
-Corresponding entries in etcd can be configured in the following way:
-
-```bash
-etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
-etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
-etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
-```
-
-The URLs expected by the tests are defined in `cypress.json` under the attributes `PrivacyPolicyURL`, `TermsOfServiceURL` and `ImprintURL`.
-
 ## Starting the integration tests
 
 The integration tests can be started in two ways:
@@ -101,6 +69,6 @@ The integration tests can be started in two ways:
 1. with `yarn cypress run` the tests start only in the console without visual feedback.
    This mode is useful when execution is the main focus.
    For example, in a Jenkins pipeline.
-
+   
 1. `yarn cypress open` starts an interactive window where you can run, visually observe and debug the tests.
    This mode is especially useful when developing new tests and finding bugs.
