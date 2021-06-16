@@ -8,9 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CompressionUtils;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
