@@ -1,5 +1,7 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.services.dogu.ICesServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -46,6 +49,57 @@ class RegistryEtcd implements Registry {
     @Autowired
     public RegistryEtcd(EtcdClient etcd) {
         this.etcd = etcd;
+    }
+
+
+    /**
+     * Retrieves all CAS Services Accounts which are currently registered in etcd.
+     *
+     * @return a list containing the identifier for all registered service accounts of cas
+     */
+    @Override
+    public List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory) {
+        log.debug("Get CAS-OAuth service accounts from registry");
+        try {
+            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
+            return extractOAuthClientsFromSADir(nodes, factory);
+        }
+        catch (EtcdException e) {
+            if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                return new ArrayList<>();
+            } else {
+                log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+                throw new RegistryException(e);
+            }
+        }
+        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
+            log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+            throw new RegistryException(e);
+        }
+    }
+
+    /**
+     * Iterates over all available etcd-Keys of CASs service accounts.
+     *
+     * @param nodesFromEtcd a list containing all child nodes of the `service_accounts` directory of the cas in the etcd
+     * @return a list containing the identifier for all registered service accounts of cas
+     */
+    private List<CesServiceData> extractOAuthClientsFromSADir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
+        log.debug("Entered extractOAuthClientsFromSADir");
+        List<CesServiceData> serviceDataList = new ArrayList<>();
+        for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
+            try {
+                String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
+                String clientSecret = this.getCurrentOAuthClientSecret(clientID);
+                HashMap<String, String> attributes = new HashMap<>();
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
+                serviceDataList.add(new CesServiceData(clientID, factory, attributes));
+            } catch (RegistryException ex) {
+                log.error("registry exception occurred", ex);
+            }
+        }
+        return serviceDataList;
     }
 
     private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
@@ -171,7 +225,6 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
         Thread t = new Thread(() -> {
             try {
