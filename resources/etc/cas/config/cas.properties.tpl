@@ -38,3 +38,14 @@ cas.authn.ldap[0].disable-pooling=true
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
+
+#========================================
+# OAuth
+#========================================
+# Time for the code to expire
+cas.authn.oauth.code.timeToKillInSeconds=30
+cas.authn.oauth.code.numberOfUses=1
+
+# Access Token (Session) is valid for 1 day = 86000 seconds
+cas.authn.oauth.accessToken.timeToKillInSeconds=86000
+cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000

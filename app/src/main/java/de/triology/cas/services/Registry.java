@@ -1,5 +1,7 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.dogu.ICesServiceFactory;
+
 import java.net.URI;
 import java.util.List;
 
@@ -13,6 +15,12 @@ interface Registry {
      * @throws RegistryException wrapper for all technical exceptions
      */
     List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
+
+    /**
+     * @return the names of all installed OAuth service accounts
+     * @throws RegistryException wrapper for all technical exceptions
+     */
+    List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name

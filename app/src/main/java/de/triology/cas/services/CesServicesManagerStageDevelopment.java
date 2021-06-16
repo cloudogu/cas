@@ -19,6 +19,7 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
     @Override
     protected void initRegisteredServices() {
         logger.debug("Cas started in development stage. All services can get an ST.");
+        logger.debug("The development stage does not support OAuth services.");
         addDevService();
     }
 

@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -56,6 +57,7 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(RegexRegisteredService service) {
+        service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
         ReturnAllowedAttributeReleasePolicy attributePolicy = new ReturnAllowedAttributeReleasePolicy();
         attributePolicy.setAllowedAttributes(allowedAttributes);
@@ -67,7 +69,6 @@ abstract class CesServicesManagerStage {
      * @return a new numeric ID for a registered service
      */
     protected long createId() {
-        // TODO Wouldn't it be simpler an less error prone to use an AtomicLong instead?
         return findHighestId(registeredServices) + 1;
     }
 
