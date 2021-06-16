@@ -1,6 +1,6 @@
-Feature: Simple test to check the forgotten password functionality of cas
+Feature: Simple test to check if the links for imprint, privacy policy and terms of service are displayed
 
-  Scenario: the user successfully logs into the CES with admin credentials and CAS shows the profile page
+  Scenario: the user opens the CAS login page and the links for imprint, privacy policy and terms of service are displayed
     Given the user is currently not logged in the CES
-    Given the browser shows the cas login page
+    When the browser shows the CAS login page
     Then a footer with three legal links is displayed
