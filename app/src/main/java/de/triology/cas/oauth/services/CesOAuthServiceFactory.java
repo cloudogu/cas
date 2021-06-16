@@ -1,9 +1,9 @@
 package de.triology.cas.oauth.services;
 
 import de.triology.cas.services.CesServiceData;
-import de.triology.cas.services.ICesServiceFactory;
+import de.triology.cas.services.dogu.CesServiceCreationException;
+import de.triology.cas.services.dogu.ICesServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,17 +51,17 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
 
 
     @Override
-    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws Exception {
+    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException {
         // Get client id
         String clientID = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_ID);
         if (clientID == null) {
-            throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_ID);
+            throw new CesServiceCreationException("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_ID);
         }
 
         // Get client secret
         String clientSecret = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
         if (clientSecret == null) {
-            throw new Exception("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
+            throw new CesServiceCreationException("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
         }
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";

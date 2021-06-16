@@ -162,10 +162,10 @@ parallel(
 
                                 if (params.OldDoguVersionForUpgradeTest != '' && !params.OldDoguVersionForUpgradeTest.contains('v')) {
                                     println "Installing user defined version of dogu: " + params.OldDoguVersionForUpgradeTest
-                                    ecoSystem.installDogu("premium/" + doguName + " " + params.OldDoguVersionForUpgradeTest)
+                                    ecoSystem.installDogu("official/" + doguName + " " + params.OldDoguVersionForUpgradeTest)
                                 } else {
                                     println "Installing latest released version of dogu..."
-                                    ecoSystem.installDogu("premium/" + doguName)
+                                    ecoSystem.installDogu("official/" + doguName)
                                 }
                                 ecoSystem.startDogu(doguName)
                                 ecoSystem.waitForDogu(doguName)

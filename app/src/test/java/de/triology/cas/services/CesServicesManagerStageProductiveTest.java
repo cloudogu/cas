@@ -3,6 +3,7 @@ package de.triology.cas.services;
 import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
+import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Assert;
@@ -182,19 +183,15 @@ public class CesServicesManagerStageProductiveTest {
     }
 
     @Test
-    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException {
+    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException, CesServiceCreationException {
         RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
         CesServicesManagerStageProductive productiveStage =
                 new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
         when(etcdRegistry.getCasLogoutUri(any())).thenThrow(new GetCasLogoutUriException("expected exception"));
         CesServiceData testService = new CesServiceData("testService", doguServiceFactory);
-        try {
-            productiveStage.addNewService(
-                    doguServiceFactory.createNewService(
-                            productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testService));
-        } catch (Exception e) {
-            // should not happen
-        }
+        productiveStage.addNewService(
+                doguServiceFactory.createNewService(
+                        productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testService));
     }
 
     /**

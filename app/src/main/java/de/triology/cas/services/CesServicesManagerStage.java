@@ -67,7 +67,6 @@ abstract class CesServicesManagerStage {
      * @return a new numeric ID for a registered service
      */
     protected long createId() {
-        // TODO Wouldn't it be simpler an less error prone to use an AtomicLong instead?
         return findHighestId(registeredServices) + 1;
     }
 

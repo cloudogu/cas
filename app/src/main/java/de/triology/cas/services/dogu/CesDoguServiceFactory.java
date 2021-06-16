@@ -1,7 +1,6 @@
 package de.triology.cas.services.dogu;
 
 import de.triology.cas.services.CesServiceData;
-import de.triology.cas.services.ICesServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
 
 import java.net.URI;
@@ -19,7 +18,7 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
     }
 
     @Override
-    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutURI, CesServiceData serviceData) {
+    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutURI, CesServiceData serviceData) throws CesServiceCreationException {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setId(id);
 
