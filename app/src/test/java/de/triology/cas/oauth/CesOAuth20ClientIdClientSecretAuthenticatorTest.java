@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static de.triology.cas.oauth.services.CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID;
 import static de.triology.cas.oauth.services.CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link CesOAuth20ClientIdClientSecretAuthenticator}.
@@ -32,7 +33,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticatorTest {
         boolean isCorrect = CesOAuth20ClientIdClientSecretAuthenticator.checkClientSecret(service, expectedClientSecret);
 
         //then
-        assert isCorrect;
+        assertTrue(isCorrect);
     }
 
     /**
@@ -53,7 +54,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticatorTest {
         boolean isCorrect = CesOAuth20ClientIdClientSecretAuthenticator.checkClientSecret(service, expectedClientSecret);
 
         //then
-        assert !isCorrect;
+        assertTrue(!isCorrect);
     }
 
 }
