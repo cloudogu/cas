@@ -27,15 +27,10 @@
                     <span id="existingSsoMsg" class="mdc-button__label"
                           th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
                 </div>
-                <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                    <i class="mdi mdi-security"></i>
-                    <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
-                </h3>
-
-                <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
-                    <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                    <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
-                </div>
+<!--                <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">-->
+<!--                    <i class="mdi mdi-security"></i>-->
+<!--                    <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>-->
+<!--                </h3>-->
                 
                 <section class="cas-field my-3" id="usernameSection">
                     <div class="d-flex">
@@ -82,7 +77,7 @@
                             <label for="password"
                                    class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
 
-                                <input class="mdc-text-field__input pwd form-control"
+                                <input class="mdc-text-field__input pwd"
                                        type="password" id="password" size="25"
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}" autocomplete="off"/>
@@ -105,10 +100,8 @@
                             </p>
                         </div>
                     </div>
-<!--                    <button class="reveal-password mdc-button mdc-button&#45;&#45;raised mdc-input-group-append mdc-icon-button" type="button">-->
                         <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append " type="button">
-<!--                        <i class="mdi mdi-eye reveal-password-icon"></i>-->
-                        <i class="glyphicon glyphicon-eye "></i>
+                        <i class="glyphicon glyphicon-eye-open "></i>
                         <span class="sr-only">Toggle Password</span>
                     </button>
                 </section>
@@ -239,6 +232,13 @@
 
                 <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
 
+                <section class="cas-field my-3">
+                    <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
+                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                    </div>
+                </section>
+
             </form>
 
             <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
@@ -273,7 +273,7 @@
                     </script>
 
                     <div th:replace="fragments/webAuthnLogin :: webAuthnLogin"/>
-                    <hr class="my-4"/>
+<!--                    <hr class="my-4"/>-->
                 </span>
 
             <div th:replace="fragments/pmlinks :: pmlinks"/>
@@ -297,7 +297,7 @@
             </script>
 
         </div>
-        <div th:replace="fragments/loginsidebar :: loginsidebar"/>
+<!--        <div th:replace="fragments/loginsidebar :: loginsidebar"/>-->
     </div>
     </div>
 </main>

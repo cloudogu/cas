@@ -30,8 +30,8 @@ body {
     padding: 0;
     flex-direction: column;
     justify-content: space-between;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    background: #EFEFEF;
+    /*font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
+    /*background: #EFEFEF;*/
 }
 
 a {
@@ -176,8 +176,8 @@ button.close {
 }
 
 .banner-danger {
-    border-color: #b00020;
-    border-color: var(--cas-theme-danger, #b00020);
+    border-color: none;
+    background-color: #c9344b;
 }
 
 .banner-danger .mdi {
@@ -621,16 +621,102 @@ body {
     background-color: #26a3dd;
 }
 
-#logo {
-    display: flex;
-    align-items: center;
-}
-#logo img {
-    max-width: 250px;
+.mdc-typography {
+    font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-@media all and (min-width: 992px) {
+#content {
+    align-content: stretch;
+}
+
+.cloudogu-logo {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+}
+.cloudogu-logo img {
+    max-width: 180px;
+}
+.mdc-card {
+    border-radius: 2rem;
+    box-shadow: none;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.login-form {
+    width: 100%
+}
+
+.mdc-button {
+    height: 34px;
+    font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading, .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch, .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+    border-color: #1b7daa;
+}
+
+
+.mdc-text-field__input {
+    font-family: "Droid Sans";
+}
+
+.mdc-text-field--outlined {
+    height: 34px;
+}
+
+.mdc-floating-label {
+    font-size: 1.4rem;
+    font-family: "Droid Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: #1b7daa;
+}
+
+.mdc-floating-label--float-above {
+    font-size: 1.4rem !important;
+}
+
+.mdc-input-group-append.reveal-password {
+    height: 34px;
+}
+
+.mdc-input-group-append.reveal-password i {
+    font-size: 14px;
+}
+
+@media all and (min-width: 768px) {
     #logo {
-        max-width:33.33%
+        max-width: 33.33%
+    }
+    .login-form {
+        width: 66.66%;
+    }
+}
+
+
+@media all and (min-width: 992px) {
+    .align-items-center {
+        height: 100%;
+        align-items: center;
+    }
+    .full-width {
+        max-width: 850px;
+    }
+    .cloudogu-logo img {
+        max-width: 200px;
+    }
+    .cloudogu-logo {
+        padding: 2.5rem 0 2.5rem 2rem;
+    }
+}
+
+@media all and (max-width: 767.99px) {
+    #logo {
+    border-bottom: none;
     }
 }
