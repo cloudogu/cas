@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+# Changed
+- Adapt the UI to the Cloudogu styling. (#91)
+
 ### Fixed
 - At log level debug, the password has been output in plain text in some classes. The password is now no longer output 
   in plain text anywhere. (#86)
