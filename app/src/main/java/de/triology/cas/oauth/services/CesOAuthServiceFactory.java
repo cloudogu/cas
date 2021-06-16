@@ -17,7 +17,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_ID = "oauth_client_id";
-    public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET = "oauth_client_secret";
+    public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH = "oauth_client_secret";
 
     /**
      * OAuth in CAS require one client for each OAuth application.
@@ -28,10 +28,10 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
      * @param serviceID    a regex that describes which requests should be accepted (e.g., '${server.prefix}/dogu'
      *                     only process request send over the named address)
      * @param clientID     public client id of the OAuth application used for identification
-     * @param clientSecret secret key from the OAuth application used for authentication
+     * @param clientSecretHash secret key from the OAuth application used for authentication
      * @return a new client server for the given information of the OAuth application
      */
-    private OAuthRegisteredService createOAuthClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecret) {
+    private OAuthRegisteredService createOAuthClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
         OAuthRegisteredService service = new OAuthRegisteredService();
         service.setId(id);
         service.setName(name);
@@ -43,9 +43,11 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         service.getSupportedResponseTypes().add("code");
         service.getSupportedGrantTypes().add("authorization_code");
         service.setClientId(clientID);
-        service.setClientSecret(clientSecret);
+        service.setClientSecret(clientSecretHash);
         service.setBypassApprovalPrompt(true);
-        logger.debug("Created OAuthService: N:{} - ID:{} - Sec:{} - SID:{}", name, clientID, clientSecret, serviceID);
+
+        String clientSecretObfuscated =  clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length()-5);
+        logger.debug("Created OAuthService: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
         return service;
     }
 
@@ -59,9 +61,9 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         }
 
         // Get client secret
-        String clientSecret = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
+        String clientSecret = serviceData.getAttributes().get(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH);
         if (clientSecret == null) {
-            throw new CesServiceCreationException("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET);
+            throw new CesServiceCreationException("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH);
         }
 
         String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";

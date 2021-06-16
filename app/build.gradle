@@ -81,6 +81,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-logout:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-logout-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-util:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-swagger:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-saml:${casServerVersion}"

@@ -86,20 +86,20 @@ class RegistryEtcd implements Registry {
      */
     private List<CesServiceData> extractOAuthClientsFromSADir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
         log.debug("Entered extractOAuthClientsFromSADir");
-        List<CesServiceData> serviceAccountNames = new ArrayList<>();
+        List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
                 String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
                 String clientSecret = this.getCurrentOAuthClientSecret(clientID);
                 HashMap<String, String> attributes = new HashMap<>();
                 attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
-                serviceAccountNames.add(new CesServiceData(clientID, factory, attributes));
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
+                serviceDataList.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
                 log.error("registry exception occurred", ex);
             }
         }
-        return serviceAccountNames;
+        return serviceDataList;
     }
 
     private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {

@@ -57,7 +57,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientId
         var storedClientSecretHash = registeredService.getClientSecret();
         if (StringUtils.isBlank(storedClientSecretHash)) {
             LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
-            return true;
+            return false;
         }
 
         String clientSecretHash = org.apache.commons.codec.digest.DigestUtils.sha256Hex(clientSecret);

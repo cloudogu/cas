@@ -1,8 +1,8 @@
 package de.triology.cas.logout;
 
 import lombok.val;
+import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -15,7 +15,7 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CesServiceLogoutMessageBuilder implements SingleLogoutMessageCreator {
+public class CesServiceLogoutMessageBuilder extends DefaultSingleLogoutMessageCreator {
 
     /**
      * The logger.
@@ -41,22 +41,16 @@ public class CesServiceLogoutMessageBuilder implements SingleLogoutMessageCreato
                     logoutRequest = String.format("%s", childTicket);
                 }
             }
+
+            val builder = SingleLogoutMessage.builder();
+            if (request.getLogoutType() == RegisteredServiceLogoutType.FRONT_CHANNEL) {
+                LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
+                return builder.payload(CompressionUtils.deflate(logoutRequest)).build();
+            }
+            return builder.payload(logoutRequest).build();
         } else {
             // default service message creator
-            logoutRequest = String.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
-                            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
-                            + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
-                    GENERATOR.getNewTicketId("LR"),
-                    new ISOStandardDateFormat().getCurrentDateAndTime(),
-                    ticket.getAuthentication().getPrincipal().getId(),
-                    request.getTicketId());
+            return super.create(request);
         }
-
-        val builder = SingleLogoutMessage.builder();
-        if (request.getLogoutType() == RegisteredServiceLogoutType.FRONT_CHANNEL) {
-            LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
-            return builder.payload(CompressionUtils.deflate(logoutRequest)).build();
-        }
-        return builder.payload(logoutRequest).build();
     }
 }

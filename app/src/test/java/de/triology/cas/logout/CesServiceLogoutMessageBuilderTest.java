@@ -4,7 +4,6 @@ import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import junit.framework.TestCase;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
@@ -35,7 +34,7 @@ public class CesServiceLogoutMessageBuilderTest {
         CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
         Map<String, String> serviceAttributes = new HashMap<>();
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, "clientSecret");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
         CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
         RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
         List<String> descendantTickets = new ArrayList<>();
@@ -68,7 +67,7 @@ public class CesServiceLogoutMessageBuilderTest {
         CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
         Map<String, String> serviceAttributes = new HashMap<>();
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, "clientSecret");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
         CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
         RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
         Collection<String> descendantTickets = new ArrayList<>();
