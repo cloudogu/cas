@@ -20,4 +20,3 @@ tmp/
 ./apache-tomcat
 apache-tomcat.zip
 config-metadata.properties
-/src/main/resources/bower_components/

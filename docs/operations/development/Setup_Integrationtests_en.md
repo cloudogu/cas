@@ -81,6 +81,19 @@ etcdctl set /config/cas/forgot_password_text 'Contact your admin'
 
 The value expected by the tests is defined in `cypress.json` under the attribute `PasswordHintText`.
 
+**Step 4**
+
+In order to run our tests for the legal URLs like the imprint, corresponding URLs must be defined in the CAS to be displayed in the footer.
+Corresponding entries in etcd can be configured in the following way:
+
+```bash
+etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
+etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
+etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
+```
+
+The URLs expected by the tests are defined in `cypress.json` under the attributes `PrivacyPolicyURL`, `TermsOfServiceURL` and `ImprintURL`.
+
 ## Starting the integration tests
 
 The integration tests can be started in two ways:
