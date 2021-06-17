@@ -15,7 +15,7 @@ Damit alle Integrationstests auch einwandfrei funktionieren, müssen vorher eini
 1) Es muss die base-URL auf das Hostsystem angepasst werden.
    Dafür muss das Feld `baseUrl` auf die Host-FQDN angepasst werden (`https://local.cloudogu.com`)
 2) Es müssen noch weitere Aspekte konfiguriert werden. 
-   Diese werdeb als Umgebungsvariablen in der `cypress.json` gesetzt:
+   Diese werden als Umgebungsvariablen in der `cypress.json` gesetzt:
 - `DoguName` - Bestimmt den Namen des jetzigen Dogus und wir beim Routing benutzt.
 - `MaxLoginRetries` - Bestimmt die Anzahl der Loginversuche, bevor ein Test fehlschlägt.
 - `AdminUsername` - Der Benutzername des CES-Admins.
@@ -23,6 +23,10 @@ Damit alle Integrationstests auch einwandfrei funktionieren, müssen vorher eini
 - `AdminGroup` - Die Benutzergruppe für CES-Administratoren.
 - `ClientID` - Die Client-ID des Integrationstests-Clients (default:`inttest`)
 - `ClientSecret` - Das Client-Secret in Klartextform (default:`integrationTestClientSecret`)
+- `PasswordHintText` - Der erwartete, angezeigte Text beim Klicken auf den Passwort-Vergessen-Button
+- `PrivacyPolicyURL` - Der erwartete Link für die Datenschutzrichtlinie
+- `TermsOfServiceURL` - Der erwartete Link für die Nutzungsbedingungen
+- `ImprintURL` - Der erwartete Link für das Impressum
   
 Eine Beispiel-`cypress.json` sieht folgendermaßen aus:
 ```json
@@ -35,7 +39,11 @@ Eine Beispiel-`cypress.json` sieht folgendermaßen aus:
     "AdminPassword":  "ecosystem2016",
     "AdminGroup":  "CesAdministrators", 
     "ClientID" : "inttest",
-    "ClientSecret"  : "integrationTestClientSecret"
+    "ClientSecret"  : "integrationTestClientSecret",
+    "PasswordHintText": "Contact your admin",
+    "PrivacyPolicyURL": "https://www.triology.de/",
+    "TermsOfServiceURL": "https://www.itzbund.de/",
+    "ImprintURL": "https://cloudogu.com/"
   }
 }
 ```
@@ -52,7 +60,7 @@ Es muss ein registrierter Service für CAS angelegt werden, damit die Tests mit 
    etcdctl set /dogu/inttest/0.0.1 '{"Name":"official/inttest","Dependencies":["cas"]}'
    etcdctl set /dogu/inttest/current "0.0.1"
 ```
-Nun existiert ein "leeres" Dogu, für welches der CAS einen Service registriert. Dieser wird von den Integrationstest benutzt um mit den notwendigen Endpunkten zu kommunizieren. Der Name des leeren Dogus muss mit dem Wert für die `ClientID` aus der `cypress.json` übereinstimmen. 
+Nun existiert ein "leeres" Dogu, für welches der CAS einen Service registriert. Dieser wird von den Integrationstests benutzt, um mit den notwendigen Endpunkten zu kommunizieren. Der Name des leeren Dogus muss mit dem Wert für die `ClientID` aus der `cypress.json` übereinstimmen. 
 
 **Schritt 2:**
 
@@ -61,6 +69,30 @@ Damit unsere OAuth-Tests erfolgreich durchgeführt werden können, müssen wir i
 etcdctl set /config/cas/service_accounts/inttest "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
 ```
 Hier muss `inttest` dem Namen des "leeren" Dogus aus dem ersten Schritt entsprechen. Bei dem Wert handelt es sich um das konfigurierte Client-Secret aus der `cypress.json` als SHA-256 Hash.
+
+**Schritt 3:**
+
+Damit unsere Tests für die Passwort-Vergessen-Funktion durchgeführt werden können, müssen wir im CAS einen Text definieren, der bei einem Klick auf den Passwort-Vergessen-Button angezeigt werden soll.
+Auf folgende Weise kann ein entsprechender Eintrag im etcd konfiguriert werden:
+
+```bash
+   etcdctl set /config/cas/forgot_password_text 'Contact your admin'
+```
+
+Der von den Tests erwartete Wert ist in der `cypress.json` unter dem Attribut `PasswordHintText` definiert.
+
+**Schritt 4**
+
+Damit unsere Tests für die rechtlichen URLs wie dem Impressum durchgeführt werden können, müssen entsprechende URLs im CAS definiert werden, damit diese im Footer angezeigt werden.
+Auf folgende Weise können entsprechende Einträge im etcd konfiguriert werden:
+
+```bash
+   etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
+   etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
+   etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
+```
+
+Die von den Tests erwarteten URLs sind in der `cypress.json` unter den Attributen `PrivacyPolicyURL`, `TermsOfServiceURL` und `ImprintURL` definiert.
 
 ## Starten der Integrationstests
 

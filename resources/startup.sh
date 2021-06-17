@@ -36,6 +36,7 @@ fi
 # from utils.sh - configures the cas server
 echo "Create general configuration..."
 configureCAS
+configureLegalURLs
 
 echo "Creating truststore, which is used in the setenv.sh..."
 create_truststore.sh > /dev/null

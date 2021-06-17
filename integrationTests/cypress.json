@@ -7,7 +7,11 @@
     "AdminPassword":  "ecosystem2016",
     "AdminGroup":  "CesAdministrators",
     "ClientID" : "inttest",
-    "ClientSecret"  : "integrationTestClientSecret"
+    "ClientSecret"  : "integrationTestClientSecret",
+    "PasswordHintText": "Contact your admin",
+    "PrivacyPolicyURL": "https://www.triology.de/",
+    "TermsOfServiceURL": "https://www.itzbund.de/",
+    "ImprintURL": "https://cloudogu.com/"
   },
   "videoCompression": false,
   "nonGlobalStepBaseDir": false
