@@ -608,6 +608,10 @@ p {
     margin: 10px 0;
 }
 
+.banner-danger h2 {
+    color: #fff;
+}
+
 kbd, code {
     font-size: 1.4rem !important;
 }
