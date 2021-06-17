@@ -4,7 +4,7 @@ This section describes the steps required to properly run the integration tests.
 
 ## Requirements
 
-* It is necessary to install the program `yarn
+* It is necessary to install the program `yarn`
 
 ## Configuration
 
