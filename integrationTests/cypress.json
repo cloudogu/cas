@@ -10,7 +10,7 @@
     "ClientSecret"  : "integrationTestClientSecret",
     "PasswordHintText": "Contact your admin",
     "PrivacyPolicyURL": "https://www.triology.de/",
-    "TermsOfServiceURL": "https://www.itzbund.de/",
+    "TermsOfServiceURL": "https://docs.cloudogu.com/",
     "ImprintURL": "https://cloudogu.com/"
   },
   "videoCompression": false,

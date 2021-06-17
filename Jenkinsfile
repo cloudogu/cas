@@ -117,7 +117,7 @@ parallel(
                                     "forgot_password_text": "Contact your admin",
                                     "legal_urls": {
                                         "privacy_policy": "https://www.triology.de/",
-                                        "terms_of_service": "https://www.itzbund.de/",
+                                        "terms_of_service": "https://docs.cloudogu.com/",
                                         "imprint": "https://cloudogu.com/"
                                    },
                                    "service_accounts": {
