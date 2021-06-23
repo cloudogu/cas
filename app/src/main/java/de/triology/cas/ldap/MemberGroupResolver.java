@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
- *
  */
 public class MemberGroupResolver implements GroupResolver {
 
@@ -154,14 +154,13 @@ public class MemberGroupResolver implements GroupResolver {
     }
 
     private SearchRequest createRequest(final FilterTemplate filter) {
-        final SearchRequest request = new SearchRequest();
+        final var request = new SearchRequest();
         request.setBaseDn(this.baseDN);
         request.setFilter(filter);
         request.setReturnAttributes(nameAttribute);
         request.setSearchScope(this.searchScope);
-        //TODO
-//        request.setSizeLimit(this.searchControls.getCountLimit());
-//        request.setTimeLimit(this.searchControls.getTimeLimit());
+        request.setSizeLimit(Math.toIntExact(this.searchControls.getCountLimit()));
+        request.setTimeLimit(Duration.ofMillis(this.searchControls.getTimeLimit()));
         return request;
     }
 
