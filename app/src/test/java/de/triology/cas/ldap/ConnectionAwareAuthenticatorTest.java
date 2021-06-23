@@ -51,18 +51,6 @@ public class ConnectionAwareAuthenticatorTest {
     
     @Mock
     private Connection systemConnection;
-   
-    /**
-     * Configure mocks.
-     * 
-     * @throws LdapException 
-     */
-    @Before
-    public void setUpMocks() throws LdapException {
-        when(systemConnection.isOpen()).thenReturn(Boolean.TRUE);
-        when(response.getConnection()).thenReturn(userConnection);
-        when(connectionFactory.getConnection()).thenReturn(systemConnection);
-    }
 
     /**
      * Tests {@link ConnectionAwareAuthenticator#resolveEntry(AuthenticationCriteria, AuthenticationHandlerResponse)}
