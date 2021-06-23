@@ -6,6 +6,7 @@
 
 package de.triology.cas.ldap;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +64,7 @@ public class GroupAwareLdapAuthenticationHandlerTest {
     assertNotNull(principalWithGroups);
     assertNotSame(principalWithGroups, principal);
     
-    assertSame(new ArrayList<>(groups), principalWithGroups.getAttributes().get("groups"));
+    assertEquals(new ArrayList<>(groups), principalWithGroups.getAttributes().get("groups"));
   }
 
 }
