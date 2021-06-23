@@ -13,6 +13,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.util.*;
@@ -25,7 +27,9 @@ import java.util.*;
  * @author Sebastian Sdorra
  */
 public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
-  
+
+  private static final Logger LOG = LoggerFactory.getLogger(GroupAwareLdapAuthenticationHandler.class);
+
   private GroupResolver groupResolver;
 
   private String groupAttribute = "groups";
@@ -65,7 +69,7 @@ public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticatio
 
   @Override
   protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws LoginException {
-    Principal principal = super.createPrincipal(username, ldapEntry);
+    var principal = super.createPrincipal(username, ldapEntry);
     
     if ( groupResolver != null ) {
       // resolve and attach groups
@@ -87,12 +91,10 @@ public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticatio
   protected Principal attachGroups(Principal principal, LdapEntry ldapEntry) {
     Map<String, List<Object>> attributes = new LinkedHashMap<>(principal.getAttributes());
     List<Object> groups = new ArrayList<>(groupResolver.resolveGroups(principal, ldapEntry));
-// TODO    logger.debug("adding groups {} to user attributes", groups);
+    LOG.debug("adding groups {} to user attributes", groups);
     attributes.put(groupAttribute, groups);
 
-    DefaultPrincipalFactory f = new DefaultPrincipalFactory();
-
-
-    return f.createPrincipal(principal.getId(), attributes);
+    var factory = new DefaultPrincipalFactory();
+    return factory.createPrincipal(principal.getId(), attributes);
   }
 }
