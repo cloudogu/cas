@@ -42,14 +42,14 @@ cas.authn.accept.enabled=false
 # Configuration guide: https://apereo.github.io/cas/6.3.x/installation/Configuring-Authentication-Throttling.html
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#authentication-throttling
 # ----------------------------------------------------------------------------------------------------------------------
-{{ if gt .Config.GetOrDefault "limit/max_number" "0" 0 }}
+{{ if ne (.Config.GetOrDefault "limit/max_number" "0") "0" }}
     # Authentication Failure Throttling
     cas.authn.throttle.username-parameter=username
     cas.authn.throttle.app-code=CAS
     cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
     cas.authn.throttle.failure.threshold={{ .Config.GetOrDefault "limit/max_number" "0"}}
     cas.authn.throttle.failure.range-seconds={{ .Config.GetOrDefault "limit/failure_store_time" "0"}}
-    cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lockTime" "0"}}
+    cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0"}}
 {{ end }}
 ########################################################################################################################
 
