@@ -12,5 +12,3 @@ The tests of the CAS are located in the directory `app/src/test/java`. Tests are
 
 ## Logging
 The loglevel of the CAS is set by the parameter `"logging/root"`dogu.json.
-Since Issue [#64](https://github.com/cloudogu/cas/pull/66) the log level for translation strings is also controlled by `"logging/translation_messages"`.
-`"logging/translation_messages"` is set to `Error` by default.
