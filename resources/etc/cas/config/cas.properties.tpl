@@ -28,10 +28,10 @@ cas.authn.accept.enabled=false
 # LDAP
 #========================================
 
-cas.authn.ldap[0].ldap-url=ldap://ldap-mapper:3893/
-cas.authn.ldap[0].base-dn=ou=People,dc=cloudogu,dc=com
-cas.authn.ldap[0].type=DIRECT
-cas.authn.ldap[0].dn-format=uid=%s,ou=People,dc=cloudogu,dc=com
+cas.authn.ldap[0].ldap-url=ldap://ldap:389/
+cas.authn.ldap[0].base-dn=ou=People,o=ces.local,dc=cloudogu,dc=com
+cas.authn.ldap[0].type=AUTHENTICATED
+cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com
 cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
 cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
 cas.authn.ldap[0].disable-pooling=true
