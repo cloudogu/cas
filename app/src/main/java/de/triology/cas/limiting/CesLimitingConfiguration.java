@@ -46,7 +46,7 @@ public class CesLimitingConfiguration {
                                                                         ThrottledRequestResponseHandler throttledRequestResponseHandler) {
 
         if (max_number <= 0 && failure_store_time <= 0) {
-            LOGGER.debug("Authentication throttling is disabled since no max_number or failure_store_time is defined");
+            LOGGER.debug("Authentication throttling is disabled since no max_number and no failure_store_time is defined");
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
 
