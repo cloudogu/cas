@@ -48,7 +48,7 @@ cas.authn.accept.enabled=false
     cas.authn.throttle.app-code=CAS
     cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
     cas.authn.throttle.failure.max_number={{ .Config.GetOrDefault "limit/max_number" "0"}}
-    cas.authn.throttle.failure.failure_store_time-seconds={{ .Config.GetOrDefault "limit/failure_store_time" "0"}}
+    cas.authn.throttle.failure.failure_store_time={{ .Config.GetOrDefault "limit/failure_store_time" "0"}}
     cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0"}}
 {{ end }}
 ########################################################################################################################

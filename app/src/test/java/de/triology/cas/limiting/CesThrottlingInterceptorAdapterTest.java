@@ -27,11 +27,11 @@ public class CesThrottlingInterceptorAdapterTest {
         ThrottledRequestResponseHandler handlerMock = mock(ThrottledRequestResponseHandler.class);
 
         // general client info mock
-        ClientInfo clientInfoMock = mock(ClientInfo.class);
-        when(clientInfoMock.getClientIpAddress()).thenReturn(CLIENT_ID);
+        CesThrottlingInterceptorAdapter.IClientInfoProvider clientInfoMock = mock(CesThrottlingInterceptorAdapter.IClientInfoProvider.class);
+        when(clientInfoMock.getClientInfo()).thenReturn(CLIENT_ID);
 
         ConcurrentMap<String, CesSubmissionListData> map = new ConcurrentHashMap<>();
-        CesThrottlingInterceptorAdapter throttlingAdapter = new CesThrottlingInterceptorAdapter(
+        return new CesThrottlingInterceptorAdapter(
                 map,
                 handlerMock,
                 clientInfoMock,
@@ -39,7 +39,6 @@ public class CesThrottlingInterceptorAdapterTest {
                 failure_store_time,
                 lockTime
         );
-        return throttlingAdapter;
     }
 
     @Test
@@ -74,11 +73,11 @@ public class CesThrottlingInterceptorAdapterTest {
         throttlingAdapter.decrement();
 
         // then
-        assertTrue(!throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid_locked"));
-        assertTrue(!throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid"));
+        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid_locked"));
+        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid"));
         assertTrue(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_locked"));
         assertTrue(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_valid"));
-        assertTrue(!throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_empty"));
+        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_empty"));
     }
 
     @Test

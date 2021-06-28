@@ -50,11 +50,11 @@ public class CesLimitingConfiguration {
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
 
-        LOGGER.debug("Activating CES authentication throttling based on IP address...");
+        LOGGER.debug("Activating CES authentication throttling based on IP address. Configuration[MaxNumber:[{}], FailureStoreTime:[{}], LockTime:[{}]]", max_number, failure_store_time, lockTime);
         return new CesThrottlingInterceptorAdapter(
                 throttleSubmissionMap,
                 throttledRequestResponseHandler,
-                ClientInfoHolder.getClientInfo(),
+                CesThrottlingInterceptorAdapter.IClientInfoProvider.clientInfoHolder(),
                 max_number,
                 failure_store_time,
                 lockTime);

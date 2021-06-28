@@ -5,7 +5,7 @@ import lombok.val;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
-import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -59,22 +59,46 @@ public class CesThrottlingInterceptorAdapter
     /**
      * Contains information about the current client. Required for testing.
      */
-    private ClientInfo clientInfo;
+    private IClientInfoProvider clientInfoProvider;
 
 
     protected CesThrottlingInterceptorAdapter(
             final ConcurrentMap<String, CesSubmissionListData> submissionIpMap,
             final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-            final ClientInfo clientInfo,
+            final IClientInfoProvider clientInfoProvider,
             final long max_number,
             final long failure_store_time,
             final long lockTime) {
         this.submissionIpMap = submissionIpMap;
         this.throttledRequestResponseHandler = throttledRequestResponseHandler;
-        this.clientInfo = clientInfo;
+        this.clientInfoProvider = clientInfoProvider;
         this.max_number = max_number;
         this.failure_store_time = failure_store_time;
         this.lockTime = lockTime;
+    }
+
+    /**
+     * This interface is used to retrieve the information that is used to distinct the actual user.
+     * <p>
+     * The {@link #clientInfoHolder()} provides a default provider that retrieves the IP address of the user.
+     */
+    interface IClientInfoProvider {
+        /**
+         * @return Returns the client identifier
+         */
+        default String getClientInfo() {
+            return ClientInfoHolder.getClientInfo().getClientIpAddress();
+        }
+
+        /**
+         * Default client info provider that retrieves the IP address of the user.
+         *
+         * @return the client info provider
+         */
+        static IClientInfoProvider clientInfoHolder() {
+            return new IClientInfoProvider() {
+            };
+        }
     }
 
     @Override
@@ -279,6 +303,6 @@ public class CesThrottlingInterceptorAdapter
      * @return a distinctive identifier for the host
      */
     String getHostIdentifier() {
-        return clientInfo.getClientIpAddress();
+        return clientInfoProvider.getClientInfo();
     }
 }

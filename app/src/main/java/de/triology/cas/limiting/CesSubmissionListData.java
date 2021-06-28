@@ -33,4 +33,13 @@ public class CesSubmissionListData {
     public void recordHostLock(ZonedDateTime now) {
         lockTime = now;
     }
+
+    @Override
+    public String toString() {
+        return "CesSubmissionListData{" +
+                "failedSubmissions=" + failedSubmissions +
+                ", firstSubmissionFailure=" + firstSubmissionFailure +
+                ", lockTime=" + lockTime +
+                '}';
+    }
 }
