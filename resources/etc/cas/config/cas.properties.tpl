@@ -28,9 +28,14 @@ cas.authn.accept.enabled=false
 # LDAP
 #========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
+
+# LDAP connection timeout in milliseconds
+cas.authn.ldap[0].connect-timeout=3000
+
 cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 cas.authn.ldap[0].type=AUTHENTICATED
-cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com
+#cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com
+cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
 cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
 cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
 
