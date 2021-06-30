@@ -25,12 +25,12 @@ function configureCAS() {
     echo "ldap type is external"
     LDAP_BASE_DN=$(doguctl config ldap/base_dn)
     LDAP_BIND_DN=$(doguctl config ldap/connection_dn)
-    LDAP_BIND_PASSWORD=$(doguctl config -e ldap/password | sed 's@/@\\\\/@g')
+    LDAP_BIND_PASSWORD=$(doguctl config -e ldap/password)
   else
     echo "ldap type is embedded"
     LDAP_BASE_DN="ou=People,o=${DOMAIN},dc=cloudogu,dc=com"
     LDAP_BIND_DN=$(doguctl config -e sa-ldap/username)
-    LDAP_BIND_PASSWORD=$(doguctl config -e sa-ldap/password | sed 's@/@\\\\/@g')
+    LDAP_BIND_PASSWORD=$(doguctl config -e sa-ldap/password)
   fi
 
   export LDAP_BASE_DN
