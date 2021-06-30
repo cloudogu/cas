@@ -13,8 +13,7 @@
   "Logo": "https://cloudogu.com/images/dogus/cas.png",
   "Image": "registry.cloudogu.com/official/cas",
   "Dependencies": [
-    "nginx",
-    "ldap"
+    "nginx"
   ],
   "Configuration": [
     {
