@@ -32,22 +32,13 @@ cas.authn.accept.enabled=false
 # General properties
 #========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
+cas.authn.ldap[0].type=AUTHENTICATED
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
 ldap.useStartTLS={{ .Env.Get "LDAP_STARTTLS" }}
-
-cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
-cas.authn.ldap[0].type=AUTHENTICATED
-#cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com
-cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
-cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
-cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
-
-ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
-ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
 # LDAP connection pool configuration
@@ -71,6 +62,24 @@ cas.authn.ldap[0].prune-period=300
 # Maximum amount of time an idle connection is allowed to be in
 # pool before it is liable to be removed/destroyed
 cas.authn.ldap[0].idle-time=600
+
+#========================================
+# Authentication
+#========================================
+
+# Base DN of users to be authenticated
+cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
+
+# Search filter used for configurations that require searching for DNs
+cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
+
+# Search filter used for configurations that require searching for DNs
+cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
+
+cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
+
+ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
+ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
 # OAuth

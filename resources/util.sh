@@ -24,12 +24,18 @@ function configureCAS() {
   if [[ "$LDAP_TYPE" == 'external' ]]; then
     echo "ldap type is external"
     LDAP_BASE_DN=$(doguctl config ldap/base_dn)
+    LDAP_BIND_DN=$(doguctl config ldap/connection_dn)
+    LDAP_BIND_PASSWORD=$(doguctl config -e ldap/password | sed 's@/@\\\\/@g')
   else
     echo "ldap type is embedded"
     LDAP_BASE_DN="ou=People,o=${DOMAIN},dc=cloudogu,dc=com"
+    LDAP_BIND_DN=$(doguctl config -e sa-ldap/username)
+    LDAP_BIND_PASSWORD=$(doguctl config -e sa-ldap/password | sed 's@/@\\\\/@g')
   fi
 
   export LDAP_BASE_DN
+  export LDAP_BIND_DN
+  export LDAP_BIND_PASSWORD
 
   LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none
   if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
@@ -45,6 +51,10 @@ function configureCAS() {
 
   export LDAP_STARTTLS
   export LDAP_PROTOCOL
+
+  LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
+  LDAP_SEARCH_FILTER=$(echo "(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))")
+  export LDAP_SEARCH_FILTER
 
   CAS_PROPERTIES_TEMPLATE="/etc/cas/config/cas.properties.tpl"
   CAS_PROPERTIES="/etc/cas/config/cas.properties"
