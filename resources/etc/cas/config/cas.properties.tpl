@@ -21,7 +21,9 @@ logging.config=file:/etc/cas/config/log4j2.xml
 
 ########################################################################################################################
 # LDAP
-#========================================
+# Configuration guide: https://apereo.github.io/cas/6.3.x/installation/LDAP-Authentication.html
+# Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-authentication
+# ----------------------------------------------------------------------------------------------------------------------
 
 #========================================
 # General properties
@@ -71,19 +73,8 @@ cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
 
-# Configuration guide: https://apereo.github.io/cas/6.3.x/installation/LDAP-Authentication.html
-# Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-authentication
-# ----------------------------------------------------------------------------------------------------------------------
-# Configure ldap-mapper as ldap source service
-cas.authn.ldap[0].ldap-url=ldap://ldap-mapper:3893/
-cas.authn.ldap[0].base-dn=ou=People,dc=cloudogu,dc=com
-cas.authn.ldap[0].type=DIRECT
-cas.authn.ldap[0].dn-format=uid=%s,ou=People,dc=cloudogu,dc=com
-cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
-cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
-
-ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
+
 # Disable static users
 cas.authn.accept.enabled=false
 ########################################################################################################################
