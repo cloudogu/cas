@@ -14,7 +14,7 @@
   "Image": "registry.cloudogu.com/official/cas",
   "Dependencies": [
     "nginx",
-    "ldap-mapper"
+    "ldap"
   ],
   "Configuration": [
     {
