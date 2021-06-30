@@ -36,7 +36,7 @@ cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:sur
 cas.authn.ldap[0].connect-timeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
-cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}={{ .Env.Get "LDAP_STARTTLS" }}
+cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
 
 #========================================
 # LDAP connection pool configuration
