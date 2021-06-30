@@ -33,10 +33,30 @@ cas.authn.ldap[0].type=AUTHENTICATED
 cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com
 cas.authn.ldap[0].search-filter=(&(objectClass=person)(uid={user}))
 cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
-cas.authn.ldap[0].disable-pooling=true
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
+
+# LDAP connection pool configuration
+cas.authn.ldap[0].min-pool-size=3
+cas.authn.ldap[0].max-pool-size=10
+cas.authn.ldap[0].validate-on-checkout=false
+cas.authn.ldap[0].validate-periodically=true
+
+# Amount of time in milliseconds to block on pool exhausted condition
+# before giving up.
+cas.authn.ldap[0].block-wait-time=3000
+
+# Frequency of connection validation in seconds
+# Only applies if validatePeriodically=true
+cas.authn.ldap[0].validate-period=300
+
+# Attempt to prune connections every N seconds
+cas.authn.ldap[0].prune-period=300
+
+# Maximum amount of time an idle connection is allowed to be in
+# pool before it is liable to be removed/destroyed
+cas.authn.ldap[0].idle-time=600
 
 #========================================
 # OAuth
