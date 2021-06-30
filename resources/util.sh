@@ -19,8 +19,19 @@ function exitOnErrorWithMessage() {
 
 # Sets general configuration option for the cas server
 function configureCAS() {
-   LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none
+  DOMAIN=$(doguctl config --global domain)
+  LDAP_TYPE=$(doguctl config ldap/ds_type)
+  if [[ "$LDAP_TYPE" == 'external' ]]; then
+    echo "ldap type is external"
+    LDAP_BASE_DN=$(doguctl config ldap/base_dn)
+  else
+    echo "ldap type is embedded"
+    LDAP_BASE_DN="ou=People,o=${DOMAIN},dc=cloudogu,dc=com"
+  fi
 
+  export LDAP_BASE_DN
+
+  LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none
   if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
      LDAP_PROTOCOL='ldap'
   elif [[ "$LDAP_ENCRYPTION" == 'ssl' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
