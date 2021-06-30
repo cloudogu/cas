@@ -53,7 +53,7 @@ function configureCAS() {
   export LDAP_PROTOCOL
 
   LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
-  LDAP_SEARCH_FILTER=$("(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))")
+  LDAP_SEARCH_FILTER="(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))"
   export LDAP_SEARCH_FILTER
 
   CAS_PROPERTIES_TEMPLATE="/etc/cas/config/cas.properties.tpl"
