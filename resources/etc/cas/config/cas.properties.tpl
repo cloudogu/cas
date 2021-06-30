@@ -30,6 +30,7 @@ logging.config=file:/etc/cas/config/log4j2.xml
 #========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 cas.authn.ldap[0].type=AUTHENTICATED
+cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
