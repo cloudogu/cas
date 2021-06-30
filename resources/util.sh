@@ -33,13 +33,17 @@ function configureCAS() {
 
   LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none
   if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
+     LDAP_STARTTLS='true'
      LDAP_PROTOCOL='ldap'
   elif [[ "$LDAP_ENCRYPTION" == 'ssl' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
-      LDAP_PROTOCOL='ldaps'
+     LDAP_STARTTLS='false'
+     LDAP_PROTOCOL='ldaps'
   else # none
-      LDAP_PROTOCOL='ldap'
+     LDAP_STARTTLS='false'
+     LDAP_PROTOCOL='ldap'
   fi
 
+  export LDAP_STARTTLS
   export LDAP_PROTOCOL
 
   CAS_PROPERTIES_TEMPLATE="/etc/cas/config/cas.properties.tpl"

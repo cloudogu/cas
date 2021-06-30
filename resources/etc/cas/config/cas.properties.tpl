@@ -27,10 +27,17 @@ cas.authn.accept.enabled=false
 #========================================
 # LDAP
 #========================================
+
+#========================================
+# General properties
+#========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
+
+# Whether to use StartTLS (probably needed if not SSL connection)
+ldap.useStartTLS={{ .Env.Get "LDAP_STARTTLS" }}
 
 cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 cas.authn.ldap[0].type=AUTHENTICATED
@@ -42,7 +49,9 @@ cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:sur
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
+#========================================
 # LDAP connection pool configuration
+#========================================
 cas.authn.ldap[0].min-pool-size=3
 cas.authn.ldap[0].max-pool-size=10
 cas.authn.ldap[0].validate-on-checkout=false
