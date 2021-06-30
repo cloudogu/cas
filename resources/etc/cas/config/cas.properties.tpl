@@ -27,8 +27,7 @@ cas.authn.accept.enabled=false
 #========================================
 # LDAP
 #========================================
-
-cas.authn.ldap[0].ldap-url=ldap://ldap:389/
+cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 cas.authn.ldap[0].base-dn=ou=People,o=ces.local,dc=cloudogu,dc=com
 cas.authn.ldap[0].type=AUTHENTICATED
 cas.authn.ldap[0].dn-format=uid=%s,ou=People,o=ces.local,dc=cloudogu,dc=com

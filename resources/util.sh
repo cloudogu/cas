@@ -19,6 +19,18 @@ function exitOnErrorWithMessage() {
 
 # Sets general configuration option for the cas server
 function configureCAS() {
+   LDAP_ENCRYPTION=$(doguctl config ldap/encryption) || LDAP_ENCRYPTION="none" # ssl, sslAny, startTLS, startTLSAny or none
+
+  if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
+     LDAP_PROTOCOL='ldap'
+  elif [[ "$LDAP_ENCRYPTION" == 'ssl' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
+      LDAP_PROTOCOL='ldaps'
+  else # none
+      LDAP_PROTOCOL='ldap'
+  fi
+
+  export LDAP_PROTOCOL
+
   CAS_PROPERTIES_TEMPLATE="/etc/cas/config/cas.properties.tpl"
   CAS_PROPERTIES="/etc/cas/config/cas.properties"
 
