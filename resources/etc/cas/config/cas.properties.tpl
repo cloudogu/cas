@@ -91,12 +91,12 @@ cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/att
 
 # settings for ldap group search by member
 # base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com
-cas.authn.attributeRepository.ldap[0].attributes.groups.baseDn={{ .Config.GetOrDefault "ldap/group_base_dn" ''}}
+cas.authn.attributeRepository.ldap[0].attributes.groups.baseDn={{ .Config.GetOrDefault "ldap/group_base_dn" ""}}
 
 # search filter for group search {0} will be replaced with the dn of the user
 # e.g.: (member={0})
 # if this property is empty, group search by member will be skipped
-cas.authn.attributeRepository.ldap[0].attributes.groups.searchFilter={{ .Config.GetOrDefault "ldap/group_search_filter" ''}}
+cas.authn.attributeRepository.ldap[0].attributes.groups.searchFilter={{ .Config.GetOrDefault "ldap/group_search_filter" ""}}
 
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
