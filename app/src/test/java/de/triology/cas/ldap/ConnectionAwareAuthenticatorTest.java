@@ -29,28 +29,16 @@ import static org.mockito.Mockito.*;
 public class ConnectionAwareAuthenticatorTest {
 
     @Mock
-    private ConnectionFactory connectionFactory;
-    
-    @Mock
     private DnResolver dnResolver;
     
     @Mock
     private AuthenticationHandler authenticationHandler;
-    
-    @Mock
-    private AuthenticationRequest request;
-    
+
     @Mock
     private AuthenticationHandlerResponse response;
     
     @Mock
     private AuthenticationCriteria criteria;
-
-    @Mock
-    private Connection userConnection;
-    
-    @Mock
-    private Connection systemConnection;
 
     /**
      * Tests {@link ConnectionAwareAuthenticator#resolveEntry(AuthenticationCriteria, AuthenticationHandlerResponse)}
@@ -75,6 +63,6 @@ public class ConnectionAwareAuthenticatorTest {
     }
 
     private ConnectionAwareAuthenticator createAuthenticator() {
-        return new ConnectionAwareAuthenticator(connectionFactory, dnResolver, authenticationHandler);
+        return new ConnectionAwareAuthenticator(dnResolver, authenticationHandler);
     }
 }

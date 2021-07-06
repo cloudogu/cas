@@ -8,23 +8,19 @@ package de.triology.cas.ldap;
 import org.ldaptive.*;
 import org.ldaptive.auth.*;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * Authenticator which is able to resolve attributes with the user connection or with the system connection.
+ * Authenticator which is able to resolve attributes.
  */
 public class ConnectionAwareAuthenticator extends Authenticator {
 
     private static final EntryResolver NOOP_RESOLVER = new NoOpEntryResolver();
 
-    @NotNull
-    private final ConnectionFactory connectionFactory;
 
     public ConnectionAwareAuthenticator(
-            ConnectionFactory connectionFactory, DnResolver resolver, AuthenticationHandler handler
+            DnResolver resolver, AuthenticationHandler handler
     ) {
         super(resolver, handler);
-        this.connectionFactory = connectionFactory;
+
     }
 
     @Override
