@@ -1,4 +1,10 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   de.triology.cas.services.CesServicesConfiguration,\
   de.triology.cas.oauth.config.CesOAuthConfiguration,\
-  de.triology.cas.limiting.CesLimitingConfiguration
+  de.triology.cas.limiting.CesLimitingConfiguration,\
+  de.triology.cas.oauth.config.CesOAuthConfiguration,\
+  de.triology.cas.limiting.CesLimitingConfiguration,\
+  de.triology.cas.ldap.CesAuthenticationEventExecutionPlanConfiguration,\
+  de.triology.cas.ldap.MemberGroupResolver,\
+  de.triology.cas.ldap.MemberOfGroupResolver
+  

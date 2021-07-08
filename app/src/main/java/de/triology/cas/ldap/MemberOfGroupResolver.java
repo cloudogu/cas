@@ -7,10 +7,15 @@
 package de.triology.cas.ldap;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,29 +25,25 @@ import java.util.Set;
  * have to add the name of the attribute to the additionalAttributes list of 
  * {@link GroupAwareLdapAuthenticationHandler}.
  */
+@Configuration
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@ComponentScan("de.triology.cas.ldap")
 public class MemberOfGroupResolver implements GroupResolver {
     
     private static final Logger LOG = LoggerFactory.getLogger(MemberOfGroupResolver.class);
 
-    private final String attribute;
-    private final boolean isDnAttribute;
 
-    /**
-     * Creates a new instance.
-     * 
-     * @param attribute name of memberOf attribute
-     * @param isDnAttribute {@code true} if the attribute is an dn
-     */
-    public MemberOfGroupResolver(String attribute, boolean isDnAttribute) {
-        this.attribute = attribute;
-        this.isDnAttribute = isDnAttribute;
-    }
-    
+    private String attribute = "memberOf";
+    private boolean isDnAttribute = true;
+
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         LOG.trace("resolve groups from ldap attribute {}", attribute);
         Set<String> groups = new HashSet<>();
         LdapAttribute ldapAttribute = ldapEntry.getAttribute(attribute);
+
+        LOG.trace("ldap-attribute: {}", ldapAttribute);
+
         if (ldapAttribute != null && !ldapAttribute.isBinary()) {
             for (String value : ldapAttribute.getStringValues()) {
                 String group = normalizeName(value);

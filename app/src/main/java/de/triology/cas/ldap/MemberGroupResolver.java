@@ -5,11 +5,20 @@
  */
 package de.triology.cas.ldap;
 
+
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LdapUtils;
+
 import org.ldaptive.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
@@ -22,23 +31,30 @@ import java.util.Set;
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
  */
+@Configuration("MemberGroupResolver")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@ComponentScan("de.triology.cas.ldap")
 public class MemberGroupResolver implements GroupResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
 
     @NotNull
+    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
     private String baseDN;
+
+    @Autowired
+    CasConfigurationProperties properties;
 
     /**
      * Search controls.
      */
     @NotNull
+    @Autowired
     private SearchControls searchControls;
 
     /**
      * LDAP connection factory.
      */
-    @NotNull
     private ConnectionFactory connectionFactory;
 
     /**
@@ -50,21 +66,13 @@ public class MemberGroupResolver implements GroupResolver {
      * LDAP search filter.
      */
     @NotNull
+    @Value("${cas.authn.ldap[0].search-filter}")
     private String searchFilter;
 
     /**
      * LDAP group name attribute.
      */
     private String nameAttribute = "cn";
-
-    /**
-     * Sets the base DN of the LDAP search for groups.
-     *
-     * @param dn LDAP base DN of search.
-     */
-    public void setBaseDN(final String dn) {
-        this.baseDN = dn;
-    }
 
     /**
      * Sets the LDAP search filter used to query for groups.
@@ -76,25 +84,6 @@ public class MemberGroupResolver implements GroupResolver {
         this.searchFilter = filter;
     }
 
-    /**
-     * Sets a number of parameters that control LDAP search semantics including search scope, maximum number of results
-     * retrieved, and search timeout.
-     *
-     * @param searchControls LDAP search controls.
-     */
-    public void setSearchControls(final SearchControls searchControls) {
-        this.searchControls = searchControls;
-    }
-
-    /**
-     * Sets the connection factory that produces LDAP connections on which searches occur. It is strongly recommended that
-     * this be a <code>PooledConnecitonFactory</code> object.
-     *
-     * @param connectionFactory LDAP connection factory.
-     */
-    public void setConnectionFactory(final ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
 
     /**
      * Sets the name of the ldap attribute, which holds the name of the group. Default is "cn".
