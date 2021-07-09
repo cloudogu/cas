@@ -68,40 +68,20 @@ cas.authn.ldap[0].idle-time=600
 # Base DN of users to be authenticated
 cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 
-# Manager DN for authenticated searches
-cas.authn.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
-
-# Manager password for authenticated searches
-cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD"}}
-
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
 
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
 
-# Ldap mapping of result attributes
-cas.authn.attributeRepository.ldap[0].attributes.uid={{ .Config.Get "ldap/attribute_id" }}
-cas.authn.attributeRepository.ldap[0].attributes.cn=cn
-cas.authn.attributeRepository.ldap[0].attributes.mail={{ .Config.Get "ldap/attribute_mail" }}
-cas.authn.attributeRepository.ldap[0].attributes.givenName=givenName
-cas.authn.attributeRepository.ldap[0].attributes.surname=sn
-cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
-cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group" }}
-
-# settings for ldap group search by member
-# base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com
-cas.authn.attributeRepository.ldap[0].attributes.groups.baseDn={{ .Config.GetOrDefault "ldap/group_base_dn" ""}}
-
-# search filter for group search {0} will be replaced with the dn of the user
-# e.g.: (member={0})
-# if this property is empty, group search by member will be skipped
-cas.authn.attributeRepository.ldap[0].attributes.groups.searchFilter={{ .Config.GetOrDefault "ldap/group_search_filter" ""}}
-
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 # Disable static users
 cas.authn.accept.enabled=false
+
+# Disbale LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
+# We use and register our own LDAP authentication handler by extending the LDAP authentication handler from the CAS.
+spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration
 ########################################################################################################################
 
 ########################################################################################################################
@@ -110,13 +90,13 @@ cas.authn.accept.enabled=false
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#authentication-throttling
 # ----------------------------------------------------------------------------------------------------------------------
 {{ if ne (.Config.GetOrDefault "limit/max_number" "0") "0" }}
-    # Authentication Failure Throttling
-    cas.authn.throttle.username-parameter=username
-    cas.authn.throttle.app-code=CAS
-    cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
-    cas.authn.throttle.failure.max_number={{ .Config.GetOrDefault "limit/max_number" "0"}}
-    cas.authn.throttle.failure.failure_store_time={{ .Config.GetOrDefault "limit/failure_store_time" "0"}}
-    cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0"}}
+# Authentication Failure Throttling
+cas.authn.throttle.username-parameter=username
+cas.authn.throttle.app-code=CAS
+cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
+cas.authn.throttle.failure.max_number={{ .Config.GetOrDefault "limit/max_number" "0"}}
+cas.authn.throttle.failure.failure_store_time={{ .Config.GetOrDefault "limit/failure_store_time" "0"}}
+cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0"}}
 {{ end }}
 ########################################################################################################################
 
