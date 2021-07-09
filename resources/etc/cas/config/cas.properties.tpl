@@ -74,3 +74,33 @@ cas.authn.oauth.code.numberOfUses=1
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 ########################################################################################################################
+
+########################################################################################################################
+# OIDC
+# Configuration guide:
+# Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
+########################################################################################################################
+### spezifisch f..r keycloak
+### wird f..r die Ermittlung der Metadaten verwendet
+cas.authn.pac4j.oidc[0].keycloak.base-uri=https://staging-account.cloudogu.com/auth
+cas.authn.pac4j.oidc[0].keycloak.realm=Cloudogu
+### allgemeine Alternative
+# cas.authn.pac4j.oidc[0].keycloak.discovery-url=https://staging-account.cloudogu.com/auth/realms/Cloudogu/.well-known/openid-configuration
+
+### useNonce muss f..r die Anbindung an unseren Keycloak konfiguriert werden
+cas.authn.pac4j.oidc[0].keycloak.useNonce=true
+cas.authn.pac4j.oidc[0].keycloak.enabled=true
+
+### Name und Secret des im Keycloak angelegten Clients
+cas.authn.pac4j.oidc[0].keycloak.id=my-client-id
+cas.authn.pac4j.oidc[0].keycloak.secret=98199dd4-17ca-4021-8987-fc8ade8d685d
+
+### Der Client-Name wird zwar immer wieder bei den Requests angegeben, ist aber eine optionale Information
+cas.authn.pac4j.oidc[0].keycloak.client-name=my-client-name
+
+### automatische Umleitung zum konfigurierten Provider, wenn man sich ..ber CAS einloggen m..chte
+cas.authn.pac4j.oidc[0].keycloak.auto-redirect=true
+
+### Informationen, die in der Antwort vom OIDC-Provider enthalten sein sollen
+cas.authn.pac4j.oidc[0].keycloak.scope=openid email profile
+cas.authn.pac4j.oidc[0].keycloak.responseType=code
