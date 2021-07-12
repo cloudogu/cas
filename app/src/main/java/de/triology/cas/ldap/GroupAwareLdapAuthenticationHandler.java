@@ -15,6 +15,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 
 import javax.security.auth.login.LoginException;
 import java.util.*;
@@ -32,7 +33,9 @@ public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticatio
 
   private GroupResolver groupResolver;
 
-  private String groupAttribute = "groups";
+  // TODO Use spring
+  private String groupAttribute = "memberOf";
+
 
   /**
    * Creates a new authentication handler that delegates to the given authenticator.
@@ -46,6 +49,7 @@ public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticatio
    */
   public GroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order, Authenticator authenticator, AuthenticationPasswordPolicyHandlingStrategy strategy) {
     super(name, servicesManager, principalFactory, order, authenticator, strategy);
+    LOG.trace("GroupAwareLdapAuthtenticatorHandler created");
   }
 
 
@@ -70,7 +74,9 @@ public final class GroupAwareLdapAuthenticationHandler extends LdapAuthenticatio
   @Override
   protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws LoginException {
     var principal = super.createPrincipal(username, ldapEntry);
-    
+    LOG.trace("Principal " + principal );
+
+    LOG.trace("Group resolver:" + groupResolver);
     if ( groupResolver != null ) {
       // resolve and attach groups
       principal = attachGroups(principal, ldapEntry);
