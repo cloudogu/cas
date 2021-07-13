@@ -1,7 +1,5 @@
 package de.triology.cas.ldap;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -9,7 +7,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +14,11 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.util.*;
 
-@Getter
-@Setter
 public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CesGroupAwareLdapAuthenticationHandler.class);
 
-    private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
-
-
-    // TODO Use spring
-    private String groupAttribute = "memberOf";
-
+    private String groupAttribute;
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -40,16 +30,22 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
      * @param authenticator    Ldaptive authenticator component.
      * @param strategy         the strategy
      */
-    public CesGroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager, PrincipalFactory principalFactory, Integer order, Authenticator authenticator, AuthenticationPasswordPolicyHandlingStrategy strategy) {
+    public CesGroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager,
+                                                  PrincipalFactory principalFactory, Integer order,
+                                                  Authenticator authenticator,
+                                                  AuthenticationPasswordPolicyHandlingStrategy strategy,
+                                                  String groupAttribute) {
         super(name, servicesManager, principalFactory, order, authenticator, strategy);
-        LOGGER.trace("{} created", CesGroupAwareLdapAuthenticationHandler.class.getSimpleName());
+        this.groupAttribute = groupAttribute;
+        LOGGER.trace("{} created with group attribute {}",
+                CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), groupAttribute);
     }
 
     @Override
     protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws LoginException {
-        LOGGER.trace("createPrincipal -> LdapEntry: {}", ldapEntry);
+        LOGGER.trace("createPrincipal from LdapEntry: {}", ldapEntry);
         var principal = super.createPrincipal(username, ldapEntry);
-        LOGGER.trace("Principal {] " + principal);
+        LOGGER.trace("created Principal from super method is: {] ", principal);
 
         GroupResolver groupResolver = new MemberGroupResolver();
         LOGGER.error("Group resolver:" + groupResolver);
