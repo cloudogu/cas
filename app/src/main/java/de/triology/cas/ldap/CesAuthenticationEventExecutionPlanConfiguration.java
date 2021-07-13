@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultLdapAccountStateHandler;
 import org.apereo.cas.authentication.support.OptionalWarningLdapAccountStateHandler;
 import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategy;
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +41,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 
+/**
+ * Class for creating and configuring the LDAP authentication handler for the CES.
+ */
 @Configuration("CesAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
@@ -54,13 +57,10 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
+    @RefreshScope
     @Bean
     // Mostly copied from LdapAuthenticationConfiguration, but uses its own AuthenticationHandler
     public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler() {
