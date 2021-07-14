@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -62,9 +61,6 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
-    private String groupAttribute;
-
     @Autowired
     CombinedGroupResolver groupResolver;
 
@@ -88,7 +84,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
         val handler = new CesGroupAwareLdapAuthenticationHandler(l.getName(),
                 servicesManager.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
-                getOrder(), authenticator, strategy, groupAttribute, groupResolver);
+                getOrder(), authenticator, strategy, groupResolver);
         handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
         if (!l.getAdditionalAttributes().isEmpty()) {

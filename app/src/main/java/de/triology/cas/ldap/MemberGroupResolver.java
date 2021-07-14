@@ -15,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
@@ -28,7 +30,9 @@ import java.util.Set;
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
  */
-@Component
+@Configuration("MemberGroupResolver")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@ComponentScan("de.triology.cas.ldap")
 public class MemberGroupResolver implements GroupResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
@@ -43,8 +47,8 @@ public class MemberGroupResolver implements GroupResolver {
     /**
      * Search controls.
      */
-    // TODO
-    private SearchControls searchControls = new SearchControls();
+    @Autowired
+    private SearchControls searchControls;
 
     /**
      * LDAP connection factory.
@@ -78,16 +82,6 @@ public class MemberGroupResolver implements GroupResolver {
         this.searchFilter = filter;
     }
 
-
-    /**
-     * Sets the name of the ldap attribute, which holds the name of the group. Default is "cn".
-     *
-     * @param nameAttribute name attribute of group
-     */
-    public void setNameAttribute(String nameAttribute) {
-        this.nameAttribute = nameAttribute;
-    }
-
     /**
      * Initializes the object after properties are set.
      */
@@ -102,6 +96,7 @@ public class MemberGroupResolver implements GroupResolver {
 
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
+        searchFilter = "a";
         if (StringUtils.isEmpty(searchFilter)) {
             LOG.trace("skip resolving groups for member, because of missing search filter");
             return Collections.emptySet();

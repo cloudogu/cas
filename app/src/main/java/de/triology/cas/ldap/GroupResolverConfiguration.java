@@ -6,6 +6,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,5 +37,13 @@ public class GroupResolverConfiguration {
     @Bean
     MemberOfGroupResolver memberOfGroupResolver() {
         return new MemberOfGroupResolver();
+    }
+
+    @Bean
+    SearchControls searchControls() {
+        var searchControls = new SearchControls();
+        searchControls.setSearchScope(2);
+
+        return searchControls;
     }
 }

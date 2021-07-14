@@ -17,9 +17,9 @@ import java.util.*;
 public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CesGroupAwareLdapAuthenticationHandler.class);
+    private static final String GROUP_ATTRIBUTE = "groups";
 
-    private String groupAttribute;
-    private GroupResolver groupResolver;
+    private final GroupResolver groupResolver;
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -30,20 +30,18 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
      * @param order            the order
      * @param authenticator    Ldaptive authenticator component.
      * @param strategy         the strategy
-     * @param groupAttribute   the name of the group attribute
      * @param groupResolver    the resolver for resolving groups
      */
     public CesGroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager,
                                                   PrincipalFactory principalFactory, Integer order,
                                                   Authenticator authenticator,
                                                   AuthenticationPasswordPolicyHandlingStrategy strategy,
-                                                  String groupAttribute, GroupResolver groupResolver) {
+                                                  GroupResolver groupResolver) {
         super(name, servicesManager, principalFactory, order, authenticator, strategy);
 
-        this.groupAttribute = groupAttribute;
         this.groupResolver = groupResolver;
         LOGGER.trace("{} created with group attribute {} and group resolver {}",
-                CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), groupAttribute, groupResolver);
+                CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), GROUP_ATTRIBUTE, groupResolver);
     }
 
     @Override
@@ -71,7 +69,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
         Map<String, List<Object>> attributes = new LinkedHashMap<>(principal.getAttributes());
         List<Object> groups = new ArrayList<>(groupResolver.resolveGroups(principal, ldapEntry));
         LOGGER.debug("adding groups {} to user attributes", groups);
-        attributes.put(groupAttribute, groups);
+        attributes.put(GROUP_ATTRIBUTE, groups);
 
         return principalFactory.createPrincipal(principal.getId(), attributes);
     }
