@@ -34,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Period;
@@ -41,12 +42,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-
 /**
  * Class for creating and configuring the LDAP authentication handler for the CES.
  */
 @Configuration("CesAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ComponentScan("de.triology.cas.ldap")
 public class CesAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CesAuthenticationEventExecutionPlanConfiguration.class);
@@ -63,6 +64,9 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
     @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
     private String groupAttribute;
+
+    @Autowired
+    CombinedGroupResolver groupResolver;
 
     @RefreshScope
     @Bean
@@ -84,7 +88,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
         val handler = new CesGroupAwareLdapAuthenticationHandler(l.getName(),
                 servicesManager.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
-                getOrder(), authenticator, strategy, groupAttribute);
+                getOrder(), authenticator, strategy, groupAttribute, groupResolver);
         handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
         if (!l.getAdditionalAttributes().isEmpty()) {

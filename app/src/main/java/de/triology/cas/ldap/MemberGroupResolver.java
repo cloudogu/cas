@@ -9,16 +9,13 @@ package de.triology.cas.ldap;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.LdapUtils;
 
 import org.ldaptive.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
@@ -31,9 +28,7 @@ import java.util.Set;
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
  */
-@Configuration("MemberGroupResolver")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@ComponentScan("de.triology.cas.ldap")
+@Component
 public class MemberGroupResolver implements GroupResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
@@ -48,9 +43,8 @@ public class MemberGroupResolver implements GroupResolver {
     /**
      * Search controls.
      */
-    @NotNull
-    @Autowired
-    private SearchControls searchControls;
+    // TODO
+    private SearchControls searchControls = new SearchControls();
 
     /**
      * LDAP connection factory.
