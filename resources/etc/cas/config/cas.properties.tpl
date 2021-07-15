@@ -4,9 +4,11 @@
 # ----------------------------------------------------------------------------------------------------------------------
 cas.server.name=https://{{ .GlobalConfig.Get "fqdn" }}
 cas.server.prefix=${cas.server.name}/cas
+
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
+
 # Unique CAS node name
-# host.name is used to generate unique Service Ticket IDs and SAMLArtifacts.  This is usually set to the specific
+# host.name is used to generate unique Service Ticket IDs and SAMLArtifacts. This is usually set to the specific
 # hostname of the machine running the CAS node, but it could be any label so long as it is unique in the cluster.
 host.name=cas.{{ .GlobalConfig.Get "domain" }}
 ########################################################################################################################
@@ -23,20 +25,30 @@ logging.config=file:/etc/cas/config/log4j2.xml
 # LDAP
 # Configuration guide: https://apereo.github.io/cas/6.3.x/installation/LDAP-Authentication.html
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-authentication
+#             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#ldap-connection-settings
+#             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#connection-strategies
+#             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#ldap-authenticationsearch-settings
 # ----------------------------------------------------------------------------------------------------------------------
 
 #========================================
 # General properties
 #========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
-cas.authn.ldap[0].type=AUTHENTICATED
-cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
+
+# Manager DN for authenticated searches
+#cas.authn.ldap[0].bind-dn=cn={{ .Env.Get "LDAP_BIND_DN" }}
+
+# Manager password for authenticated searches
+#cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
 cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
+
+cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
+ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
 # LDAP connection pool configuration
@@ -64,6 +76,7 @@ cas.authn.ldap[0].idle-time=600
 #========================================
 # Authentication
 #========================================
+cas.authn.ldap[0].type=AUTHENTICATED
 
 # Base DN of users to be authenticated
 cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
@@ -74,14 +87,37 @@ cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
 
-ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
+# Ldap mapping of result attributes
+cas.authn.attributeRepository.ldap[0].attributes.uid={{ .Config.Get "ldap/attribute_id"}}
+cas.authn.attributeRepository.ldap[0].attributes.cn=cn
+cas.authn.attributeRepository.ldap[0].attributes.mail={{ .Config.Get "ldap/attribute_mail"}}
+cas.authn.attributeRepository.ldap[0].attributes.givenName=givenName
+cas.authn.attributeRepository.ldap[0].attributes.surname=sn
+cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
+cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
+
+# member search settings
+
+# settings for ldap group search by member
+# base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com
+cas.authn.attributeRepository.ldap[0].attributes.baseDn={{ .Config.GetOrDefault "ldap/group_base_dn" ""}}
+
+# search filter for group search {0} will be replaced with the dn of the user
+# e.g.: (member={0})
+# if this property is empty, group search by member will be skipped
+cas.authn.attributeRepository.ldap[0].attributes.searchFilter={{ .Config.GetOrDefault "ldap/group_search_filter" ""}}
+
+# name attribute of groups e.g.: cn
+cas.authn.attributeRepository.ldap[0].attributes.attribute.name={{ .Config.GetOrDefault "ldap/group_attribute_name" ""}}
 
 # Disable static users
 cas.authn.accept.enabled=false
 
-# Disbale LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
+# Disable LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
 # We use and register our own LDAP authentication handler by extending the LDAP authentication handler from the CAS.
+# https://apereo.github.io/cas/6.3.x/configuration/Configuration-Management-Extensions.html#exclusions
 spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration
+
 ########################################################################################################################
 
 ########################################################################################################################
