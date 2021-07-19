@@ -15,6 +15,9 @@
   "Dependencies": [
     "nginx"
   ],
+  "OptionalDependencies": [
+    "ldap"
+  ],
   "Configuration": [
     {
       "Name": "limit/max_number",
