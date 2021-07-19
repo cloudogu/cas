@@ -1,6 +1,9 @@
 package de.triology.cas.ldap;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.LdapUtils;
+import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +17,9 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GroupResolverConfiguration {
 
+    @Autowired
+    CasConfigurationProperties properties;
+
     @Bean
     @RefreshScope
     CombinedGroupResolver combinedGroupResolver() {
@@ -23,8 +29,8 @@ public class GroupResolverConfiguration {
     @Bean
     List<GroupResolver> groupResolvers() {
         List<GroupResolver> groupResolvers = new ArrayList<>(2);
+        groupResolvers.add(memberGroupResolver());
         groupResolvers.add(memberOfGroupResolver());
-//        groupResolvers.add(memberGroupResolver());
 
         return groupResolvers;
     }
@@ -40,9 +46,15 @@ public class GroupResolverConfiguration {
     }
 
     @Bean
+    ConnectionFactory searchPooledLdapConnectionFactory() {
+        var ldapProperties = properties.getAuthn().getLdap().get(0);
+        return LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
+    }
+
+    @Bean
     SearchControls searchControls() {
         var searchControls = new SearchControls();
-        searchControls.setSearchScope(2);
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         return searchControls;
     }

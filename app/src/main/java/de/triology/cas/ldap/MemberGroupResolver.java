@@ -37,22 +37,25 @@ public class MemberGroupResolver implements GroupResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
 
+    @Autowired
+    CasConfigurationProperties properties;
+
     @NotNull
     @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
     private String baseDN;
 
-    @Autowired
-    CasConfigurationProperties properties;
-
     /**
      * Search controls.
      */
+    @NotNull
     @Autowired
     private SearchControls searchControls;
 
     /**
      * LDAP connection factory.
      */
+    @NotNull
+    @Autowired
     private ConnectionFactory connectionFactory;
 
     /**
@@ -96,7 +99,6 @@ public class MemberGroupResolver implements GroupResolver {
 
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
-        searchFilter = "a";
         if (StringUtils.isEmpty(searchFilter)) {
             LOG.trace("skip resolving groups for member, because of missing search filter");
             return Collections.emptySet();
