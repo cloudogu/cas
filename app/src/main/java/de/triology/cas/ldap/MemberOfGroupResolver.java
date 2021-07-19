@@ -6,6 +6,7 @@
 
 package de.triology.cas.ldap;
 
+import lombok.Setter;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.ldaptive.LdapAttribute;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +27,7 @@ import java.util.Set;
  */
 @Configuration("MemberOfGroupResolver")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Setter
 public class MemberOfGroupResolver implements GroupResolver {
     
     private static final Logger LOG = LoggerFactory.getLogger(MemberOfGroupResolver.class);
@@ -38,7 +39,7 @@ public class MemberOfGroupResolver implements GroupResolver {
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         LOG.trace("resolve groups from ldap attribute {}", attribute);
         Set<String> groups = new HashSet<>();
-        LdapAttribute ldapAttribute = ldapEntry.getAttribute(attribute);
+        var ldapAttribute = ldapEntry.getAttribute(attribute);
 
         LOG.trace("ldap-attribute: {}", ldapAttribute);
 

@@ -19,13 +19,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link CombinedGroupResolver}.
- * 
- * @author Sebastian Sdorra
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CombinedGroupResolverTest {

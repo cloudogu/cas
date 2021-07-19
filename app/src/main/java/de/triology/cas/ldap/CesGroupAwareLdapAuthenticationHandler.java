@@ -1,5 +1,6 @@
 package de.triology.cas.ldap;
 
+import lombok.Setter;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -14,12 +15,13 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.util.*;
 
+@Setter
 public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CesGroupAwareLdapAuthenticationHandler.class);
     private static final String GROUP_ATTRIBUTE = "groups";
 
-    private final GroupResolver groupResolver;
+    private GroupResolver groupResolver;
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
