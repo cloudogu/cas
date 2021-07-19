@@ -39,7 +39,7 @@ cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap
 cas.authn.ldap[0].bind-dn=cn={{ .Env.Get "LDAP_BIND_DN" }}
 
 # Manager password for authenticated searches
-#cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
+cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
