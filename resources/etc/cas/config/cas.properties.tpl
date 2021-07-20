@@ -37,10 +37,10 @@ logging.config=file:/etc/cas/config/log4j2.xml
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 
 # Manager DN for authenticated searches
-cas.authn.ldap[0].bind-dn=cn={{ .Env.Get "LDAP_BIND_DN" }}
+cas.authn.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
 
 # Manager password for authenticated searches
-#cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
+cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
