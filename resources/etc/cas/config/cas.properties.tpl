@@ -93,8 +93,8 @@ cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
 cas.authn.attributeRepository.ldap[0].attributes.uid={{ .Config.Get "ldap/attribute_id"}}
 cas.authn.attributeRepository.ldap[0].attributes.cn=cn
 cas.authn.attributeRepository.ldap[0].attributes.mail={{ .Config.Get "ldap/attribute_mail"}}
-cas.authn.attributeRepository.ldap[0].attributes.givenName=givenName
-cas.authn.attributeRepository.ldap[0].attributes.surname=sn
+cas.authn.attributeRepository.ldap[0].attributes.givenName={{ .Config.GetOrDefault "ldap/given_name" "givenName"}}
+cas.authn.attributeRepository.ldap[0].attributes.surname={{ .Config.GetOrDefault "ldap/surname" "sn"}}
 cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
 cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
 
