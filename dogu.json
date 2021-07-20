@@ -65,6 +65,110 @@
       "Optional": true
     },
     {
+      "Name": "ldap/host",
+      "Description": "The host of the LDAP (without protocol and without port)",
+      "Optional": false
+    },
+    {
+      "Name": "ldap/port",
+      "Description": "The port of the LDAP",
+      "Optional": false
+    },
+    {
+      "Name": "ldap/base_dn",
+      "Description": "Base DN of users to be authenticated",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/connection_dn",
+      "Description": "Manager DN for authenticated searches",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/password",
+      "Description": "The password in encrypted form",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/search_filter",
+      "Description": "Search filter used for configurations that require searching for DNs",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/ds_type",
+      "Description": "Type of the LDAP",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "embedded",
+          "external"
+        ]
+      }
+    },
+    {
+      "Name": "ldap/encryption",
+      "Description": "Type of the encryption of the LDAP",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "ssl",
+          "sslAny",
+          "startTLS",
+          "startTLSAny",
+          "none"
+        ]
+      }
+    },
+    {
+      "Name": "ldap/attribute_id",
+      "Description": "The attribute for the user ID in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_given_name",
+      "Description": "The attribute for the given name in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_surname",
+      "Description": "The attribute for the the surname in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_fullname",
+      "Description": "The attribute for the the fullname in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_mail",
+      "Description": "The attribute for the mail address in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_group",
+      "Description": "The attribute for the group in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/group_attribute_name",
+      "Description": "Name of the attribute for groups in LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/group_base_dn",
+      "Description": "Settings for ldap group search by member. Base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com",
+      "Optional": true,
+      "Default": "sn"
+    },
+    {
+      "Name": "ldap/group_search_filter",
+      "Description": "",
+      "Optional": true,
+      "Default": "sn"
+    },
+    {
       "Name": "logging/root",
       "Description": "Set the root log level to one of ERROR, WARN, INFO, DEBUG.",
       "Optional": true,
