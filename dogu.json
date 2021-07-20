@@ -109,17 +109,7 @@
     {
       "Name": "ldap/encryption",
       "Description": "Type of the encryption of the LDAP",
-      "Optional": true,
-      "Validation": {
-        "Type": "ONE_OF",
-        "Values": [
-          "ssl",
-          "sslAny",
-          "startTLS",
-          "startTLSAny",
-          "none"
-        ]
-      }
+      "Optional": true
     },
     {
       "Name": "ldap/attribute_id",
