@@ -41,16 +41,24 @@ function configureCAS() {
   if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
      LDAP_STARTTLS='true'
      LDAP_PROTOCOL='ldap'
+     LDAP_SSL='false'
+     LDAP_TRUST_MANAGER='ANY'
   elif [[ "$LDAP_ENCRYPTION" == 'ssl' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
      LDAP_STARTTLS='false'
      LDAP_PROTOCOL='ldaps'
+     LDAP_SSL='true'
+     LDAP_TRUST_MANAGER='DEFAULT'
   else # none
      LDAP_STARTTLS='false'
      LDAP_PROTOCOL='ldap'
+     LDAP_SSL='false'
+     LDAP_TRUST_MANAGER='DEFAULT'
   fi
 
   export LDAP_STARTTLS
   export LDAP_PROTOCOL
+  export LDAP_SSL
+  export LDAP_TRUST_MANAGER
 
   LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
   LDAP_SEARCH_FILTER="(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))"

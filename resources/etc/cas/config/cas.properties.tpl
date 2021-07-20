@@ -28,6 +28,7 @@ logging.config=file:/etc/cas/config/log4j2.xml
 #             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#ldap-connection-settings
 #             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#connection-strategies
 #             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#ldap-authenticationsearch-settings
+#             https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties-Common.html#ldap-ssl-trust-managers
 # ----------------------------------------------------------------------------------------------------------------------
 
 #========================================
@@ -39,14 +40,14 @@ cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap
 cas.authn.ldap[0].bind-dn=cn={{ .Env.Get "LDAP_BIND_DN" }}
 
 # Manager password for authenticated searches
-cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
+#cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
 cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
-cas.authn.ldap[0].useSsl=false
+cas.authn.ldap[0].useSsl={{ .Env.Get "LDAP_SSL" }}
 
 cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
@@ -110,6 +111,9 @@ cas.authn.attributeRepository.ldap[0].attributes.searchFilter={{ .Config.GetOrDe
 
 # name attribute of groups e.g.: cn
 cas.authn.attributeRepository.ldap[0].attributes.attribute.name={{ .Config.GetOrDefault "ldap/group_attribute_name" ""}}
+
+# LDAP ssl trust manager: ANY | DEFAULT
+cas.authn.ldap[0].trust-manager={{ .Env.Get "LDAP_TRUST_MANAGER" }}
 
 # Disable static users
 cas.authn.accept.enabled=false
