@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.naming.directory.SearchControls;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,20 @@ public class GroupResolverConfiguration {
 
     @Autowired
     CasConfigurationProperties properties;
+
+    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
+    private String groupAttribute;
+
+    @NotNull
+    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
+    private String baseDN;
+
+    /**
+     * LDAP search filter.
+     */
+    @NotNull
+    @Value("${cas.authn.ldap[0].search-filter}")
+    private String searchFilter;
 
     @Bean
     @RefreshScope
@@ -37,12 +53,12 @@ public class GroupResolverConfiguration {
 
     @Bean
     MemberGroupResolver memberGroupResolver() {
-        return new MemberGroupResolver();
+        return new MemberGroupResolver(baseDN, searchControls(), searchPooledLdapConnectionFactory(), searchFilter);
     }
 
     @Bean
     MemberOfGroupResolver memberOfGroupResolver() {
-        return new MemberOfGroupResolver();
+        return new MemberOfGroupResolver(groupAttribute);
     }
 
     @Bean

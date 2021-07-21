@@ -8,20 +8,13 @@ package de.triology.cas.ldap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.ldaptive.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,59 +23,43 @@ import java.util.Set;
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
  */
-@Configuration("MemberGroupResolver")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@ComponentScan("de.triology.cas.ldap")
 public class MemberGroupResolver implements GroupResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
 
-    @Autowired
-    CasConfigurationProperties properties;
-
-    @NotNull
-    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
-    private String baseDN;
+    private final String baseDN;
 
     /**
      * Search controls.
      */
-    @NotNull
-    @Autowired
-    private SearchControls searchControls;
+    private final SearchControls searchControls;
 
     /**
      * LDAP connection factory.
      */
-    @NotNull
-    @Autowired
-    private ConnectionFactory connectionFactory;
+    private final ConnectionFactory connectionFactory;
+
+    /**
+     * LDAP search filter.
+     */
+    private final String searchFilter;
 
     /**
      * LDAP search scope.
      */
     private SearchScope searchScope;
 
-    /**
-     * LDAP search filter.
-     */
-    @NotNull
-    @Value("${cas.authn.ldap[0].search-filter}")
-    private String searchFilter;
-
-    /**
+     /**
      * LDAP group name attribute.
      */
     private String nameAttribute = "cn";
 
-    /**
-     * Sets the LDAP search filter used to query for groups.
-     *
-     * @param filter Search filter of the form "(member={0})" where {0} is replaced with the dn of the ldap entry,
-     *               {1} is replaced with id of the principal.
-     */
-    public void setSearchFilter(final String filter) {
-        this.searchFilter = filter;
+
+    public MemberGroupResolver(String baseDN, SearchControls searchControls, ConnectionFactory connectionFactory, String searchFilter) {
+        this.baseDN = baseDN;
+        this.searchControls = searchControls;
+        this.connectionFactory = connectionFactory;
+        this.searchFilter = searchFilter;
     }
 
     /**

@@ -22,8 +22,6 @@ public class MemberGroupResolverTest {
     @Mock
     private LdapEntry entry;
 
-    private final MemberGroupResolver resolver = new MemberGroupResolver();
-
     @Before
     public void setUp() {
         when(principal.getId()).thenReturn("trillian");
@@ -32,19 +30,18 @@ public class MemberGroupResolverTest {
 
     @Test
     public void testSearchFilterWithPrincipalId() {
-        resolver.setSearchFilter("(&(objectClass=posixGroup)(memberUid={1}))");
-        assertFilter("(&(objectClass=posixGroup)(memberUid=trillian))");
+        var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=posixGroup)(memberUid={1}))");
+        assertFilter(resolver,"(&(objectClass=posixGroup)(memberUid=trillian))");
     }
 
-    private void assertFilter(String expected) {
+    private void assertFilter( MemberGroupResolver resolver, String expected) {
         FilterTemplate filter = resolver.createFilter(principal, entry);
         assertEquals(expected, filter.format());
     }
 
     @Test
     public void testSearchFilterWithPrincipalDN() {
-        resolver.setSearchFilter("(&(objectClass=inetOrgPerson)(member={0}))");
-        assertFilter("(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
+        var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=inetOrgPerson)(member={0}))");
+        assertFilter(resolver,"(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
     }
-
 }

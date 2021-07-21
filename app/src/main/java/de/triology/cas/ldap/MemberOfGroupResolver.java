@@ -6,16 +6,10 @@
 
 package de.triology.cas.ldap;
 
-import lombok.Setter;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,15 +19,15 @@ import java.util.Set;
  * have to add the name of the attribute to the additionalAttributes list of 
  * {@link CesGroupAwareLdapAuthenticationHandler}.
  */
-@Configuration("MemberOfGroupResolver")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@Setter
 public class MemberOfGroupResolver implements GroupResolver {
     
     private static final Logger LOG = LoggerFactory.getLogger(MemberOfGroupResolver.class);
 
-    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
-    private String attribute;
+    private final String attribute;
+
+    public MemberOfGroupResolver(String attribute) {
+        this.attribute = attribute;
+    }
 
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {

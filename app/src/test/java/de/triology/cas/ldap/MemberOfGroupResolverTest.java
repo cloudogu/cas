@@ -45,8 +45,7 @@ public class MemberOfGroupResolverTest {
     when(attribute.getStringValues()).thenReturn(Arrays.asList("cn=a", "cn=b,local", "c=c,c=c", "dc=d,o=d"));
     when(ldapEntry.getAttribute("member")).thenReturn(attribute);
     
-    MemberOfGroupResolver resolver = new MemberOfGroupResolver();
-    resolver.setAttribute("member");
+    MemberOfGroupResolver resolver = new MemberOfGroupResolver("member");
 
     Set<String> groups = resolver.resolveGroups(principal, ldapEntry);
     assertThat(groups, containsInAnyOrder("a", "b", "c", "d"));
