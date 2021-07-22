@@ -86,9 +86,6 @@ cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
 
-# Search filter used for configurations that require searching for DNs
-cas.authn.ldap[0].dn-format=uid=%s,ou=Accounts,{{ .Env.Get "LDAP_BASE_DN" }}
-
 # Ldap mapping of result attributes
 cas.authn.attributeRepository.ldap[0].attributes.uid={{ .Config.Get "ldap/attribute_id"}}
 cas.authn.attributeRepository.ldap[0].attributes.cn=cn
