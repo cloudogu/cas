@@ -49,7 +49,8 @@ cas.authn.ldap[0].connect-timeout=3000
 cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
 cas.authn.ldap[0].useSsl={{ .Env.Get "LDAP_SSL" }}
 
-cas.authn.ldap[0].principal-attribute-list=uid:username,cn,mail,givenName,sn:surname,displayName,memberOf:groups
+cas.authn.ldap[0].principal-attribute-list={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ .Config.GetOrDefault "ldap/given_name" "givenName"}}:givenName,{{ .Config.GetOrDefault "ldap/surname" "sn"}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups
+cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
 ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
@@ -85,15 +86,6 @@ cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 
 # Search filter used for configurations that require searching for DNs
 cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
-
-# Ldap mapping of result attributes
-cas.authn.attributeRepository.ldap[0].attributes.uid={{ .Config.Get "ldap/attribute_id"}}
-cas.authn.attributeRepository.ldap[0].attributes.cn=cn
-cas.authn.attributeRepository.ldap[0].attributes.mail={{ .Config.Get "ldap/attribute_mail"}}
-cas.authn.attributeRepository.ldap[0].attributes.givenName={{ .Config.GetOrDefault "ldap/given_name" "givenName"}}
-cas.authn.attributeRepository.ldap[0].attributes.surname={{ .Config.GetOrDefault "ldap/surname" "sn"}}
-cas.authn.attributeRepository.ldap[0].attributes.displayName=displayName
-cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
 
 # member search settings
 
