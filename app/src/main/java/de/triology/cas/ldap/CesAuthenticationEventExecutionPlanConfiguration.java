@@ -86,7 +86,6 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         val handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator);
         configureLDAPAuthenticationHandler(handler, ldapProperties, multiMapAttributes, authenticator);
 
-        LOGGER.debug("Initializing LDAP authentication handler for [{}]", ldapProperties.getLdapUrl());
         handler.initialize();
 
         return handler;
@@ -94,25 +93,22 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
     private Multimap<String, Object> createMultiMapAttributes(LdapAuthenticationProperties ldapProperties) {
         val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(ldapProperties.getPrincipalAttributeList());
-        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, ldapProperties.getLdapUrl());
+        LOGGER.debug("Created and mapped principal attributes [{}] ...", multiMapAttributes);
 
         return multiMapAttributes;
     }
 
     private Authenticator createAuthenticator(LdapAuthenticationProperties ldapProperties, Multimap<String, Object> multiMapAttributes) {
-        LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", ldapProperties.getLdapUrl(), ldapProperties.getBaseDn());
         val authenticator = LdapUtils.newLdaptiveAuthenticator(ldapProperties);
-        LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
-                multiMapAttributes.keySet(), ldapProperties.getLdapUrl(), ldapProperties.getBaseDn());
+        LOGGER.debug("Ldap authenticator configured with return attributes [{}] and baseDn [{}]",
+                multiMapAttributes.keySet(), ldapProperties.getBaseDn());
 
         return authenticator;
     }
 
     private LdapAuthenticationHandler createCesLDAPAuthenticationHandler(LdapAuthenticationProperties ldapProperties, Authenticator authenticator) {
-        LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", ldapProperties.getLdapUrl());
         val strategy = createLdapPasswordPolicyHandlingStrategy(ldapProperties);
 
-        LOGGER.debug("Creating LDAP authentication handler for [{}]", ldapProperties.getLdapUrl());
         return new CesGroupAwareLdapAuthenticationHandler(ldapProperties.getName(), servicesManager.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
                 getOrder(), authenticator, strategy, groupResolver);
     }
@@ -152,31 +148,33 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
     private void configureCredentialCriteria(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isNotBlank(ldapProperties.getCredentialCriteria())) {
-            LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]",
-                    ldapProperties.getLdapUrl(), ldapProperties.getCredentialCriteria());
+            LOGGER.debug("Ldap authentication is filtering credentials by [{}]", ldapProperties.getCredentialCriteria());
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(ldapProperties.getCredentialCriteria()));
         }
     }
 
     private void configurePrincipalAttributeId(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isBlank(ldapProperties.getPrincipalAttributeId())) {
-            LOGGER.debug("No principal id attribute is found for LDAP authentication via [{}]", ldapProperties.getLdapUrl());
+            LOGGER.debug("No principal id attribute is found for LDAP authentication");
         } else {
             handler.setPrincipalIdAttribute(ldapProperties.getPrincipalAttributeId());
-            LOGGER.debug("Using principal id attribute [{}] for LDAP authentication via [{}]", ldapProperties.getPrincipalAttributeId(), ldapProperties.getLdapUrl());
+            LOGGER.debug("Using principal id attribute [{}] for LDAP authentication", ldapProperties.getPrincipalAttributeId());
         }
     }
 
     private void configurePasswordPolicy(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties, Authenticator authenticator, Multimap<String, Object> multiMapAttributes) {
         val passwordPolicy = ldapProperties.getPasswordPolicy();
         if (passwordPolicy.isEnabled()) {
-            LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", ldapProperties.getLdapUrl());
+            LOGGER.debug("Password policy is enabled. Constructing password policy configuration");
             val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
             handler.setPasswordPolicyConfiguration(cfg);
         }
     }
 
-    // 1:1 copy from LdapAuthenticationConfiguration
+    // This code is an exact 1:1 copy copy from LdapAuthenticationConfiguration
+    // This in only copied code because it was not possible to call this method because the method is private.
+    // This method should actually be public in CAS. There should simply be no changes here.
+    // This is not a great solution, but there is probably no better one at the moment.
     private static PasswordPolicyContext createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
                                                                                final Authenticator authenticator,
                                                                                final Multimap<String, Object> attributes) {
@@ -247,7 +245,10 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         return cfg;
     }
 
-    // 1:1 copy from LdapAuthenticationConfiguration
+    // This code is an exact 1:1 copy copy from LdapAuthenticationConfiguration
+    // This in only copied code because it was not possible to call this method because the method is private.
+    // This method should actually be public in CAS. There should simply be no changes here.
+    // This is not a great solution, but there is probably no better one at the moment.
     private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
     createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
