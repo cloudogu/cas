@@ -70,6 +70,7 @@ public class MemberGroupResolver implements GroupResolver {
         for (final SearchScope scope : SearchScope.values()) {
             if (scope.ordinal() == this.searchControls.getSearchScope()) {
                 this.searchScope = scope;
+                break;
             }
         }
     }
