@@ -1,6 +1,5 @@
 package de.triology.cas.ldap;
 
-
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,7 @@ public class MemberGroupResolverTest {
     }
 
     @Test
-    public void testSearchFilterWithPrincipalId() {
+    public void searchFilterWithPrincipalId() {
         var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=posixGroup)(memberUid={1}))");
         assertFilter(resolver,"(&(objectClass=posixGroup)(memberUid=trillian))");
     }
@@ -40,7 +39,7 @@ public class MemberGroupResolverTest {
     }
 
     @Test
-    public void testSearchFilterWithPrincipalDN() {
+    public void searchFilterWithPrincipalDN() {
         var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=inetOrgPerson)(member={0}))");
         assertFilter(resolver,"(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
     }

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package de.triology.cas.ldap;
 
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,10 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Unit tests for {@link MemberOfGroupResolver}.
- * 
- */
 @RunWith(MockitoJUnitRunner.class)
 public class MemberOfGroupResolverTest {
 
@@ -36,11 +26,8 @@ public class MemberOfGroupResolverTest {
   @Mock
   private LdapEntry ldapEntry;
   
-   /**
-   * Tests {@link MemberOfGroupResolver#resolveGroups(Principal, LdapEntry)} with member attribute.
-   */
   @Test
-  public void testResolveGroupsWithMemberDn() {
+  public void resolveGroupsWithMemberDn() {
     LdapAttribute attribute = mock(LdapAttribute.class);
     when(attribute.getStringValues()).thenReturn(Arrays.asList("cn=a", "cn=b,local", "c=c,c=c", "dc=d,o=d"));
     when(ldapEntry.getAttribute("member")).thenReturn(attribute);

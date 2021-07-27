@@ -1,12 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package de.triology.cas.ldap;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +14,6 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
-/**
- * Unit tests for {@link CesGroupAwareLdapAuthenticationHandler}.
- */
 @RunWith(MockitoJUnitRunner.class)
 public class CesGroupAwareLdapAuthenticationHandlerTest {
 
@@ -42,11 +32,8 @@ public class CesGroupAwareLdapAuthenticationHandlerTest {
   @Mock
   private LdapEntry ldapEntry;
   
-  /**
-   * Tests {@link CesGroupAwareLdapAuthenticationHandler#attachGroups(Principal, LdapEntry) }.
-   */
   @Test
-  public void testAttachGroups() {
+  public void attachGroups() {
     Map<String,List<Object>> attributes = new HashMap<>();
     attributes.put("user", Collections.singletonList("trillian"));
     
