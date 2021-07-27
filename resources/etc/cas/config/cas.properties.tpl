@@ -104,7 +104,7 @@ cas.authn.attributeRepository.ldap[0].attributes.attribute.name={{ .Config.GetOr
 # LDAP ssl trust manager: ANY | DEFAULT
 cas.authn.ldap[0].trust-manager={{ .Env.Get "LDAP_TRUST_MANAGER" }}
 
-# Disable static users
+# Enable (=true)/Disable (=false) static users
 cas.authn.accept.enabled=false
 
 # Disable LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
