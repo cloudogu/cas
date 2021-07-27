@@ -152,7 +152,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
     private void configureCredentialCriteria(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isNotBlank(ldapProperties.getCredentialCriteria())) {
-            LOGGER.trace("Ldap authentication for [{}] is filtering credentials by [{}]",
+            LOGGER.debug("Ldap authentication for [{}] is filtering credentials by [{}]",
                     ldapProperties.getLdapUrl(), ldapProperties.getCredentialCriteria());
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(ldapProperties.getCredentialCriteria()));
         }
@@ -160,17 +160,17 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
     private void configurePrincipalAttributeId(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isBlank(ldapProperties.getPrincipalAttributeId())) {
-            LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", ldapProperties.getLdapUrl());
+            LOGGER.debug("No principal id attribute is found for LDAP authentication via [{}]", ldapProperties.getLdapUrl());
         } else {
             handler.setPrincipalIdAttribute(ldapProperties.getPrincipalAttributeId());
-            LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", ldapProperties.getPrincipalAttributeId(), ldapProperties.getLdapUrl());
+            LOGGER.debug("Using principal id attribute [{}] for LDAP authentication via [{}]", ldapProperties.getPrincipalAttributeId(), ldapProperties.getLdapUrl());
         }
     }
 
     private void configurePasswordPolicy(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties, Authenticator authenticator, Multimap<String, Object> multiMapAttributes) {
         val passwordPolicy = ldapProperties.getPasswordPolicy();
         if (passwordPolicy.isEnabled()) {
-            LOGGER.trace("Password policy is enabled for [{}]. Constructing password policy configuration", ldapProperties.getLdapUrl());
+            LOGGER.debug("Password policy is enabled for [{}]. Constructing password policy configuration", ldapProperties.getLdapUrl());
             val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
             handler.setPasswordPolicyConfiguration(cfg);
         }
@@ -228,7 +228,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
 
         if (!passwordPolicy.isAccountStateHandlingEnabled()) {
             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
-            LOGGER.trace("Handling LDAP account states is disabled via CAS configuration");
+            LOGGER.debug("Handling LDAP account states is disabled via CAS configuration");
         } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
             val accountHandler = new OptionalWarningLdapAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
