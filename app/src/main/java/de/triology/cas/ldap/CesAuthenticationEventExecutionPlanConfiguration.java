@@ -64,75 +64,116 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
     @Autowired
     CombinedGroupResolver groupResolver;
 
-    @RefreshScope
-    @Bean
-    // Mostly copied from LdapAuthenticationConfiguration, but uses its own AuthenticationHandler
-    public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler() {
-        val l = casProperties.getAuthn().getLdap().get(0);
-
-        val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
-        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
-
-        LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
-        val authenticator = LdapUtils.newLdaptiveAuthenticator(l);
-        LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
-                multiMapAttributes.keySet(), l.getLdapUrl(), l.getBaseDn());
-
-        LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", l.getLdapUrl());
-        val strategy = createLdapPasswordPolicyHandlingStrategy(l);
-
-        LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
-        val handler = new CesGroupAwareLdapAuthenticationHandler(l.getName(),
-                servicesManager.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
-                getOrder(), authenticator, strategy, groupResolver);
-        handler.setCollectDnAttribute(l.isCollectDnAttribute());
-
-        if (!l.getAdditionalAttributes().isEmpty()) {
-            val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getAdditionalAttributes());
-            multiMapAttributes.putAll(additional);
-        }
-        if (StringUtils.isNotBlank(l.getPrincipalDnAttributeName())) {
-            handler.setPrincipalDnAttributeName(l.getPrincipalDnAttributeName());
-        }
-        handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
-        handler.setAllowMissingPrincipalAttributeValue(l.isAllowMissingPrincipalAttributeValue());
-        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(l.getPasswordEncoder(), applicationContext));
-        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(l.getPrincipalTransformation()));
-
-        if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-            LOGGER.trace("Ldap authentication for [{}] is filtering credentials by [{}]",
-                    l.getLdapUrl(), l.getCredentialCriteria());
-            handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(l.getCredentialCriteria()));
-        }
-
-        if (StringUtils.isBlank(l.getPrincipalAttributeId())) {
-            LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", l.getLdapUrl());
-        } else {
-            handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-            LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", l.getPrincipalAttributeId(), l.getLdapUrl());
-        }
-
-        val passwordPolicy = l.getPasswordPolicy();
-        if (passwordPolicy.isEnabled()) {
-            LOGGER.trace("Password policy is enabled for [{}]. Constructing password policy configuration", l.getLdapUrl());
-            val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
-            handler.setPasswordPolicyConfiguration(cfg);
-        }
-
-        val attributes = CollectionUtils.wrap(multiMapAttributes);
-        handler.setPrincipalAttributeMap(attributes);
-
-        LOGGER.debug("Initializing LDAP authentication handler for [{}]", l.getLdapUrl());
-        handler.initialize();
-
-        return handler;
-    }
-
     @Override
     public void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan) {
         plan.registerAuthenticationHandler(cesGroupAwareLdapAuthenticationHandler());
         LOGGER.trace("Registered {}, registered authentication handlers: {}",
                 CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), plan.getAuthenticationHandlers());
+    }
+    /**
+     * Creates, configures and initializes the LDAP authentication handler. The configuration is created using the
+     * configuration from the cas.properties file.
+     *
+     */
+    @RefreshScope
+    @Bean
+    public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler() {
+        val ldapProperties = casProperties.getAuthn().getLdap().get(0);
+
+        val multiMapAttributes = createMultiMapAttributes(ldapProperties);
+        val authenticator = createAuthenticator(ldapProperties, multiMapAttributes);
+
+        val handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator);
+        configureLDAPAuthenticationHandler(handler, ldapProperties, multiMapAttributes, authenticator);
+
+        LOGGER.debug("Initializing LDAP authentication handler for [{}]", ldapProperties.getLdapUrl());
+        handler.initialize();
+
+        return handler;
+    }
+
+    private Multimap<String, Object> createMultiMapAttributes(LdapAuthenticationProperties ldapProperties) {
+        val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(ldapProperties.getPrincipalAttributeList());
+        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, ldapProperties.getLdapUrl());
+
+        return multiMapAttributes;
+    }
+
+    private Authenticator createAuthenticator(LdapAuthenticationProperties ldapProperties, Multimap<String, Object> multiMapAttributes) {
+        LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", ldapProperties.getLdapUrl(), ldapProperties.getBaseDn());
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldapProperties);
+        LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
+                multiMapAttributes.keySet(), ldapProperties.getLdapUrl(), ldapProperties.getBaseDn());
+
+        return authenticator;
+    }
+
+    private LdapAuthenticationHandler createCesLDAPAuthenticationHandler(LdapAuthenticationProperties ldapProperties, Authenticator authenticator) {
+        LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", ldapProperties.getLdapUrl());
+        val strategy = createLdapPasswordPolicyHandlingStrategy(ldapProperties);
+
+        LOGGER.debug("Creating LDAP authentication handler for [{}]", ldapProperties.getLdapUrl());
+        return new CesGroupAwareLdapAuthenticationHandler(ldapProperties.getName(), servicesManager.getObject(), PrincipalFactoryUtils.newPrincipalFactory(),
+                getOrder(), authenticator, strategy, groupResolver);
+    }
+
+    private void configureLDAPAuthenticationHandler(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties, Multimap<String, Object> multiMapAttributes, Authenticator authenticator) {
+        configureDNAttributes(handler, ldapProperties);
+
+        appendAdditionalAttributes(ldapProperties, multiMapAttributes);
+
+        handler.setAllowMultiplePrincipalAttributeValues(ldapProperties.isAllowMultiplePrincipalAttributeValues());
+        handler.setAllowMissingPrincipalAttributeValue(ldapProperties.isAllowMissingPrincipalAttributeValue());
+
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(ldapProperties.getPasswordEncoder(), applicationContext));
+        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(ldapProperties.getPrincipalTransformation()));
+
+        configureCredentialCriteria(handler, ldapProperties);
+        configurePrincipalAttributeId(handler, ldapProperties);
+        configurePasswordPolicy(handler, ldapProperties, authenticator, multiMapAttributes);
+
+        val attributes = CollectionUtils.wrap(multiMapAttributes);
+        handler.setPrincipalAttributeMap(attributes);
+    }
+
+    private void configureDNAttributes(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
+        handler.setCollectDnAttribute(ldapProperties.isCollectDnAttribute());
+        if (StringUtils.isNotBlank(ldapProperties.getPrincipalDnAttributeName())) {
+            handler.setPrincipalDnAttributeName(ldapProperties.getPrincipalDnAttributeName());
+        }
+    }
+
+    private void appendAdditionalAttributes(LdapAuthenticationProperties ldapProperties, Multimap<String, Object> multiMapAttributes) {
+        if (!ldapProperties.getAdditionalAttributes().isEmpty()) {
+            val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(ldapProperties.getAdditionalAttributes());
+            multiMapAttributes.putAll(additional);
+        }
+    }
+
+    private void configureCredentialCriteria(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
+        if (StringUtils.isNotBlank(ldapProperties.getCredentialCriteria())) {
+            LOGGER.trace("Ldap authentication for [{}] is filtering credentials by [{}]",
+                    ldapProperties.getLdapUrl(), ldapProperties.getCredentialCriteria());
+            handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(ldapProperties.getCredentialCriteria()));
+        }
+    }
+
+    private void configurePrincipalAttributeId(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
+        if (StringUtils.isBlank(ldapProperties.getPrincipalAttributeId())) {
+            LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", ldapProperties.getLdapUrl());
+        } else {
+            handler.setPrincipalIdAttribute(ldapProperties.getPrincipalAttributeId());
+            LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]", ldapProperties.getPrincipalAttributeId(), ldapProperties.getLdapUrl());
+        }
+    }
+
+    private void configurePasswordPolicy(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties, Authenticator authenticator, Multimap<String, Object> multiMapAttributes) {
+        val passwordPolicy = ldapProperties.getPasswordPolicy();
+        if (passwordPolicy.isEnabled()) {
+            LOGGER.trace("Password policy is enabled for [{}]. Constructing password policy configuration", ldapProperties.getLdapUrl());
+            val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
+            handler.setPasswordPolicyConfiguration(cfg);
+        }
     }
 
     // 1:1 copy from LdapAuthenticationConfiguration
