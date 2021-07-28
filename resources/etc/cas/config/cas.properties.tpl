@@ -47,7 +47,6 @@ cas.authn.ldap[0].connect-timeout=3000
 
 # Whether to use StartTLS (probably needed if not SSL connection)
 cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
-cas.authn.ldap[0].useSsl={{ .Env.Get "LDAP_SSL" }}
 
 cas.authn.ldap[0].principal-attribute-list={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ .Config.GetOrDefault "ldap/given_name" "givenName"}}:givenName,{{ .Config.GetOrDefault "ldap/surname" "sn"}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups
 cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
