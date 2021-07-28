@@ -22,7 +22,7 @@ public interface GroupResolver {
    * @param principal principal
    * @param ldapEntry ldap entry
    * 
-   * @return set of group namess
+   * @return set of group names
    */
   Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry);
 }
