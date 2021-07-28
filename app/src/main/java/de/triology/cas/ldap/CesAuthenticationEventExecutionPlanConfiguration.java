@@ -70,10 +70,10 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         LOGGER.trace("Registered {}, registered authentication handlers: {}",
                 CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), plan.getAuthenticationHandlers());
     }
+
     /**
      * Creates, configures and initializes the LDAP authentication handler. The configuration is created using the
      * configuration from the cas.properties file.
-     *
      */
     @RefreshScope
     @Bean
@@ -171,10 +171,11 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         }
     }
 
-    // This code is an exact 1:1 copy copy from LdapAuthenticationConfiguration
-    // This in only copied code because it was not possible to call this method because the method is private.
-    // This method should actually be public in CAS. There should simply be no changes here.
-    // This is not a great solution, but there is probably no better one at the moment.
+    /**
+     * This code is an exact 1:1 copy from {@link org.apereo.cas.config.LdapAuthenticationConfiguration}
+     *
+     * @see org.apereo.cas.config.LdapAuthenticationConfiguration
+     **/
     private static PasswordPolicyContext createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
                                                                                final Authenticator authenticator,
                                                                                final Multimap<String, Object> attributes) {
@@ -245,10 +246,11 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         return cfg;
     }
 
-    // This code is an exact 1:1 copy copy from LdapAuthenticationConfiguration
-    // This in only copied code because it was not possible to call this method because the method is private.
-    // This method should actually be public in CAS. There should simply be no changes here.
-    // This is not a great solution, but there is probably no better one at the moment.
+    /**
+     * This code is an exact 1:1 copy from {@link org.apereo.cas.config.LdapAuthenticationConfiguration}
+     *
+     * @see org.apereo.cas.config.LdapAuthenticationConfiguration
+     **/
     private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
     createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
