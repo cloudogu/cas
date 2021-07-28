@@ -40,7 +40,12 @@ cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap
 cas.authn.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
 
 # Manager password for authenticated searches
-cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_BIND_PASSWORD" }}
+{{ if eq (.Config.Get "ldap/ds_type") "external"}}
+cas.authn.ldap[0].bind-credential={{ .Config.GetAndDecrypt "ldap/password" }}
+{{ end }}
+{{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
+cas.authn.ldap[0].bind-credential={{ .Config.GetAndDecrypt "sa-ldap/password" }}
+{{ end }}
 
 # LDAP connection timeout in milliseconds
 cas.authn.ldap[0].connect-timeout=3000
