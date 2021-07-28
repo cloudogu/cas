@@ -25,8 +25,7 @@ public class GroupResolverConfiguration {
     @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
     private String groupAttribute;
 
-    @NotNull
-    @Value("${cas.authn.attributeRepository.ldap[0].attributes.groups}")
+    @Value("${cas.authn.attributeRepository.ldap[0].attributes.baseDn}")
     private String baseDN;
 
     /**
