@@ -80,7 +80,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
     public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler() {
         val ldapProperties = casProperties.getAuthn().getLdap().get(0);
 
-        val multiMapAttributes = createMultiMapAttributes(ldapProperties);
+        val multiMapAttributes = createPrincipalAttributes(ldapProperties);
         val authenticator = createAuthenticator(ldapProperties, multiMapAttributes);
 
         val handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator);
@@ -91,7 +91,7 @@ public class CesAuthenticationEventExecutionPlanConfiguration implements Authent
         return handler;
     }
 
-    private Multimap<String, Object> createMultiMapAttributes(LdapAuthenticationProperties ldapProperties) {
+    private Multimap<String, Object> createPrincipalAttributes(LdapAuthenticationProperties ldapProperties) {
         val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(ldapProperties.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] ...", multiMapAttributes);
 
