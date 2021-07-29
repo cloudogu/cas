@@ -106,12 +106,12 @@
     },
     {
       "Name": "ldap/encryption",
-      "Description": "Type of the encryption of the LDAP. An empty string means no encryption.",
-      "Default": "",
+      "Description": "Type of the encryption of the LDAP. Defaults to 'none'.",
+      "Default": "none",
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
-          "",
+          "none",
           "startTLS",
           "startTLSAny",
           "ssl",
