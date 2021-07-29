@@ -96,6 +96,7 @@
     {
       "Name": "ldap/ds_type",
       "Description": "Type of the LDAP",
+      "Optional": true,
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
@@ -108,6 +109,7 @@
       "Name": "ldap/encryption",
       "Description": "Type of the encryption of the LDAP. Defaults to 'none'.",
       "Default": "none",
+      "Optional": true,
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
