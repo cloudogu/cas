@@ -13,8 +13,10 @@
   "Logo": "https://cloudogu.com/images/dogus/cas.png",
   "Image": "registry.cloudogu.com/official/cas",
   "Dependencies": [
-    "nginx",
-    "ldap-mapper"
+    "nginx"
+  ],
+  "OptionalDependencies": [
+    "ldap"
   ],
   "Configuration": [
     {
@@ -60,6 +62,107 @@
     {
       "Name": "session_tgt/time_to_kill_in_seconds",
       "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/host",
+      "Description": "The host of the LDAP (without protocol and without port), e.g. ldap if LDAP dogu is used.",
+      "Optional": false
+    },
+    {
+      "Name": "ldap/port",
+      "Description": "The port of the LDAP, e.g. 389",
+      "Optional": false
+    },
+    {
+      "Name": "ldap/base_dn",
+      "Description": "Base DN of users to be authenticated, \"(dc=cloudogu,dc=com)\". This value is only used when using an external LDAP.",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/connection_dn",
+      "Description": "Manager DN for authenticated searches, e.g. \"(cn=admin,dc=cloudogu,dc=com)\" This value is only used when using an external LDAP.",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/password",
+      "Description": "The password for connection to ldap in encrypted form. This value is only used when using an external LDAP.",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/search_filter",
+      "Description": "Search filter used for configurations that require searching for DNs, e.g. (objectClass=person)"
+    },
+    {
+      "Name": "ldap/ds_type",
+      "Description": "Type of the LDAP",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "embedded",
+          "external"
+        ]
+      }
+    },
+    {
+      "Name": "ldap/encryption",
+      "Description": "Type of the encryption of the LDAP. Defaults to 'none'.",
+      "Default": "none",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "none",
+          "startTLS",
+          "startTLSAny",
+          "ssl",
+          "sslAny"
+        ]
+      }
+    },
+    {
+      "Name": "ldap/attribute_id",
+      "Description": "The attribute for the user ID in the LDAP"
+    },
+    {
+      "Name": "ldap/attribute_given_name",
+      "Description": "The attribute for the user's given name in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_surname",
+      "Description": "The attribute for the user's surname in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_fullname",
+      "Description": "The attribute for the user's fullname in the LDAP, which can also be seen as display name like \"John Doe\"",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_mail",
+      "Description": "The attribute for the user's mail address in the LDAP",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/attribute_group",
+      "Description": "The user's group membership attribute (e.g. memberOf)",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/group_attribute_name",
+      "Description": "Name of the attribute for groups (the group's user membership attribute) in LDAP, e.g. member",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/group_base_dn",
+      "Description": "Settings for ldap group search by member. Base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com",
+      "Optional": true
+    },
+    {
+      "Name": "ldap/group_search_filter",
+      "Description": "Search filter for group search. If this property is empty, group search by member will be skipped",
       "Optional": true
     },
     {

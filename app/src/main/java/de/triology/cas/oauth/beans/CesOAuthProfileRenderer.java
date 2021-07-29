@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Currently we need the custom renderer to transform the LDAP-Groups such as
- * `cn=cesManager,ou=Groups,dc=cloudogu,dc=com` into a simplified form consisting only of the groups name.
+ * Currently we need the custom renderer to transform the LDAP-Groups
+ * into a simplified form consisting only of the groups name.
  */
 public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -76,7 +76,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
                 Object groupsObject = attributes.get(modelAttributesGroup);
                 logger.debug("Class of object: {}", groupsObject);
                 List<String> groups = (List<String>) groupsObject;
-                groups.forEach(o -> newGroups.add(o.split(",")[0].split("=")[1]));
+                groups.forEach(o -> newGroups.add(o));
             }
             attributes.put(modelAttributesGroup, newGroups);
             customModel.put(MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
