@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Remove dependency to the ldap-mapper dogu in favour of direct LDAP connections (#99)
   - The vision of abstracting LDAP connections with help of the [ldap-mapper](https://github.com/cloudogu/ldap-mapper) dogu still remains. This change is an intermediate step until the necessary changes to the ldap-mapper dogu and the migration towards CAS 6 are completed.
-  
+- Remove dogu configuration key ```ldap/use_user_connection_to_fetch_attributes```
+ 
 ### Fixed
 - At log level debug, the password has been output in plain text in some classes. The password is now no longer output 
   in plain text anywhere. (#86)

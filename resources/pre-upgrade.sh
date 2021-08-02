@@ -14,6 +14,8 @@ if [ "${FROM_VERSION}" = "${TO_VERSION}" ]; then
 fi
 
 echo "Remove deprecated etcd Keys..."
+doguctl config --remove "ldap/use_user_connection_to_fetch_attributes"
+
 VALUE=$(doguctl config "logging/translation_messages" --default "default")
 if [[ "${VALUE}" != "default" ]]; then
   doguctl config --remove "logging/translation_messages"
