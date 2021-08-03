@@ -14,7 +14,17 @@ if [ "${FROM_VERSION}" = "${TO_VERSION}" ]; then
 fi
 
 echo "Remove deprecated etcd Keys..."
-doguctl config --remove "ldap/use_user_connection_to_fetch_attributes"
+LDAP_VALUE=$(doguctl config "ldap/use_user_connection_to_fetch_attributes" --default "default")
+if [[ "${LDAP_VALUE}" == "true" ]]; then
+  echo
+  echo "Note: The method of connecting to LDAP to retrieve user attributes has changed."
+  echo "The connection is no longer established via the user connection but via the system connection."
+  echo
+fi
+if [[ "${LDAP_VALUE}" != "default" ]]; then
+  doguctl config --remove "ldap/use_user_connection_to_fetch_attributes"
+fi
+
 
 VALUE=$(doguctl config "logging/translation_messages" --default "default")
 if [[ "${VALUE}" != "default" ]]; then
