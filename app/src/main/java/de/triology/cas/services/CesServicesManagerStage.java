@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.dogu.OIDCAttributeReleasePolicy;
+import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
 import org.apereo.cas.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,14 +21,16 @@ abstract class CesServicesManagerStage {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final List<String> allowedAttributes;
+    private final Map<String, String> attributesMappingRules;
 
     /**
      * Map to store all registeredServices.
      */
     protected final Map<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
 
-    CesServicesManagerStage(List<String> allowedAttributes) {
+    CesServicesManagerStage(List<String> allowedAttributes, Map<String, String> attributesMappingRules) {
         this.allowedAttributes = allowedAttributes;
+        this.attributesMappingRules = attributesMappingRules;
     }
 
 
@@ -60,7 +61,7 @@ abstract class CesServicesManagerStage {
         service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
 
-        service.setAttributeReleasePolicy(new OIDCAttributeReleasePolicy(allowedAttributes));
+        service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(allowedAttributes, attributesMappingRules));
 
         ArrayList<String> allowedProviders = new ArrayList<>();
         allowedProviders.add("my-client-name");

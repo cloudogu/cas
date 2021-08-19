@@ -106,4 +106,4 @@ cas.authn.pac4j.oidc[0].generic.scope=openid email profile
 cas.authn.pac4j.oidc[0].generic.responseType=code
 
 ### Attribute mapping
-cas.services.attributeMapping=email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName
+ces.services.attributeMapping=email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName

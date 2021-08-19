@@ -4,6 +4,7 @@ package de.triology.cas.services;
 import org.apereo.cas.services.RegexRegisteredService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Special stage in which a {@link CesServicesManager} operates during development.
@@ -12,8 +13,8 @@ import java.util.List;
  */
 class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
 
-    CesServicesManagerStageDevelopment(List<String> allowedAttributes) {
-        super(allowedAttributes);
+    CesServicesManagerStageDevelopment(List<String> allowedAttributes, Map<String, String> attributesMappingRules) {
+        super(allowedAttributes, attributesMappingRules);
     }
 
     @Override

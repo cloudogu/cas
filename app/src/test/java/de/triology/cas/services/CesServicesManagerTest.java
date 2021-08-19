@@ -12,6 +12,7 @@ import uk.org.lidalia.slf4jtest.TestLoggerFactoryResetRule;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -31,26 +32,28 @@ public class CesServicesManagerTest {
     /**
      * Reset logger before each test.
      **/
-    @Rule public TestLoggerFactoryResetRule testLoggerFactoryResetRule = new TestLoggerFactoryResetRule();
+    @Rule
+    public TestLoggerFactoryResetRule testLoggerFactoryResetRule = new TestLoggerFactoryResetRule();
 
     /**
      * Rule for asserting exceptions.
      */
-    @Rule public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
-    CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(null, "don't care", mock(Registry.class));
+    CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(null, null, "don't care", mock(Registry.class));
 
     /**
-     * Test for {@link CesServicesManager#CesServiceManager(List, String, Registry)} for production.
+     * Test for {@link CesServicesManager#CesServicesManager(List, Map, String, Registry)} )} for production.
      */
     @Test
     public void constructForProduction() throws Exception {
-        new CesServicesManager(null, "something", null) {
+        new CesServicesManager(null, null, "something", null) {
             @Override
             protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                          Registry registry) {
-                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
+                                                          Map<String, String> attributesMappingRules, Registry registry) {
+                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, attributesMappingRules, registry);
                 assertThat(stage, instanceOf(CesServicesManagerStageProductive.class));
                 return stage;
             }
@@ -58,15 +61,15 @@ public class CesServicesManagerTest {
     }
 
     /**
-     * Test for {@link CesServicesManager#CesServiceManager(List, String, Registry)} for production.
+     * Test for {@link CesServicesManager#CesServicesManager(List, Map, String, Registry)} for production.
      */
     @Test
     public void constructForDevelopment() throws Exception {
-        new CesServicesManager(null, STAGE_DEVELOPMENT, null) {
+        new CesServicesManager(null, null, STAGE_DEVELOPMENT, null) {
             @Override
             protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                          Registry registry) {
-                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, registry);
+                                                          Map<String, String> attributesMappingRules, Registry registry) {
+                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, attributesMappingRules, registry);
                 assertThat(stage, instanceOf(CesServicesManagerStageDevelopment.class));
                 return stage;
             }
@@ -118,7 +121,7 @@ public class CesServicesManagerTest {
 
         RegisteredService actualRegisteredService = etcdServicesManger.findServiceBy(service);
         assertEquals("findServiceBy(Service) did not return registered service", expectedRegisteredService,
-                     actualRegisteredService);
+                actualRegisteredService);
     }
 
     /**
@@ -171,7 +174,7 @@ public class CesServicesManagerTest {
     @Test
     public void load() throws Exception {
         etcdServicesManger.load();
-        verify(etcdServicesManger.createStage(null,null,null)).updateRegisteredServices();
+        verify(etcdServicesManger.createStage(null, null, null, null)).updateRegisteredServices();
     }
 
     /**
@@ -200,13 +203,13 @@ public class CesServicesManagerTest {
      * Special {@link CesServicesManager} that return a mocked stage for unit testing in isolation.
      */
     class CesServiceManagerUnderTest extends CesServicesManager {
-        public CesServiceManagerUnderTest(List<String> allowedAttributes, String stage, Registry registry) {
-            super(allowedAttributes, stage, registry);
+        public CesServiceManagerUnderTest(List<String> allowedAttributes, Map<String, String> attributesMappingRules, String stage, Registry registry) {
+            super(allowedAttributes, attributesMappingRules, stage, registry);
         }
 
         @Override
         protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                      Registry registry) {
+                                                      Map<String, String> attributesMappingRules, Registry registry) {
             return servicesManagerStage;
         }
     }

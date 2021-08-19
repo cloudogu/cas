@@ -4,10 +4,9 @@ import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import de.triology.cas.services.dogu.OIDCAttributeReleasePolicy;
+import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +33,11 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
+    private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
     private List<ExpectedService> expectedServices;
     private Registry registry = mock(Registry.class);
     private CesServicesManagerStageProductive stage =
-            new CesServicesManagerStageProductive(expectedAllowedAttributes, registry);
+            new CesServicesManagerStageProductive(expectedAllowedAttributes, attributesMappingRules, registry);
 
     @Before
     public void setUp() {
@@ -189,7 +189,7 @@ public class CesServicesManagerStageProductiveTest {
         // given
         RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
         CesServicesManagerStageProductive productiveStage =
-                new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
+                new CesServicesManagerStageProductive(expectedAllowedAttributes, attributesMappingRules, etcdRegistry);
         GetCasLogoutUriException expectedException = new GetCasLogoutUriException("expected exception");
         when(etcdRegistry.getCasLogoutUri(any())).thenThrow(expectedException);
         CesServiceData testServiceData = new CesServiceData("testService", doguServiceFactory);
@@ -303,7 +303,7 @@ public class CesServicesManagerStageProductiveTest {
          */
         void assertEqualsService(RegisteredService actualService) {
             assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                    ((OIDCAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
+                    ((ReturnMappedAttributesPolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
             assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
                     actualService.getServiceId());
         }

@@ -1,8 +1,6 @@
-package de.triology.cas.services.dogu;
+package de.triology.cas.services.attributes;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
@@ -10,7 +8,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Return all attributes required for the ecosystem
@@ -19,12 +20,12 @@ import java.util.*;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 @AllArgsConstructor
-public class OIDCAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
+public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private List<String> allowedAttributes = new ArrayList<>(0);
+    private List<String> allowedAttributes;
+    private Map<String, String> attributesMappingRules;
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
@@ -45,16 +46,19 @@ public class OIDCAttributeReleasePolicy extends AbstractRegisteredServiceAttribu
                                                                             final Map<String, List<Object>> attrs,
                                                                             final RegisteredService registeredService,
                                                                             final Service selectedService) {
+        HashMap<String, List<Object>> attributesToRelease = new HashMap<>();
+        if (allowedAttributes == null) {
+            return attributesToRelease;
+        }
+
+        // map attributes
         Map<String, List<Object>> mappedAttributes = mapAttributes(attrs);
-        val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
+
+        // order attributes
+        TreeMap<String, List<Object>> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(mappedAttributes);
 
-        val attributesToRelease = new HashMap<String, List<Object>>();
-
-        attrs.forEach((s, objects) -> {
-            logger.debug("Key [{}] - Value [{}]", s, objects);
-        });
-
+        // filter attributes
         getAllowedAttributes()
                 .stream()
                 .filter(resolvedAttributes::containsKey)
@@ -71,23 +75,13 @@ public class OIDCAttributeReleasePolicy extends AbstractRegisteredServiceAttribu
     }
 
     protected Map<String, List<Object>> mapAttributes(Map<String, List<Object>> attributes) {
-        // rules
-        Map<String, List<Object>> mappedMap = new TreeMap<String, List<Object>>();
-        attributes.forEach((s, objects) -> {
-            if(s.equals("family_name")) {
-                mappedMap.put("surname", objects);
-            } else if (s.equals("email")) {
-                mappedMap.put("mail", objects);
-            } else if (s.equals("given_name")) {
-                mappedMap.put("givenName", objects);
-            } else if (s.equals("preferred_username")) {
-                mappedMap.put("username", objects);
-            } else if (s.equals("name")) {
-                mappedMap.put("displayName", objects);
-            } else {
-                mappedMap.put(s, objects);
-            }
-        });
-        return mappedMap;
+        if (attributesMappingRules == null) {
+            return attributes;
+        }
+
+        Map<String, List<Object>> mappedAttributes = new TreeMap<>();
+        attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s)));
+        attributes.keySet().stream().filter(s -> !attributesMappingRules.containsKey(s)).forEach(s -> mappedAttributes.put(s, attributes.get(s)));
+        return mappedAttributes;
     }
 }
