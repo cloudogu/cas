@@ -1,14 +1,14 @@
 package de.triology.cas.services;
 
-import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import de.triology.cas.services.dogu.OIDCAttributeReleasePolicy;
+import org.apereo.cas.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,9 +59,18 @@ abstract class CesServicesManagerStage {
     protected void addNewService(RegexRegisteredService service) {
         service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
-        ReturnAllowedAttributeReleasePolicy attributePolicy = new ReturnAllowedAttributeReleasePolicy();
-        attributePolicy.setAllowedAttributes(allowedAttributes);
-        service.setAttributeReleasePolicy(attributePolicy);
+
+        service.setAttributeReleasePolicy(new OIDCAttributeReleasePolicy(allowedAttributes));
+
+        ArrayList<String> allowedProviders = new ArrayList<>();
+        allowedProviders.add("my-client-name");
+        DefaultRegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        delegatedAuthenticationPolicy.setPermitUndefined(true);
+        delegatedAuthenticationPolicy.setAllowedProviders(allowedProviders);
+        DefaultRegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        accessStrategy.setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
+        service.setAccessStrategy(accessStrategy);
+
         registeredServices.put(service.getId(), service);
     }
 

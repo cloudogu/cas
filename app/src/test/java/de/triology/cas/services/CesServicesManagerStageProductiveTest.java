@@ -4,6 +4,7 @@ import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import de.triology.cas.services.dogu.OIDCAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -302,7 +303,7 @@ public class CesServicesManagerStageProductiveTest {
          */
         void assertEqualsService(RegisteredService actualService) {
             assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                    ((ReturnAllowedAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
+                    ((OIDCAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
             assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
                     actualService.getServiceId());
         }
