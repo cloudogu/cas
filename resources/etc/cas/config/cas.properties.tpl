@@ -80,18 +80,14 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 # Configuration guide:
 # Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
 ########################################################################################################################
-### spezifisch für keycloak
-### wird für die Ermittlung der Metadaten verwendet
-### cas.authn.pac4j.oidc[0].keycloak.base-uri=https://staging-account.cloudogu.com/auth
-### cas.authn.pac4j.oidc[0].keycloak.realm=Cloudogu
 ### allgemeine Alternative
 cas.authn.pac4j.oidc[0].generic.discovery-uri=https://staging-account.cloudogu.com/auth/realms/Cloudogu/.well-known/openid-configuration
 
-### useNonce muss für die Anbindung an unseren Keycloak konfiguriert werden
+### useNonce muss für die Anbindung an unseren generic konfiguriert werden
 cas.authn.pac4j.oidc[0].generic.useNonce=true
 cas.authn.pac4j.oidc[0].generic.enabled=true
 
-### Name und Secret des im Keycloak angelegten Clients
+### Name und Secret des im generic angelegten Clients
 cas.authn.pac4j.oidc[0].generic.id=my-client-id
 cas.authn.pac4j.oidc[0].generic.secret=98199dd4-17ca-4021-8987-fc8ade8d685d
 
@@ -102,7 +98,7 @@ cas.authn.pac4j.oidc[0].generic.client-name=my-client-name
 cas.authn.pac4j.oidc[0].generic.auto-redirect=true
 
 ### Informationen, die in der Antwort vom OIDC-Provider enthalten sein sollen
-cas.authn.pac4j.oidc[0].generic.scope=openid email profile
+cas.authn.pac4j.oidc[0].generic.scope=openid email profile groups
 cas.authn.pac4j.oidc[0].generic.responseType=code
 
 ### Attribute mapping
