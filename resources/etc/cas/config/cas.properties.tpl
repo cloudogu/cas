@@ -183,7 +183,7 @@ cas.authn.pac4j.oidc[0].generic.scope=openid email profile groups
 cas.authn.pac4j.oidc[0].generic.responseType=code
 
 ### preferred algorithm to use for the open id connect jwt tokens
-cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=HS512
+cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=RS256
 
 ### attribute mapping
 ces.services.attributeMapping=email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName
