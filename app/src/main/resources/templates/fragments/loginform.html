@@ -19,7 +19,7 @@
             <form method="post" id="fm1" th:object="${credential}" action="login">
 
                 <div th:if="${existingSingleSignOnSessionAvailable}">
-                    <i class="mdi mdi-alert-decagram"></i>&nbsp;
+                    <i class="glyphicon glyphicon-info-sign"></i>&nbsp;
                     <span id="existingSsoMsg" class="mdc-button__label"
                           th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
                 </div>

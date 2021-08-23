@@ -6,12 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-# Changed
+
+### Added
+- Add new LDAP specific dogu configuration keys (#99)
+- Re-add LDAP group resolving with internal resolvers (#99)
+
+### Changed
 - Adapt the UI to the Cloudogu styling. (#91)
+- Update the underlying Tomcat library to v9.0 (#36)
+
+### Removed
+- Remove dependency to the ldap-mapper dogu in favour of direct LDAP connections (#99)
+  - The vision of abstracting LDAP connections with help of the [ldap-mapper](https://github.com/cloudogu/ldap-mapper) dogu still remains. This change is an intermediate step until the necessary changes to the ldap-mapper dogu and the migration towards CAS 6 are completed.
+- Remove dogu configuration key ```ldap/use_user_connection_to_fetch_attributes```. From now on, all connections to the LDAP to fetch user attributes are made via the system connection. (#103)
 
 ### Fixed
 - At log level debug, the password has been output in plain text in some classes. The password is now no longer output 
   in plain text anywhere. (#86)
+
+### Removed
+- Remove dogu configuration key `logging/translation_messages`
 
 ## [v4.0.7.20-16] - 2021-02-18
 ### Added

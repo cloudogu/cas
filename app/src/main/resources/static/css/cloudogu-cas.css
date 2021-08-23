@@ -725,7 +725,6 @@ body {
     }
 }
 
-
 @media all and (min-width: 992px) {
     .full-width {
         max-width: 850px;
@@ -742,4 +741,16 @@ body {
     #logo {
     border-bottom: none;
     }
+}
+
+#fm1 > div > span.mdc-button__label {
+    color: #153e50;
+}
+
+#fm1 > div {
+    margin-bottom: 25px;
+}
+
+#fm1 > div > i{
+    color: #153e50;
 }
