@@ -79,27 +79,31 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 # OIDC
 # Configuration guide:
 # Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
-########################################################################################################################
-### allgemeine Alternative
+# ----------------------------------------------------------------------------------------------------------------------
+### path to the discovery url of the provider
 cas.authn.pac4j.oidc[0].generic.discovery-uri=https://staging-account.cloudogu.com/auth/realms/Cloudogu/.well-known/openid-configuration
 
-### useNonce muss für die Anbindung an unseren generic konfiguriert werden
+### required configuration
 cas.authn.pac4j.oidc[0].generic.useNonce=true
 cas.authn.pac4j.oidc[0].generic.enabled=true
 
-### Name und Secret des im generic angelegten Clients
+### name and secret for the client to identify itself by the provider
 cas.authn.pac4j.oidc[0].generic.id=my-client-id
 cas.authn.pac4j.oidc[0].generic.secret=98199dd4-17ca-4021-8987-fc8ade8d685d
 
-### Der Client-Name wird zwar immer wieder bei den Requests angegeben, ist aber eine optionale Information
+### the client name used to identify the client in the cas application
 cas.authn.pac4j.oidc[0].generic.client-name=my-client-name
 
-### automatische Umleitung zum konfigurierten Provider, wenn man sich ..ber CAS einloggen m..chte
+### perform automatic redirects to the configured provider when a user logs into the cas
 cas.authn.pac4j.oidc[0].generic.auto-redirect=true
 
-### Informationen, die in der Antwort vom OIDC-Provider enthalten sein sollen
+### information that are supposed to be contained in the responses of the OIDC provider
 cas.authn.pac4j.oidc[0].generic.scope=openid email profile groups
 cas.authn.pac4j.oidc[0].generic.responseType=code
 
-### Attribute mapping
+### preferred algorithm to use for the open id connect jwt tokens
+cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=HS512
+
+### attribute mapping
 ces.services.attributeMapping=email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName
+########################################################################################################################
