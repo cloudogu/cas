@@ -31,6 +31,7 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
     private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
+    private static final CesServiceData EXPECTED_SERVICE_DATA_OIDC = new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private List<ExpectedService> expectedServices;
@@ -53,6 +54,9 @@ public class CesServicesManagerStageProductiveTest {
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/.*")
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent"),
+                new ExpectedService().name(EXPECTED_SERVICE_DATA_OIDC.getIdentifier())
+                        .serviceId(".*")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent")));
     }
 

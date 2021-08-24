@@ -184,5 +184,9 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         logger.info("Creating cas service for clearPass workflow");
         addNewService(doguServiceFactory.createCASService(createId(), fqdn));
         persistentServices.add(new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
+
+        logger.info("Add oidc service");
+        addNewService(oAuthServiceFactory.createOIDCService(createId(), fqdn));
+        persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory));
     }
 }
