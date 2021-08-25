@@ -44,7 +44,7 @@ parallel(
                             withSonarQubeEnv {
                                 sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
                                 gitWithCredentials("fetch --all")
-                                String parameters = ' -Dsonar.projectKey=cas6'
+                                String parameters = ' -Dsonar.projectKey=cas'
                                 if (branch == productionReleaseBranch) {
                                     echo "This branch has been detected as the " + productionReleaseBranch + " branch."
                                     parameters += " -Dsonar.branch.name=${env.BRANCH_NAME}"
