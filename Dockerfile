@@ -20,8 +20,8 @@ RUN ./gradlew clean build --parallel --no-daemon
 FROM registry.cloudogu.com/official/java:11.0.5-4
 
 LABEL NAME="official/cas" \
-    VERSION="4.0.7.20-16" \
-    maintainer="michael.behlendorf@cloudogu.com"
+      VERSION="6.3.3-1" \
+      maintainer="hello@cloudogu.com"
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=9 \
