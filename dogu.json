@@ -113,6 +113,7 @@
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
+          "",
           "none",
           "startTLS",
           "startTLSAny",
