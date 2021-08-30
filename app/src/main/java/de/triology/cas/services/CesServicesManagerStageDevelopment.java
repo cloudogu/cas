@@ -13,8 +13,8 @@ import java.util.Map;
  */
 class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
 
-    CesServicesManagerStageDevelopment(List<String> allowedAttributes, Map<String, String> attributesMappingRules) {
-        super(allowedAttributes, attributesMappingRules);
+    CesServicesManagerStageDevelopment(CesServiceManagerConfiguration managerConfig) {
+        super(managerConfig);
     }
 
     @Override

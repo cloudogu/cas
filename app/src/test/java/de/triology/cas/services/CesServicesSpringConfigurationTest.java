@@ -4,12 +4,12 @@ import junit.framework.TestCase;
 
 import java.util.Map;
 
-public class CesServicesConfigurationTest extends TestCase {
+public class CesServicesSpringConfigurationTest extends TestCase {
 
     public void testPropertyStringToMap_emptyString() {
         // given
         // when
-        Map<String, String> propertyMap = CesServicesConfiguration.propertyStringToMap("");
+        Map<String, String> propertyMap = CesServicesSpringConfiguration.propertyStringToMap("");
 
         // then
         assertEquals(propertyMap.size(), 0);
@@ -20,7 +20,7 @@ public class CesServicesConfigurationTest extends TestCase {
         String mapProperty = "key1:value1,key2:value2";
 
         // when
-        Map<String, String> propertyMap = CesServicesConfiguration.propertyStringToMap(mapProperty);
+        Map<String, String> propertyMap = CesServicesSpringConfiguration.propertyStringToMap(mapProperty);
 
         // then
         assertEquals(propertyMap.size(), 2);

@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration("CesServicesConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.services")
-public class CesServicesConfiguration implements ServicesManagerExecutionPlanConfigurer {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class CesServicesSpringConfiguration implements ServicesManagerExecutionPlanConfigurer {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -35,14 +35,21 @@ public class CesServicesConfiguration implements ServicesManagerExecutionPlanCon
     @Value("${ces.services.allowedAttributes}")
     private List<String> allowedAttributes;
 
-    @Value("${ces.services.attributeMapping}")
+    @Value("${ces.services.attributeMapping:#{\"\"}}")
     private String attributesMappingRulesString;
+
+    @Value("${cas.authn.pac4j.oidc[0].generic.enabled:#{false}}")
+    private boolean oidcProviderEnabled;
+
+    @Value("${cas.authn.pac4j.oidc[0].generic.client-name:#{\"\"}}")
+    private String oidcClientName;
 
     @Override
     public ServicesManager configureServicesManager() {
         LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
-        return new CesServicesManager(allowedAttributes, attributesMappingRules, stage, registry);
+        CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcProviderEnabled, oidcClientName);
+        return new CesServicesManager(managerConfig, registry);
     }
 
     @Bean

@@ -66,6 +66,9 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
                     logger.debug("Found attribute [{}] in the list of allowed attributes", attr);
                     attributesToRelease.put(attr, resolvedAttributes.get(attr));
                 });
+
+
+        logger.debug("Attributes to release [{}]", resolvedAttributes);
         return attributesToRelease;
     }
 
@@ -79,8 +82,13 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
             return attributes;
         }
 
+        logger.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
+
         Map<String, List<Object>> mappedAttributes = new TreeMap<>();
-        attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s)));
+        attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> {
+            logger.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
+            mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s));
+        });
         attributes.keySet().stream().filter(s -> !attributesMappingRules.containsKey(s)).forEach(s -> mappedAttributes.put(s, attributes.get(s)));
         return mappedAttributes;
     }

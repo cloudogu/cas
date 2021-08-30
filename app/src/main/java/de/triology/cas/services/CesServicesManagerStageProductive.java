@@ -34,8 +34,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private boolean initialized = false;
 
-    CesServicesManagerStageProductive(List<String> allowedAttributes, Map<String, String> attributesMappingRules, Registry registry) {
-        super(allowedAttributes, attributesMappingRules);
+    CesServicesManagerStageProductive(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        super(managerConfig);
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();

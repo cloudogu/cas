@@ -33,8 +33,8 @@ public class CesServicesManager implements ServicesManager {
 
     private CesServicesManagerStage serviceStage;
 
-    public CesServicesManager(List<String> allowedAttributes, Map<String, String> attributesMappingRules, String stage, Registry registry) {
-        serviceStage = createStage(stage, allowedAttributes, attributesMappingRules, registry);
+    public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        serviceStage = createStage(managerConfig, registry);
     }
 
     @Override
@@ -111,11 +111,11 @@ public class CesServicesManager implements ServicesManager {
     /**
      * @return a new instance of the {@link CesServicesManagerStage}, depending on the <code>stageString</code> parameter.
      */
-    protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes, Map<String, String> attributesMappingRules, Registry registry) {
-        if (!STAGE_DEVELOPMENT.equals(stageString)) {
-            return new CesServicesManagerStageProductive(allowedAttributes, attributesMappingRules, registry);
+    protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        if (!STAGE_DEVELOPMENT.equals(managerConfig.getStage())) {
+            return new CesServicesManagerStageProductive(managerConfig, registry);
         } else {
-            return new CesServicesManagerStageDevelopment(allowedAttributes, attributesMappingRules);
+            return new CesServicesManagerStageDevelopment(managerConfig);
         }
     }
 }

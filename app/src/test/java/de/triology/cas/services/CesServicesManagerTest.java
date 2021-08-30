@@ -42,18 +42,19 @@ public class CesServicesManagerTest {
     public ExpectedException thrown = ExpectedException.none();
 
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
-    CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(null, null, "don't care", mock(Registry.class));
+    CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null, null, false, null);
+    CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null, null, false, null);
+    CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(managerConfig, mock(Registry.class));
 
     /**
-     * Test for {@link CesServicesManager#CesServicesManager(List, Map, String, Registry)} )} for production.
+     * Test for {@link CesServicesManager#CesServicesManager(CesServiceManagerConfiguration, Registry)} )} for production.
      */
     @Test
     public void constructForProduction() throws Exception {
-        new CesServicesManager(null, null, "something", null) {
+        new CesServicesManager(managerConfig, null) {
             @Override
-            protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                          Map<String, String> attributesMappingRules, Registry registry) {
-                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, attributesMappingRules, registry);
+            protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
+                CesServicesManagerStage stage = super.createStage(managerConfig, registry);
                 assertThat(stage, instanceOf(CesServicesManagerStageProductive.class));
                 return stage;
             }
@@ -61,15 +62,14 @@ public class CesServicesManagerTest {
     }
 
     /**
-     * Test for {@link CesServicesManager#CesServicesManager(List, Map, String, Registry)} for production.
+     * Test for {@link CesServicesManager#CesServicesManager(CesServiceManagerConfiguration, Registry)} for production.
      */
     @Test
     public void constructForDevelopment() throws Exception {
-        new CesServicesManager(null, null, STAGE_DEVELOPMENT, null) {
+        new CesServicesManager(managerDevelopmentConfig, null) {
             @Override
-            protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                          Map<String, String> attributesMappingRules, Registry registry) {
-                CesServicesManagerStage stage = super.createStage(stageString, allowedAttributes, attributesMappingRules, registry);
+            protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
+                CesServicesManagerStage stage = super.createStage(managerConfig, registry);
                 assertThat(stage, instanceOf(CesServicesManagerStageDevelopment.class));
                 return stage;
             }
@@ -174,7 +174,7 @@ public class CesServicesManagerTest {
     @Test
     public void load() throws Exception {
         etcdServicesManger.load();
-        verify(etcdServicesManger.createStage(null, null, null, null)).updateRegisteredServices();
+        verify(etcdServicesManger.createStage(managerConfig, null)).updateRegisteredServices();
     }
 
     /**
@@ -203,13 +203,12 @@ public class CesServicesManagerTest {
      * Special {@link CesServicesManager} that return a mocked stage for unit testing in isolation.
      */
     class CesServiceManagerUnderTest extends CesServicesManager {
-        public CesServiceManagerUnderTest(List<String> allowedAttributes, Map<String, String> attributesMappingRules, String stage, Registry registry) {
-            super(allowedAttributes, attributesMappingRules, stage, registry);
+        public CesServiceManagerUnderTest(CesServiceManagerConfiguration managerConfig, Registry registry) {
+            super(managerConfig, registry);
         }
 
         @Override
-        protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes,
-                                                      Map<String, String> attributesMappingRules, Registry registry) {
+        protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
             return servicesManagerStage;
         }
     }
