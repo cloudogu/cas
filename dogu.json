@@ -265,7 +265,7 @@
     },
     {
       "Name": "oidc/scopes",
-      "Description": "Specifies the resource to be queried against OIDC. Normally, this enumeration should contain at least the openid, user's email, profile information, and the groups assigned to the user. This entry is ",
+      "Description": "Specifies the resource to be queried against OIDC. Normally, this enumeration should contain at least the openid, user's email, profile information, and the groups assigned to the user. This entry is set to `openid email profile groups` by default.",
       "Default": "openid email profile groups",
       "Optional": true
     },
