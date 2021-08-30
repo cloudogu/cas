@@ -1,5 +1,5 @@
 ![Cloudogu logo](https://cloudogu.com/images/logo.png)
-# CAS
+# CAS Dogu
 https://cloudogu.com
 
 This repository consists of the CAS server. CAS stands for Central Authentication Service. It provides Single Sign On either via Legacy LDAP-connection or via own user management system.
