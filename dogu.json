@@ -18,6 +18,14 @@
   "OptionalDependencies": [
     "ldap"
   ],
+  "ServiceAccounts": [
+    {
+      "Type": "ldap",
+      "Params": [
+        "ro"
+      ]
+    }
+  ],
   "Configuration": [
     {
       "Name": "limit/max_number",
@@ -226,16 +234,6 @@
     }
   ],
   "ExposedCommands": [
-    {
-      "Name": "service-account-create",
-      "Description": "Creates a new service account",
-      "Command": "/create-sa.sh"
-    },
-    {
-      "Name": "service-account-remove",
-      "Description": "Removes an existing service account",
-      "Command": "/remove-sa.sh"
-    },
     {
       "Name": "pre-upgrade",
       "Command": "/pre-upgrade.sh"
