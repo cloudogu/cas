@@ -218,7 +218,7 @@
     {
       "Name": "oidc/enabled",
       "Description": "Determines whether the CAS should use the configured OIDC provider for delegated authentication. This entry is set to 'false' by default.",
-      "Default": false,
+      "Default": "false",
       "Optional": true,
       "Validation": {
         "Type": "ONE_OF",
@@ -253,7 +253,7 @@
     {
       "Name": "oidc/optional",
       "Description": "Determines whether the authentication via the configured OIDC provider is optional. The user is automatically redirected to the login page of the OIDC provider if this property is set to 'false'. The 'true' entry makes authentication via the OIDC provider optional. For this, an additional button for the OIDC provider is displayed on the login page of the CAS, which can be used for authentication with the OIDC provider. This entry is set to 'false' by default.",
-      "Default": false,
+      "Default": "false",
       "Optional": true,
       "Validation": {
         "Type": "ONE_OF",

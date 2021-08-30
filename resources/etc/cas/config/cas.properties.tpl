@@ -161,30 +161,32 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 # Configuration guide:
 # Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
 # ----------------------------------------------------------------------------------------------------------------------
-### path to the discovery url of the provider
-cas.authn.pac4j.oidc[0].generic.discovery-uri=https://staging-account.cloudogu.com/auth/realms/Cloudogu/.well-known/openid-configuration
+{{ if .Config.Get "oidc/enabled"}}
+    ### path to the discovery url of the provider
+    cas.authn.pac4j.oidc[0].generic.discovery-uri={{ .Config.Get "oidc/discovery_uri"}}
 
-### required configuration
-cas.authn.pac4j.oidc[0].generic.useNonce=true
-cas.authn.pac4j.oidc[0].generic.enabled=true
+    ### required configuration
+    cas.authn.pac4j.oidc[0].generic.useNonce=true
+    cas.authn.pac4j.oidc[0].generic.enabled={{ .Config.Get "oidc/enabled"}}
 
-### name and secret for the client to identify itself by the provider
-cas.authn.pac4j.oidc[0].generic.id=my-client-id
-cas.authn.pac4j.oidc[0].generic.secret=98199dd4-17ca-4021-8987-fc8ade8d685d
+    ### name and secret for the client to identify itself by the provider
+    cas.authn.pac4j.oidc[0].generic.id={{ .Config.Get "oidc/client_id"}}
+    cas.authn.pac4j.oidc[0].generic.secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
 
-### the client name used to identify the client in the cas application
-cas.authn.pac4j.oidc[0].generic.client-name=my-client-name
+    ### the client name used to identify the client in the cas application
+    cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
 
-### perform automatic redirects to the configured provider when a user logs into the cas
-cas.authn.pac4j.oidc[0].generic.auto-redirect=true
+    ### perform automatic redirects to the configured provider when a user logs into the cas
+    cas.authn.pac4j.oidc[0].generic.auto-redirect={{ .Config.Get "oidc/optional"}}
 
-### information that are supposed to be contained in the responses of the OIDC provider
-cas.authn.pac4j.oidc[0].generic.scope=openid email profile groups
-cas.authn.pac4j.oidc[0].generic.responseType=code
+    ### information that are supposed to be contained in the responses of the OIDC provider
+    cas.authn.pac4j.oidc[0].generic.scope={{ .Config.Get "oidc/scopes"}}
+    cas.authn.pac4j.oidc[0].generic.responseType=code
 
-### preferred algorithm to use for the open id connect jwt tokens
-cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=RS256
+    ### preferred algorithm to use for the open id connect jwt tokens
+    cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=RS256
 
-### attribute mapping
-ces.services.attributeMapping=email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName
+    ### attribute mapping
+    ces.services.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
+{{ end }}
 ########################################################################################################################
