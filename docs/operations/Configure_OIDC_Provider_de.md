@@ -47,7 +47,7 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 #### oidc/scopes
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/scopes`
 * Inhalt: Gibt die Ressource an, die gegen OIDC abgefragt werden soll. Normalerweise sollte diese Aufzählung mindestens die openid, die E-Mail des Benutzers, Profilinformationen und die dem Benutzer zugewiesenen Gruppen enthalten. Dieser Eintrag ist standardmäßig auf "openid email profile groups" gesetzt.
-* Datentyp: String nach Format: `scope1,scope2`
+* Datentyp: String nach Format: `scope1 scope2`
 
 #### oidc/attribute_mapping
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/attribute_mapping`

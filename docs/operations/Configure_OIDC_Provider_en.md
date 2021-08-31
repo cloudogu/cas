@@ -47,7 +47,7 @@ Such registration basically consists of a client ID and a client secret.
 #### oidc/scopes
 * Configuration key path: `<cas_path>/oidc/scopes`
 * Content: specifies the resource to query against OIDC. Normally, this enumeration should include at least the openid, the user's email, profile information, and the groups assigned to the user. This entry is set to "openid email profile groups" by default.
-* Data type: String according to format: `scope1,scope2`.
+* Data type: String according to format: `scope1 scope2`.
 
 #### oidc/attribute_mapping
 * Configuration key path: `<cas_path>/oidc/attribute_mapping`
