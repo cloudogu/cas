@@ -157,7 +157,7 @@ parallel(
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
                             stage('Upgrade dogu') {
                                 // Remove new dogu that has been built and tested above
-                                ecoSystem.purgeDogu(doguName)
+                                ecoSystem.purgeDogu("--keep-config --keep-service-accounts --keep-volumes " + doguName)
 
                                 if (params.OldDoguVersionForUpgradeTest != '' && !params.OldDoguVersionForUpgradeTest.contains('v')) {
                                     println "Installing user defined version of dogu: " + params.OldDoguVersionForUpgradeTest
