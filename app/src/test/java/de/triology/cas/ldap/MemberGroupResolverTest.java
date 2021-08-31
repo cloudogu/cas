@@ -1,17 +1,16 @@
 package de.triology.cas.ldap;
 
-
-import org.jasig.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MemberGroupResolverTest {
@@ -22,8 +21,6 @@ public class MemberGroupResolverTest {
     @Mock
     private LdapEntry entry;
 
-    private final MemberGroupResolver resolver = new MemberGroupResolver();
-
     @Before
     public void setUp() {
         when(principal.getId()).thenReturn("trillian");
@@ -31,20 +28,19 @@ public class MemberGroupResolverTest {
     }
 
     @Test
-    public void testSearchFilterWithPrincipalId() {
-        resolver.setSearchFilter("(&(objectClass=posixGroup)(memberUid={1}))");
-        assertFilter("(&(objectClass=posixGroup)(memberUid=trillian))");
+    public void searchFilterWithPrincipalId() {
+        var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=posixGroup)(memberUid={1}))");
+        assertFilter(resolver,"(&(objectClass=posixGroup)(memberUid=trillian))");
     }
 
-    private void assertFilter(String expected) {
-        SearchFilter filter = resolver.createFilter(principal, entry);
+    private void assertFilter( MemberGroupResolver resolver, String expected) {
+        FilterTemplate filter = resolver.createFilter(principal, entry);
         assertEquals(expected, filter.format());
     }
 
     @Test
-    public void testSearchFilterWithPrincipalDN() {
-        resolver.setSearchFilter("(&(objectClass=inetOrgPerson)(member={0}))");
-        assertFilter("(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
+    public void searchFilterWithPrincipalDN() {
+        var resolver = new MemberGroupResolver(null, null, null, "(&(objectClass=inetOrgPerson)(member={0}))");
+        assertFilter(resolver,"(&(objectClass=inetOrgPerson)(member=cn=Tricia,ou=People,dc=hitchhiker,dc=com))");
     }
-
 }

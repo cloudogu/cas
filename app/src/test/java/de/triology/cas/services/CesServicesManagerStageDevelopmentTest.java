@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import org.jasig.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.junit.Test;
 
 import java.util.Collection;

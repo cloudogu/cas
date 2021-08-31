@@ -6,15 +6,13 @@
 
 package de.triology.cas.ldap;
 
-import org.jasig.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
 
 import java.util.Set;
 
 /**
  * Resolves groups for an principal.
- * 
- * @author Sebastian Sdorra
  */
 public interface GroupResolver {
   
@@ -24,7 +22,7 @@ public interface GroupResolver {
    * @param principal principal
    * @param ldapEntry ldap entry
    * 
-   * @return set of group namess
+   * @return set of group names
    */
   Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry);
 }
