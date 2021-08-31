@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-1] - 2021-08-31
+
 ### Added
 - Add new LDAP specific dogu configuration keys (#99)
 - Re-add LDAP group resolving with internal resolvers (#99)
