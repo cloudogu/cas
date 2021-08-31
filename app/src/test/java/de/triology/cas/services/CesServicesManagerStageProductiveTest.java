@@ -1,9 +1,12 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.service.CesOAuthServiceFactory;
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
-import org.jasig.cas.services.RegisteredService;
+import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +15,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +31,6 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
     private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
-    private static final CesServiceData EXPECTED_SERVICE_DATA_OAUTH = new CesServiceData("oauth_callback_service", oAuthServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private List<ExpectedService> expectedServices;
@@ -52,10 +53,7 @@ public class CesServicesManagerStageProductiveTest {
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/.*")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent"),
-                new ExpectedService().name(EXPECTED_SERVICE_DATA_OAUTH.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/oauth2.0/callbackAuthorize")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/oauth2.0/callbackAuthorize")));
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent")));
     }
 
     /**
@@ -72,8 +70,6 @@ public class CesServicesManagerStageProductiveTest {
 
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
-        doReturn(new LinkedList<>(Collections.singletonList(EXPECTED_OAUTH_SERVICE_DATA)))
-                .when(registry).getInstalledOAuthCASServiceAccounts(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
@@ -93,7 +89,7 @@ public class CesServicesManagerStageProductiveTest {
      * Test for listener, when a dogu is added after initialization.
      */
     @Test
-    public void doguChangeListenerAddDoguOAuthNoFail() {
+    public void doguChangeListenerAddDoguNoFail() {
         // Initialize expectedServices
         DoguChangeListener doguChangeListener = initialize();
 
@@ -103,7 +99,7 @@ public class CesServicesManagerStageProductiveTest {
 
         HashMap<String, String> attributes = new HashMap<>();
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, EXPECTED_OAUTH_SERVICE_DATA.getName());
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, "supersecret");
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "supersecret");
         CesServiceData correctOAuthService = new CesServiceData(EXPECTED_OAUTH_SERVICE_DATA.getName(), oAuthServiceFactory, attributes);
 
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
@@ -188,21 +184,23 @@ public class CesServicesManagerStageProductiveTest {
     }
 
     @Test
-    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException {
+    public void addNewServiceWhichHasNoLogoutUri() throws GetCasLogoutUriException, CesServiceCreationException {
+        // given
         RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
         CesServicesManagerStageProductive productiveStage =
                 new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
-        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(new GetCasLogoutUriException("expected exception"));
-        CesServiceData testService = new CesServiceData("testService", doguServiceFactory);
-        try {
-            productiveStage.addNewService(
-                    doguServiceFactory.createNewService(
-                            productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testService));
-        } catch (GetCasLogoutUriException e) {
-            throw e;
-        } catch (Exception e) {
-            // should not happen
-        }
+        GetCasLogoutUriException expectedException = new GetCasLogoutUriException("expected exception");
+        when(etcdRegistry.getCasLogoutUri(any())).thenThrow(expectedException);
+        CesServiceData testServiceData = new CesServiceData("testService", doguServiceFactory);
+        RegexRegisteredService testService = doguServiceFactory.createNewService(
+                productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testServiceData);
+
+        // when
+        productiveStage.addNewService(testService);
+
+        // then
+        RegisteredService registeredService = productiveStage.getRegisteredServices().get(1L);
+        assertNull(registeredService.getLogoutUrl());
     }
 
     /**
@@ -282,10 +280,9 @@ public class CesServicesManagerStageProductiveTest {
                     + services, 1, matchingServices.size());
             RegisteredService actualService = matchingServices.get(0);
 
-            assertTrue("Service \" + name \": ID is not unique",
-                    1 == services.stream()
-                            .filter(registeredService -> actualService.getId() == registeredService.getId())
-                            .count());
+            assertEquals("Service \" + name \": ID is not unique", 1, services.stream()
+                    .filter(registeredService -> actualService.getId() == registeredService.getId())
+                    .count());
             assertEqualsService(actualService);
         }
 
@@ -304,10 +301,8 @@ public class CesServicesManagerStageProductiveTest {
          * Asserts that this service's attributes equal the one specified in this {@link ExpectedService}.
          */
         void assertEqualsService(RegisteredService actualService) {
-            assertEquals("Service \" + name \": Unexpected value allowedToProxy", allowedToProxy,
-                    actualService.isAllowedToProxy());
             assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                    actualService.getAllowedAttributes());
+                    ((ReturnAllowedAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
             assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
                     actualService.getServiceId());
         }

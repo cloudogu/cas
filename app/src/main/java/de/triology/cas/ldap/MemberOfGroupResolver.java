@@ -6,8 +6,7 @@
 
 package de.triology.cas.ldap;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.ldaptive.LdapAttribute;
+import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,33 +17,26 @@ import java.util.Set;
 /**
  * Resolve groups by reading an attribute from the ldap entry. <strong>Note</strong> you
  * have to add the name of the attribute to the additionalAttributes list of 
- * {@link GroupAwareLdapAuthenticationHandler}.
- * 
- * @author Sebastian Sdorra
+ * {@link CesGroupAwareLdapAuthenticationHandler}.
  */
 public class MemberOfGroupResolver implements GroupResolver {
     
     private static final Logger LOG = LoggerFactory.getLogger(MemberOfGroupResolver.class);
 
     private final String attribute;
-    private final boolean isDnAttribute;
 
-    /**
-     * Creates a new instance.
-     * 
-     * @param attribute name of memberOf attribute
-     * @param isDnAttribute {@code true} if the attribute is an dn
-     */
-    public MemberOfGroupResolver(String attribute, boolean isDnAttribute) {
+    public MemberOfGroupResolver(String attribute) {
         this.attribute = attribute;
-        this.isDnAttribute = isDnAttribute;
     }
-    
+
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         LOG.trace("resolve groups from ldap attribute {}", attribute);
         Set<String> groups = new HashSet<>();
-        LdapAttribute ldapAttribute = ldapEntry.getAttribute(attribute);
+        var ldapAttribute = ldapEntry.getAttribute(attribute);
+
+        LOG.trace("ldap-attribute: {}", ldapAttribute);
+
         if (ldapAttribute != null && !ldapAttribute.isBinary()) {
             for (String value : ldapAttribute.getStringValues()) {
                 String group = normalizeName(value);
@@ -58,10 +50,7 @@ public class MemberOfGroupResolver implements GroupResolver {
     }
     
     private String normalizeName(String value) {
-        if (isDnAttribute){
-          return extractNameFromDn(value);  
-        }
-        return value;
+          return extractNameFromDn(value);
     }
     
     private String extractNameFromDn(String dn) {

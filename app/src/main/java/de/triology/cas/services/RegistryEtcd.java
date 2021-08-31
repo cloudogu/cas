@@ -1,6 +1,7 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.service.CesOAuthServiceFactory;
+import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.services.dogu.ICesServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -13,6 +14,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,11 +32,11 @@ import java.util.concurrent.TimeoutException;
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
+@Component
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu/";
     private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts/";
-    private static final String CAS_SERVICE_ACCOUNT_DIR_IN_DOGU = "service_accounts/";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final EtcdClient etcd;
@@ -43,6 +46,7 @@ class RegistryEtcd implements Registry {
      *
      * @throws RegistryException when the URI cannot be read
      */
+    @Autowired
     public RegistryEtcd(EtcdClient etcd) {
         this.etcd = etcd;
     }
@@ -82,20 +86,20 @@ class RegistryEtcd implements Registry {
      */
     private List<CesServiceData> extractOAuthClientsFromSADir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
         log.debug("Entered extractOAuthClientsFromSADir");
-        List<CesServiceData> serviceAccountNames = new ArrayList<>();
+        List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
                 String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
                 String clientSecret = this.getCurrentOAuthClientSecret(clientID);
                 HashMap<String, String> attributes = new HashMap<>();
                 attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET, clientSecret);
-                serviceAccountNames.add(new CesServiceData(clientID, factory, attributes));
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
+                serviceDataList.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
                 log.error("registry exception occurred", ex);
             }
         }
-        return serviceAccountNames;
+        return serviceDataList;
     }
 
     private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
@@ -110,9 +114,9 @@ class RegistryEtcd implements Registry {
                     doguServices.add(new CesServiceData(doguName, factory));
                 }
             } catch (ParseException ex) {
-                log.error("failed to parse EtcdNode to json", ex);
+                log.error("failed to parse EtcdNode to json: ", ex);
             } catch (RegistryException ex) {
-                log.error("registry exception occurred", ex);
+                log.error("registry exception occurred: ", ex);
             }
         }
         return doguServices;
@@ -136,18 +140,17 @@ class RegistryEtcd implements Registry {
     }
 
     public String getEtcdValueForKey(String key) {
-        log.debug("Get " + key + " from registry");
+        log.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.error("Failed to getEtcdValueForKey: " + key);
+                log.error("Failed to getEtcdValueForKey: {}",  key);
             } else {
                 log.error("Failed to getEtcdValueForKey: ", e);
             }
             throw new RegistryException(e);
-        }
-        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getEtcdValueForKey: ", e);
             throw new RegistryException(e);
         }
@@ -160,12 +163,12 @@ class RegistryEtcd implements Registry {
      * @return the value for the given key if present, otherwise an empty string.
      */
     public String getEtcdValueForKeyIfPresent(String key) {
-        log.debug("Get " + key + " from registry");
+        log.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"" + key + "\" not found");
+                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"{}\" not found", key);
                 //Valid case if key is not found return an empty string
                 return "";
             } else {
@@ -222,12 +225,11 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
         Thread t = new Thread(() -> {
             try {
                 while (true) {
-                    EtcdResponsePromise responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
+                    EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
                     log.info("wait for changes under /dogu");
                     responsePromise.get();
                     doguChangeListener.onChange();
@@ -242,7 +244,7 @@ class RegistryEtcd implements Registry {
         Thread t2 = new Thread(() -> {
             try {
                 while (true) {
-                    EtcdResponsePromise responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
+                    EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
                     log.info("wait for changes under /config/cas/service_accounts");
                     responsePromise.get();
                     doguChangeListener.onChange();

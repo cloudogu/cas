@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
 
-import org.jasig.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
     @Override
     protected void initRegisteredServices() {
         logger.debug("Cas started in development stage. All services can get an ST.");
+        logger.debug("The development stage does not support OAuth services.");
         addDevService();
     }
 

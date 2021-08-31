@@ -18,7 +18,7 @@ To do this, the request for a CAS service account can be stored in the `dogu.jso
 ]
 ```
 
-The credentials of the service account are randomly generated (see [create-sa.sh](../../resources/create-sa.sh))
+The credentials of the service account are randomly generated (see [create-sa.sh](https://github.com/cloudogu/cas/blob/develop/resources/create-sa.sh))
 and stored encrypted in etcd under the path `/config/<dogu>/sa-cas/oauth_client_id` and `/config/<dogu>/sa-cas/oauth_client_secret`.
 The credentials are composed of the `CLIENT_ID` and the `CLIENT_SECRET`. 
 For the CAS, the `CLIENT_SECRET` is stored as a hash in the __etcd__ under the path `/config/cas/service_accounts/<CLIENT_ID>`.

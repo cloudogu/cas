@@ -1,5 +1,7 @@
 package de.triology.cas.services;
 
+import de.triology.cas.services.dogu.ICesServiceFactory;
+
 import java.net.URI;
 import java.util.List;
 
