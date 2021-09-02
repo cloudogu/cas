@@ -173,6 +173,9 @@ cas.authn.pac4j.oidc[0].generic.enabled={{ .Config.Get "oidc/enabled"}}
 cas.authn.pac4j.oidc[0].generic.id={{ .Config.Get "oidc/client_id"}}
 cas.authn.pac4j.oidc[0].generic.secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
 
+### Max clock skew
+cas.authn.pac4j.oidc[0].generic.max-clock-skew=5
+
 ### the client name used to identify the client in the cas application
 cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
 
