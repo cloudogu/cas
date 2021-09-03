@@ -50,7 +50,7 @@ parallel(
                                     parameters += " -Dsonar.branch.name=${env.BRANCH_NAME}"
                                 } else if (branch == "develop") {
                                     echo "This branch has been detected as the develop branch."
-                                    parameters +=  " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=" + productionReleaseBranch
+                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=" + productionReleaseBranch
                                 } else if (env.CHANGE_TARGET) {
                                     echo "This branch has been detected as a pull request."
                                     parameters += " -Dsonar.branch.name=${env.CHANGE_BRANCH}-PR${env.CHANGE_ID} -Dsonar.branch.target=${env.CHANGE_TARGET}"
@@ -110,21 +110,77 @@ parallel(
                             ecoSystem.provision("/dogu")
                         }
 
+                        stage('Start OIDC-Provider') {
+                            String port = sh(script: 'echo $(python -c \'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()\');', returnStdout: true)
+                            sh "echo \"Starting Keycloak as OIDC provider on IP ${VSPHERE_IP}:${port}\""
+                            sh "sed 's/192.168.56.2/" + VSPHERE_IP + "/g' -i ${WORKSPACE}/integrationTests/keycloak-realm/realm-cloudogu.json"
+                            sh "docker run -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p ${port}:8080 -e KEYCLOAK_IMPORT=\"/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled\" -v  ${WORKSPACE}/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2"
+
+                            testConfig = [
+                                    registryConfig           : """
+                                    "cas": {
+                                        "forgot_password_text": "Contact your admin",
+                                        "legal_urls": {
+                                            "privacy_policy": "https://www.triology.de/",
+                                            "terms_of_service": "https://docs.cloudogu.com/",
+                                            "imprint": "https://cloudogu.com/"
+                                       },
+                                       "service_accounts": {
+                                            "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                       },
+                                       "oidc": {
+                                            "enabled": "true",
+                                            "discovery_uri": "https://${VSPHERE_IP}:${port}/auth/realms/Cloudogu/.well-known/openid-configuration",
+                                            "client_id": "casClient",
+                                            "display_name": "MyProvider",
+                                            "optional": "true",
+                                            "scopes": "openid email profile groups",
+                                            "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+                                       }
+                                    }""",
+                                    "registryConfigEncrypted": '''{
+                                    "cas" : {
+                                       "oidc": {
+                                            "client_id": "c21a7690-1ca3-4cf9-bef3-22f37faf514",
+                                       }
+                                    }
+                                }'''
+                            ]
+                            sh "echo ${testConfig}"
+                        }
+
                         stage('Setup') {
                             ecoSystem.loginBackend('cesmarvin-setup')
-                            ecoSystem.setup([registryConfig:'''
-                                "cas": {
-                                    "forgot_password_text": "Contact your admin",
-                                    "legal_urls": {
-                                        "privacy_policy": "https://www.triology.de/",
-                                        "terms_of_service": "https://docs.cloudogu.com/",
-                                        "imprint": "https://cloudogu.com/"
-                                   },
-                                   "service_accounts": {
-                                        "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
-                                   }
-                                }
-                            '''])
+                            ecoSystem.setup([
+                                registryConfig           : """
+                                    "cas": {
+                                        "forgot_password_text": "Contact your admin",
+                                        "legal_urls": {
+                                            "privacy_policy": "https://www.triology.de/",
+                                            "terms_of_service": "https://docs.cloudogu.com/",
+                                            "imprint": "https://cloudogu.com/"
+                                       },
+                                       "service_accounts": {
+                                            "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                       },
+                                       "oidc": {
+                                            "enabled": "true",
+                                            "discovery_uri": "https://${VSPHERE_IP}:${port}/auth/realms/Cloudogu/.well-known/openid-configuration",
+                                            "client_id": "casClient",
+                                            "display_name": "MyProvider",
+                                            "optional": "true",
+                                            "scopes": "openid email profile groups",
+                                            "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+                                       }
+                                    }""",
+                                "registryConfigEncrypted": '''{
+                                    "cas" : {
+                                       "oidc": {
+                                            "client_id": "c21a7690-1ca3-4cf9-bef3-22f37faf514",
+                                       }
+                                    }
+                                }'''
+                            ])
                         }
 
                         stage('Build') {
@@ -199,6 +255,7 @@ parallel(
                         }
                     } finally {
                         stage('Clean') {
+                            sh "echo \"Remove keycloak container...\" && docker rm -f kc"
                             ecoSystem.destroy()
                         }
                     }
