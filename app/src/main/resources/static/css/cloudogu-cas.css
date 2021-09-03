@@ -103,11 +103,17 @@ header>nav .cas-brand .cas-logo {
     display: none;
 }
 
+.login-options {
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+}
+
 .login-section {
-    /*border-right: 1px solid rgba(0, 0, 0, .2);*/
-    /*border-right: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));*/
     padding: 2rem 2.5rem;
     flex: 1;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
 }
 
 .login-section:last-child {
@@ -121,11 +127,14 @@ header>nav .cas-brand .cas-logo {
 @media screen and (max-width: 767.99px) {
     .login-section {
         border-right: none;
-        border-bottom: 1px solid rgba(0, 0, 0, .2);
-        border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
         max-width: none;
         padding: 0 1.5rem;
     }
+    .login-section.login-form {
+        padding-bottom: 2.5rem;
+        padding-top: 2.5rem;
+    }
+
 }
 
 .close {
@@ -716,12 +725,16 @@ body {
     font-size: 14px;
 }
 
+.oidc-button-label {
+    color: #1b7daa;
+}
+
 @media all and (min-width: 768px) {
     #logo {
         max-width: 33.33%
     }
-    .login-form {
-        width: 66.66%;
+    .login-options {
+        width: 66%;
     }
 }
 
