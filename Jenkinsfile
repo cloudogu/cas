@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@v1.3.0'])
+@Library(['github.com/cloudogu/ces-build-lib@1.47.0', 'github.com/cloudogu/dogu-build-lib@d86eb7d6'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -107,13 +107,12 @@ parallel(
 
                     try {
                         stage('Provision') {
-                            // template realm file
-                            sh "sed 's/192.168.56.2/${ecoSystem.externalIP}/g' -i ${WORKSPACE}/integrationTests/keycloak-realm/realm-cloudogu.json"
-
                             ecoSystem.provision("/dogu")
                         }
 
                         stage('Start OIDC-Provider') {
+                            // template realm file
+                            ecoSystem.vagrant.sshOut "sed 's/192.168.56.2/${ecoSystem.externalIP}/g' -i /dogu/integrationTests/keycloak-realm/realm-cloudogu.json"
                             sh "echo \"Starting Keycloak as OIDC provider on ${ecoSystem.externalIP}:9000\""
                             // Start keycloak
                             ecoSystem.vagrant.sshOut 'sudo docker run -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT=\'/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled\' -v  /dogu/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2'
@@ -121,36 +120,34 @@ parallel(
 
                         stage('Setup') {
                             ecoSystem.loginBackend('cesmarvin-setup')
-                            ecoSystem.setup([
-                                    registryConfig           : """
-                                    "cas": {
-                                        "forgot_password_text": "Contact your admin",
-                                        "legal_urls": {
-                                            "privacy_policy": "https://www.triology.de/",
-                                            "terms_of_service": "https://docs.cloudogu.com/",
-                                            "imprint": "https://cloudogu.com/"
-                                       },
-                                       "service_accounts": {
-                                            "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
-                                       },
-                                       "oidc": {
-                                            "enabled": "true",
-                                            "discovery_uri": "https://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
-                                            "client_id": "casClient",
-                                            "display_name": "MyProvider",
-                                            "optional": "true",
-                                            "scopes": "openid email profile groups",
-                                            "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
-                                       }
-                                    }""",
-                                    "registryConfigEncrypted": '''{
-                                    "cas" : {
-                                       "oidc": {
-                                            "client_id": "c21a7690-1ca3-4cf9-bef3-22f37faf514",
-                                       }
+                            ecoSystem.setup([registryConfig:"""
+                                "cas": {
+                                    "forgot_password_text": "Contact your admin",
+                                    "legal_urls": {
+                                        "privacy_policy": "https://www.triology.de/",
+                                        "terms_of_service": "https://docs.cloudogu.com/",
+                                        "imprint": "https://cloudogu.com/"
+                                    },
+                                    "service_accounts": {
+                                        "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                    },
+                                    "oidc": {
+                                        "enabled": "true",
+                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
+                                        "client_id": "casClient",
+                                        "display_name": "MyProvider",
+                                        "optional": "true",
+                                        "scopes": "openid email profile groups",
+                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
                                     }
-                                }'''
-                            ])
+                                }
+                            """, registryConfigEncrypted:'''
+                                 "cas" : {
+                                    "oidc": {
+                                        "client_secret": "c21a7690-1ca3-4cf9-bef3-22f37faf5144"
+                                    }
+                                 }
+                            '''])
                         }
 
                         stage('Build') {
