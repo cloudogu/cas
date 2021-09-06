@@ -15,7 +15,7 @@ Dafür kann die Aufforderung eines CAS-Service Account in der `dogu.json` des be
 ]
 ```
 
-Die Credentials des Service Accounts werden zufällig generiert (siehe [create-sa.sh](../resources/create-sa.sh)) 
+Die Credentials des Service Accounts werden zufällig generiert (siehe [create-sa.sh](https://github.com/cloudogu/cas/blob/develop/resources/create-sa.sh)) 
 und verschlüsselt im etcd unter dem Pfad `/config/<dogu>/sa-cas/oauth_client_id` und `/config/<dogu>/sa-cas/oauth_client_secret` hinterlegt.
 Die credentials setzten sich aus der `CLIENT_ID` und dem `CLIENT_SECRET` zusammen. 
 Für den CAS wird das `CLIENT_SECRET` als Hash im __etcd__ unter dem Pfad `/config/cas/service_accounts/<CLIENT_ID>` abgelegt.
@@ -24,9 +24,9 @@ Für den CAS wird das `CLIENT_SECRET` als Hash im __etcd__ unter dem Pfad `/conf
 
 Die folgenden Schritte beschreiben einen erfolgreichen Ablauf der OAuth-Authentifizierung. 
 
-1. Anfordern eines Kurzzeit-Tokens: [Authorize-Endpunkt](oauth/endpoint_authorize.md)
-2. Kurzzeittoken gegen ein Langzeittoken tauschen: [AccessToken-Endpunkt](oauth/endpoint_accessToken.md)    
+1. Anfordern eines Kurzzeit-Tokens: [Authorize-Endpunkt](endpoint_authorize_de.md)
+2. Kurzzeittoken gegen ein Langzeittoken tauschen: [AccessToken-Endpunkt](endpoint_accessToken_de.md)    
 3. Langzeittoken kann nun zu Authentifizierung gegen Ressourcen benutzen werden. 
-   Derzeit bietet CAS nur das Profil der User als Resource an: [Profil-Endpunkt](oauth/endpoint_profile.md)
+   Derzeit bietet CAS nur das Profil der User als Resource an: [Profil-Endpunkt](endpoint_profile_de.md)
 
 ![CesServiceFactory](figures/sequenzediagramm_oauth.png)

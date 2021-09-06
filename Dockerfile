@@ -17,7 +17,7 @@ COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.5-4
+FROM registry.cloudogu.com/official/java:11.0.11-1
 
 LABEL NAME="official/cas" \
       VERSION="6.3.3-1" \

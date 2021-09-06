@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "4.0.7.20-16",
+  "Version": "6.3.3-1",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -17,6 +17,14 @@
   ],
   "OptionalDependencies": [
     "ldap"
+  ],
+  "ServiceAccounts": [
+    {
+      "Type": "ldap",
+      "Params": [
+        "ro"
+      ]
+    }
   ],
   "Configuration": [
     {
@@ -113,6 +121,7 @@
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
+          "",
           "none",
           "startTLS",
           "startTLSAny",
@@ -238,6 +247,10 @@
     {
       "Name": "pre-upgrade",
       "Command": "/pre-upgrade.sh"
+    },
+    {
+      "Name": "upgrade-notification",
+      "Command": "/upgrade-notification.sh"
     }
   ],
   "HealthChecks": [

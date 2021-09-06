@@ -44,7 +44,7 @@ parallel(
                             withSonarQubeEnv {
                                 sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
                                 gitWithCredentials("fetch --all")
-                                String parameters = ' -Dsonar.projectKey=cas6'
+                                String parameters = ' -Dsonar.projectKey=cas'
                                 if (branch == productionReleaseBranch) {
                                     echo "This branch has been detected as the " + productionReleaseBranch + " branch."
                                     parameters += " -Dsonar.branch.name=${env.BRANCH_NAME}"
@@ -112,7 +112,7 @@ parallel(
 
                         stage('Setup') {
                             ecoSystem.loginBackend('cesmarvin-setup')
-                            ecoSystem.setup([additionalDependencies:["official/ldap-mapper"], registryConfig:'''
+                            ecoSystem.setup([registryConfig:'''
                                 "cas": {
                                     "forgot_password_text": "Contact your admin",
                                     "legal_urls": {
@@ -123,13 +123,6 @@ parallel(
                                    "service_accounts": {
                                         "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
                                    }
-                                },
-                                "ldap-mapper": {
-                                    "backend": {
-                                        "type": "embedded",
-                                        "host": "ldap",
-                                        "port": "389"
-                                    }
                                 }
                             '''])
                         }
@@ -164,7 +157,7 @@ parallel(
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
                             stage('Upgrade dogu') {
                                 // Remove new dogu that has been built and tested above
-                                ecoSystem.purgeDogu(doguName)
+                                ecoSystem.purgeDogu("--keep-config --keep-service-accounts --keep-volumes " + doguName)
 
                                 if (params.OldDoguVersionForUpgradeTest != '' && !params.OldDoguVersionForUpgradeTest.contains('v')) {
                                     println "Installing user defined version of dogu: " + params.OldDoguVersionForUpgradeTest

@@ -38,14 +38,17 @@ function configureCAS() {
   if [[ "$LDAP_ENCRYPTION" == 'startTLS' || "$LDAP_ENCRYPTION" == 'startTLSAny' ]]; then
      LDAP_STARTTLS='true'
      LDAP_PROTOCOL='ldap'
-     LDAP_TRUST_MANAGER='ANY'
   elif [[ "$LDAP_ENCRYPTION" == 'ssl' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
      LDAP_STARTTLS='false'
      LDAP_PROTOCOL='ldaps'
-     LDAP_TRUST_MANAGER='DEFAULT'
-  else # none
+  else # none or ""
      LDAP_STARTTLS='false'
      LDAP_PROTOCOL='ldap'
+  fi
+
+  if [[ "$LDAP_ENCRYPTION" == 'startTLSAny' || "$LDAP_ENCRYPTION" == 'sslAny' ]]; then
+     LDAP_TRUST_MANAGER='ANY'
+  else
      LDAP_TRUST_MANAGER='DEFAULT'
   fi
 

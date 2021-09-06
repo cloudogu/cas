@@ -1,4 +1,4 @@
-# Changelog
+# CAS Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v6.3.3-1] - 2021-08-31
 
 ### Added
 - Add new LDAP specific dogu configuration keys (#99)
@@ -26,6 +28,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Remove dogu configuration key `logging/translation_messages`
+
+## [v4.0.7.20-20] - 2021-06-02
+### Changed
+- Add autofocus attribute to username (#83)
+
+## [v4.0.7.20-19] - 2021-05-06
+
+### Changed
+- Improve accessibility of login mask by changing design (#80)
+
+## [v4.0.7.20-18] - 2021-04-20
+
+### Changed
+- Changes the positioning of alert-fields and the login button
+
+## [v4.0.7.20-17] - 2021-04-19
+
+### Changed
+- Changes to button and alert-dialogues on the login- and logout-page to increase accessibility
 
 ## [v4.0.7.20-16] - 2021-02-18
 ### Added
