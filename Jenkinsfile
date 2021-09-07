@@ -163,7 +163,6 @@ parallel(
                                 ecoSystem.waitForDogu("nginx")
                                 ecoSystem.waitForDogu("cas")
                             }
-                            sh "sleep 10000"
                         }
 
                         stage('Integration Tests') {
