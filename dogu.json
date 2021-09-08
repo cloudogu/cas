@@ -240,13 +240,13 @@
     },
     {
       "Name": "oidc/client_secret",
-      "Description": "Contains the secret that should be used along the client id to identify the client against the OIDC provider.",
+      "Description": "Contains the secret that should be used along the client ID to identify the client against the OIDC provider.",
       "Optional": true,
       "Encrypted": true
     },
     {
       "Name": "oidc/display_name",
-      "Description": "The display name is used for the OIDC provider in the user interface",
+      "Description": "The display name is used for the OIDC provider in the user interface.",
       "Default": "OIDC Provider",
       "Optional": true
     },

@@ -7,6 +7,7 @@ const env = require('@cloudogu/dogu-integration-test-library/lib/environment_var
 
 Given(/^the browser shows the CAS login page$/, function () {
     cy.visit("/cas/login")
+    cy.clickWarpMenuCheckboxIfPossible()
 });
 
 Given(/^the user is currently not logged in the CES$/, function () {
