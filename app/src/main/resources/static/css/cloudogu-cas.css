@@ -110,7 +110,7 @@ header>nav .cas-brand .cas-logo {
 }
 
 .login-section {
-    padding: 2rem 2.5rem;
+    margin: 2rem 2.5rem 0 2rem;
     flex: 1;
     border-bottom: 1px solid rgba(0, 0, 0, .2);
     border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
@@ -118,6 +118,10 @@ header>nav .cas-brand .cas-logo {
 
 .login-section:last-child {
     border: none;
+}
+
+.login-section.login-form {
+    padding-bottom: 2rem;
 }
 
 .logout-section {
@@ -128,10 +132,9 @@ header>nav .cas-brand .cas-logo {
     .login-section {
         border-right: none;
         max-width: none;
-        padding: 0 1.5rem;
+        margin: 0 1.5rem;
     }
     .login-section.login-form {
-        padding-bottom: 2.5rem;
         padding-top: 2.5rem;
     }
 
@@ -234,6 +237,9 @@ button.close {
 
 @media screen and (max-width: 767.99px) {
     .logout-banner {
+        width: 100%;
+    }
+    .login-provider-item a {
         width: 100%;
     }
 }
@@ -354,7 +360,7 @@ button.close {
     order: 1;
 }
 
-.mdc-input-group .mdc-input-group-field .mdc-text-field {
+.mdc-input-group .mdc-input-group-field .mdc-text-field, .mdc-input-group .mdc-input-group-field-append .mdc-notched-outline__trailing {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
@@ -666,7 +672,7 @@ body {
 .cloudogu-logo {
     display: flex;
     align-items: center;
-    padding: 1.5rem;
+    margin: 1.5rem;
 }
 .cloudogu-logo img {
     max-width: 180px;
@@ -678,10 +684,6 @@ body {
 
 .full-width {
     width: 100%;
-}
-
-.login-form {
-    width: 100%
 }
 
 .mdc-button {
@@ -729,12 +731,23 @@ body {
     color: #1b7daa;
 }
 
+.mdc-button-oidc {
+    font-size: 1.6rem;
+}
+
+.mdc-button-oidc:hover, .mdc-button-oidc:focus, .mdc-button-oidc:active {
+    text-decoration:none;
+}
+
+.login-section .redirect-info {
+    color: #0e4259;
+    background-color: #fff;
+    font-size: 1.6rem;
+}
+
 @media all and (min-width: 768px) {
     #logo {
         max-width: 33.33%
-    }
-    .login-options {
-        width: 66%;
     }
 }
 
@@ -746,7 +759,7 @@ body {
         max-width: 200px;
     }
     .cloudogu-logo {
-        padding: 2.5rem 0 2.5rem 2rem;
+        margin: 2.5rem 0 2.5rem 2rem;
     }
 }
 
