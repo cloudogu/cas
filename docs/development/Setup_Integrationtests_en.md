@@ -98,7 +98,7 @@ The URLs expected by the tests are defined in `cypress.json` under the attribute
 docker run --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile. feature. upload_scripts=enabled" -v /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2
 ```
 
-**Step 2:** Configuration for the CAS:
+**Step 2:** Configuration for the CAS in the CES:
 
 ```bash
 etcdctl set /config/cas/oidc/enabled "true"

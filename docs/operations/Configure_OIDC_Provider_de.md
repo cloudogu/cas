@@ -18,7 +18,7 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 
 #### oidc/discovery_uri
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/discovery_uri`
-* Inhalt: Beschreibt den URI, der die Beschreibung für das OIDC-Protokoll des Zielanbieters enthält. Muss auf die openid-connect Konfiguration zeigen. Diese ist meißt wie folgt aufgebaut: `https://[base-server-url]/.well-known/openid-configuration`
+* Inhalt: Beschreibt den URI, der die Beschreibung für das OIDC-Protokoll des Zielanbieters enthält. Muss auf die openid-connect Konfiguration zeigen. Diese ist meist wie folgt aufgebaut: `https://[base-server-url]/.well-known/openid-configuration`
 * Datentyp: String
 * Valide Werte: `https://[base-server-url]/.well-known/openid-configuration`
 
@@ -26,7 +26,6 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/client_id`
 * Inhalt: Enthält die Kennung, die zur Identifizierung des CAS gegenüber dem OIDC-Anbieter verwendet werden soll.
 * Datentyp: String
-* Valide Werte: `https://[base-server-url]/.well-known/openid-configuration`
 
 #### oidc/client_secret
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/client_secret`

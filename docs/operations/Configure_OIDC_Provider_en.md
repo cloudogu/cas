@@ -26,7 +26,6 @@ Such registration basically consists of a client ID and a client secret.
 * Configuration key path: `<cas_path>/oidc/client_id`
 * Content: Contains the identifier to be used to identify the CAS to the OIDC provider.
 * Data type: String
-* Valid values: `https://[base-server-url]/.well-known/openid-configuration`
 
 #### oidc/client_secret
 * Configuration key path: `<cas_path>/oidc/client_secret`

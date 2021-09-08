@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add new LDAP specific dogu configuration keys (#99)
 - Re-add LDAP group resolving with internal resolvers (#99)
-- Add new configuration keys to delegate the cas authentication to a configured oidc provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
+- Add new configuration keys to delegate the cas authentication to a configured OIDC provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
 
 ### Changed
 - Adapt the UI to the Cloudogu styling. (#91)

@@ -1,10 +1,10 @@
 # Setup für die Integrationstests
 
-In diesem Abschnitt werden die benötigten Schritte beschrieben um die Integrationstests korrekt ausführen zu können.
+In diesem Abschnitt werden die benötigten Schritte beschrieben, um die Integrationstests korrekt ausführen zu können.
 
 ## Voraussetzungen
 
-* Es ist notwendig das Program `yarn` zu installieren
+* Es ist notwendig, das Programm `yarn` zu installieren
 
 ## Konfiguration 
 
@@ -33,7 +33,7 @@ Eine Beispiel-`cypress.json` sieht folgendermaßen aus:
 {
   "baseUrl": "https://192.168.56.2",
   "env": {
-    "DoguName": "redmine",
+    "DoguName": "cas/login",
     "MaxLoginRetries": 3,
     "AdminUsername":  "ces-admin",
     "AdminPassword":  "ecosystem2016",
@@ -96,13 +96,13 @@ Die von den Tests erwarteten URLs sind in der `cypress.json` unter den Attribute
 
 ### Vorbereitung: OIDC Provider
 
-**Schritt 1:** Keycloak auf Hostmaschine starten und Realm importieren (**Achtung:Der Pfad zur JSON muss angepasst werden!**)
+**Schritt 1:** Keycloak auf der Host-Maschine starten und Realm importieren (**Achtung: Der Pfad zur JSON muss angepasst werden!**)
 
 ```bash
 docker run --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled" -v  /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2
 ```
 
-**Schritt 2:** Konfiguration für den CAS:
+**Schritt 2:** Konfiguration für den CAS im CES:
 
 ```bash
 etcdctl set /config/cas/oidc/enabled "true"
