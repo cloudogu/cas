@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Adapt the UI to the Cloudogu styling. (#91)
 - Update the underlying Tomcat library to v9.0 (#36)
+- Update UI to show OIDC-Link (#108)
 
 ### Removed
 - Remove dependency to the ldap-mapper dogu in favour of direct LDAP connections (#99)
