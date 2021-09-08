@@ -33,6 +33,7 @@ import java.util.concurrent.TimeoutException;
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
 @Component
+public
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu/";
