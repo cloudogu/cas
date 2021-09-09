@@ -4,7 +4,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -23,25 +22,25 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
 
 /**
- * This is {@link org.apereo.cas.web.flow.DelegatedAuthenticationClientLogoutAction}.
+ * This is {@link CustomDelegatedAuthenticationClientLogoutAction}.
  * <p>
  * The action takes into account the currently used PAC4J client which is stored
- * in the user profile. If the client is found, its logout action is executed.
+ * in the user profile. If the client is found, its logout action is executed and
+ * the user will be redirected to the specified redirect uri.
  * <p>
  * Assumption: The PAC4J user profile should be in the user session during
  * logout, accessible with PAC4J Profile Manager. The Logout web flow should
  * make sure the user profile is present.
  *
- * @author Misagh Moayyed
- * @since 5.1.0
+ * @author Misagh Moayyed und Christian Beyer
+ * @since 6.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final Clients clients;
     private final SessionStore<JEEContext> sessionStore;
-    private final String targetUrl;
+    private final String redirectUri;
 
     /**
      * Finds the current profile from the context.
@@ -68,8 +67,8 @@ public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAct
                     : clients.findClient(currentProfile.getClientName());
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
-                logger.debug("Located client [{}] with redirect-uri [{}]", client, targetUrl);
-                val actionResult = client.getLogoutAction(context, currentProfile, targetUrl);
+                logger.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
+                val actionResult = client.getLogoutAction(context, currentProfile, redirectUri);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
                     new JEEHttpActionAdapter().adapt(action, context);
@@ -82,5 +81,4 @@ public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAct
         }
         return null;
     }
-
 }

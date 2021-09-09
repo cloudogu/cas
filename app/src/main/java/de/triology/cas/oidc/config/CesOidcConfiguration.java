@@ -1,7 +1,6 @@
 package de.triology.cas.oidc.config;
 
 import de.triology.cas.oidc.CustomDelegatedAuthenticationClientLogoutAction;
-import de.triology.cas.services.RegistryEtcd;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
@@ -17,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
 @Configuration("CesOidcConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.oidc")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesOidcConfiguration {
     private final ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
     private final ObjectProvider<Clients> builtClients;
@@ -35,16 +34,15 @@ public class CesOidcConfiguration {
     @Value("${cas.authn.pac4j.oidc[0].generic.redirect-uri:#{\"\"}}")
     private String redirectUri;
 
-    public String getRedirectUri(){
+    private String getRedirectUri(){
         return redirectUri.isEmpty() ? casServerPrefix + "/logout" : redirectUri;
     }
 
-    @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
     public Action delegatedAuthenticationClientLogoutAction() {
         return new CustomDelegatedAuthenticationClientLogoutAction(builtClients.getObject(),
                 delegatedClientDistributedSessionStore.getObject(), getRedirectUri());
     }
-
 }
