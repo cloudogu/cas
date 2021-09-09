@@ -1,12 +1,11 @@
 package de.triology.cas.services;
 
-import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
+import org.apereo.cas.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,15 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 abstract class CesServicesManagerStage {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final List<String> allowedAttributes;
+    private final CesServiceManagerConfiguration managerConfig;
 
     /**
      * Map to store all registeredServices.
      */
     protected final Map<Long, RegisteredService> registeredServices = new ConcurrentHashMap<>();
 
-    CesServicesManagerStage(List<String> allowedAttributes) {
-        this.allowedAttributes = allowedAttributes;
+    CesServicesManagerStage(CesServiceManagerConfiguration managerConfig) {
+        this.managerConfig = managerConfig;
     }
 
 
@@ -59,9 +58,17 @@ abstract class CesServicesManagerStage {
     protected void addNewService(RegexRegisteredService service) {
         service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
-        ReturnAllowedAttributeReleasePolicy attributePolicy = new ReturnAllowedAttributeReleasePolicy();
-        attributePolicy.setAllowedAttributes(allowedAttributes);
-        service.setAttributeReleasePolicy(attributePolicy);
+        service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
+
+        if (managerConfig.isOidcEnabled()) {
+            List<String> allowedProviders = new ArrayList<>();
+            allowedProviders.add(managerConfig.getOidcClientDisplayName());
+            DefaultRegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+            delegatedAuthenticationPolicy.setAllowedProviders(allowedProviders);
+            DefaultRegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+            accessStrategy.setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
+            service.setAccessStrategy(accessStrategy);
+        }
         registeredServices.put(service.getId(), service);
     }
 

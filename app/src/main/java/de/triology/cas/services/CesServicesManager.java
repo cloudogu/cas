@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -32,8 +33,8 @@ public class CesServicesManager implements ServicesManager {
 
     private CesServicesManagerStage serviceStage;
 
-    public CesServicesManager(List<String> allowedAttributes, String stage, Registry registry) {
-        serviceStage = createStage(stage, allowedAttributes, registry);
+    public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        serviceStage = createStage(managerConfig, registry);
     }
 
     @Override
@@ -110,11 +111,11 @@ public class CesServicesManager implements ServicesManager {
     /**
      * @return a new instance of the {@link CesServicesManagerStage}, depending on the <code>stageString</code> parameter.
      */
-    protected CesServicesManagerStage createStage(String stageString, List<String> allowedAttributes, Registry registry) {
-        if (!STAGE_DEVELOPMENT.equals(stageString)) {
-            return new CesServicesManagerStageProductive(allowedAttributes, registry);
+    protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        if (!STAGE_DEVELOPMENT.equals(managerConfig.getStage())) {
+            return new CesServicesManagerStageProductive(managerConfig, registry);
         } else {
-            return new CesServicesManagerStageDevelopment(allowedAttributes);
+            return new CesServicesManagerStageDevelopment(managerConfig);
         }
     }
 }

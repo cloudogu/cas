@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private boolean initialized = false;
 
-    CesServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
-        super(allowedAttributes);
+    CesServicesManagerStageProductive(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        super(managerConfig);
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();

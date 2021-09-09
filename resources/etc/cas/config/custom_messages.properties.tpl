@@ -15,6 +15,7 @@ forgot.password.text={{ .Config.Get "forgot_password_text"}}
 screen.logout.success=You have successfully logged out of the Central Authentication Service. You may <a href="login">log&nbsp;in</a> again.
 
 # CES specific texts
+login.oid.label.hint=<i class="glyphicon glyphicon-share"></i> Login with
 terms.of.service=Terms of Service
 imprint=Imprint
 privacy.policy=Privacy Policy

@@ -14,5 +14,6 @@
     "ImprintURL": "https://cloudogu.com/"
   },
   "videoCompression": false,
-  "nonGlobalStepBaseDir": false
+  "nonGlobalStepBaseDir": false,
+  "chromeWebSecurity": false
 }
