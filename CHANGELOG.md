@@ -7,17 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v6.3.3-1] - 2021-08-31
+## [v6.3.3-2] - 2021-09-09
+### Added
+- Add new configuration keys to delegate the cas authentication to a configured OIDC provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
 
+### Changed
+- Update UI to show OIDC-Link (#108)
+
+## [v6.3.3-1] - 2021-08-31
 ### Added
 - Add new LDAP specific dogu configuration keys (#99)
 - Re-add LDAP group resolving with internal resolvers (#99)
-- Add new configuration keys to delegate the cas authentication to a configured OIDC provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
 
 ### Changed
 - Adapt the UI to the Cloudogu styling. (#91)
 - Update the underlying Tomcat library to v9.0 (#36)
-- Update UI to show OIDC-Link (#108)
 
 ### Removed
 - Remove dependency to the ldap-mapper dogu in favour of direct LDAP connections (#99)
