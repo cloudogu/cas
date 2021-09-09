@@ -38,6 +38,12 @@ Such registration basically consists of a client ID and a client secret.
 * Content: The display name is used for the OIDC provider on the user interface.
 * Data type: String
 
+#### oidc/redirect_uri
+* Configuration Key Path: `<cas_path>/oidc/redirect_uri`
+* Content: Specifies where the user will be redirected to after a successful logout.
+* Data type: String
+* Default value: `<FQDN>/cas/logout`
+
 #### oidc/optional
 * Configuration key path: `<cas_path>/oidc/optional`
 * Content: specifies whether authentication via the configured OIDC provider is optional. The user will be automatically redirected to the OIDC provider login page if this property is set to 'false'. The 'true' entry makes authentication via the OIDC provider optional. This is done by displaying an additional button for the OIDC provider on the login page of the CAS, which can be used to authenticate with the OIDC provider. By default, this entry is set to 'false'.
