@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Configuration("CesServicesConfiguration")
+@Configuration("CesServicesSpringConfiguration")
 @ComponentScan("de.triology.cas.services")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesServicesSpringConfiguration implements ServicesManagerExecutionPlanConfigurer {

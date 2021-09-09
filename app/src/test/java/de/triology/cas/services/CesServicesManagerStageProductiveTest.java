@@ -105,7 +105,7 @@ public class CesServicesManagerStageProductiveTest {
         for (RegisteredService expectedService : allServicesOfOIDCStage) {
             assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
             assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
-            ArrayList<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
+            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
             assertEquals(1, allowedProviders.size());
             assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.get(0));
         }
@@ -115,7 +115,7 @@ public class CesServicesManagerStageProductiveTest {
         for (RegisteredService expectedService : allServicesOfDefaultStage) {
             assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
             assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
-            ArrayList<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
+            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
             assertEquals(0, allowedProviders.size());
         }
     }
