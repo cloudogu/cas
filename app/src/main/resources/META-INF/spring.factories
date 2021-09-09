@@ -1,6 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   de.triology.cas.services.CesServicesSpringConfiguration,\
   de.triology.cas.oauth.config.CesOAuthConfiguration,\
+  de.triology.cas.oidc.config.CesOidcConfiguration,\
   de.triology.cas.limiting.CesLimitingConfiguration,\
   de.triology.cas.oauth.config.CesOAuthConfiguration,\
   de.triology.cas.limiting.CesLimitingConfiguration,\

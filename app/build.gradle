@@ -86,6 +86,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-services:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-util:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-ldap-core:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oauth-api:${casServerVersion}"

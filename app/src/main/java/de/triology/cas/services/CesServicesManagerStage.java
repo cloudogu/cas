@@ -61,7 +61,7 @@ abstract class CesServicesManagerStage {
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
 
         if (managerConfig.isOidcEnabled()) {
-            ArrayList<String> allowedProviders = new ArrayList<>();
+            List<String> allowedProviders = new ArrayList<>();
             allowedProviders.add(managerConfig.getOidcClientDisplayName());
             DefaultRegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
             delegatedAuthenticationPolicy.setAllowedProviders(allowedProviders);

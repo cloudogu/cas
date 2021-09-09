@@ -38,6 +38,12 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 * Inhalt: Der Anzeigename wird für den OIDC-Anbieter auf der Benutzeroberfläche verwendet.
 * Datentyp: String
 
+#### oidc/redirect_uri
+* Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/redirect_uri`
+* Inhalt: Legt fest, an welche Adresse nach dem Logout umgeleitet werden soll.
+* Datentyp: String
+* Standardwert: `<FQDN>/cas/logout`
+
 #### oidc/optional
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/optional`
 * Inhalt: Legt fest, ob die Authentifizierung über den konfigurierten OIDC-Anbieter optional ist. Der Benutzer wird automatisch auf die Anmeldeseite des OIDC-Anbieters umgeleitet, wenn diese Eigenschaft auf 'false' gesetzt ist. Der Eintrag 'true' macht die Authentifizierung über den OIDC-Provider optional. Dazu wird auf der Login-Seite des CAS eine zusätzliche Schaltfläche für den OIDC-Provider angezeigt, über die eine Authentifizierung beim OIDC-Provider erfolgen kann. Standardmäßig ist dieser Eintrag auf 'false' gesetzt.

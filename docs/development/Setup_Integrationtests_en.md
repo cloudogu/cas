@@ -85,7 +85,7 @@ Corresponding entries in etcd can be configured in the following way:
 ```bash
 etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
 etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
-etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
+etcdctl set /config/cas/legal_urls/terms_of_service 'https://docs.cloudogu.com/'
 ```
 
 The URLs expected by the tests are defined in `cypress.json` under the attributes `PrivacyPolicyURL`, `TermsOfServiceURL` and `ImprintURL`.

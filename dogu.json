@@ -251,6 +251,12 @@
       "Optional": true
     },
     {
+      "Name": "oidc/redirect_uri",
+      "Description": "The url which will be used as redirect target after a successful delegated logout. The url has to match the patterns which are allowed for the configured client. [defaults to <instance>/cas/logout]",
+      "Default": "",
+      "Optional": true
+    },
+    {
       "Name": "oidc/optional",
       "Description": "Determines whether the authentication via the configured OIDC provider is optional. The user is automatically redirected to the login page of the OIDC provider if this property is set to 'false'. The 'true' entry makes authentication via the OIDC provider optional. For this, an additional button for the OIDC provider is displayed on the login page of the CAS, which can be used for authentication with the OIDC provider. This entry is set to 'false' by default.",
       "Default": "false",
