@@ -183,7 +183,7 @@ cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
 cas.authn.pac4j.oidc[0].generic.auto-redirect={{if eq (.Config.Get "oidc/optional") "true"}}false{{else}}true{{end}}
 
 ### redirect back to the ces after successful logout
-cas.authn.pac4j.oidc[0].generic.target-url={{ .Config.Get "oidc/redirect_uri" }}
+cas.authn.pac4j.oidc[0].generic.target-url={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}
 
 ### information that are supposed to be contained in the responses of the OIDC provider
 cas.authn.pac4j.oidc[0].generic.scope={{ .Config.Get "oidc/scopes"}}

@@ -20,25 +20,23 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.oidc")
 public class CesOidcConfiguration {
-    private final RegistryEtcd registry;
-
     private final ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
     private final ObjectProvider<Clients> builtClients;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public CesOidcConfiguration(@Qualifier("builtClients") ObjectProvider<Clients> builtClients,
-                                @Qualifier("delegatedClientDistributedSessionStore") ObjectProvider<SessionStore> delegatedClientDistributedSessionStore,
-                                RegistryEtcd registry) {
+                                @Qualifier("delegatedClientDistributedSessionStore") ObjectProvider<SessionStore> delegatedClientDistributedSessionStore) {
         this.builtClients = builtClients;
         this.delegatedClientDistributedSessionStore = delegatedClientDistributedSessionStore;
-        this.registry = registry;
     }
 
+    @Value("${cas.server.prefix:#{\"\"}}")
+    private String casServerPrefix;
     @Value("${cas.authn.pac4j.oidc[0].generic.redirect-uri:#{\"\"}}")
     private String redirectUri;
 
     public String getRedirectUri(){
-        return redirectUri.isEmpty() ? "https://" + registry.getFqdn() + "/cas/logout": redirectUri;
+        return redirectUri.isEmpty() ? casServerPrefix + "/logout" : redirectUri;
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationClientLogoutAction")
