@@ -186,7 +186,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         persistentServices.add(new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
 
         logger.info("Add oidc service");
-        addNewService(oAuthServiceFactory.createOIDCService(createId(), fqdn));
+        addNewService(oAuthServiceFactory.createOIDCService(createId(), fqdn, fqdn));
         persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory));
     }
 }

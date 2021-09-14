@@ -77,14 +77,14 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         }
     }
 
-    public OidcRegisteredService createOIDCService(long id, String logoutURI) {
+    public OidcRegisteredService createOIDCService(long id, String fqdn, String logoutURI) {
         OidcRegisteredService service = new OidcRegisteredService();
         service.setId(id);
         service.setName(CesOAuthServiceFactory.class.getSimpleName() + " " + SERVICE_OIDC_IDENTIFIER);
         service.setServiceId(".*");
-        if (logoutURI != null) {
-            service.setLogoutUrl(logoutURI);
-        }
+
+        String logoutUrl = "https://" + fqdn + "/" + SERVICE_OIDC_IDENTIFIER + "/logout";
+        service.setLogoutUrl(logoutUrl);
         service.getSupportedResponseTypes().add("application/json");
         service.getSupportedResponseTypes().add("code");
         service.getSupportedGrantTypes().add("authorization_code");
