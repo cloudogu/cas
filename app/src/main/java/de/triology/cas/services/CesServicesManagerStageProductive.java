@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 

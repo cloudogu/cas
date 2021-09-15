@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 public class CesServicesManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
+    private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX = CesDoguServiceFactory.generateServiceIdFqdnRegex("fully/qualified");
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
     private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
@@ -53,13 +54,13 @@ public class CesServicesManagerStageProductiveTest {
 
         expectedServices = new LinkedList<>(Arrays.asList(
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_1.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/nexus(/.*)?")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/nexus(/.*)?")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/nexus/something"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_2.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/smeagol(/.*)?")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/smeagol(/.*)?")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/.*")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "/cas/.*")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent")));
     }
 
@@ -79,7 +80,7 @@ public class CesServicesManagerStageProductiveTest {
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         //Do not expect the o auth service as the attributes are missing
 
         // Notify manager of change
@@ -143,9 +144,9 @@ public class CesServicesManagerStageProductiveTest {
                 .when(registry).getInstalledOAuthCASServiceAccounts(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         expectedServices.add(new ExpectedService().name(correctOAuthService.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/portainer(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/portainer(/.*)?"));
 
         // Notify manager of change
         doguChangeListener.onChange();
@@ -172,7 +173,7 @@ public class CesServicesManagerStageProductiveTest {
                 Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)));
 
         ExpectedService service3 = new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?");
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?");
         expectedServices.add(service3);
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
