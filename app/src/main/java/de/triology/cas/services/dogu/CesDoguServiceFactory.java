@@ -29,7 +29,7 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
         service.setName(serviceData.getIdentifier());
 
         if (casLogoutURI != null) {
-            String logoutUri = "https://" + fqdnRegex + "/" + serviceData.getName() + casLogoutURI;
+            String logoutUri = "https://" + fqdn + "/" + serviceData.getName() + casLogoutURI;
             service.setLogoutUrl(logoutUri);
         }
 
