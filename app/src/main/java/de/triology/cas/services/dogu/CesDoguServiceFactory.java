@@ -41,18 +41,6 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
             return "";
         }
 
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < fqdn.length(); i++) {
-            char letter = fqdn.charAt(i);
-            if (Character.isAlphabetic(letter)) {
-                builder.append("[");
-                builder.append(Character.toUpperCase(letter));
-                builder.append(Character.toLowerCase(letter));
-                builder.append("]");
-            } else {
-                builder.append(letter);
-            }
-        }
-        return builder.toString();
+        return "(?i)" + fqdn;
     }
 }

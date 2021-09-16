@@ -9,7 +9,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
      */
     public void testGenerateServiceIdFqdnRegex_AllLower() {
         String fqdn = "local.cloudogu.com";
-        String expected = "[Ll][Oo][Cc][Aa][Ll].[Cc][Ll][Oo][Uu][Dd][Oo][Gg][Uu].[Cc][Oo][Mm]";
+        String expected = "(?i)local.cloudogu.com";
 
         String fqdnRegex = CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn);
         assertEquals(expected, fqdnRegex);
@@ -21,7 +21,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
      */
     public void testGenerateServiceIdFqdnRegex_AllUpper() {
         String fqdn = "SUPER.cloudogu.com";
-        String expected = "[Ss][Uu][Pp][Ee][Rr].[Cc][Ll][Oo][Uu][Dd][Oo][Gg][Uu].[Cc][Oo][Mm]";
+        String expected = "(?i)SUPER.cloudogu.com";
 
         String fqdnRegex = CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn);
         assertEquals(expected, fqdnRegex);
@@ -33,7 +33,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
      */
     public void testGenerateServiceIdFqdnRegex_Mixed() {
         String fqdn = "SuPer.loCAl.cloUDogu.cOM";
-        String expected = "[Ss][Uu][Pp][Ee][Rr].[Ll][Oo][Cc][Aa][Ll].[Cc][Ll][Oo][Uu][Dd][Oo][Gg][Uu].[Cc][Oo][Mm]";
+        String expected = "(?i)SuPer.loCAl.cloUDogu.cOM";
 
         String fqdnRegex = CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn);
         assertEquals(expected, fqdnRegex);
@@ -45,7 +45,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
      */
     public void testGenerateServiceIdFqdnRegex_IP() {
         String fqdn = "192.168.56.2";
-        String expected = "192.168.56.2";
+        String expected = "(?i)192.168.56.2";
 
         String fqdnRegex = CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn);
         assertEquals(expected, fqdnRegex);
