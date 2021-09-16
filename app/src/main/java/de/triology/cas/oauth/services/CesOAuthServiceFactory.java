@@ -83,7 +83,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         service.setName(CesOAuthServiceFactory.class.getSimpleName() + " " + SERVICE_OIDC_IDENTIFIER);
         service.setServiceId(".*");
 
-        String logoutUrl = "https://" + fqdn + "/" + SERVICE_OIDC_IDENTIFIER + "/logout";
+        String logoutUrl = "http://localhost:8080/api/oauth/oidc/logout";
         service.setLogoutUrl(logoutUrl);
         service.getSupportedResponseTypes().add("application/json");
         service.getSupportedResponseTypes().add("code");
