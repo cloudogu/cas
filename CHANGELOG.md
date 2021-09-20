@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-3] - 2021-09-20
+### Fixed
+- CAS could not handle fqdn that contain uppercase letters (#110)
+
 ## [v6.3.3-2] - 2021-09-09
 ### Added
 - Add new configuration keys to delegate the cas authentication to a configured OIDC provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
