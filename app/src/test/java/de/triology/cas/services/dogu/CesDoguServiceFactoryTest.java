@@ -53,7 +53,6 @@ public class CesDoguServiceFactoryTest extends TestCase {
         String serviceName = "testService";
         URI logoutProperty = new URI("/api/mylogout");
         CesServiceData data = new CesServiceData(serviceName, factory);
-        String expectedServiceID = "https://(?i)192.168.56.2(:443)?/testService(/.*)?";
 
         // when
         RegexRegisteredService service = factory.createNewService(id, fqdn, logoutProperty, data);
