@@ -20,13 +20,13 @@ public class CesServicesManagerStageDevelopmentTest {
      */
     private static final String DEVELOPMENT_SERVICE_SERVICE_ID = "^(https?|imaps?)://.*";
 
-    CesServicesManagerStageDevelopment stage = new CesServicesManagerStageDevelopment(new CesServiceManagerConfiguration("development", null, null, false, null));
+    CesServicesManagerStageDevelopment stage = new CesServicesManagerStageDevelopment(new CesServiceManagerConfiguration("development", null, null, false, null, null));
 
     /**
      * Test for {@link CesServicesManagerStageDevelopment#getRegisteredServices()}
      */
     @Test
-    public void getRegisteredServices() throws Exception {
+    public void getRegisteredServices() {
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
         assertEquals("Unexpected amount of services returned in development mode", 1, allServices.size());
         assertEquals("Development service not returned by getRegisteredServices(). Id mismatch.",

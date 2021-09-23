@@ -42,8 +42,8 @@ public class CesServicesManagerTest {
     public ExpectedException thrown = ExpectedException.none();
 
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
-    CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null, null, false, null);
-    CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null, null, false, null);
+    CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null, null, false, null, null);
+    CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null, null, false, null, null);
     CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(managerConfig, mock(Registry.class));
 
     /**

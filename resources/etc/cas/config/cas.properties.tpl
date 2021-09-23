@@ -192,6 +192,9 @@ cas.authn.pac4j.oidc[0].generic.responseType=code
 ### preferred algorithm to use for the open id connect jwt tokens
 cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=RS256
 
+### the attribute that should be used as the principal id
+ces.services.oidcPrincipalsAttribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
+
 ### attribute mapping
 ces.services.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 {{ end }}
