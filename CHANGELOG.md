@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v6.3.3-4] - 2021-09-24
 ### Added
 - OIDC-property to define an attribute that should be used as the principal id for the clients (#112)
 
