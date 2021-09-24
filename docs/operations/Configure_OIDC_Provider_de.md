@@ -58,3 +58,8 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/attribute_mapping`
 * Inhalt: Die von OIDC bereitgestellten Attribute stimmen nicht genau mit den vom CAS geforderten Attributen überein. Es ist notwendig, die OIDC-Attribute in vom CAS akzeptierte Attribute umzuwandeln. Daher sollte dieser Eintrag Regeln zur Umwandlung eines vom OIDC-Anbieter bereitgestellten Attributs in ein vom CAS erforderliches Attribut enthalten. Die Regeln sollten in folgendem Format angegeben werden: email:mail,familienname:nachname'. In dem angegebenen Beispiel werden die OIDC-Attribute "email" und "family_name" in "mail" bzw. "surname" umgewandelt. Das CAS benötigt die folgenden Attribute, um ordnungsgemäß zu funktionieren: "mail,surname,givenName,username,displayName".
 * Datentyp: String nach Format: `fromAttribute:toAttribute,fromAttribute2:toAttribute2`
+
+#### oidc/principal_attribute
+* Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/principal_attribute`
+* Inhalt: Gibt ein Attribut an, das als Haupt-ID innerhalb des CES verwendet werden soll. CAS verwendet die vom OIDC-Anbieter bereitgestellte ID, wenn diese Eigenschaft leer ist.
+* Datentyp: Name eines OIDC attribute
