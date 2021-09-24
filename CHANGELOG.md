@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-4] - 2021-09-24
+### Added
+- OIDC-property to define an attribute that should be used as the principal id for the clients (#112)
+
 ## [v6.3.3-3] - 2021-09-20
 ### Fixed
 - CAS could not handle fqdn that contain uppercase letters (#110)

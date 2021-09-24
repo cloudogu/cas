@@ -58,3 +58,8 @@ Such registration basically consists of a client ID and a client secret.
 * Configuration key path: `<cas_path>/oidc/attribute_mapping`
 * Contents: the attributes provided by OIDC do not exactly match the attributes required by CAS. It is necessary to convert the OIDC attributes to attributes accepted by the CAS. Therefore, this entry should contain rules for converting an attribute provided by the OIDC vendor to an attribute required by the CAS. The rules should be specified in the following format: email:mail,familyname:lastname'. In the given example, the OIDC attributes "email" and "family_name" are converted to "mail" and "surname" respectively. The CAS needs the following attributes to work properly: 'mail,surname,givenName,username,displayName'.
 * Data type: String according to format: `fromAttribute:toAttribute,fromAttribute2:toAttribute2`.
+
+#### oidc/principal_attribute
+* Configuration key path: `<cas_path>/oidc/principal_attribute`
+* Contents: Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.
+* Data type: Name of OIDC attribute

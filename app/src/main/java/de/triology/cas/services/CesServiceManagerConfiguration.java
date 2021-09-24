@@ -14,4 +14,5 @@ public class CesServiceManagerConfiguration {
     private final Map<String, String> attributesMappingRules;
     private final boolean oidcEnabled;
     private final String oidcClientDisplayName;
+    private final String oidcPrincipalsAttribute;
 }

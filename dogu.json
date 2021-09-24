@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "6.3.3-3",
+  "Version": "6.3.3-4",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -286,6 +286,11 @@
     {
       "Name": "oidc/attribute_mapping",
       "Description": "The attributes provided by OIDC do not exactly match the attributes required by the CAS. It is necessary to transform the OIDC attributes into attributes accepted by the cas. Therefore, this entry should contain rules to transform an attribute provided by the OIDC provider into an attribute required by CAS. The rules should be provided in the following format: 'email:mail,family_name:surname'. With the given example the OIDC attribute 'email' and 'family_name' are transformed into 'mail' and 'surname' respectively. The CAS requires the following attributes to function properly: 'mail,surname,givenName,username,displayName'.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/principal_attribute",
+      "Description": "Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.",
       "Optional": true
     }
   ],
