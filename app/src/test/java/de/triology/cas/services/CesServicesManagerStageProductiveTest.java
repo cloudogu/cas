@@ -5,10 +5,7 @@ import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
-import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +36,8 @@ public class CesServicesManagerStageProductiveTest {
     private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
     private List<ExpectedService> expectedServices;
     private Registry registry = mock(Registry.class);
-    private CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, false, null);
-    private CesServiceManagerConfiguration managerConfigWithOIDC = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, true, "my-test-name");
+    private CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, false, null, "username");
+    private CesServiceManagerConfiguration managerConfigWithOIDC = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, true, "my-test-name", "username");
     private CesServicesManagerStageProductive stage =
             new CesServicesManagerStageProductive(managerConfig, registry);
     private CesServicesManagerStageProductive stageWithOIDC =
@@ -106,6 +103,8 @@ public class CesServicesManagerStageProductiveTest {
         for (RegisteredService expectedService : allServicesOfOIDCStage) {
             assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
             assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
+            assertTrue(expectedService.getUsernameAttributeProvider() instanceof PrincipalAttributeRegisteredServiceUsernameProvider);
+            assertEquals("username", ((PrincipalAttributeRegisteredServiceUsernameProvider) expectedService.getUsernameAttributeProvider()).getUsernameAttribute());
             List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
             assertEquals(1, allowedProviders.size());
             assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.get(0));
@@ -115,6 +114,7 @@ public class CesServicesManagerStageProductiveTest {
         Collection<RegisteredService> allServicesOfDefaultStage = stage.getRegisteredServices().values();
         for (RegisteredService expectedService : allServicesOfDefaultStage) {
             assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
+            assertTrue(expectedService.getUsernameAttributeProvider() instanceof DefaultRegisteredServiceUsernameProvider);
             assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
             List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
             assertEquals(0, allowedProviders.size());

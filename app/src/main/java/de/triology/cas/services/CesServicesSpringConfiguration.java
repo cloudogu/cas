@@ -38,6 +38,9 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     @Value("${ces.services.attributeMapping:#{\"\"}}")
     private String attributesMappingRulesString;
 
+    @Value("${ces.services.oidcPrincipalsAttribute:#{\"\"}}")
+    private String oidcPrincipalsAttribute;
+
     @Value("${cas.authn.pac4j.oidc[0].generic.enabled:#{false}}")
     private boolean oidcProviderEnabled;
 
@@ -48,7 +51,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     public ServicesManager configureServicesManager() {
         LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
-        CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcProviderEnabled, oidcClientName);
+        CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcProviderEnabled, oidcClientName, oidcPrincipalsAttribute);
         return new CesServicesManager(managerConfig, registry);
     }
 

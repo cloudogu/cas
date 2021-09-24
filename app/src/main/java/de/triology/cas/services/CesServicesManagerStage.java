@@ -59,8 +59,13 @@ abstract class CesServicesManagerStage {
         service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
-
         if (managerConfig.isOidcEnabled()) {
+            if (managerConfig.getOidcPrincipalsAttribute() != null && !managerConfig.getOidcPrincipalsAttribute().isEmpty()) {
+                PrincipalAttributeRegisteredServiceUsernameProvider principalProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
+                principalProvider.setUsernameAttribute(managerConfig.getOidcPrincipalsAttribute());
+                service.setUsernameAttributeProvider(principalProvider);
+            }
+
             List<String> allowedProviders = new ArrayList<>();
             allowedProviders.add(managerConfig.getOidcClientDisplayName());
             DefaultRegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
