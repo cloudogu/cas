@@ -1,10 +1,10 @@
 # Setup für die Integrationstests
 
-In diesem Abschnitt werden die benötigten Schritte beschrieben um die Integrationstests korrekt ausführen zu können.
+In diesem Abschnitt werden die benötigten Schritte beschrieben, um die Integrationstests korrekt ausführen zu können.
 
 ## Voraussetzungen
 
-* Es ist notwendig das Program `yarn` zu installieren
+* Es ist notwendig, das Programm `yarn` zu installieren
 
 ## Konfiguration 
 
@@ -33,7 +33,7 @@ Eine Beispiel-`cypress.json` sieht folgendermaßen aus:
 {
   "baseUrl": "https://192.168.56.2",
   "env": {
-    "DoguName": "redmine",
+    "DoguName": "cas/login",
     "MaxLoginRetries": 3,
     "AdminUsername":  "ces-admin",
     "AdminPassword":  "ecosystem2016",
@@ -89,10 +89,32 @@ Auf folgende Weise können entsprechende Einträge im etcd konfiguriert werden:
 ```bash
    etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
    etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
-   etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
+   etcdctl set /config/cas/legal_urls/terms_of_service 'https://docs.cloudogu.com/'
 ```
 
 Die von den Tests erwarteten URLs sind in der `cypress.json` unter den Attributen `PrivacyPolicyURL`, `TermsOfServiceURL` und `ImprintURL` definiert.
+
+### Vorbereitung: OIDC Provider
+
+**Schritt 1:** Keycloak auf der Host-Maschine starten und Realm importieren (**Achtung: Der Pfad zur JSON muss angepasst werden!**)
+
+```bash
+docker run --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled" -v  /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2
+```
+
+**Schritt 2:** Konfiguration für den CAS im CES:
+
+```bash
+etcdctl set /config/cas/oidc/enabled "true"
+etcdctl set /config/cas/oidc/discovery_uri "http://192.168.56.1:9000/auth/realms/Cloudogu/.well-known/openid-configuration"
+etcdctl set /config/cas/oidc/client_id "casClient"
+etcdctl set /config/cas/oidc/display_name "MyProvider"
+etcdctl set /config/cas/oidc/optional "true"
+etcdctl set /config/cas/oidc/scopes "openid email profile groups"
+etcdctl set /config/cas/oidc/attribute_mapping "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+```
+
+**Schritt 3:** Per `cesapp edit-config cas` das oidc/client_secret auf `c21a7690-1ca3-4cf9-bef3-22f37faf5144` setzen. Dies wird dann korrekt verschlüsselt abgelegt.
 
 ## Starten der Integrationstests
 

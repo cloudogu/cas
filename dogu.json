@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "6.3.3-1",
+  "Version": "6.3.3-4",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -222,6 +222,76 @@
       "Validation": {
         "Type": "FLOAT_PERCENTAGE_HUNDRED"
       }
+    },
+    {
+      "Name": "oidc/enabled",
+      "Description": "Determines whether the CAS should use the configured OIDC provider for delegated authentication. This entry is set to 'false' by default.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "oidc/discovery_uri",
+      "Description": "Describes the URI that contains the description for the OIDC protocol of the target provider.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/client_id",
+      "Description": "Contains the identifier that should be used to identify the client against the OIDC provider.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/client_secret",
+      "Description": "Contains the secret that should be used along the client ID to identify the client against the OIDC provider.",
+      "Optional": true,
+      "Encrypted": true
+    },
+    {
+      "Name": "oidc/display_name",
+      "Description": "The display name is used for the OIDC provider in the user interface.",
+      "Default": "OIDC Provider",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/redirect_uri",
+      "Description": "The url which will be used as redirect target after a successful delegated logout. The url has to match the patterns which are allowed for the configured client. [defaults to <instance>/cas/logout]",
+      "Default": "",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/optional",
+      "Description": "Determines whether the authentication via the configured OIDC provider is optional. The user is automatically redirected to the login page of the OIDC provider if this property is set to 'false'. The 'true' entry makes authentication via the OIDC provider optional. For this, an additional button for the OIDC provider is displayed on the login page of the CAS, which can be used for authentication with the OIDC provider. This entry is set to 'false' by default.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "oidc/scopes",
+      "Description": "Specifies the resource to be queried against OIDC. Normally, this enumeration should contain at least the openid, user's email, profile information, and the groups assigned to the user. This entry is set to `openid email profile groups` by default.",
+      "Default": "openid email profile groups",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/attribute_mapping",
+      "Description": "The attributes provided by OIDC do not exactly match the attributes required by the CAS. It is necessary to transform the OIDC attributes into attributes accepted by the cas. Therefore, this entry should contain rules to transform an attribute provided by the OIDC provider into an attribute required by CAS. The rules should be provided in the following format: 'email:mail,family_name:surname'. With the given example the OIDC attribute 'email' and 'family_name' are transformed into 'mail' and 'surname' respectively. The CAS requires the following attributes to function properly: 'mail,surname,givenName,username,displayName'.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/principal_attribute",
+      "Description": "Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.",
+      "Optional": true
     }
   ],
   "Volumes": [

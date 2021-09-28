@@ -7,8 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v6.3.3-1] - 2021-08-31
+## [v6.3.3-4] - 2021-09-24
+### Added
+- OIDC-property to define an attribute that should be used as the principal id for the clients (#112)
 
+## [v6.3.3-3] - 2021-09-20
+### Fixed
+- CAS could not handle fqdn that contain uppercase letters (#110)
+
+## [v6.3.3-2] - 2021-09-09
+### Added
+- Add new configuration keys to delegate the cas authentication to a configured OIDC provider. For more information about the keys see [here](./docs/operations/Configure_OIDC_Provider_en.md) (#107)
+
+### Changed
+- Update UI to show OIDC-Link (#108)
+
+## [v6.3.3-1] - 2021-08-31
 ### Added
 - Add new LDAP specific dogu configuration keys (#99)
 - Re-add LDAP group resolving with internal resolvers (#99)

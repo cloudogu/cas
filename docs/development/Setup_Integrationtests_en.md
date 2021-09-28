@@ -85,10 +85,32 @@ Corresponding entries in etcd can be configured in the following way:
 ```bash
 etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
 etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
-etcdctl set /config/cas/legal_urls/terms_of_service 'https://www.itzbund.de/'
+etcdctl set /config/cas/legal_urls/terms_of_service 'https://docs.cloudogu.com/'
 ```
 
 The URLs expected by the tests are defined in `cypress.json` under the attributes `PrivacyPolicyURL`, `TermsOfServiceURL` and `ImprintURL`.
+
+### Preparation: OIDC Provider
+
+**Step 1:** Start Keycloak on host machine and import realm (**Attention:The path to the JSON must be adjusted!**)
+
+```bash
+docker run --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile. feature. upload_scripts=enabled" -v /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json jboss/keycloak:15.0.2
+```
+
+**Step 2:** Configuration for the CAS in the CES:
+
+```bash
+etcdctl set /config/cas/oidc/enabled "true"
+etcdctl set /config/cas/oidc/discovery_uri "http://192.168.56.1:9000/auth/realms/Cloudogu/.well-known/openid-configuration"
+etcdctl set /config/cas/oidc/client_id "casClient"
+etcdctl set /config/cas/oidc/display_name "MyProvider"
+etcdctl set /config/cas/oidc/optional "true"
+etcdctl set /config/cas/oidc/scopes "openid email profile groups"
+etcdctl set /config/cas/oidc/attribute_mapping "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+```
+
+**Step 3:** Via `cesapp edit-config cas` set the oidc/client_secret to `c21a7690-1ca3-4cf9-bef3-22f37faf5144`. This will then be stored correctly encrypted.
 
 ## Starting the integration tests
 

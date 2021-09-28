@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -33,8 +33,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private boolean initialized = false;
 
-    CesServicesManagerStageProductive(List<String> allowedAttributes, Registry registry) {
-        super(allowedAttributes);
+    CesServicesManagerStageProductive(CesServiceManagerConfiguration managerConfig, Registry registry) {
+        super(managerConfig);
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();
