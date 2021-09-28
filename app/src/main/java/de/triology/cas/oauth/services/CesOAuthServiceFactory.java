@@ -1,6 +1,7 @@
 package de.triology.cas.oauth.services;
 
 import de.triology.cas.services.CesServiceData;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.dogu.ICesServiceFactory;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -68,7 +69,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
             throw new CesServiceCreationException("Cannot create OAuth client service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH);
         }
 
-        String serviceId = "https://" + fqdn + "(:443)?/" + serviceData.getName() + "(/.*)?";
+        String serviceId = "https://" + CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn) + "(:443)?/" + serviceData.getName() + "(/.*)?";
         if (casLogoutUri != null) {
             String logoutUri = "https://" + fqdn + "/" + serviceData.getName() + casLogoutUri;
             return createOAuthClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);

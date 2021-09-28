@@ -4,9 +4,8 @@ import de.triology.cas.oauth.services.CesOAuthServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
+import org.apereo.cas.services.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +24,7 @@ import static org.mockito.Mockito.*;
 public class CesServicesManagerStageProductiveTest {
     private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
+    private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX = CesDoguServiceFactory.generateServiceIdFqdnRegex("fully/qualified");
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
     private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
@@ -34,10 +34,15 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesServiceData EXPECTED_SERVICE_DATA_OIDC = new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
+    private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
     private List<ExpectedService> expectedServices;
     private Registry registry = mock(Registry.class);
+    private CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, false, null, "username");
+    private CesServiceManagerConfiguration managerConfigWithOIDC = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, true, "my-test-name", "username");
     private CesServicesManagerStageProductive stage =
-            new CesServicesManagerStageProductive(expectedAllowedAttributes, registry);
+            new CesServicesManagerStageProductive(managerConfig, registry);
+    private CesServicesManagerStageProductive stageWithOIDC =
+            new CesServicesManagerStageProductive(managerConfigWithOIDC, registry);
 
     @Before
     public void setUp() {
@@ -47,13 +52,13 @@ public class CesServicesManagerStageProductiveTest {
 
         expectedServices = new LinkedList<>(Arrays.asList(
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_1.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/nexus(/.*)?")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/nexus(/.*)?")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/nexus/something"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_2.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/smeagol(/.*)?")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/smeagol(/.*)?")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/.*")
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "/cas/.*")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_OIDC.getIdentifier())
                         .serviceId(".*")
@@ -76,7 +81,7 @@ public class CesServicesManagerStageProductiveTest {
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         //Do not expect the o auth service as the attributes are missing
 
         // Notify manager of change
@@ -86,6 +91,37 @@ public class CesServicesManagerStageProductiveTest {
 
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
+        }
+    }
+
+    /**
+     * Test for listener, when a dogu is added after initialization.
+     */
+    @Test
+    public void managerAddDelegatedAuthenticationProvider() {
+        doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2)))
+                .when(registry).getInstalledDogusWhichAreUsingCAS(any());
+
+        // Check services of oidc stage
+        Collection<RegisteredService> allServicesOfOIDCStage = stageWithOIDC.getRegisteredServices().values();
+        for (RegisteredService expectedService : allServicesOfOIDCStage) {
+            assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
+            assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
+            assertTrue(expectedService.getUsernameAttributeProvider() instanceof PrincipalAttributeRegisteredServiceUsernameProvider);
+            assertEquals("username", ((PrincipalAttributeRegisteredServiceUsernameProvider) expectedService.getUsernameAttributeProvider()).getUsernameAttribute());
+            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
+            assertEquals(1, allowedProviders.size());
+            assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.get(0));
+        }
+
+        // Check services of oidc stage
+        Collection<RegisteredService> allServicesOfDefaultStage = stage.getRegisteredServices().values();
+        for (RegisteredService expectedService : allServicesOfDefaultStage) {
+            assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
+            assertTrue(expectedService.getUsernameAttributeProvider() instanceof DefaultRegisteredServiceUsernameProvider);
+            assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
+            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
+            assertEquals(0, allowedProviders.size());
         }
     }
 
@@ -112,9 +148,9 @@ public class CesServicesManagerStageProductiveTest {
                 .when(registry).getInstalledOAuthCASServiceAccounts(any());
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         expectedServices.add(new ExpectedService().name(correctOAuthService.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/portainer(/.*)?"));
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/portainer(/.*)?"));
 
         // Notify manager of change
         doguChangeListener.onChange();
@@ -141,7 +177,7 @@ public class CesServicesManagerStageProductiveTest {
                 Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)));
 
         ExpectedService service3 = new ExpectedService().name(serviceDataSCM.getIdentifier())
-                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "(:443)?/scm(/.*)?");
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?");
         expectedServices.add(service3);
 
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
@@ -192,7 +228,7 @@ public class CesServicesManagerStageProductiveTest {
         // given
         RegistryEtcd etcdRegistry = mock(RegistryEtcd.class);
         CesServicesManagerStageProductive productiveStage =
-                new CesServicesManagerStageProductive(expectedAllowedAttributes, etcdRegistry);
+                new CesServicesManagerStageProductive(managerConfig, etcdRegistry);
         GetCasLogoutUriException expectedException = new GetCasLogoutUriException("expected exception");
         when(etcdRegistry.getCasLogoutUri(any())).thenThrow(expectedException);
         CesServiceData testServiceData = new CesServiceData("testService", doguServiceFactory);
@@ -306,7 +342,7 @@ public class CesServicesManagerStageProductiveTest {
          */
         void assertEqualsService(RegisteredService actualService) {
             assertEquals("Service \" + name \": Unexpected value allowedAttributes", allowedAttributes,
-                    ((ReturnAllowedAttributeReleasePolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
+                    ((ReturnMappedAttributesPolicy) actualService.getAttributeReleasePolicy()).getAllowedAttributes());
             assertEquals("Service \" + name \": Unexpected value serviceId", serviceId,
                     actualService.getServiceId());
         }
