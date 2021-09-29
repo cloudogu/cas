@@ -1,7 +1,7 @@
-package de.triology.cas.oauth.config;
+package de.triology.cas.oidc.config;
 
-import de.triology.cas.oauth.beans.CesOAuth20ClientIdClientSecretAuthenticator;
-import de.triology.cas.oauth.beans.CesOAuthProfileRenderer;
+import de.triology.cas.oidc.beans.CesOAuth20ClientIdClientSecretAuthenticator;
+import de.triology.cas.oidc.beans.CesOAuthProfileRenderer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 @Configuration("CesOAuthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ComponentScan("de.triology.cas.oauth")
+@ComponentScan("de.triology.cas.oidc")
 public class CesOAuthConfiguration {
 
     @Bean

@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.ICesServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
@@ -92,8 +92,8 @@ class RegistryEtcd implements Registry {
                 String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
                 String clientSecret = this.getCurrentOAuthClientSecret(clientID);
                 HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
+                attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, clientID);
+                attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, clientSecret);
                 serviceDataList.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
                 log.error("registry exception occurred", ex);

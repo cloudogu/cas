@@ -1,4 +1,4 @@
-package de.triology.cas.oauth.beans;
+package de.triology.cas.oidc.beans;
 
 import lombok.val;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;

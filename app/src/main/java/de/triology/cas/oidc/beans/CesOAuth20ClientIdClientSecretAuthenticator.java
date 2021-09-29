@@ -1,4 +1,4 @@
-package de.triology.cas.oauth.beans;
+package de.triology.cas.oidc.beans;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableExecution;

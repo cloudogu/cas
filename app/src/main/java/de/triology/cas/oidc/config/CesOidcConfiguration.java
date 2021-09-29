@@ -2,9 +2,11 @@ package de.triology.cas.oidc.config;
 
 import de.triology.cas.oidc.CustomDelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,6 +33,7 @@ public class CesOidcConfiguration {
 
     @Value("${cas.server.prefix:#{\"\"}}")
     private String casServerPrefix;
+
     @Value("${cas.authn.pac4j.oidc[0].generic.redirect-uri:#{\"\"}}")
     private String redirectUri;
 

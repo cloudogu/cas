@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
@@ -26,12 +26,11 @@ public class CesServicesManagerStageProductiveTest {
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX = CesDoguServiceFactory.generateServiceIdFqdnRegex("fully/qualified");
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
-    private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
+    private static final CesOIDCServiceFactory oAuthServiceFactory = new CesOIDCServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
     private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
-    private static final CesServiceData EXPECTED_SERVICE_DATA_OIDC = new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
@@ -59,9 +58,6 @@ public class CesServicesManagerStageProductiveTest {
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "/cas/.*")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent"),
-                new ExpectedService().name(EXPECTED_SERVICE_DATA_OIDC.getIdentifier())
-                        .serviceId(".*")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent")));
     }
 
@@ -138,8 +134,8 @@ public class CesServicesManagerStageProductiveTest {
         CesServiceData serviceDataSCM = new CesServiceData(expectedServiceName3, doguServiceFactory);
 
         HashMap<String, String> attributes = new HashMap<>();
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, EXPECTED_OAUTH_SERVICE_DATA.getName());
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "supersecret");
+        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, EXPECTED_OAUTH_SERVICE_DATA.getName());
+        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, "supersecret");
         CesServiceData correctOAuthService = new CesServiceData(EXPECTED_OAUTH_SERVICE_DATA.getName(), oAuthServiceFactory, attributes);
 
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))

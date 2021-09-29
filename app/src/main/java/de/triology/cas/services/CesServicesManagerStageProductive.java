@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -28,7 +28,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private List<CesServiceData> persistentServices;
 
-    private final CesOAuthServiceFactory oAuthServiceFactory;
+    private final CesOIDCServiceFactory oAuthServiceFactory;
     private final CesDoguServiceFactory doguServiceFactory;
 
     private boolean initialized = false;
@@ -38,7 +38,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();
-        this.oAuthServiceFactory = new CesOAuthServiceFactory();
+        this.oAuthServiceFactory = new CesOIDCServiceFactory();
     }
 
     /**
@@ -184,9 +184,5 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         logger.info("Creating cas service for clearPass workflow");
         addNewService(doguServiceFactory.createCASService(createId(), fqdn));
         persistentServices.add(new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
-
-        logger.info("Add oidc service");
-        addNewService(oAuthServiceFactory.createOIDCService(createId(), fqdn, fqdn));
-        persistentServices.add(new CesServiceData(CesOAuthServiceFactory.SERVICE_OIDC_IDENTIFIER, oAuthServiceFactory));
     }
 }
