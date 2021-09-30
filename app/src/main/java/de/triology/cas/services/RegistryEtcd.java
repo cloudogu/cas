@@ -35,8 +35,8 @@ import java.util.concurrent.TimeoutException;
 @Component
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
-    private static final String DOGU_DIR = "/dogu/";
-    private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts/";
+    private static final String DOGU_DIR = "/dogu";
+    private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final EtcdClient etcd;
@@ -63,16 +63,14 @@ class RegistryEtcd implements Registry {
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
             return extractOAuthClientsFromSADir(nodes, factory);
-        }
-        catch (EtcdException e) {
+        } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 return new ArrayList<>();
             } else {
                 log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
                 throw new RegistryException(e);
             }
-        }
-        catch (IOException | EtcdAuthenticationException | TimeoutException e) {
+        } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
             log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
             throw new RegistryException(e);
         }
@@ -89,7 +87,7 @@ class RegistryEtcd implements Registry {
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
-                String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length());
+                String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length() + 1);
                 String clientSecret = this.getCurrentOAuthClientSecret(clientID);
                 HashMap<String, String> attributes = new HashMap<>();
                 attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, clientID);
@@ -108,7 +106,7 @@ class RegistryEtcd implements Registry {
         for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
             JSONObject json;
             try {
-                String doguName = dogu.getKey().substring(DOGU_DIR.length());
+                String doguName = dogu.getKey().substring(DOGU_DIR.length() + 1);
                 json = getCurrentDoguNode(doguName);
                 if (hasCasDependency(json)) {
                     doguServices.add(new CesServiceData(doguName, factory));
@@ -145,7 +143,7 @@ class RegistryEtcd implements Registry {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.error("Failed to getEtcdValueForKey: {}",  key);
+                log.error("Failed to getEtcdValueForKey: {}", key);
             } else {
                 log.error("Failed to getEtcdValueForKey: ", e);
             }
@@ -265,10 +263,10 @@ class RegistryEtcd implements Registry {
     protected JSONObject getCurrentDoguNode(String doguName) throws ParseException {
         JSONObject json = null;
         // get used dogu version
-        String doguVersion = getEtcdValueForKeyIfPresent(DOGU_DIR + doguName + "/current");
+        String doguVersion = getEtcdValueForKeyIfPresent(DOGU_DIR + "/" + doguName + "/current");
         // empty if dogu isnt used
         if (!doguVersion.isEmpty()) {
-            String doguDescription = getEtcdValueForKey(DOGU_DIR + doguName + "/" + doguVersion);
+            String doguDescription = getEtcdValueForKey(DOGU_DIR + "/" + doguName + "/" + doguVersion);
             json = (JSONObject) PARSER.parse(doguDescription);
         }
         return json;

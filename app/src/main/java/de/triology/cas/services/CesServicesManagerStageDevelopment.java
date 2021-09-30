@@ -43,16 +43,18 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         logger.debug("Creating development service...");
 
         try {
-            CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+            var factory = new CesOIDCServiceFactory();
+            String oidcClientName = "cas-oidc-client";
             Map<String, String> attributes = new HashMap<>();
-            attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, "cas-oidc-client");
+            attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, oidcClientName);
             attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, "df0576c3d0b3b449eef75f71894fffe86baa555eba1d52ed18ec324c96025d10");
-            OidcRegisteredService service = (OidcRegisteredService) factory.createNewService(createId(), "", null, new CesServiceData("cas-oidc-client", factory, attributes));
-            service.setName("cas-oidc-client");
+            OidcRegisteredService service = (OidcRegisteredService) factory.createNewService(createId(), "", null, new CesServiceData(oidcClientName, factory, attributes));
+            service.setName(oidcClientName);
             service.setServiceId(".*");
             addNewService(service);
-            logger.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `cas-oidc-client` for your client.");
-        } catch (CesServiceCreationException ignored) {
+            logger.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `{}` for your client.", oidcClientName);
+        } catch (CesServiceCreationException e) {
+            logger.error("could not start oidc service in development mode: ", e);
         }
     }
 }

@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CustomDelegatedAuthenticationClientLogoutAction.class);
     private final Clients clients;
     private final SessionStore<JEEContext> sessionStore;
     private final String redirectUri;
@@ -67,17 +67,17 @@ public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAct
                     : clients.findClient(currentProfile.getClientName());
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
-                logger.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
+                LOGGER.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
                 val actionResult = client.getLogoutAction(context, currentProfile, redirectUri);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
                     new JEEHttpActionAdapter().adapt(action, context);
                 }
             } else {
-                logger.debug("The current client cannot be found and no logout action will be executed.");
+                LOGGER.debug("The current client cannot be found and no logout action will be executed.");
             }
         } catch (final Exception e) {
-            LoggingUtils.warn(logger, e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

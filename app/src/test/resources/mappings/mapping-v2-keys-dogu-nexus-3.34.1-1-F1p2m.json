@@ -1,0 +1,20 @@
+{
+  "id" : "76c9800d-adcb-3b9b-b796-67e36515d62c",
+  "request" : {
+    "url" : "/v2/keys/dogu/nexus/3.34.1-1",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-nexus-3.34.1-1-F1p2m.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "44423",
+      "X-Raft-Index" : "1412633",
+      "X-Raft-Term" : "29",
+      "Date" : "Thu, 30 Sep 2021 09:56:01 GMT"
+    }
+  },
+  "uuid" : "76c9800d-adcb-3b9b-b796-67e36515d62c"
+}

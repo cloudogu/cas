@@ -6,6 +6,7 @@ import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.dogu.ICesServiceFactory;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import java.net.URI;
  */
 public class CesOIDCServiceFactory implements ICesServiceFactory {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CesOIDCServiceFactory.class);
     public static final String ATTRIBUTE_KEY_OIDC_CLIENT_ID = "oidc_client_id";
     public static final String ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH = "oidc_client_secret";
 
@@ -32,8 +33,8 @@ public class CesOIDCServiceFactory implements ICesServiceFactory {
      * @param clientSecretHash secret key from the OIDC application used for authentication
      * @return a new client server for the given information of the OIDC application
      */
-    private OidcRegisteredService createOIDCClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
-        OidcRegisteredService service = new OidcRegisteredService();
+    private OAuthRegisteredService createOIDCClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
+        var service = new OAuthRegisteredService();
         service.setId(id);
         service.setName(name);
         service.setServiceId(serviceID);
@@ -48,7 +49,7 @@ public class CesOIDCServiceFactory implements ICesServiceFactory {
         service.setBypassApprovalPrompt(true);
 
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
-        logger.debug("Created OidcRegisteredService: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
+        LOGGER.debug("Created OidcRegisteredService: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
         return service;
     }
 

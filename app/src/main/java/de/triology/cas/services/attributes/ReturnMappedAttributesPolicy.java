@@ -22,7 +22,7 @@ import java.util.TreeMap;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributesPolicy.class);
 
     private List<String> allowedAttributes;
     private Map<String, String> attributesMappingRules;
@@ -63,12 +63,12 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
                 .stream()
                 .filter(resolvedAttributes::containsKey)
                 .forEach(attr -> {
-                    logger.debug("Found attribute [{}] in the list of allowed attributes", attr);
+                    LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
                     attributesToRelease.put(attr, resolvedAttributes.get(attr));
                 });
 
 
-        logger.debug("Attributes to release [{}]", resolvedAttributes);
+        LOGGER.debug("Attributes to release [{}]", resolvedAttributes);
         return attributesToRelease;
     }
 
@@ -82,11 +82,11 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
             return attributes;
         }
 
-        logger.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
+        LOGGER.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
 
         Map<String, List<Object>> mappedAttributes = new TreeMap<>();
         attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> {
-            logger.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
+            LOGGER.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
             mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s));
         });
         attributes.keySet().stream().filter(s -> !attributesMappingRules.containsKey(s)).forEach(s -> mappedAttributes.put(s, attributes.get(s)));

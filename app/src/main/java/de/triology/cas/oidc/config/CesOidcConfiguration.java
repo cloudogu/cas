@@ -2,11 +2,10 @@ package de.triology.cas.oidc.config;
 
 import de.triology.cas.oidc.CustomDelegatedAuthenticationClientLogoutAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,12 +20,12 @@ import org.springframework.webflow.execution.Action;
 @ComponentScan("de.triology.cas.oidc")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesOidcConfiguration {
-    private final ObjectProvider<SessionStore> delegatedClientDistributedSessionStore;
+    private final ObjectProvider<SessionStore<JEEContext>> delegatedClientDistributedSessionStore;
     private final ObjectProvider<Clients> builtClients;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public CesOidcConfiguration(@Qualifier("builtClients") ObjectProvider<Clients> builtClients,
-                                @Qualifier("delegatedClientDistributedSessionStore") ObjectProvider<SessionStore> delegatedClientDistributedSessionStore) {
+                                @Qualifier("delegatedClientDistributedSessionStore") ObjectProvider<SessionStore<JEEContext>> delegatedClientDistributedSessionStore) {
         this.builtClients = builtClients;
         this.delegatedClientDistributedSessionStore = delegatedClientDistributedSessionStore;
     }

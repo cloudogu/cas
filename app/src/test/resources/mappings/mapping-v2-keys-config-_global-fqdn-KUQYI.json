@@ -1,0 +1,20 @@
+{
+  "id" : "ecf27c44-55fa-3735-9364-b08823f01932",
+  "request" : {
+    "url" : "/v2/keys/config/_global/fqdn",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-config-_global-fqdn-KUQYI.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "44423",
+      "X-Raft-Index" : "1412632",
+      "X-Raft-Term" : "29",
+      "Date" : "Thu, 30 Sep 2021 09:56:01 GMT"
+    }
+  },
+  "uuid" : "ecf27c44-55fa-3735-9364-b08823f01932"
+}

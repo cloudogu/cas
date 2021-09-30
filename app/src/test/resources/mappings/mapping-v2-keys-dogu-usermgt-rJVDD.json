@@ -1,0 +1,20 @@
+{
+  "id" : "0ce0eaa2-ac89-3c1e-9632-76b6c70a60ed",
+  "request" : {
+    "url" : "/v2/keys/dogu/usermgt/?dir=true",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-usermgt-rJVDD.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "44423",
+      "X-Raft-Index" : "1412634",
+      "X-Raft-Term" : "29",
+      "Date" : "Thu, 30 Sep 2021 09:56:02 GMT"
+    }
+  },
+  "uuid" : "0ce0eaa2-ac89-3c1e-9632-76b6c70a60ed"
+}

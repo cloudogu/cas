@@ -1,0 +1,20 @@
+{
+  "id" : "dc292b0c-eb9b-3b43-992a-c531de18094e",
+  "request" : {
+    "url" : "/v2/keys/dogu/redmine/4.2.1-3",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-redmine-4.2.1-3-q0Hlv.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "44423",
+      "X-Raft-Index" : "1412634",
+      "X-Raft-Term" : "29",
+      "Date" : "Thu, 30 Sep 2021 09:56:02 GMT"
+    }
+  },
+  "uuid" : "dc292b0c-eb9b-3b43-992a-c531de18094e"
+}
