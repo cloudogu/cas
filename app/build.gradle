@@ -90,6 +90,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-ldap-core:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-oidc-core:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oidc-core-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oidc-services:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oauth-api:${casServerVersion}"

@@ -1,0 +1,41 @@
+package de.triology.cas.oidc.beans;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.util.EncodingUtils;
+import org.pac4j.cas.client.CasClient;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.exception.http.FoundAction;
+import org.pac4j.core.exception.http.RedirectionAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+
+@RequiredArgsConstructor
+public class CesOidcClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CesOidcClientRedirectActionBuilder.class);
+
+    @Override
+    public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
+        var renew = casClient.getConfiguration().isRenew();
+        var gateway = casClient.getConfiguration().isGateway();
+
+        val serviceUrl = casClient.computeFinalCallbackUrl(context);
+        val casServerLoginUrl = casClient.getConfiguration().getLoginUrl();
+        val redirectionUrl = casServerLoginUrl + (casServerLoginUrl.contains("?") ? "&" : "?")
+                + CasProtocolConstants.PARAMETER_SERVICE + '=' + EncodingUtils.urlEncode(serviceUrl)
+                + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
+                + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
+        LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
+        Optional<RedirectionAction> action = Optional.of(new FoundAction(redirectionUrl));
+
+        LOGGER.debug("Final redirect action is [{}]", action);
+        return action;
+    }
+}

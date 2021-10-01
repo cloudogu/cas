@@ -33,8 +33,8 @@ public class CesOIDCServiceFactory implements ICesServiceFactory {
      * @param clientSecretHash secret key from the OIDC application used for authentication
      * @return a new client server for the given information of the OIDC application
      */
-    private OAuthRegisteredService createOIDCClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
-        var service = new OAuthRegisteredService();
+    private OidcRegisteredService createOIDCClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
+        var service = new OidcRegisteredService();
         service.setId(id);
         service.setName(name);
         service.setServiceId(serviceID);
@@ -50,6 +50,8 @@ public class CesOIDCServiceFactory implements ICesServiceFactory {
 
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
         LOGGER.debug("Created OidcRegisteredService: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
+        LOGGER.debug("Created OidcRegisteredService: {}}", service);
+        LOGGER.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
         return service;
     }
 

@@ -1,4 +1,4 @@
-package de.triology.cas.oidc;
+package de.triology.cas.oidc.beans;
 
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
 
 /**
- * This is {@link CustomDelegatedAuthenticationClientLogoutAction}.
+ * This is {@link CesCustomDelegatedAuthenticationClientLogoutAction}.
  * <p>
  * The action takes into account the currently used PAC4J client which is stored
  * in the user profile. If the client is found, its logout action is executed and
@@ -36,8 +36,8 @@ import java.util.Optional;
  * @since 6.3.0
  */
 @RequiredArgsConstructor
-public class CustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CustomDelegatedAuthenticationClientLogoutAction.class);
+public class CesCustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(CesCustomDelegatedAuthenticationClientLogoutAction.class);
     private final Clients clients;
     private final SessionStore<JEEContext> sessionStore;
     private final String redirectUri;

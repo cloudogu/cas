@@ -3,12 +3,20 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-SERVICE="$1"
+# TODO [jsprey] test this
 
-if [ X"${SERVICE}" = X"" ]; then
-    echo "usage remove-sa.sh servicename"
-    exit 1
+TYPE="${1}"
+SERVICE="${2}"
+
+if [ -z "${SERVICE}" ] || [ -z "${TYPE}" ]; then
+  echo "usage remove-sa.sh account_type servicename"
+  exit 1
 fi
 
-echo "Removing service_accounts/${SERVICE} key..."
-doguctl config --rm "service_accounts/${SERVICE}"
+if [ "${TYPE}" != "oidc" ] && [ "${TYPE}" != "oauth" ]; then
+  echo "only the account_types: oidc, oauth are allowed"
+  exit 1
+fi
+
+echo "Removing service_accounts/${TYPE}/${SERVICE} key..."
+doguctl config --rm "service_accounts/${TYPE}/${SERVICE}"
