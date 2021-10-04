@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link #initRegisteredServices()}.
  */
 abstract class CesServicesManagerStage {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     private final CesServiceManagerConfiguration managerConfig;
 

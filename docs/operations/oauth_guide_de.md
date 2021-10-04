@@ -1,24 +1,41 @@
-# CAS als OAuth Provider benutzen
+# CAS als OAuth/OIDC Provider benutzen
 
-CAS bietet OAuth als Protokoll zur Authentifizierung samt SSO/SSL an. 
+CAS bietet OAuth/OIDC als Protokoll zur Authentifizierung samt SSO/SSL an. 
 Im Folgenden werden die Spezifikation des OAuth Protokolls in CAS beschrieben.
 
-## OAuth Service Account für Dogu erstellen
+## OAuth/OIDC Service Account für Dogu erstellen
 
-Damit ein Dogu die OAuth-Endpunkte des CAS benutzen kann, muss sich dieser beim CAS als OAuth Client anmelden.
+Damit ein Dogu die OAuth/OIDC-Endpunkte des CAS benutzen kann, muss sich dieser beim CAS als Client anmelden.
 Dafür kann die Aufforderung eines CAS-Service Account in der `dogu.json` des betreffenden Dogus hinterlegt werden.
+
+**Eintrag für einen OAuth Client:**
 ``` json
 "ServiceAccounts": [
     {
-        "Type": "cas"
+        "Type": "cas",
+        "Params": [
+            "oauth"
+        ]
+    }
+]
+```
+
+**Eintrag für einen OIDC Client:**
+``` json
+"ServiceAccounts": [
+    {
+        "Type": "cas",
+        "Params": [
+            "oidc"
+        ]
     }
 ]
 ```
 
 Die Credentials des Service Accounts werden zufällig generiert (siehe [create-sa.sh](https://github.com/cloudogu/cas/blob/develop/resources/create-sa.sh)) 
-und verschlüsselt im etcd unter dem Pfad `/config/<dogu>/sa-cas/oauth_client_id` und `/config/<dogu>/sa-cas/oauth_client_secret` hinterlegt.
+und verschlüsselt im etcd unter dem Pfad `/config/<dogu>/sa-cas/<oauth|oidc>_client_id` und `/config/<dogu>/sa-cas/<oauth|oidc>_client_secret` hinterlegt.
 Die credentials setzten sich aus der `CLIENT_ID` und dem `CLIENT_SECRET` zusammen. 
-Für den CAS wird das `CLIENT_SECRET` als Hash im __etcd__ unter dem Pfad `/config/cas/service_accounts/<CLIENT_ID>` abgelegt.
+Für den CAS wird das `CLIENT_SECRET` als Hash im __etcd__ unter dem Pfad `/config/cas/service_accounts/<oidc|oauth>/<CLIENT_ID>` abgelegt.
 
 ### OAuth Endpunkte und Ablauf
 

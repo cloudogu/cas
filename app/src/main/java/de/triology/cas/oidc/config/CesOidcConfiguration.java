@@ -38,7 +38,7 @@ import java.io.Serializable;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(OidcConfiguration.class)
 public class CesOidcConfiguration {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CesOidcConfiguration.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CesOidcConfiguration.class);
 
     @Value("${cas.server.prefix:#{\"\"}}")
     private String casServerPrefix;
@@ -82,14 +82,14 @@ public class CesOidcConfiguration {
     @Bean
     @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
-        LOGGER.debug("Create CES-OAuth client redirect action builder...");
+        LOG.debug("Create CES-OAuth client redirect action builder...");
         return new CesOidcClientRedirectActionBuilder();
     }
 
     @Bean
     @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
-        LOGGER.debug("Create OIDC-OAuth client redirect action builder...");
+        LOG.debug("Create OIDC-OAuth client redirect action builder...");
         return new CesOidcClientRedirectActionBuilder();
     }
 }

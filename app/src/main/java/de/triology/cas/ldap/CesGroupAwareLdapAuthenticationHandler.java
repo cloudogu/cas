@@ -18,7 +18,7 @@ import java.util.*;
 @Setter
 public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesGroupAwareLdapAuthenticationHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CesGroupAwareLdapAuthenticationHandler.class);
     private static final String GROUP_ATTRIBUTE = "groups";
 
     private GroupResolver groupResolver;
@@ -42,15 +42,15 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
         super(name, servicesManager, principalFactory, order, authenticator, strategy);
 
         this.groupResolver = groupResolver;
-        LOGGER.trace("{} created with group attribute {} and group resolver {}",
+        LOG.trace("{} created with group attribute {} and group resolver {}",
                 CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), GROUP_ATTRIBUTE, groupResolver);
     }
 
     @Override
     protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws LoginException {
-        LOGGER.trace("createPrincipal from LdapEntry: {}", ldapEntry);
+        LOG.trace("createPrincipal from LdapEntry: {}", ldapEntry);
         var principal = super.createPrincipal(username, ldapEntry);
-        LOGGER.trace("created Principal from super method is: {} ", principal);
+        LOG.trace("created Principal from super method is: {} ", principal);
 
         if (groupResolver != null) {
             // resolve and attach groups
@@ -70,7 +70,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
     protected Principal attachGroups(Principal principal, LdapEntry ldapEntry) {
         Map<String, List<Object>> attributes = new LinkedHashMap<>(principal.getAttributes());
         List<Object> groups = new ArrayList<>(groupResolver.resolveGroups(principal, ldapEntry));
-        LOGGER.debug("adding groups {} to user attributes", groups);
+        LOG.debug("adding groups {} to user attributes", groups);
         attributes.put(GROUP_ATTRIBUTE, groups);
 
         return principalFactory.createPrincipal(principal.getId(), attributes);

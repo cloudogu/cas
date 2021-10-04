@@ -17,14 +17,14 @@ public class CesServiceLogoutMessageBuilder extends DefaultSingleLogoutMessageCr
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesServiceLogoutMessageBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CesServiceLogoutMessageBuilder.class);
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
         TicketGrantingTicket ticket = request.getExecutionRequest().getTicketGrantingTicket();
         RegisteredService service = request.getRegisteredService();
         String logoutRequest = "";
-        LOGGER.debug("Generate logout request for: [{}] to [{}]", service.getName(), service.getLogoutUrl());
+        LOG.debug("Generate logout request for: [{}] to [{}]", service.getName(), service.getLogoutUrl());
 
         if (service instanceof OAuthRegisteredService) {
             for (String childTicket : ticket.getDescendantTickets()) {
@@ -36,7 +36,7 @@ public class CesServiceLogoutMessageBuilder extends DefaultSingleLogoutMessageCr
 
             val builder = SingleLogoutMessage.builder();
             if (request.getLogoutType() == RegisteredServiceLogoutType.FRONT_CHANNEL) {
-                LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
+                LOG.trace("Attempting to deflate the logout message [{}]", logoutRequest);
                 return builder.payload(CompressionUtils.deflate(logoutRequest)).build();
             }
             return builder.payload(logoutRequest).build();

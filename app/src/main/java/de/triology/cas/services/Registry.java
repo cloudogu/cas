@@ -11,16 +11,21 @@ import java.util.List;
 interface Registry {
 
     /**
-     * @return the names of all installed dogus wich are using CAS without the namespace
+     * @return an array of {@link CesServiceData} containing the information for all installed dogus
      * @throws RegistryException wrapper for all technical exceptions
      */
     List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
 
     /**
-     * @return the names of all installed OAuth service accounts
+     * Retrieves all CAS Services Accounts which are currently registered in etcd.
+     *
+     * @param factory The factory responsible to create a service of the given type
+     * @param serviceAccountType The type of service account that should be searched in the registry
+     * @return an array of {@link CesServiceData} containing the information for all installed oauth service accounts
+     * of the given type
      * @throws RegistryException wrapper for all technical exceptions
      */
-    List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory);
+    List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, ICesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name

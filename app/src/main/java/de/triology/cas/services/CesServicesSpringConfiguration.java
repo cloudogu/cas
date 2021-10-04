@@ -24,7 +24,7 @@ import java.util.Map;
 @ComponentScan("de.triology.cas.services")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesServicesSpringConfiguration implements ServicesManagerExecutionPlanConfigurer {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CesServicesSpringConfiguration.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CesServicesSpringConfiguration.class);
 
     @Autowired
     private RegistryEtcd registry;
@@ -49,7 +49,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
 
     @Override
     public ServicesManager configureServicesManager() {
-        LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
+        LOG.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
         var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
         return new CesServicesManager(managerConfig, registry);

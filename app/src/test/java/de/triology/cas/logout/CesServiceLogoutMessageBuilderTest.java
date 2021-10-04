@@ -1,5 +1,6 @@
 package de.triology.cas.logout;
 
+import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
@@ -33,8 +34,8 @@ public class CesServiceLogoutMessageBuilderTest {
         // given - data
         CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
         Map<String, String> serviceAttributes = new HashMap<>();
-        serviceAttributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, "clientSecret");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
         CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
         RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
         List<String> descendantTickets = new ArrayList<>();
@@ -66,8 +67,8 @@ public class CesServiceLogoutMessageBuilderTest {
         // given - data
         CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
         Map<String, String> serviceAttributes = new HashMap<>();
-        serviceAttributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, "clientSecret");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
+        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
         CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
         RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
         Collection<String> descendantTickets = new ArrayList<>();

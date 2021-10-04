@@ -27,7 +27,7 @@ public class CesServicesManager implements ServicesManager {
      */
     static final String STAGE_DEVELOPMENT = "development";
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     private CesServicesManagerStage serviceStage;
 
@@ -37,13 +37,13 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        logger.debug("Entered getAllServices method");
+        LOG.debug("Entered getAllServices method");
         return Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values());
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        logger.info("Cas wants to reload registered services.");
+        LOG.info("Cas wants to reload registered services.");
         serviceStage.updateRegisteredServices();
         return serviceStage.getRegisteredServices().values();
     }

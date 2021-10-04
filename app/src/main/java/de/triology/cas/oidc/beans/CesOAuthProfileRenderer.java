@@ -20,7 +20,7 @@ import java.util.Map;
  * into a simplified form consisting only of the groups name.
  */
 public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CesOAuthProfileRenderer.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CesOAuthProfileRenderer.class);
 
     /**
      * The group attributes that contains all groups of a user.
@@ -29,7 +29,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
 
     @Override
     public ResponseEntity render(Map<String, Object> model, OAuth20AccessToken accessToken, HttpServletResponse response) {
-        LOGGER.debug("Using custom profile renderer {}", model);
+        LOG.debug("Using custom profile renderer {}", model);
         val userProfile = getRenderedUserProfile(model, accessToken, response);
         return renderProfileForModel(userProfile, accessToken, response);
     }
@@ -59,7 +59,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
-        LOGGER.debug("Before - Profile: {}", model);
+        LOG.debug("Before - Profile: {}", model);
         val customModel = new LinkedHashMap<String, Object>();
 
         // Add all entries other than the attributes
@@ -74,14 +74,14 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
             LinkedList<String> newGroups = new LinkedList<>();
             if (attributes.containsKey(modelAttributesGroup)) {
                 Object groupsObject = attributes.get(modelAttributesGroup);
-                LOGGER.debug("Class of object: {}", groupsObject);
+                LOG.debug("Class of object: {}", groupsObject);
                 List<String> groups = (List<String>) groupsObject;
                 groups.forEach(o -> newGroups.add(o));
             }
             attributes.put(modelAttributesGroup, newGroups);
             customModel.put(MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
         }
-        LOGGER.debug("After - Profile: {}", customModel);
+        LOG.debug("After - Profile: {}", customModel);
         return customModel;
     }
 }

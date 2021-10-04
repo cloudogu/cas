@@ -1,0 +1,20 @@
+{
+  "id" : "ad1ed074-fbdd-3fad-9dbd-c6b9564b20fc",
+  "request" : {
+    "url" : "/v2/keys/dogu/postgresql/12.5-2",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-postgresql-12.5-2-3ab4B.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49464",
+      "X-Raft-Index" : "1522508",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "ad1ed074-fbdd-3fad-9dbd-c6b9564b20fc"
+}

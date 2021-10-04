@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class CesThrottlingInterceptorAdapter
         extends HandlerInterceptorAdapter
         implements ThrottledSubmissionHandlerInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesThrottlingInterceptorAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CesThrottlingInterceptorAdapter.class);
 
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
@@ -105,13 +105,13 @@ public class CesThrottlingInterceptorAdapter
     public final boolean preHandle(final HttpServletRequest request,
                                    final HttpServletResponse response, final Object o) throws Exception {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
+            LOG.trace("Letting the request through given http method is [{}]", request.getMethod());
             return true;
         }
 
         boolean throttled = isHostLocked();
         if (throttled) {
-            LOGGER.warn("Throttling submission from [{}]. The host is locked and cannot send any requests. " +
+            LOG.warn("Throttling submission from [{}]. The host is locked and cannot send any requests. " +
                     "More than [{}] failed login attempts within [{}] seconds.", request.getRemoteAddr(), max_number, failure_store_time);
             return throttledRequestResponseHandler.handle(request, response);
         }
@@ -122,16 +122,16 @@ public class CesThrottlingInterceptorAdapter
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOGGER.trace("Skipping authentication throttling for requests other than POST");
+            LOG.trace("Skipping authentication throttling for requests other than POST");
             return;
         }
 
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
-            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
+            LOG.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         } else {
-            LOGGER.trace("Skipping to record submission failure for [{}] with response status [{}]",
+            LOG.trace("Skipping to record submission failure for [{}] with response status [{}]",
                     request.getRequestURI(), response.getStatus());
         }
     }
@@ -154,7 +154,7 @@ public class CesThrottlingInterceptorAdapter
         invalidateSubmissionDataIfRequired(hostSubmissionData);
 
         // record failed submission
-        LOGGER.debug("Recording submission failure [{}]", hostIdentifier);
+        LOG.debug("Recording submission failure [{}]", hostIdentifier);
         hostSubmissionData.recordFailedSubmission(now);
 
         // lock the host when necessary
@@ -163,8 +163,8 @@ public class CesThrottlingInterceptorAdapter
 
     @Override
     public void decrement() {
-        LOGGER.info("Beginning audit cleanup...");
-        LOGGER.info("Before:" + submissionIpMap);
+        LOG.info("Beginning audit cleanup...");
+        LOG.info("Before:" + submissionIpMap);
         this.submissionIpMap.entrySet().removeIf(entry -> {
             CesSubmissionListData data = entry.getValue();
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
@@ -184,8 +184,8 @@ public class CesThrottlingInterceptorAdapter
                 return true;
             }
         });
-        LOGGER.info("After:" + submissionIpMap);
-        LOGGER.debug("Done decrementing count for throttler.");
+        LOG.info("After:" + submissionIpMap);
+        LOG.debug("Done decrementing count for throttler.");
     }
 
     @Override

@@ -1,0 +1,20 @@
+{
+  "id" : "90200256-b618-373f-9afa-dcedd391c502",
+  "request" : {
+    "url" : "/v2/keys/dogu/cockpit/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-cockpit-current-wtXtq.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49462",
+      "X-Raft-Index" : "1522505",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "90200256-b618-373f-9afa-dcedd391c502"
+}

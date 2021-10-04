@@ -3,15 +3,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# TODO [jsprey] test this
-
-TYPE="${1}"
-SERVICE="${2}"
-
-if [ -z "${SERVICE}" ] || [ -z "${TYPE}" ]; then
+if [ -z "${1+x}" ] || [ -z "${2+x}" ]; then
   echo "usage remove-sa.sh account_type servicename"
   exit 1
 fi
+
+TYPE="${1}"
+SERVICE="${2}"
 
 if [ "${TYPE}" != "oidc" ] && [ "${TYPE}" != "oauth" ]; then
   echo "only the account_types: oidc, oauth are allowed"

@@ -27,7 +27,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientId
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer, registeredServiceCipherExecutor, ticketRegistry, principalResolver);
     }
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(CesOAuth20ClientIdClientSecretAuthenticator.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CesOAuth20ClientIdClientSecretAuthenticator.class);
 
     /**
      * Validate credentials.
@@ -53,17 +53,18 @@ public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientId
      * @return whether the secret is valid
      */
     public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret) {
-        LOGGER.debug("Found: [{}] in secret check", registeredService);
+        LOG.debug("Found: [{}] in secret check", registeredService);
         var storedClientSecretHash = registeredService.getClientSecret();
         if (StringUtils.isBlank(storedClientSecretHash)) {
-            LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
+            LOG.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
             return false;
         }
 
         String clientSecretHash = org.apache.commons.codec.digest.DigestUtils.sha256Hex(clientSecret);
+        LOG.debug("Check Secrets:\n\nInput-Secret: {}\nInput-Secret-Hash: {}\nService-Hash: {}", clientSecret, clientSecretHash, registeredService.getClientSecret());
 
         if (!StringUtils.equals(storedClientSecretHash, clientSecretHash)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
+            LOG.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
         return true;

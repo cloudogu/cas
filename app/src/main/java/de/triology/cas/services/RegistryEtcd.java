@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oidc.services.CesOIDCServiceFactory;
+import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.dogu.ICesServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
@@ -34,12 +34,14 @@ import java.util.concurrent.TimeoutException;
  */
 @Component
 class RegistryEtcd implements Registry {
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu";
-    private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts";
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     private final EtcdClient etcd;
+
+    private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts";
+    public static final String SERVICE_ACCOUNT_TYPE_OAUTH = "oauth";
+    public static final String SERVICE_ACCOUNT_TYPE_OIDC = "oidc";
 
     /**
      * Creates a etcd client that loads its URI from <code>/etc/ces/node_master</code>.
@@ -52,26 +54,21 @@ class RegistryEtcd implements Registry {
     }
 
 
-    /**
-     * Retrieves all CAS Services Accounts which are currently registered in etcd.
-     *
-     * @return a list containing the identifier for all registered service accounts of cas
-     */
     @Override
-    public List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory) {
-        log.debug("Get CAS-OAuth service accounts from registry");
+    public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, ICesServiceFactory factory) {
+        log.debug("Get [{}] service accounts from registry", type);
         try {
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).send().get().getNode().getNodes();
-            return extractOAuthClientsFromSADir(nodes, factory);
+            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR + "/" + type).send().get().getNode().getNodes();
+            return extractServiceAccountClientsByType(nodes, type, factory);
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 return new ArrayList<>();
             } else {
-                log.warn("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+                log.warn("Failed to getInstalledCasServiceAccountsOfType: ", e);
                 throw new RegistryException(e);
             }
         } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
-            log.error("Failed to getInstalledOAuthCASServiceAccounts: ", e);
+            log.error("Failed to getInstalledCasServiceAccountsOfType: ", e);
             throw new RegistryException(e);
         }
     }
@@ -80,18 +77,29 @@ class RegistryEtcd implements Registry {
      * Iterates over all available etcd-Keys of CASs service accounts.
      *
      * @param nodesFromEtcd a list containing all child nodes of the `service_accounts` directory of the cas in the etcd
+     * @param type          the type of service accounts that should be extracted
      * @return a list containing the identifier for all registered service accounts of cas
      */
-    private List<CesServiceData> extractOAuthClientsFromSADir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
-        log.debug("Entered extractOAuthClientsFromSADir");
+    private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, ICesServiceFactory factory) {
+        log.debug("Entered extractServiceAccountClientsByType");
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
-                String clientID = oAuthClient.getKey().substring(CAS_SERVICE_ACCOUNT_DIR.length() + 1);
-                String clientSecret = this.getCurrentOAuthClientSecret(clientID);
+                String clientPathPrefix = CAS_SERVICE_ACCOUNT_DIR + "/" + type + "/";
+                String clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 HashMap<String, String> attributes = new HashMap<>();
-                attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, clientID);
-                attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, clientSecret);
+
+                switch (type) {
+                    case SERVICE_ACCOUNT_TYPE_OIDC:
+                    case SERVICE_ACCOUNT_TYPE_OAUTH:
+                        String clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID);
+                        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
+                        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
+                        break;
+                    default:
+                        break;
+                }
+
                 serviceDataList.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
                 log.error("registry exception occurred", ex);
@@ -237,8 +245,8 @@ class RegistryEtcd implements Registry {
                 throw new RegistryException(e);
             }
         });
-
         t.start();
+
         Thread t2 = new Thread(() -> {
             try {
                 while (true) {
@@ -252,7 +260,6 @@ class RegistryEtcd implements Registry {
                 throw new RegistryException(e);
             }
         });
-
         t2.start();
     }
 
@@ -270,16 +277,5 @@ class RegistryEtcd implements Registry {
             json = (JSONObject) PARSER.parse(doguDescription);
         }
         return json;
-    }
-
-    /**
-     * Retrieves the client secret for a given clientId and encrypts the secret accordingly.
-     *
-     * @param clientID Identifier for the OAuth client
-     * @return hash of the actual client secret
-     * <p>
-     */
-    protected String getCurrentOAuthClientSecret(String clientID) {
-        return getEtcdValueForKeyIfPresent(CAS_SERVICE_ACCOUNT_DIR + "/" + clientID);
     }
 }

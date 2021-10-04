@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -21,14 +22,14 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
 
     @Override
     protected void initRegisteredServices() {
-        logger.debug("Cas started in development stage. All services can get an ST.");
-        logger.debug("The development stage does not support OAuth services.");
+        LOG.debug("Cas started in development stage. All services can get an ST.");
+        LOG.debug("The development stage does not support OAuth services.");
         addDevService();
     }
 
     @Override
     protected void updateRegisteredServices() {
-        logger.debug("Cas started in development stage. No services need to be updated");
+        LOG.debug("Cas started in development stage. No services need to be updated");
     }
 
     /**
@@ -40,21 +41,21 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         devService.setServiceId("^(https?|imaps?)://.*");
         devService.setName("10000001");
         addNewService(devService);
-        logger.debug("Creating development service...");
+        LOG.debug("Creating development service...");
 
         try {
             var factory = new CesOIDCServiceFactory();
             String oidcClientName = "cas-oidc-client";
             Map<String, String> attributes = new HashMap<>();
-            attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_ID, oidcClientName);
-            attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OIDC_CLIENT_SECRET_HASH, "df0576c3d0b3b449eef75f71894fffe86baa555eba1d52ed18ec324c96025d10");
+            attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, oidcClientName);
+            attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "df0576c3d0b3b449eef75f71894fffe86baa555eba1d52ed18ec324c96025d10");
             OidcRegisteredService service = (OidcRegisteredService) factory.createNewService(createId(), "", null, new CesServiceData(oidcClientName, factory, attributes));
             service.setName(oidcClientName);
             service.setServiceId(".*");
             addNewService(service);
-            logger.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `{}` for your client.", oidcClientName);
+            LOG.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `{}` for your client.", oidcClientName);
         } catch (CesServiceCreationException e) {
-            logger.error("could not start oidc service in development mode: ", e);
+            LOG.error("could not start oidc service in development mode: ", e);
         }
     }
 }

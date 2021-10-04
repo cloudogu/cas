@@ -71,12 +71,14 @@ for val in "${dogus[@]}"; do
   curl "http://localhost:9999/v2/keys/dogu/${val}/${DOGU_VERSION}"
 done 
 
-curl "http://localhost:9999/v2/keys/config/cas/service_accounts?dir=true"
 # set the secrets to a special value for both dogus to ensure that the new unit pass
-etcdctl set /config/cas/service_accounts/portainer "cdf022a1583367cf3fd6795be0eef0c8ce6f764143fcd9d851934750b0f4f39f"
-etcdctl set /config/cas/service_accounts/cas-oidc-client "834251c84c1b88ce39351d888ee04df91e89785a28dbd86244e0e22c9d27b41f"
-curl "http://localhost:9999/v2/keys/config/cas/service_accounts/cas-oidc-client"
-curl "http://localhost:9999/v2/keys/config/cas/service_accounts/portainer"
+etcdctl set /config/cas/service_accounts/oauth/portainer "cdf022a1583367cf3fd6795be0eef0c8ce6f764143fcd9d851934750b0f4f39f"
+etcdctl set /config/cas/service_accounts/oidc/cas-oidc-client "834251c84c1b88ce39351d888ee04df91e89785a28dbd86244e0e22c9d27b41f"
+curl "http://localhost:9999/v2/keys/config/cas/service_accounts?dir=true"
+curl "http://localhost:9999/v2/keys/config/cas/service_accounts/oidc?dir=true"
+curl "http://localhost:9999/v2/keys/config/cas/service_accounts/oidc/cas-oidc-client"
+curl "http://localhost:9999/v2/keys/config/cas/service_accounts/oauth?dir=true"
+curl "http://localhost:9999/v2/keys/config/cas/service_accounts/oauth/portainer"
 ''' | bash
 ```
 
