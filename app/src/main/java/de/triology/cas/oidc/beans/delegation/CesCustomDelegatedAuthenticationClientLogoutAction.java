@@ -1,4 +1,4 @@
-package de.triology.cas.oidc.beans;
+package de.triology.cas.oidc.beans.delegation;
 
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,9 +31,6 @@ import java.util.Optional;
  * Assumption: The PAC4J user profile should be in the user session during
  * logout, accessible with PAC4J Profile Manager. The Logout web flow should
  * make sure the user profile is present.
- *
- * @author Misagh Moayyed und Christian Beyer
- * @since 6.3.0
  */
 @RequiredArgsConstructor
 public class CesCustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {

@@ -12,7 +12,7 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
     public RegexRegisteredService createCASService(long id, String fqdn){
         RegexRegisteredService casService = new RegexRegisteredService();
         casService.setId(id);
-        casService.setServiceId("https://" + generateServiceIdFqdnRegex(fqdn) + "/cas/.*");
+        casService.setServiceId("https://" + generateServiceIdFqdnRegex(fqdn) + "(:443)?/cas(/.*)?");
         casService.setName(CesDoguServiceFactory.class.getSimpleName() + " " + SERVICE_CAS_IDENTIFIER);
         return casService;
     }

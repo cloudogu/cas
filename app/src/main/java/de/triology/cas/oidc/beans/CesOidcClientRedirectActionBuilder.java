@@ -15,6 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+/**
+ * This class handles the building of the redirection url when using the OIDC protocol. We removed the evaluation
+ * of the GET parameter prompt which meddles with the general SSO/SSL flow.
+ */
 @RequiredArgsConstructor
 public class CesOidcClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
     protected static final Logger LOG = LoggerFactory.getLogger(CesOidcClientRedirectActionBuilder.class);

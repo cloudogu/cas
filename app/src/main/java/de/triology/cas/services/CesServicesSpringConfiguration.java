@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import de.triology.cas.logout.CesServiceLogoutMessageBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
@@ -53,12 +52,6 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
         var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
         return new CesServicesManager(managerConfig, registry);
-    }
-
-    @Bean
-    @RefreshScope
-    public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
-        return new CesServiceLogoutMessageBuilder();
     }
 
     /**

@@ -30,6 +30,7 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesOIDCServiceFactory oidcServiceFactory = new CesOIDCServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
+    private static final CesServiceData EXPECTED_SERVICE_CAS = new CesServiceData("cas", doguServiceFactory);
     private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
     private static final CesServiceData EXPECTED_OIDC_SERVICE_DATA = new CesServiceData("cas-oidc-client", oidcServiceFactory);
 
@@ -56,7 +57,10 @@ public class CesServicesManagerStageProductiveTest {
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/nexus/something"),
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_2.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/smeagol(/.*)?")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse")));
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
+                new ExpectedService().name(EXPECTED_SERVICE_CAS.getIdentifier())
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/cas(/.*)?")
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingElse")));
     }
 
     /**

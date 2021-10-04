@@ -40,7 +40,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();
-        this.oAuthServiceFactory = new CesOIDCServiceFactory();
+        this.oAuthServiceFactory = new CesOAuthServiceFactory();
         this.oidcServiceFactory = new CesOIDCServiceFactory();
     }
 
@@ -89,9 +89,13 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         List<CesServiceData> newServices = new ArrayList<>(persistentServices);
         newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory));
         newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory));
-        newServices.addAll(registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory));
+        List<String> serviceAccountServices = newServices.stream().map(data -> data.getName()).collect(Collectors.toList());
+
+        List<CesServiceData> doguServices = registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory);
+        newServices.addAll(doguServices.stream().filter(service -> !serviceAccountServices.contains(service.getName())).collect(Collectors.toList()));
         synchronizeServices(newServices);
-        LOG.info("Loaded {} services!", registeredServices.size());
+        LOG.info("Loaded {} services:", registeredServices.size());
+        registeredServices.values().forEach(e -> LOG.debug("[{}]", e));
     }
 
     /**
@@ -184,8 +188,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * persistent services will not be removed
      */
     public void addPersistentServices() {
-        //This is necessary since cas needs a Service Ticket in clearPass workflow
-        LOG.info("Creating cas service for clearPass workflow");
+        //This is necessary for the oauth workflow
+        LOG.info("Creating cas service for oauth/oidc workflow");
         addNewService(doguServiceFactory.createCASService(createId(), fqdn));
         persistentServices.add(new CesServiceData(CesDoguServiceFactory.SERVICE_CAS_IDENTIFIER, doguServiceFactory));
     }

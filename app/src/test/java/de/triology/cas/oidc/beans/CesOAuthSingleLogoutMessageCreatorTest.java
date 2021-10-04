@@ -1,4 +1,4 @@
-package de.triology.cas.logout;
+package de.triology.cas.oidc.beans;
 
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
@@ -22,14 +22,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for {@link CesServiceLogoutMessageBuilder}.
+ * Tests for {@link CesOAuthSingleLogoutMessageCreator}.
  */
-public class CesServiceLogoutMessageBuilderTest {
+public class CesOAuthSingleLogoutMessageCreatorTest {
 
     @Test
-    public void test_create_oauth_message_successfully() throws Exception {
+    public void testCreate_Successful() throws Exception {
         // given
-        CesServiceLogoutMessageBuilder builder = new CesServiceLogoutMessageBuilder();
+        CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator();
 
         // given - data
         CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
@@ -60,9 +60,9 @@ public class CesServiceLogoutMessageBuilderTest {
     }
 
     @Test
-    public void test_create_oauth_message_without_at() throws Exception {
+    public void testCreate_WrongAtTicket() throws Exception {
         // given
-        CesServiceLogoutMessageBuilder builder = new CesServiceLogoutMessageBuilder();
+        CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator();
 
         // given - data
         CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
@@ -88,43 +88,6 @@ public class CesServiceLogoutMessageBuilderTest {
 
         // then
         assertEquals("", logoutMessage.getPayload());
-        validateMockitoUsage();
-    }
-
-    @Test
-    public void test_create_service_message_successfully() throws CesServiceCreationException {
-        // given
-        CesServiceLogoutMessageBuilder builder = new CesServiceLogoutMessageBuilder();
-
-        // given - data
-        CesDoguServiceFactory factory = new CesDoguServiceFactory();
-        CesServiceData expectedData = new CesServiceData("testDoguClient", factory);
-        RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
-        String expectedServiceTicket = "ST-2-ViFoWViiZ2A0TMhoMhbvq2Ey7Pg-cas";
-        String expectedPrincipal = "testUser";
-
-        // given - mocks
-        SingleLogoutRequestContext contextMock = mock(SingleLogoutRequestContext.class);
-        SingleLogoutExecutionRequest singleLogoutExecutionRequestMock = mock(SingleLogoutExecutionRequest.class);
-        TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
-        Authentication authMock = mock(Authentication.class);
-        Principal principalMock = mock(Principal.class);
-
-        when(contextMock.getRegisteredService()).thenReturn(expectedService);
-        when(contextMock.getExecutionRequest()).thenReturn(singleLogoutExecutionRequestMock);
-        when(contextMock.getTicketId()).thenReturn(expectedServiceTicket);
-        when(singleLogoutExecutionRequestMock.getTicketGrantingTicket()).thenReturn(tgtMock);
-        when(tgtMock.getAuthentication()).thenReturn(authMock);
-        when(authMock.getPrincipal()).thenReturn(principalMock);
-        when(principalMock.getId()).thenReturn(expectedPrincipal);
-
-        // when
-        SingleLogoutMessage logoutMessage = builder.create(contextMock);
-
-        // then
-        assertTrue(logoutMessage.getPayload().contains("samlp:LogoutRequest"));
-        assertTrue(logoutMessage.getPayload().contains(expectedServiceTicket));
-        assertTrue(logoutMessage.getPayload().contains(expectedPrincipal));
         validateMockitoUsage();
     }
 }

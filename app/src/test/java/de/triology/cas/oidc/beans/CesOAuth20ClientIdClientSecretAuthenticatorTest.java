@@ -1,4 +1,4 @@
-package de.triology.cas.oidc;
+package de.triology.cas.oidc.beans;
 
 import de.triology.cas.oidc.beans.CesOAuth20ClientIdClientSecretAuthenticator;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
