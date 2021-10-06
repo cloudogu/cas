@@ -34,9 +34,8 @@ function removeDeprecatedKeys() {
 
 function migrateServiceAccounts() {
   echo "Migrating service service_accounts..."
-  VALUE=$(doguctl config service_accounts/portainer --default "")
-  echo "Value: ${VALUE}"
-  if [[ "${VALUE}" != "" ]]; then
+  VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
+  if [[ "${VALUE}" != "default" ]]; then
       {
         CLIENT_SECRET="$(doguctl config service_accounts/portainer)"
         doguctl config --remove service_accounts/portainer
