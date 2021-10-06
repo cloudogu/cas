@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -23,13 +21,13 @@ import java.util.function.Predicate;
  * {@link CesServicesManagerStageProductive}), a number of {@link RegisteredService}s is returned.
  */
 public class CesServicesManager implements ServicesManager {
+    private static final Logger LOG = LoggerFactory.getLogger(CesServicesManager.class);
 
     /**
      * This triggers operation in development stage.
      */
     static final String STAGE_DEVELOPMENT = "development";
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private CesServicesManagerStage serviceStage;
 
@@ -39,13 +37,13 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        logger.debug("Entered getAllServices method");
+        LOG.debug("Entered getAllServices method");
         return Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values());
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        logger.info("Cas wants to reload registered services.");
+        LOG.info("Cas wants to reload registered services.");
         serviceStage.updateRegisteredServices();
         return serviceStage.getRegisteredServices().values();
     }

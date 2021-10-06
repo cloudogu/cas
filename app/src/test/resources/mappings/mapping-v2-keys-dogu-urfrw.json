@@ -1,0 +1,20 @@
+{
+  "id" : "f47b4817-9607-3c54-b4f3-e6d7cb783a72",
+  "request" : {
+    "url" : "/v2/keys/dogu?dir=true",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-urfrw.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49462",
+      "X-Raft-Index" : "1522505",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "f47b4817-9607-3c54-b4f3-e6d7cb783a72"
+}

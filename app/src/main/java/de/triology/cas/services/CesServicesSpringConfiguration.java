@@ -1,8 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.logout.CesServiceLogoutMessageBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.slf4j.Logger;
@@ -10,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +20,7 @@ import java.util.Map;
 @ComponentScan("de.triology.cas.services")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CesServicesSpringConfiguration implements ServicesManagerExecutionPlanConfigurer {
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger LOG = LoggerFactory.getLogger(CesServicesSpringConfiguration.class);
 
     @Autowired
     private RegistryEtcd registry;
@@ -42,23 +38,17 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     private String oidcPrincipalsAttribute;
 
     @Value("${cas.authn.pac4j.oidc[0].generic.enabled:#{false}}")
-    private boolean oidcProviderEnabled;
+    private boolean oidcAuthenticationDelegationEnabled;
 
     @Value("${cas.authn.pac4j.oidc[0].generic.client-name:#{\"\"}}")
     private String oidcClientName;
 
     @Override
     public ServicesManager configureServicesManager() {
-        LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
+        LOG.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
-        CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcProviderEnabled, oidcClientName, oidcPrincipalsAttribute);
+        var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
         return new CesServicesManager(managerConfig, registry);
-    }
-
-    @Bean
-    @RefreshScope
-    public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
-        return new CesServiceLogoutMessageBuilder();
     }
 
     /**

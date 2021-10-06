@@ -11,20 +11,22 @@ import java.util.List;
 interface Registry {
 
     /**
-     * @return the names of all installed dogus wich are using CAS without the namespace
-     * @throws RegistryException wrapper for all technical exceptions
+     * @return an array of {@link CesServiceData} containing the information for all installed dogus
      */
     List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
 
     /**
-     * @return the names of all installed OAuth service accounts
-     * @throws RegistryException wrapper for all technical exceptions
+     * Retrieves all CAS Services Accounts which are currently registered in etcd.
+     *
+     * @param factory The factory responsible to create a service of the given type
+     * @param serviceAccountType The type of service account that should be searched in the registry
+     * @return an array of {@link CesServiceData} containing the information for all installed oauth service accounts
+     * of the given type
      */
-    List<CesServiceData> getInstalledOAuthCASServiceAccounts(ICesServiceFactory factory);
+    List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, ICesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name
-     * @throws RegistryException wrapper for all technical exceptions
      */
     String getFqdn();
 
@@ -38,7 +40,6 @@ interface Registry {
      * Adds a listener that is called when a new dogu is added to or delted from etcd.
      *
      * @param doguChangeListener listener to be called on dogu change
-     * @throws RegistryException wrapper for all technical exceptions
      */
     void addDoguChangeListener(DoguChangeListener doguChangeListener);
 

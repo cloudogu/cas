@@ -1,0 +1,20 @@
+{
+  "id" : "00b0ba39-d683-3816-9189-7154573f17f4",
+  "request" : {
+    "url" : "/v2/keys/dogu/registrator/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-registrator-current-X00Ks.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49464",
+      "X-Raft-Index" : "1522509",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "00b0ba39-d683-3816-9189-7154573f17f4"
+}

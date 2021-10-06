@@ -1,0 +1,20 @@
+{
+  "id" : "471fd0cd-69a5-378d-a28f-86d308120266",
+  "request" : {
+    "url" : "/v2/keys/dogu/cas-oidc-client/0.1.0-1",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-cas-oidc-client-0.1.0-1-EzBK4.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49462",
+      "X-Raft-Index" : "1522505",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "471fd0cd-69a5-378d-a28f-86d308120266"
+}

@@ -1,0 +1,20 @@
+{
+  "id" : "b490a6de-a49f-386d-b625-e3ad9b4c9899",
+  "request" : {
+    "url" : "/v2/keys/dogu/postfix/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-postfix-current-63V7N.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49464",
+      "X-Raft-Index" : "1522508",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "b490a6de-a49f-386d-b625-e3ad9b4c9899"
+}

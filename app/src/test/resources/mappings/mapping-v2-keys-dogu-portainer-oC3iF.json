@@ -1,0 +1,20 @@
+{
+  "id" : "61964994-97bf-3869-b616-713a1d08e13a",
+  "request" : {
+    "url" : "/v2/keys/dogu/portainer/?dir=true",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-portainer-oC3iF.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49464",
+      "X-Raft-Index" : "1522508",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "61964994-97bf-3869-b616-713a1d08e13a"
+}

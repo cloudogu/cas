@@ -1,6 +1,7 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oauth.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
@@ -22,15 +23,16 @@ import static org.mockito.Mockito.*;
  * Tests for {@link CesServicesManagerStageProductive}.
  */
 public class CesServicesManagerStageProductiveTest {
-    private static final String STAGE_PRODUCTION = "production";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX = CesDoguServiceFactory.generateServiceIdFqdnRegex("fully/qualified");
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
     private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
+    private static final CesOIDCServiceFactory oidcServiceFactory = new CesOIDCServiceFactory();
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
+    private static final CesServiceData EXPECTED_SERVICE_CAS = new CesServiceData("cas", doguServiceFactory);
     private static final CesServiceData EXPECTED_OAUTH_SERVICE_DATA = new CesServiceData("portainer", oAuthServiceFactory);
-    private static final CesServiceData EXPECTED_SERVICE_DATA_CAS = new CesServiceData("cas", doguServiceFactory);
+    private static final CesServiceData EXPECTED_OIDC_SERVICE_DATA = new CesServiceData("cas-oidc-client", oidcServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
     private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
@@ -56,9 +58,9 @@ public class CesServicesManagerStageProductiveTest {
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_2.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/smeagol(/.*)?")
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
-                new ExpectedService().name(EXPECTED_SERVICE_DATA_CAS.getIdentifier())
-                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "/cas/.*")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingCompletelyDifferent")));
+                new ExpectedService().name(EXPECTED_SERVICE_CAS.getIdentifier())
+                        .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/cas(/.*)?")
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingElse")));
     }
 
     /**
@@ -138,15 +140,23 @@ public class CesServicesManagerStageProductiveTest {
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "supersecret");
         CesServiceData correctOAuthService = new CesServiceData(EXPECTED_OAUTH_SERVICE_DATA.getName(), oAuthServiceFactory, attributes);
 
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, EXPECTED_OIDC_SERVICE_DATA.getName());
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "supersecret");
+        CesServiceData correctOidcService = new CesServiceData(EXPECTED_OIDC_SERVICE_DATA.getName(), oidcServiceFactory, attributes);
+
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
         doReturn(new LinkedList<>(Collections.singletonList(correctOAuthService)))
-                .when(registry).getInstalledOAuthCASServiceAccounts(any());
+                .when(registry).getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, stage.oAuthServiceFactory);
+        doReturn(new LinkedList<>(Collections.singletonList(correctOidcService)))
+                .when(registry).getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, stage.oidcServiceFactory);
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         expectedServices.add(new ExpectedService().name(correctOAuthService.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/portainer(/.*)?"));
+        expectedServices.add(new ExpectedService().name(correctOidcService.getIdentifier())
+                .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/cas-oidc-client(/.*)?"));
 
         // Notify manager of change
         doguChangeListener.onChange();

@@ -28,7 +28,7 @@ public class CesServicesManagerStageDevelopmentTest {
     @Test
     public void getRegisteredServices() {
         Collection<RegisteredService> allServices = stage.getRegisteredServices().values();
-        assertEquals("Unexpected amount of services returned in development mode", 1, allServices.size());
+        assertEquals("Unexpected amount of services returned in development mode", 2, allServices.size());
         assertEquals("Development service not returned by getRegisteredServices(). Id mismatch.",
                 DEVELOPMENT_SERVICE_ID, allServices.iterator().next().getId());
         assertEquals("Development service not returned by getRegisteredServices(). ServiceId mismatch.",

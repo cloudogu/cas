@@ -26,7 +26,7 @@ public class EtcdClientFactory {
             // TODO when is this resource closed? Can spring be used to call etcd.close()?
             return createEtcdClient(URI.create(getEtcdUri(nodeMasterFilepath)));
         } catch (IOException e) {
-            throw new RegistryException(e);
+            throw new RegistryException("Cannot create etcd client: ", e);
         }
     }
 
