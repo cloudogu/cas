@@ -22,14 +22,14 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
 
     @Override
     protected void initRegisteredServices() {
-        LOG.debug("Cas started in development stage. All services can get an ST.");
-        LOG.debug("The development stage does not support OAuth services.");
+        log.debug("Cas started in development stage. All services can get an ST.");
+        log.debug("The development stage does not support OAuth services.");
         addDevService();
     }
 
     @Override
     protected void updateRegisteredServices() {
-        LOG.debug("Cas started in development stage. No services need to be updated");
+        log.debug("Cas started in development stage. No services need to be updated");
     }
 
     /**
@@ -41,11 +41,11 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         devService.setServiceId("^(https?|imaps?)://.*");
         devService.setName("10000001");
         addNewService(devService);
-        LOG.debug("Creating development service...");
+        log.debug("Creating development service...");
 
         try {
             var factory = new CesOIDCServiceFactory();
-            String oidcClientName = "cas-oidc-client";
+            var oidcClientName = "cas-oidc-client";
             Map<String, String> attributes = new HashMap<>();
             attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, oidcClientName);
             attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "df0576c3d0b3b449eef75f71894fffe86baa555eba1d52ed18ec324c96025d10");
@@ -53,9 +53,9 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
             service.setName(oidcClientName);
             service.setServiceId(".*");
             addNewService(service);
-            LOG.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `{}` for your client.", oidcClientName);
+            log.debug("Creating oidc development service... Use the secret: `T0OpxpbdyFixfwMc` and id `{}` for your client.", oidcClientName);
         } catch (CesServiceCreationException e) {
-            LOG.error("could not start oidc service in development mode: ", e);
+            log.error("could not start oidc service in development mode: ", e);
         }
     }
 }

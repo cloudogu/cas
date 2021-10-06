@@ -25,9 +25,9 @@ public class CesOAuthSingleLogoutMessageCreator implements SingleLogoutMessageCr
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
-        TicketGrantingTicket ticket = request.getExecutionRequest().getTicketGrantingTicket();
-        RegisteredService service = request.getRegisteredService();
-        String logoutRequest = "";
+        var ticket = request.getExecutionRequest().getTicketGrantingTicket();
+        var service = request.getRegisteredService();
+        var logoutRequest = "";
         LOG.debug("Generate oauth logout request for: [{}] to [{}]", service.getName(), service.getLogoutUrl());
 
         for (String childTicket : ticket.getDescendantTickets()) {

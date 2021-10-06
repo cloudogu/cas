@@ -12,7 +12,7 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
     public RegexRegisteredService createCASService(long id, String fqdn){
         RegexRegisteredService casService = new RegexRegisteredService();
         casService.setId(id);
-        casService.setServiceId("https://" + generateServiceIdFqdnRegex(fqdn) + "(:443)?/cas(/.*)?");
+        casService.setServiceId(String.format("https://%s(:443)?/cas(/.*)?", generateServiceIdFqdnRegex(fqdn)));
         casService.setName(CesDoguServiceFactory.class.getSimpleName() + " " + SERVICE_CAS_IDENTIFIER);
         return casService;
     }
@@ -24,12 +24,12 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
         RegexRegisteredService service = new RegexRegisteredService();
         service.setId(id);
 
-        String serviceId = "https://" + fqdnRegex + "(:443)?/" + serviceData.getName() + "(/.*)?";
+        String serviceId = String.format("https://%s(:443)?/%s(/.*)?", fqdnRegex, serviceData.getName());
         service.setServiceId(serviceId);
         service.setName(serviceData.getIdentifier());
 
         if (casLogoutURI != null) {
-            String logoutUri = "https://" + fqdn + "/" + serviceData.getName() + casLogoutURI;
+            String logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutURI);
             service.setLogoutUrl(logoutUri);
         }
 

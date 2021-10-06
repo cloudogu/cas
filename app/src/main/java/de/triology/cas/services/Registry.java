@@ -12,7 +12,6 @@ interface Registry {
 
     /**
      * @return an array of {@link CesServiceData} containing the information for all installed dogus
-     * @throws RegistryException wrapper for all technical exceptions
      */
     List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
 
@@ -23,13 +22,11 @@ interface Registry {
      * @param serviceAccountType The type of service account that should be searched in the registry
      * @return an array of {@link CesServiceData} containing the information for all installed oauth service accounts
      * of the given type
-     * @throws RegistryException wrapper for all technical exceptions
      */
     List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, ICesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name
-     * @throws RegistryException wrapper for all technical exceptions
      */
     String getFqdn();
 
@@ -43,7 +40,6 @@ interface Registry {
      * Adds a listener that is called when a new dogu is added to or delted from etcd.
      *
      * @param doguChangeListener listener to be called on dogu change
-     * @throws RegistryException wrapper for all technical exceptions
      */
     void addDoguChangeListener(DoguChangeListener doguChangeListener);
 

@@ -21,13 +21,13 @@ import java.util.function.Predicate;
  * {@link CesServicesManagerStageProductive}), a number of {@link RegisteredService}s is returned.
  */
 public class CesServicesManager implements ServicesManager {
+    private static final Logger LOG = LoggerFactory.getLogger(CesServicesManager.class);
 
     /**
      * This triggers operation in development stage.
      */
     static final String STAGE_DEVELOPMENT = "development";
 
-    private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     private CesServicesManagerStage serviceStage;
 

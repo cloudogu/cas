@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- OIDC-client support. Now, it is possible to register oidc clients at the CAS via a service account. For more information see [docs](docs/operations/oauth_guide_en.md) (#114)
+- OIDC-client support. Now, it is possible to register OIDC clients at the CAS via a service account. For more information see [docs](docs/operations/oauth_guide_en.md) (#114)
 
 ## [v6.3.3-4] - 2021-09-24
 ### Added

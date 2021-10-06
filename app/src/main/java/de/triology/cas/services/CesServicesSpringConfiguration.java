@@ -1,7 +1,6 @@
 package de.triology.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.slf4j.Logger;
@@ -9,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 

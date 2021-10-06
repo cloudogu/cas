@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -49,7 +50,7 @@ public class CesOAuthConfiguration {
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator(
             ObjectProvider<ServicesManager> servicesManager,
             ObjectProvider<TicketRegistry> ticketRegistry,
-            ObjectProvider<ServiceFactory> webApplicationServiceFactory,
+            ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
             ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
             ObjectProvider<CipherExecutor<Serializable, String>> oauthRegisteredServiceCipherExecutor) {
