@@ -1,0 +1,20 @@
+{
+  "id" : "6633673a-6e78-30ef-b7af-60d989914d84",
+  "request" : {
+    "url" : "/v2/keys/dogu/cas/current",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-cas-current-E4ZV8.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49462",
+      "X-Raft-Index" : "1522505",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "6633673a-6e78-30ef-b7af-60d989914d84"
+}

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.limiting")
 public class CesLimitingConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesLimitingConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CesLimitingConfiguration.class);
 
     @Value("${cas.authn.throttle.failure.max_number:0}")
     private long max_number;
@@ -46,11 +46,11 @@ public class CesLimitingConfiguration {
                                                                         ThrottledRequestResponseHandler throttledRequestResponseHandler) {
 
         if (max_number <= 0 && failure_store_time <= 0) {
-            LOGGER.debug("Authentication throttling is disabled since no max_number and no failure_store_time is defined");
+            LOG.debug("Authentication throttling is disabled since no max_number and no failure_store_time is defined");
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
 
-        LOGGER.debug("Activating CES authentication throttling based on IP address. Configuration[MaxNumber:[{}], FailureStoreTime:[{}], LockTime:[{}]]", max_number, failure_store_time, lockTime);
+        LOG.debug("Activating CES authentication throttling based on IP address. Configuration[MaxNumber:[{}], FailureStoreTime:[{}], LockTime:[{}]]", max_number, failure_store_time, lockTime);
         return new CesThrottlingInterceptorAdapter(
                 throttleSubmissionMap,
                 throttledRequestResponseHandler,

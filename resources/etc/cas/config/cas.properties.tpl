@@ -144,20 +144,7 @@ cas.ticket.tgt.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time
 ########################################################################################################################
 
 ########################################################################################################################
-# OAuth
-# Configuration guide: https://apereo.github.io/cas/6.3.x/installation/OAuth-OpenId-Authentication.html
-# Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#oauth2
-# ----------------------------------------------------------------------------------------------------------------------
-# Time for the code to expire
-cas.authn.oauth.code.timeToKillInSeconds=30
-cas.authn.oauth.code.numberOfUses=1
-# Access Token (Session) is valid for 1 day (= 86000 seconds)
-cas.authn.oauth.accessToken.timeToKillInSeconds=86000
-cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
-########################################################################################################################
-
-########################################################################################################################
-# OIDC
+# OIDC - Provider Mode
 # Configuration guide:
 # Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
 # ----------------------------------------------------------------------------------------------------------------------
@@ -198,4 +185,24 @@ ces.services.oidcPrincipalsAttribute={{ .Config.GetOrDefault "oidc/principal_att
 ### attribute mapping
 ces.services.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 {{ end }}
+########################################################################################################################
+
+########################################################################################################################
+# OIDC+OAuth2 - Client Mode
+# Configuration guide:
+# OIDC Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#openid-connect
+# OAuth2 Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#oauth2
+# ----------------------------------------------------------------------------------------------------------------------
+# OIDC
+# assigns the issuer of oidc correctly
+cas.authn.oidc.issuer=${cas.server.prefix}/oidc
+cas.client.prefix=${cas.server.prefix}
+# ----------------------------------------------------------------------------------------------------------------------
+# OAuth2
+# Time for the code to expire
+cas.authn.oauth.code.timeToKillInSeconds=30
+cas.authn.oauth.code.numberOfUses=1
+# Access Token (Session) is valid for 1 day (= 86000 seconds)
+cas.authn.oauth.accessToken.timeToKillInSeconds=86000
+cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 ########################################################################################################################

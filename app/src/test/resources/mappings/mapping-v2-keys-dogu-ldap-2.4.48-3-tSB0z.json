@@ -1,0 +1,20 @@
+{
+  "id" : "c1981c63-8dd3-3450-8546-d7e115237ed9",
+  "request" : {
+    "url" : "/v2/keys/dogu/ldap/2.4.48-3",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-v2-keys-dogu-ldap-2.4.48-3-tSB0z.json",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "X-Etcd-Cluster-Id" : "cdf818194e3a8c32",
+      "X-Etcd-Index" : "49462",
+      "X-Raft-Index" : "1522505",
+      "X-Raft-Term" : "31",
+      "Date" : "Mon, 04 Oct 2021 05:50:01 GMT"
+    }
+  },
+  "uuid" : "c1981c63-8dd3-3450-8546-d7e115237ed9"
+}

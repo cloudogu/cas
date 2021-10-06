@@ -3,6 +3,8 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import de.triology.cas.oidc.services.CesOAuthServiceFactory;
+import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
@@ -29,6 +31,8 @@ import static org.mockito.Mockito.when;
  */
 public class RegistryEtcdTest {
 
+    private static final String OAUTH_CLIENT_PORTAINER_SECRET = "cdf022a1583367cf3fd6795be0eef0c8ce6f764143fcd9d851934750b0f4f39f";
+    private static final String OIDC_CLIENT_CAS_OIDC_SECRET = "834251c84c1b88ce39351d888ee04df91e89785a28dbd86244e0e22c9d27b41f";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(
@@ -40,17 +44,23 @@ public class RegistryEtcdTest {
     @Test
     public void getFqdn() {
         RegistryEtcd registry = createRegistry();
-        assertEquals("ces.cloudogu.local", registry.getFqdn());
+        assertEquals("192.168.56.2", registry.getFqdn());
     }
 
     @Test
     public void getDogus() {
         RegistryEtcd registry = createRegistry();
-        CesDoguServiceFactory factory = new CesDoguServiceFactory();
+        var factory = new CesDoguServiceFactory();
         List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
                 .stream().map(CesServiceData::getName).collect(Collectors.toList());
-        assertThat(installedDogus, containsInAnyOrder("nexus", "usermgt", "cockpit"));
-        assertEquals(3, registry.getInstalledDogusWhichAreUsingCAS(factory).size());
+        assertTrue(installedDogus.contains("redmine"));
+        assertTrue(installedDogus.contains("usermgt"));
+        assertTrue(installedDogus.contains("nexus"));
+        assertTrue(installedDogus.contains("portainer"));
+        assertTrue(installedDogus.contains("scm"));
+        assertTrue(installedDogus.contains("cas-oidc-client"));
+        assertTrue(installedDogus.contains("cockpit"));
+        assertTrue(registry.getInstalledDogusWhichAreUsingCAS(factory).size() >= 7);
     }
 
     private RegistryEtcd createRegistry() {
@@ -84,7 +94,7 @@ public class RegistryEtcdTest {
         RegistryEtcd registry = new RegistryEtcd(client);
         ArrayList<String> dogus = new ArrayList<>();
 
-        registry.addDoguChangeListener(()-> {
+        registry.addDoguChangeListener(() -> {
             synchronized (dogus) {
                 if (dogus.contains("dogu")) {
                     try {
@@ -158,5 +168,52 @@ public class RegistryEtcdTest {
         when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
 
         registry.getCasLogoutUri("testDogu");
+    }
+
+
+    @Test
+    public void getOidcDogus() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesOIDCServiceFactory();
+        List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, factory)
+                .stream().map(CesServiceData::getName).collect(Collectors.toList());
+        assertThat(installedServiceAccounts, containsInAnyOrder("cas-oidc-client"));
+        assertEquals(1, registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, factory).size());
+    }
+
+    @Test
+    public void getOidcDogus_CheckSecrets() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesOIDCServiceFactory();
+        List<CesServiceData> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory);
+        assertEquals(1, installedServiceAccounts.size());
+
+        installedServiceAccounts.stream().filter(e -> e.getName().equals("cas-oidc-client")).forEach(e -> {
+            assertEquals(OIDC_CLIENT_CAS_OIDC_SECRET, e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH));
+            assertEquals("cas-oidc-client", e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID));
+        });
+    }
+
+    @Test
+    public void getOAuthDogus() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesOAuthServiceFactory();
+        List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory)
+                .stream().map(CesServiceData::getName).collect(Collectors.toList());
+        assertThat(installedServiceAccounts, containsInAnyOrder("portainer"));
+        assertEquals(1, registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory).size());
+    }
+
+    @Test
+    public void getOAuthDogus_CheckSecrets() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesOAuthServiceFactory();
+        List<CesServiceData> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory);
+        assertEquals(1, installedServiceAccounts.size());
+
+        installedServiceAccounts.stream().filter(e -> e.getName().equals("portainer")).forEach(e -> {
+            assertEquals(OAUTH_CLIENT_PORTAINER_SECRET, e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH));
+            assertEquals("portainer", e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID));
+        });
     }
 }
