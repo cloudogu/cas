@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- correct font-stack for inputs
+- correct font-stack for inputs (#116)
 - update ces-theme to v0.4.0
 
 ## [v6.3.3-5] - 2021-10-06
