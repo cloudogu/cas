@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-7] - 2021-10-21
+
 ## [v6.3.3-6] - 2021-10-20
 ### Changed
 - correct font-stack for inputs (#116)
