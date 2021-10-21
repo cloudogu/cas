@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-6] - 2021-10-20
+### Changed
+- correct font-stack for inputs (#116)
+- update ces-theme to v0.4.0
+
 ## [v6.3.3-5] - 2021-10-06
 ### Added
 - OIDC-client support. Now, it is possible to register OIDC clients at the CAS via a service account. For more information see [docs](docs/operations/oauth_guide_en.md) (#114)
