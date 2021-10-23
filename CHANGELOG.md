@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v6.3.3-7] - 2021-10-21
 ### Changed
-- use equal login error mesages (#118)
+- use equal login error messages (#118)
 
 ## [v6.3.3-6] - 2021-10-20
 ### Changed
