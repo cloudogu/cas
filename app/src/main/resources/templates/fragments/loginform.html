@@ -225,7 +225,7 @@
                 <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
 
                 <section class="cas-field my-3">
-                    <div id="loginErrorsPanel" class="banner banner-danger banner-dismissible" th:if="${#fields.hasErrors('*')}">
+                    <div id="loginErrorsPanel" class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>
