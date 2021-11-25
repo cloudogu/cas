@@ -48,9 +48,9 @@ function casAdminLogin() {
     cy.visit("/cas/login")
     cy.clickWarpMenuCheckboxIfPossible()
 
-    cy.get('input[name="username"]').type(env.GetAdminUsername())
-    cy.get('input[name="password"]').type(env.GetAdminPassword())
-    cy.get('button[name="submit"]').click()
+    cy.get('input[data-testid=login-username-input-field]').type(env.GetAdminUsername())
+    cy.get('input[data-testid=login-password-input-field]').type(env.GetAdminPassword())
+    cy.get('div[data-testid=login-form-login-button-container]').children('div').children('button').click()
 }
 
 Given(/^the admin logs into the ces$/, function () {
@@ -122,6 +122,8 @@ Then(/^a profile is returned$/, function () {
 });
 
 Then(/^cas shows that the service is not authorized to access this endpoint$/, function () {
+    // This header element comes from the vanilla CAS therefore this component doesn't implement the test-key convention
+    // and is select by h2
     cy.get('h2').contains("Application Not Authorized to Use CAS")
     resetData()
 });
