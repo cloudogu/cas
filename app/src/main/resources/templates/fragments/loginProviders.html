@@ -31,7 +31,7 @@
                                 th:id="${entry.name}"
                                 th:classappend=" 'mdc-button-' + ${entry.type}"
                                 th:href="@{${entry.redirectUrl}}"
-                                th:attr="autoredirect=${entry.autoRedirect}"
+                                th:attr="autoredirect=${entry.autoRedirect},data-testid='login-provider-'+${entry.type}"
                                 th:inline="text"
                                 th:title="${entry.name + ' ' + entry.type}">
 
@@ -93,10 +93,8 @@
                             <li th:each="entry: ${wsfedUrls}">
                                 <a class="mdc-button mdc-button--raised d-block"
                                     th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
-                                    th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
-
+                                    th:attr="autoredirect=${entry.autoRedirect}"  th:title="${entry.name}">
                                     <i class="mdi mdi-windows"></i>
-
                                     <span class="mdc-button__label">[[${entry.name}]]</span>
                                 </a>
                             </li>
