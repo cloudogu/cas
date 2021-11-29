@@ -53,7 +53,7 @@ function migrateServiceAccounts() {
 FROM_VERSION="${1}"
 TO_VERSION="${2}"
 
-echo "Executing CAS pre-upgrade from ${FROM_VERSION} to ${TO_VERSION} ..."
+echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ..."
 
 checkSameVersion
 removeDeprecatedKeys
@@ -62,5 +62,5 @@ migrateServiceAccounts
 echo "Set registry flag so startup script can start afterwards..."
 doguctl state "upgrade done"
 
-echo "Executing CAS pre-upgrade from ${FROM_VERSION} to ${TO_VERSION} ... Done!"
+echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ... Done!"
 
