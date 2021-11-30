@@ -4,5 +4,5 @@ const {
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
 
 Then(/^a button for delegated OIDC authentication is shown$/, function () {
-    cy.get('#MyProvider').contains("MyProvider")
+    cy.get('[data-testid=login-provider-oidc]')
 });

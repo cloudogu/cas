@@ -48,12 +48,13 @@
                 && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
 
             <button type="button" id="forgotPassword" class="link-underlined btn btn-default right"
+                    data-testid="login-forgot-password-button"
                     aria-label="${passwordForgot}"
                     onclick="toggleForgotPasswordInfo(); return false;"
                     th:text="#{passwordForgot}">
             </button>
 
-            <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}"></p>
+            <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}" data-testid="login-forgot-password-text"></p>
         </div>
     </div>
 </div>

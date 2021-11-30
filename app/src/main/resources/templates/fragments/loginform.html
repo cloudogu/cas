@@ -29,6 +29,7 @@
 
                         <label for="username" class="mdc-text-field mdc-text-field--outlined form-group">
                             <input class="mdc-text-field__input form control"
+                                   data-testid="login-username-input-field"
                                    id="username"
                                    size="25"
                                    type="text"
@@ -70,6 +71,7 @@
                                    class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
 
                                 <input class="mdc-text-field__input pwd"
+                                       data-testid="login-password-input-field"
                                        type="password" id="password" size="25"
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}" autocomplete="off"/>
@@ -92,7 +94,9 @@
                             </p>
                         </div>
                     </div>
-                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append " type="button">
+                        <button data-testid="login-reveal-btn"
+                                class="reveal-password mdc-button mdc-button--raised mdc-input-group-append "
+                                type="button">
                         <i class="glyphicon glyphicon-eye-open "></i>
                         <span class="sr-only">Toggle Password</span>
                     </button>
@@ -221,11 +225,15 @@
                             </span>
                     </p>
                 </section>
-
-                <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
+                <div data-testid="login-form-login-button-container">
+                    <div th:replace="fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')"/>
+                </div>
 
                 <section class="cas-field my-3">
-                    <div id="loginErrorsPanel" class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                    <div data-testid="login-error-msg"
+                            id="loginErrorsPanel"
+                            class="alert alert-danger"
+                            th:if="${#fields.hasErrors('*')}">
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
                         <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
                     </div>

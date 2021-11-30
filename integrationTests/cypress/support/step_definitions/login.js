@@ -20,6 +20,6 @@ When(/^the user logs into the CES with the admin credentials$/, function () {
 });
 
 Then(/^CAS shows the profile page of the user$/, function () {
-    cy.get('h2').contains("Log In Successful")
+    cy.get('h2[data-testid=login-header]').contains("Log In Successful")
     cy.get(':nth-child(2) > strong').contains(env.GetAdminUsername())
 });

@@ -13,10 +13,16 @@
   "Logo": "https://cloudogu.com/images/dogus/cas.png",
   "Image": "registry.cloudogu.com/official/cas",
   "Dependencies": [
-    "nginx"
+    {
+      "Type": "dogu",
+      "Name": "nginx"
+    }
   ],
   "OptionalDependencies": [
-    "ldap"
+    {
+      "Type": "dogu",
+      "Name": "ldap"
+    }
   ],
   "ServiceAccounts": [
     {

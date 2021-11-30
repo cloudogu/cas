@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- add testkeys in thymeleaf templates for a stable selection in integrationtests (#122)
+
 ## [v6.3.3-8] - 2021-11-09
 ### Changed
 - warning label for invalid credentials conforms to styleguide (#120)
