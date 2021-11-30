@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-9] - 2021-11-30
+
 ### Added
 - add testkeys in thymeleaf templates for a stable selection in integrationtests (#122)
 
