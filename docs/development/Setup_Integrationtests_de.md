@@ -66,7 +66,7 @@ Nun existiert ein "leeres" Dogu, für welches der CAS einen Service registriert.
 
 Damit unsere OAuth-Tests erfolgreich durchgeführt werden können, müssen wir im CAS einen Service-Account anlegen. Dis können wir ebenfalls simulieren, indem wir einen Service-Account im etcd unter dem CAS Pfad hinterlegen:
 ```bash
-etcdctl set /config/cas/service_accounts/inttest "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+etcdctl set /config/cas/service_accounts/oauth/inttest "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
 ```
 Hier muss `inttest` dem Namen des "leeren" Dogus aus dem ersten Schritt entsprechen. Bei dem Wert handelt es sich um das konfigurierte Client-Secret aus der `cypress.json` als SHA-256 Hash.
 
