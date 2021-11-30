@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-10] - 2021-11-30
+### Fixed
+- Get CAS 4 upgrade compatibility by moving upgrade steps to post-upgrade script; #123
+
 ## [v6.3.3-9] - 2021-11-30
 
 ### Added

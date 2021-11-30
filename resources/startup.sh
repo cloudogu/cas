@@ -18,6 +18,12 @@ echo "                       'V/(/////////////////////////////V'      "
 # shellcheck disable=SC1091
 source util.sh
 
+# check whether post-upgrade script is still running
+while [[ "$(doguctl state)" == "upgrading" ]]; do
+  echo "Upgrade script is running. Waiting..."
+  sleep 3
+done
+
 # If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
 # leads to an zero exit code which enables further error handling.
 loggingExitCode=0
