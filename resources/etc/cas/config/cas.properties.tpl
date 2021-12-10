@@ -206,3 +206,8 @@ cas.authn.oauth.code.numberOfUses=1
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 ########################################################################################################################
+
+### gauth ###
+cas.authn.mfa.gauth.issuer=CASIssuer
+cas.authn.mfa.gauth.label=CASLabel
+cas.authn.mfa.gauth.json.location=file:/etc/cas/gauths.json

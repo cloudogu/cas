@@ -4,8 +4,10 @@ import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -129,11 +131,17 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         try {
             URI logoutUri = registry.getCasLogoutUri(serviceName);
             RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
+            RegisteredServiceMultifactorPolicy mfPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+            mfPolicy.getMultifactorAuthenticationProviders().add("mfa-gauth");
+            service.setMultifactorPolicy(mfPolicy);
             addNewService(service);
         } catch (GetCasLogoutUriException e) {
             log.debug("GetCasLogoutUriException: CAS logout URI of service {} could not be retrieved: {}", serviceName, e.toString());
             log.info("Adding service without CAS logout URI");
             RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
+            RegisteredServiceMultifactorPolicy mfPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+            mfPolicy.getMultifactorAuthenticationProviders().add("mfa-gauth");
+            service.setMultifactorPolicy(mfPolicy);
             addNewService(service);
         }
     }
