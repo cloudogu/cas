@@ -105,6 +105,11 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-throttle:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-throttle-core:${casServerVersion}"
 
+    implementation "org.apereo.cas:cas-server-support-gauth:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-webauthn:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-simple-mfa:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-notifications:${project.'cas.version'}"
+
     implementation 'org.mousio:etcd4j:2.11.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'

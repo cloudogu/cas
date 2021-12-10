@@ -31,6 +31,11 @@ public class CesServicesManager implements ServicesManager {
 
     private CesServicesManagerStage serviceStage;
 
+    @Override
+    public Collection<RegisteredService>getServicesForDomain(String domain) {
+        throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
+    }
+
     public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
         serviceStage = createStage(managerConfig, registry);
     }

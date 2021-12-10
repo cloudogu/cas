@@ -3,8 +3,10 @@ package de.triology.cas.services;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,11 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         devService.setId(createId());
         devService.setServiceId("^(https?|imaps?)://.*");
         devService.setName("10000001");
+        RegisteredServiceMultifactorPolicy mfPolicy = new DefaultRegisteredServiceMultifactorPolicy();
+        mfPolicy.getMultifactorAuthenticationProviders().add("mfa-gauth");
+        mfPolicy.getMultifactorAuthenticationProviders().add("mfa-webauthn");
+        mfPolicy.getMultifactorAuthenticationProviders().add("mfa-simple");
+        devService.setMultifactorPolicy(mfPolicy);
         addNewService(devService);
         log.debug("Creating development service...");
 
