@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - add testkeys in thymeleaf templates for a stable selection in integrationtests (#122)
 
+### Fixed
+- jndi vulnarability by updating log4j to 2.15.0 (#126, https://www.heise.de/news/Kritische-Zero-Day-Luecke-in-log4j-gefaehrdet-zahlreiche-Server-und-Apps-6291653.html)
+
 ## [v6.3.3-8] - 2021-11-09
 ### Changed
 - warning label for invalid credentials conforms to styleguide (#120)
