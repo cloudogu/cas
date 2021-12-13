@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.3-11] - 2021-12-13
+### Fixed
+- jndi vulnerability by updating log4j to 2.15.0 (#126, https://www.heise.de/news/Kritische-Zero-Day-Luecke-in-log4j-gefaehrdet-zahlreiche-Server-und-Apps-6291653.html) #126
+
 ## [v6.3.3-10] - 2021-11-30
 ### Fixed
 - Get CAS 4 upgrade compatibility by moving upgrade steps to post-upgrade script; #123
@@ -15,9 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - add testkeys in thymeleaf templates for a stable selection in integrationtests (#122)
-
-### Fixed
-- jndi vulnarability by updating log4j to 2.15.0 (#126, https://www.heise.de/news/Kritische-Zero-Day-Luecke-in-log4j-gefaehrdet-zahlreiche-Server-und-Apps-6291653.html)
 
 ## [v6.3.3-8] - 2021-11-09
 ### Changed
