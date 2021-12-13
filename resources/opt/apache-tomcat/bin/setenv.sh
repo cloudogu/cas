@@ -1,4 +1,5 @@
 #!/bin/sh
+JAVA_OPTS="$JAVA_OPTS -Dlog4j2.formatMsgNoLookups=true"
 JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
 JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"
 JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/ssl/truststore.jks"
@@ -9,5 +10,4 @@ if [ "$(doguctl config "container_config/memory_limit" -d "empty")" != "empty" ]
   MEMORY_LIMIT_MIN_PERCENTAGE=$(doguctl config "container_config/java_min_ram_percentage")
   JAVA_OPTS="$JAVA_OPTS -XX:MaxRAMPercentage=${MEMORY_LIMIT_MAX_PERCENTAGE}"
   JAVA_OPTS="$JAVA_OPTS -XX:MinRAMPercentage=${MEMORY_LIMIT_MIN_PERCENTAGE}"
-  JAVA_OPTS="$JAVA_OPTS -Dlog4j2.formatMsgNoLookups=true"
 fi
