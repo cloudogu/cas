@@ -42,10 +42,20 @@ public class CesServicesManager implements ServicesManager {
     }
 
     @Override
+    public <T extends RegisteredService> Collection<T> getAllServicesOfType(Class<T> clazz) {
+        throw new UnsupportedOperationException("Operation getAllServicesOfType is not supported.");
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         LOG.info("Cas wants to reload registered services.");
         serviceStage.updateRegisteredServices();
         return serviceStage.getRegisteredServices().values();
+    }
+
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(String domain) {
+        throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
     }
 
     @Override
