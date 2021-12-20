@@ -1,7 +1,10 @@
 package de.triology.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.hamcrest.MatcherAssert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,12 +14,10 @@ import uk.org.lidalia.slf4jtest.TestLoggerFactoryResetRule;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -90,6 +91,43 @@ public class CesServicesManagerTest {
         when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
         Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
         assertThat(allServices, containsInAnyOrder(service1, service2));
+    }
+
+    /**
+     * Test for {@link CesServicesManager#getAllServices()}.
+     */
+    @Test
+    public void getAllServicesOfType() {
+        // given
+        RegisteredService service1 = mock(RegisteredService.class);
+        RegisteredService service2 = mock(RegisteredService.class);
+        RegisteredService service3 = mock(OAuthRegisteredService.class);
+        RegisteredService service4 = mock(OidcRegisteredService.class);
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
+            put(0L, service1);
+            put(23L, service2);
+            put(50L, service3);
+            put(51L, service4);
+        }};
+        when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
+
+        // when
+        Collection<RegisteredService> allRegisteredServices = etcdServicesManger.getAllServicesOfType(RegisteredService.class);
+        // then
+        MatcherAssert.assertThat(allRegisteredServices, containsInAnyOrder(service1, service2, service3, service4));
+        assertEquals(allRegisteredServices.size(), 4);
+
+        // when
+        Collection<OAuthRegisteredService> allOauthServices = etcdServicesManger.getAllServicesOfType(OAuthRegisteredService.class);
+        // then
+        MatcherAssert.assertThat(allOauthServices, containsInAnyOrder(service3, service4));
+        assertEquals(allOauthServices.size(), 2);
+
+        // when
+        Collection<OidcRegisteredService> allOIDCServices = etcdServicesManger.getAllServicesOfType(OidcRegisteredService.class);
+        // then
+        MatcherAssert.assertThat(allOIDCServices, containsInAnyOrder(service4));
+        assertEquals(allOIDCServices.size(), 1);
     }
 
     /**
