@@ -5,15 +5,19 @@
  */
 package de.triology.cas.services;
 
+import lombok.val;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manages the Dogus that are accessible via CAS within the Cloudogu Ecosystem.
@@ -28,7 +32,6 @@ public class CesServicesManager implements ServicesManager {
      */
     static final String STAGE_DEVELOPMENT = "development";
 
-
     private CesServicesManagerStage serviceStage;
 
     public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
@@ -42,10 +45,29 @@ public class CesServicesManager implements ServicesManager {
     }
 
     @Override
+    public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
+        if (supports(clazz)) {
+            return serviceStage.getRegisteredServices().values()
+                    .stream()
+                    .filter(s -> clazz.isAssignableFrom(s.getClass()))
+                    .sorted()
+                    .peek(RegisteredService::initialize)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
     public Collection<RegisteredService> load() {
         LOG.info("Cas wants to reload registered services.");
         serviceStage.updateRegisteredServices();
         return serviceStage.getRegisteredServices().values();
+    }
+
+    @Override
+    public Collection<RegisteredService> getServicesForDomain(String domain) {
+        throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
     }
 
     @Override
