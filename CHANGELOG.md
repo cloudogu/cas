@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update cas overlay version to version 6.3.7.3 (#129)
 
+## [v6.3.3-11] - 2021-12-13
+### Fixed
+- jndi vulnerability by updating log4j to 2.15.0 (#126, https://www.heise.de/news/Kritische-Zero-Day-Luecke-in-log4j-gefaehrdet-zahlreiche-Server-und-Apps-6291653.html) #126
+
 ## [v6.3.3-10] - 2021-11-30
 ### Fixed
 - Get CAS 4 upgrade compatibility by moving upgrade steps to post-upgrade script; #123
