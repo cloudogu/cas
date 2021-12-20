@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Update cas overlay version to version 6.3.7.3 (#129)
+- Update cas overlay version to version 6.3.7.4 (#129)
 
 ## [v6.3.3-10] - 2021-11-30
 ### Fixed
