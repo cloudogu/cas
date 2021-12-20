@@ -5,12 +5,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.hamcrest.MatcherAssert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import uk.org.lidalia.slf4jtest.TestLogger;
-import uk.org.lidalia.slf4jtest.TestLoggerFactory;
-import uk.org.lidalia.slf4jtest.TestLoggerFactoryResetRule;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,23 +20,6 @@ import static org.mockito.Mockito.*;
  * Tests for {@link CesServicesManager}
  */
 public class CesServicesManagerTest {
-    /**
-     * Logger of class under test.
-     */
-    private static final TestLogger LOG = TestLoggerFactory.getTestLogger(CesServiceManagerUnderTest.class);
-
-    /**
-     * Reset logger before each test.
-     **/
-    @Rule
-    public TestLoggerFactoryResetRule testLoggerFactoryResetRule = new TestLoggerFactoryResetRule();
-
-    /**
-     * Rule for asserting exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
     CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null, null, false, null, null);
     CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null, null, false, null, null);
@@ -51,12 +29,12 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#CesServicesManager(CesServiceManagerConfiguration, Registry)} )} for production.
      */
     @Test
-    public void constructForProduction() throws Exception {
+    public void constructForProduction() {
         new CesServicesManager(managerConfig, null) {
             @Override
             protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
                 CesServicesManagerStage stage = super.createStage(managerConfig, registry);
-                assertThat(stage, instanceOf(CesServicesManagerStageProductive.class));
+                MatcherAssert.assertThat(stage, instanceOf(CesServicesManagerStageProductive.class));
                 return stage;
             }
         };
@@ -66,12 +44,12 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#CesServicesManager(CesServiceManagerConfiguration, Registry)} for production.
      */
     @Test
-    public void constructForDevelopment() throws Exception {
+    public void constructForDevelopment() {
         new CesServicesManager(managerDevelopmentConfig, null) {
             @Override
             protected CesServicesManagerStage createStage(CesServiceManagerConfiguration managerConfig, Registry registry) {
                 CesServicesManagerStage stage = super.createStage(managerConfig, registry);
-                assertThat(stage, instanceOf(CesServicesManagerStageDevelopment.class));
+                MatcherAssert.assertThat(stage, instanceOf(CesServicesManagerStageDevelopment.class));
                 return stage;
             }
         };
@@ -81,16 +59,16 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#getAllServices()}.
      */
     @Test
-    public void getAllServices() throws Exception {
+    public void getAllServices() {
         RegisteredService service1 = mock(RegisteredService.class);
         RegisteredService service2 = mock(RegisteredService.class);
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, service1);
             put(23L, service2);
         }};
         when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
         Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
-        assertThat(allServices, containsInAnyOrder(service1, service2));
+        MatcherAssert.assertThat(allServices, containsInAnyOrder(service1, service2));
     }
 
     /**
@@ -118,13 +96,13 @@ public class CesServicesManagerTest {
         assertEquals(allRegisteredServices.size(), 4);
 
         // when
-        Collection<OAuthRegisteredService> allOauthServices = etcdServicesManger.getAllServicesOfType(OAuthRegisteredService.class);
+        Collection<RegisteredService> allOauthServices = etcdServicesManger.getAllServicesOfType(OAuthRegisteredService.class);
         // then
         MatcherAssert.assertThat(allOauthServices, containsInAnyOrder(service3, service4));
         assertEquals(allOauthServices.size(), 2);
 
         // when
-        Collection<OidcRegisteredService> allOIDCServices = etcdServicesManger.getAllServicesOfType(OidcRegisteredService.class);
+        Collection<RegisteredService> allOIDCServices = etcdServicesManger.getAllServicesOfType(OidcRegisteredService.class);
         // then
         MatcherAssert.assertThat(allOIDCServices, containsInAnyOrder(service4));
         assertEquals(allOIDCServices.size(), 1);
@@ -136,19 +114,19 @@ public class CesServicesManagerTest {
     @Test
     public void assertGetAllServicesModify() {
         when(servicesManagerStage.getRegisteredServices()).thenReturn(new HashMap<>());
-        thrown.expect(UnsupportedOperationException.class);
-
-        Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
-        allServices.add(mock(RegisteredService.class));
+        assertThrows(UnsupportedOperationException.class, () -> {
+            Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
+            allServices.add(mock(RegisteredService.class));
+        });
     }
 
     /**
      * Test for {@link CesServicesManager#findServiceBy(Service)}.
      */
     @Test
-    public void findServiceBy() throws Exception {
+    public void findServiceBy() {
         RegisteredService expectedRegisteredService = mock(RegisteredService.class);
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, mock(RegisteredService.class));
             put(23L, expectedRegisteredService);
         }};
@@ -166,8 +144,8 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#findServiceBy(Service)} for a service that does not exist.
      */
     @Test
-    public void findServiceByNegative() throws Exception {
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
+    public void findServiceByNegative() {
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, mock(RegisteredService.class));
             put(23L, mock(RegisteredService.class));
         }};
@@ -181,7 +159,7 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#findServiceBy(long)}.
      */
     @Test
-    public void findServiceById() throws Exception {
+    public void findServiceById() {
         RegisteredService expectedService = mock(RegisteredService.class);
         HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, mock(RegisteredService.class));
@@ -196,8 +174,8 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#findServiceBy(long)} for a service that does not exist.
      */
     @Test
-    public void findServiceByIdNegative() throws Exception {
-        HashMap<Long, RegisteredService> expectedServices = new HashMap<Long, RegisteredService>() {{
+    public void findServiceByIdNegative() {
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
             put(0L, mock(RegisteredService.class));
             put(23L, mock(RegisteredService.class));
         }};
@@ -210,7 +188,7 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#load()}.
      */
     @Test
-    public void load() throws Exception {
+    public void load() {
         etcdServicesManger.load();
         verify(etcdServicesManger.createStage(managerConfig, null)).updateRegisteredServices();
     }
@@ -219,22 +197,16 @@ public class CesServicesManagerTest {
      * Test for {@link CesServicesManager#save(RegisteredService)}.
      */
     @Test
-    public void save() throws Exception {
-        thrown.expect(UnsupportedOperationException.class);
-        thrown.expectMessage("save");
-
-        etcdServicesManger.save(mock(RegisteredService.class));
+    public void save() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.save(mock(RegisteredService.class)));
     }
 
     /**
      * Test for {@link CesServicesManager#delete(long)}.
      */
     @Test
-    public void delete() throws Exception {
-        thrown.expect(UnsupportedOperationException.class);
-        thrown.expectMessage("delete");
-
-        etcdServicesManger.delete(42L);
+    public void delete() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.delete(42L));
     }
 
     /**

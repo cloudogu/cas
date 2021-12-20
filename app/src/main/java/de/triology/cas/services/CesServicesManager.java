@@ -31,13 +31,7 @@ public class CesServicesManager implements ServicesManager {
      * This triggers operation in development stage.
      */
     static final String STAGE_DEVELOPMENT = "development";
-    
-    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
-            final Predicate<RegisteredService>... p) {
-        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
-        return predicates.stream().reduce(x -> true, Predicate::and);
-    }
-    
+
     private CesServicesManagerStage serviceStage;
 
     public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
@@ -51,16 +45,14 @@ public class CesServicesManager implements ServicesManager {
     }
 
     @Override
-    public <T extends RegisteredService> Collection<T> getAllServicesOfType(Class<T> clazz) {
+    public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
         if (supports(clazz)) {
-            Collection<RegisteredService> services = serviceStage.getRegisteredServices().values()
+            return serviceStage.getRegisteredServices().values()
                     .stream()
                     .filter(s -> clazz.isAssignableFrom(s.getClass()))
-                    .filter(getRegisteredServicesFilteringPredicate())
                     .sorted()
                     .peek(RegisteredService::initialize)
                     .collect(Collectors.toList());
-            return (Collection<T>) services;
         } else {
             return new ArrayList<>();
         }
