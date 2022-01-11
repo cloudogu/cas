@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The name entered at login previously has been directly transferred to the session (including upper and lower case).
+  This has led to some problems and has now been changed to use the name and spelling from the LDAP entry. (#133)
+- On the logout page, English text was displayed in the German version. The correct German text is now displayed here 
+  for the English text.
 
 ## [v6.3.7-1] - 2021-12-20
 ### Changed
