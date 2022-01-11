@@ -20,7 +20,7 @@ RUN ./gradlew clean build --parallel --no-daemon
 FROM registry.cloudogu.com/official/java:11.0.11-1
 
 LABEL NAME="official/cas" \
-      VERSION="6.3.7-1" \
+      VERSION="6.3.7-2" \
       maintainer="hello@cloudogu.com"
 
 # configure environment
