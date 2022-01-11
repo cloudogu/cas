@@ -19,12 +19,7 @@ When(/^the user logs into the CES with the admin credentials$/, function () {
     cy.login(env.GetAdminUsername(), env.GetAdminPassword());
 });
 
-When(/^When the user logs into the CES with the admin credentials, writing the username in capital letters$/, function () {
-    cy.clickWarpMenuCheckboxIfPossible()
-    cy.login(env.GetAdminUsername().toUpperCase(), env.GetAdminPassword());
-});
-
-Then(/^CAS shows the profile page of the user with the user ID from LDAP entry$/, function () {
+Then(/^CAS shows the profile page of the user$/, function () {
     cy.get('h2[data-testid=login-header]').contains("Log In Successful")
     cy.get(':nth-child(2) > strong').contains(env.GetAdminUsername())
 });
