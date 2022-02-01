@@ -61,7 +61,7 @@ ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,gr
 #========================================
 # LDAP connection pool configuration
 #========================================
-cas.authn.ldap[0].min-pool-size=3
+cas.authn.ldap[0].min-pool-size=0
 cas.authn.ldap[0].max-pool-size=10
 cas.authn.ldap[0].validate-on-checkout=false
 cas.authn.ldap[0].validate-periodically=true
