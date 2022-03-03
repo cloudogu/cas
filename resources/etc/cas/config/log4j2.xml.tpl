@@ -60,16 +60,16 @@
         </Rewrite>
     </Appenders>
     <Loggers>
+        <AsyncLogger name="org.apereo" level="TRACE" includeLocation="true"/>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
         <!-- Loggers inherit appenders from Root Logger unless additivity is false -->
-        <AsyncLogger name="org.apereo" level="${sys:ces.log.level}" includeLocation="true"/>
 
         <AsyncLogger name="org.apache" level="${sys:ces.log.level}" />
 
         <AsyncLogger name="org.springframework" level="${sys:ces.log.level}" includeLocation="true" />
         <AsyncLogger name="org.springframework.webflow" level="${sys:ces.log.level}" includeLocation="true" />
 
-        <AsyncLogger name="de.triology" level="${sys:ces.log.level}" includeLocation="true"/>
+        <AsyncLogger name="de.triology" level="TRACE" includeLocation="true"/>
 
         <AsyncLogger name="org.pac4j" level="${sys:ces.log.level}" includeLocation="true"/>
 

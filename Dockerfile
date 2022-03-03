@@ -1,26 +1,8 @@
-FROM adoptopenjdk/openjdk11:alpine-slim AS builder
-
-RUN mkdir -p /cas-overlay
-COPY ./app/gradle/ /cas-overlay/gradle/
-COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
-WORKDIR /cas-overlay
-
-# Cache gradle
-RUN chmod 750 ./gradlew \
-    && ./gradlew --version
-
-# Cache dependencies
-RUN ./gradlew clean build --parallel --no-daemon
-
-# Copy source code and build overlay
-COPY ./app/src /cas-overlay/src/
-RUN ./gradlew clean build --parallel --no-daemon
-
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.11-1
+FROM registry.cloudogu.com/official/java:11.0.5-4
 
 LABEL NAME="official/cas" \
-      VERSION="6.3.7-2" \
+      VERSION="6.3.3-1" \
       maintainer="hello@cloudogu.com"
 
 # configure environment
@@ -55,7 +37,7 @@ RUN set -x \
  && mkdir -p /logs
 
 # copy overlay
-COPY --from=builder --chown=${USER}:${GROUP} cas-overlay/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
+COPY --chown=${USER}:${GROUP} app/build/libs/cas.war ${CATALINA_BASE}/webapps/cas/cas.war
 
 RUN set -x \
  && cd ${CATALINA_BASE}/webapps/cas/ \

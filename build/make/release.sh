@@ -48,7 +48,7 @@ git flow release start v"${NEW_RELEASE_VERSION}"
 
 # Update version in dogu.json
 jq ".Version = \"${NEW_RELEASE_VERSION}\"" dogu.json > dogu2.json && mv dogu2.json dogu.json
-# Update version in Dockerfile
+# Update version in Dockerfile2
 sed -i "s/\(^[ ]*VERSION=\"\)\([^\"]*\)\(.*$\)/\1${NEW_RELEASE_VERSION}\3/" Dockerfile
 # Update version in Makefile
 if [ -f "Makefile" ]; then
