@@ -73,10 +73,10 @@ function configureCAS() {
 
 # Sets configured legal URLs for the cas UI
 function configureLegalURLs() {
-  CUSTOM_MESSAGES_TEMPLATE="/etc/cas/config/custom_messages.properties.tpl"
-  CUSTOM_MESSAGES="/etc/cas/config/custom_messages.properties"
+  GENERATED_MESSAGES_TEMPLATE="/etc/cas/config/generated_messages.properties.tpl"
+  GENERATED_MESSAGES="/etc/cas/config/generated_messages.properties"
 
-  doguctl template "${CUSTOM_MESSAGES_TEMPLATE}" "${CUSTOM_MESSAGES}"
+  doguctl template "${GENERATED_MESSAGES_TEMPLATE}" "${GENERATED_MESSAGES}"
   templatingSuccessful=$?
 
   if [[ "${templatingSuccessful}" != 0 ]];  then
