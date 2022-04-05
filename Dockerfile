@@ -17,11 +17,18 @@ COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.14-2
+FROM registry.cloudogu.com/official/java:11.0.14-3
 
 LABEL NAME="official/cas" \
       VERSION="6.3.7-4" \
       maintainer="hello@cloudogu.com"
+
+# update packages of the image
+RUN set -o errexit \
+  && set -o nounset \
+  && set -o pipefail \
+  && apk update \
+  && apk upgrade
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=9 \
