@@ -123,16 +123,20 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-services-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-web-api:${project.'cas.version'}"
+
     implementation "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-ldap-core:${project.'cas.version'}"
+
     implementation "org.apereo.cas:cas-server-support-oidc:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oidc-core:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oidc-core-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oidc-services:${project.'cas.version'}"
+
     implementation "org.apereo.cas:cas-server-support-oauth-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oauth-core-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oauth-services:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oauth-webflow:${project.'cas.version'}"
+    
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"

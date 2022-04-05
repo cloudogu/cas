@@ -5,8 +5,29 @@ configurations {
 }
 
 dependencies {
+    bootRunConfig "org.apereo.cas:cas-server-core:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-logging:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-web:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-webflow:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-cookie:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-logout:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-authentication:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-validation:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-audit:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-tickets:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-services:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"
+
+    bootRunConfig "org.apereo.cas:cas-server-support-thymeleaf:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-support-validation:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-support-person-directory:${project.'cas.version'}"
+
+    bootRunConfig "org.apereo.cas:cas-server-webapp-resources:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-config:${project.'cas.version'}"
     bootRunConfig "org.apereo.cas:cas-server-webapp-init:${project.'cas.version'}"
     bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-init-tomcat:${project.'cas.version'}"
+
     bootRunConfig "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
 }
 
@@ -58,7 +79,7 @@ bootRun {
 
 springBoot {
     buildInfo()
-    mainClassName = "org.apereo.cas.web.CasWebApplication"
+    mainClass = "org.apereo.cas.web.CasWebApplication"
 }
 
 bootBuildImage {
@@ -75,14 +96,9 @@ bootWar {
     }
     archiveName "cas.war"
     baseName "cas"
-    excludeDevtools = false
 
     entryCompression = ZipEntryCompression.STORED
-    /*
-        attachClasses = true 
-        classesClassifier = 'classes'
-        archiveClasses = true
-    */
+
     overlays {
         /*
             https://docs.freefair.io/gradle-plugins/current/reference/#_io_freefair_war_overlay
@@ -93,13 +109,7 @@ bootWar {
         cas {
             from "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}@war"
             provided = false
-            /*
-            excludes = ["WEB-INF/lib/somejar-1.0*"]
-            enableCompilation = true
-            includes = ["*.xyz"]
-            targetPath = "sub-path/bar"
-            skip = false
-            */
+            excludes = ["WEB-INF/lib/servlet-api-2*.jar"]
         }
     }
 }

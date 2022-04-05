@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update java base image to 11.0.14-3 (#141)
 - Update all base image packages prior to building the cas app (#141)
+- Upgrade spring boot to version 2.6.6 (#141)
 
 ## [v6.3.7-4] - 2022-03-29
 ### Changed
