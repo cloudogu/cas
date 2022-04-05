@@ -5,8 +5,8 @@ configurations {
 }
 
 dependencies {
-    bootRunConfig "org.apereo.cas:cas-server-webapp-init:${casServerVersion}"
-    bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${casServerVersion}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-init:${project.'cas.version'}"
+    bootRunConfig "org.apereo.cas:cas-server-webapp-tomcat:${project.'cas.version'}"
     bootRunConfig "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
 }
 
@@ -62,7 +62,7 @@ springBoot {
 }
 
 bootBuildImage {
-    imageName = "apereo/cas:${casServerVersion}"
+    imageName = "apereo/cas:${project.'cas.version'}"
 }
 
 bootWar {
@@ -73,7 +73,7 @@ bootWar {
     } else {
         logger.info "WAR artifact is not marked as an executable"
     }
-    archiveName "${casWebApplicationBinaryName}"
+    archiveName "cas.war"
     baseName "cas"
     excludeDevtools = false
 
@@ -91,7 +91,7 @@ bootWar {
             of non-war dependencies. Those should be excluded via normal gradle dependency exclusions.
         */
         cas {
-            from "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}@war"
+            from "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}@war"
             provided = false
             /*
             excludes = ["WEB-INF/lib/somejar-1.0*"]

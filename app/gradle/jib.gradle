@@ -18,13 +18,13 @@ jib {
             password = "*******"
         }
         */
-        tags = ["v" + casServerVersion]
+        tags = ["v" + project.'cas.version']
     }
     container {
         creationTime = "USE_CURRENT_TIMESTAMP"
         entrypoint = ['docker/entrypoint.sh']
         ports = ['80', '443', '8080', '8443']
-        labels = [version:casServerVersion, name:project.name, group:project.group]
+        labels = [version:project.'cas.version', name:project.name, group:project.group]
     }
     extraDirectories {
         paths = 'src/main/jib'
@@ -37,7 +37,7 @@ jib {
 
 task copyWebAppIntoJib(type: Copy, group: "Docker", description: "Copy the web application into Docker image") {
     dependsOn build
-    from "build/libs/${casWebApplicationBinaryName}"
+    from "build/libs/cas.war"
     into "src/main/jib/docker/cas/war"
 }
 
