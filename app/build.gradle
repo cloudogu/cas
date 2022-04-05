@@ -27,7 +27,6 @@ buildscript {
         classpath "io.freefair.gradle:maven-plugin:${project.gradleFreeFairPluginVersion}"
         classpath "io.freefair.gradle:lombok-plugin:${project.gradleFreeFairPluginVersion}"
         classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
-        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
 
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
@@ -71,9 +70,7 @@ apply plugin: "io.freefair.lombok"
 apply plugin: "idea"
 
 apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/jib.gradle")
 apply from: rootProject.file("gradle/tasks.gradle")
-
 
 configurations.all {
     resolutionStrategy {
@@ -111,10 +108,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
     }
-}
-
-bootBuildImage {
-    imageName = "${project.'containerImageOrg'}/${project.'containerImageName'}:${project.version}"
 }
 
 dependencies {
