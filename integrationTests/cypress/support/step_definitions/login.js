@@ -14,6 +14,20 @@ Given(/^the user is currently not logged in the CES$/, function () {
     cy.visit("/cas/logout")
 });
 
+Given(/^the browser shows the CAS login page and the browser language is set to german$/, function () {
+    cy.visit("/cas/login", {
+        onBeforeLoad(window) {
+            Object.defineProperty(window.navigator, 'language', {value: 'de-DE'});
+            Object.defineProperty(window.navigator, 'languages', {value: ['de-DE']});
+            Object.defineProperty(window.navigator, 'accept_languages', {value: ['de']});
+        },
+        headers: {
+            'Accept-Language': 'de'
+        },
+    });
+    cy.clickWarpMenuCheckboxIfPossible()
+})
+
 When(/^the user logs into the CES with the admin credentials$/, function () {
     cy.clickWarpMenuCheckboxIfPossible()
     cy.login(env.GetAdminUsername(), env.GetAdminPassword());

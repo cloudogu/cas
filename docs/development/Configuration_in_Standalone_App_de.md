@@ -21,3 +21,10 @@ legal.url.imprint=https://cloudogu.com/
 legal.url.privacy.policy=https://www.triology.de/
 forgot.password.text=Contact your admin
 ```
+## Troubleshooting
+
+### Java Compiler Level stimmt nicht mit der Version des installierten Java Projekts überein
+CAS ist ein Gradle-Projekt. Gradle verwendet NICHT das aktuell konfigurierte IntelliJ SDK und muss separat konfiguriert werden.
+Wenn IntelliJ eine Fehlermeldung wie *Aktuelle Java-Version 15 stimmt nicht mit der erforderlichen Java-Version 11 überein* meldet, navigier zu
+"Einstellungen" > "Build, Execution, Deployment" > "Build Tools" > Gradle und wähle das richtige SDK (derzeit Java 11) aus.
+![sdk für gradle konfigurieren](figures/gradle_java_sdk.png)
