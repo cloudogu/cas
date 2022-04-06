@@ -1,6 +1,5 @@
 package de.triology.cas.oidc.beans;
 
-import de.triology.cas.oidc.beans.CesOAuth20ClientIdClientSecretAuthenticator;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.CesServiceData;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -28,7 +27,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticatorTest {
         CesServiceData data = new CesServiceData("testService", factory);
         data.getAttributes().put(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, expectedClientSecretHashSHA256);
         data.getAttributes().put(ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "placeholderClientID");
-        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, "test.de", null , data);
+        OAuthRegisteredService service = (OAuthRegisteredService) factory.createNewService(1, "test.de", null, data);
 
         //when
         boolean isCorrect = CesOAuth20ClientIdClientSecretAuthenticator.checkClientSecret(service, expectedClientSecret);
@@ -49,7 +48,7 @@ public class CesOAuth20ClientIdClientSecretAuthenticatorTest {
         CesServiceData data = new CesServiceData("testService", factory);
         data.getAttributes().put(ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, expectedClientSecretHashSHA256);
         data.getAttributes().put(ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "placeholderClientID");
-        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, "test.de", null , data);
+        OAuthRegisteredService service = (OAuthRegisteredService) factory.createNewService(1, "test.de", null, data);
 
         //when
         boolean isCorrect = CesOAuth20ClientIdClientSecretAuthenticator.checkClientSecret(service, expectedClientSecret);

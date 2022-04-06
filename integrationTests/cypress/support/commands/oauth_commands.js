@@ -33,6 +33,9 @@ const getOAuth20AccessToken = (clientID, accessToken, exitOnFail = false) => {
     cy.request({
         method: "GET",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/accessToken",
+        headers: {
+            "Accept": 'application/json',
+        },
         qs: {
             grant_type: 'authorization_code',
             code: accessToken.toString(),
@@ -55,6 +58,7 @@ const getOAuth20Profile = (ticketGrantingTicket, exitOnFail = false) => {
         method: "GET",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/profile",
         headers: {
+            "Accept": 'application/json',
             "Content-Type": 'application/json',
             "Authorization": 'Bearer ' + ticketGrantingTicket
         },

@@ -1,10 +1,8 @@
 package de.triology.cas.services.attributes;
 
 import lombok.*;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +26,19 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
     private Map<String, String> attributesMappingRules;
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
-        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
+    public Map<String, List<Object>> getAttributesInternal(RegisteredServiceAttributeReleasePolicyContext context,
+                                                           Map<String, List<Object>> attributes) {
+        return authorizeReleaseOfAllowedAttributes(context, attributes);
     }
 
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param principal         the principal
-     * @param attrs             the attributes
-     * @param registeredService the registered service
-     * @param selectedService   the selected service
+     * @param attrs the attributes
      * @return the map
      */
-    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                            final Map<String, List<Object>> attrs,
-                                                                            final RegisteredService registeredService,
-                                                                            final Service selectedService) {
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(RegisteredServiceAttributeReleasePolicyContext context,
+                                                                            Map<String, List<Object>> attrs) {
         HashMap<String, List<Object>> attributesToRelease = new HashMap<>();
         if (allowedAttributes == null) {
             return attributesToRelease;
@@ -73,7 +66,7 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
     }
 
     @Override
-    protected List<String> getRequestedDefinitions() {
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return getAllowedAttributes();
     }
 

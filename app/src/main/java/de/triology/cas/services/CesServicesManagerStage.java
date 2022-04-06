@@ -62,6 +62,8 @@ abstract class CesServicesManagerStage {
         if (managerConfig.isOidcAuthenticationDelegationEnabled()) {
             configureOidcDelegationService(service);
         }
+
+        log.debug("Adding new service to service manager {}", service);
         registeredServices.put(service.getId(), service);
     }
 

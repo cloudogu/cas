@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.slf4j.Logger;
@@ -39,7 +40,8 @@ public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientId
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final WebContext context) {
+                                       final WebContext context,
+                                       final SessionStore sessionStore) {
         if (!checkClientSecret(registeredService, credentials.getPassword())) {
             throw new CredentialsException("Client Credentials provided is not valid for registered service: " + registeredService.getName());
         }

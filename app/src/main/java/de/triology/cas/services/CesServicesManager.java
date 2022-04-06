@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.triology.cas.services;
 
-import lombok.val;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -15,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +28,7 @@ public class CesServicesManager implements ServicesManager {
      */
     static final String STAGE_DEVELOPMENT = "development";
 
-    private CesServicesManagerStage serviceStage;
+    private final CesServicesManagerStage serviceStage;
 
     public CesServicesManager(CesServiceManagerConfiguration managerConfig, Registry registry) {
         serviceStage = createStage(managerConfig, registry);
@@ -40,12 +36,13 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        LOG.debug("Entered getAllServices method");
+        LOG.trace("Entered getAllServices method with return {}", Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values()));
         return Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values());
     }
 
     @Override
     public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
+        LOG.trace("Entered getAllServicesOfType method with type: {}", clazz);
         if (supports(clazz)) {
             return serviceStage.getRegisteredServices().values()
                     .stream()
@@ -67,11 +64,13 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(String domain) {
+        LOG.trace("getServicesForDomain: {}", domain);
         throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
     }
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
+        LOG.trace("findServiceBy: {}", service);
         final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
 
         for (final RegisteredService registeredService : registeredServices) {
@@ -85,46 +84,67 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(Predicate<RegisteredService> clazz) {
+        LOG.trace("findServiceBy1: {}", clazz);
         throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
     }
 
     @Override
     public <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz) {
+        LOG.trace("findServiceBy2: {}", clazz);
         throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
     }
 
     @Override
     public RegisteredService findServiceBy(final long id) {
+        LOG.trace("findServiceBy: {}", id);
         return serviceStage.getRegisteredServices().get(id);
     }
 
     @Override
     public RegisteredService findServiceByName(String name) {
+        LOG.trace("findServiceByName: {}", name);
         throw new UnsupportedOperationException("Operation findServiceByName is not supported.");
     }
 
     @Override
+    public void save(Stream<RegisteredService> toSave) {
+        LOG.trace("save1: {}", toSave);
+        throw new UnsupportedOperationException("Operation save is not supported.");
+    }
+
+    @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        LOG.trace("save2: {}", registeredService);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public RegisteredService save(RegisteredService registeredService, boolean publishEvent) {
+        LOG.trace("save3: {} - {}", registeredService, publishEvent);
+        throw new UnsupportedOperationException("Operation save is not supported.");
+    }
+
+    @Override
+    public void save(Supplier<RegisteredService> supplier, Consumer<RegisteredService> andThenConsume, long countExclusive) {
+        LOG.trace("save4: {} - {}", supplier, andThenConsume);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public void deleteAll() {
+        LOG.trace("deleteAll:");
         throw new UnsupportedOperationException("Operation deleteAll is not supported.");
     }
 
     @Override
     public RegisteredService delete(final long id) {
+        LOG.trace("delete1: {}", id);
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
     @Override
     public RegisteredService delete(RegisteredService svc) {
+        LOG.trace("delete2: {}", svc);
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
