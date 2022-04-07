@@ -98,6 +98,8 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-oauth-services:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-pm:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-pm-ldap:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-rest:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-swagger:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
