@@ -68,6 +68,11 @@ if [ "${FROM_VERSION}" = "${TO_VERSION}" ]; then
   echo "FROM and TO versions are the same; Exiting..."
   exit 0
 fi
+
+
+FQDN="$(doguctl config --global fqdn)"
+echo "FQDN: ${FQDN}"
+
 # Every version above 6.3.7-4 needs a service account that can read and write. To ensure it is not readonly like the
 # versions below we delete the old service account.
 echo "${FROM_VERSION} to ${TO_VERSION}"
@@ -76,8 +81,10 @@ SERVICE_ACCOUNT_RECREATE_VERSION="6.3.7-4"
 if versionXLessOrEqualThanY "${FROM_VERSION}" "${SERVICE_ACCOUNT_RECREATE_VERSION}" ; then
   echo "check if TO version > 6.3.7-4"
         if ! versionXLessOrEqualThanY "${TO_VERSION}" "${SERVICE_ACCOUNT_RECREATE_VERSION}" ; then
-                echo "Upgrade FROM version below v6.3.7-4 TO a version abover v6.3.7-4 -> delete old service account"
-                source remove-sa.sh
+                echo "Upgrade FROM version below v6.3.7-4 TO a version above v6.3.7-4 -> delete old service account"
+                # This is a workaround because `doguctl -rm` cannot delete folders and the cesapp checks if the path
+                # `sa-<servicename> is present. Deleting the sa-ldap/username and sa-ldap/password keys does therefore not work.
+                curl "http://${FQDN}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
                 echo "remove sa has run"
         fi
 fi
