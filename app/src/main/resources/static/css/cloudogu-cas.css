@@ -751,6 +751,12 @@ body {
     #logo {
         max-width: 33.33%
     }
+
+    .passwordUpdateSucess {
+        width: 100%;
+        margin-left: 2.5rem;
+        margin-top: 2.5rem;
+    }
 }
 
 @media all and (min-width: 992px) {
@@ -768,6 +774,10 @@ body {
 @media all and (max-width: 767.99px) {
     #logo {
     border-bottom: none;
+    }
+    .passwordUpdateSucess {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
     }
 }
 
