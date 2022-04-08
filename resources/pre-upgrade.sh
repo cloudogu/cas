@@ -70,26 +70,24 @@ if [ "${FROM_VERSION}" = "${TO_VERSION}" ]; then
 fi
 
 
-FQDN="$(doguctl config --global fqdn)"
+FQDN="$(cat /etc/ces/node_master)"
 echo "FQDN: ${FQDN}"
 
 # Every version above 6.3.7-4 needs a service account that can read and write. To ensure it is not readonly like the
 # versions below we delete the old service account.
 echo "${FROM_VERSION} to ${TO_VERSION}"
-echo "check if FROM version <= 6.3.7-4"
-SERVICE_ACCOUNT_RECREATE_VERSION="6.3.7-4"
-if versionXLessOrEqualThanY "${FROM_VERSION}" "${SERVICE_ACCOUNT_RECREATE_VERSION}" ; then
-  echo "check if TO version > 6.3.7-4"
-        if ! versionXLessOrEqualThanY "${TO_VERSION}" "${SERVICE_ACCOUNT_RECREATE_VERSION}" ; then
-                echo "Upgrade FROM version below v6.3.7-4 TO a version above v6.3.7-4 -> delete old service account"
-                # This is a workaround because `doguctl -rm` cannot delete folders and the cesapp checks if the path
-                # `sa-<servicename> is present. Deleting the sa-ldap/username and sa-ldap/password keys does therefore not work.
-                curl "http://${FQDN}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
-                echo "remove sa has run"
-        fi
+LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT="6.3.7-4"
+if versionXLessOrEqualThanY "${FROM_VERSION}" "${LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT}" ; then
+  echo "FROM version <= 6.3.7-4"
+  if ! versionXLessOrEqualThanY "${TO_VERSION}" "${LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT}" ; then
+    echo "TO version > 6.3.7-4"
+    echo "Upgrade FROM version below v6.3.7-4 TO ${TO_VERSION} -> delete old ldap service account"
+    # This is a workaround because `doguctl -rm` cannot delete folders and the cesapp checks if the path
+    # `sa-<servicename> is present. Deleting the sa-ldap/username and sa-ldap/password keys does therefore not work.
+    curl "http://${FQDN}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
+    echo "Service account has been removed successfully."
+  fi
 fi
-
-
 
 echo "Set registry flag so startup script waits for post-upgrade to finish..."
 doguctl state "upgrading"
