@@ -10,3 +10,10 @@ Die Tests des CAS liegen im Verzeichnis `app/src/test/java`. Getestet wird mit [
 
 ## Logging
 Das Loglevel des CAS wird über den Parameter `"logging/root"`dogu.json eingestellt.
+
+## Spring
+
+Mit dem CAS War Overlay Upgrade auf Version 6.5.2 lässt sich das `@Autowire`-Feature von Spring Boot nicht mehr als 
+Field Injection verwenden. Bei der Entwicklung sollte in allen Fällen die "Constructor Injection" benutzt werden.
+Man kann sich gut an den vorhandenen Code im CAS orientieren. Dieser wurde für "Constructor Injection" komplett 
+angepasst.

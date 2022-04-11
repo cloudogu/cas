@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Upgrade cas war overlay version to 6.5.2 (#141)
 - Update java base image to 11.0.14-3 (#141)
 - Update all base image packages prior to building the cas app (#141)
 - Upgrade spring boot to version 2.6.6 (#141)
