@@ -1,8 +1,8 @@
 # Anpassung von konfigurierbaren Texten
 Bestimmte Textfelder für Nachrichten und eigene URLs lassen sich im CAS Dogu per etcd-Schlüssel individuell anpassen. 
-In der Standardkonfiguration des CAS sind diese Schlüssel nicht enthalten. Das Setzen der Schlüssel sorgt dafür das die UI Elemente erst gerendert werden. Sind die Schlüssel nicht gesetzt werden bestimmte UI Elemente auch nicht angezeigt.
+In der Standardkonfiguration des CAS sind diese Schlüssel nicht enthalten. Das Setzen der Schlüssel sorgt dafür, dass die UI Elemente erst gerendert werden. Sind die Schlüssel nicht gesetzt werden bestimmte UI Elemente auch nicht angezeigt.
 
-Zu den konfigurierbaren Schlüsseln gehören die URLs für **Nutzungsbedingungen**, **Impressum** und **Datenschutzerklärung** sowie ein Text der angezeigt wird wenn auf den `Passwort vergessen` Button geklickt wird (Der `Passwort vergessen` Button ist in der Standardkonfiguration ausgeblendet. Das setzen des Textes aktiviert ebenfalls den Button in der UI).
+Zu den konfigurierbaren Schlüsseln gehören die URLs für **Nutzungsbedingungen**, **Impressum** und **Datenschutzerklärung** sowie ein Text der angezeigt wird, wenn auf den `Passwort vergessen` Button geklickt wird (Der `Passwort vergessen` Button ist in der Standardkonfiguration ausgeblendet. Das setzen des Textes aktiviert ebenfalls den Button in der UI).
 
 ## Konfiguration von rechtlichen Links
 In der Standardkonfiguration des CAS Dogus werden auf der Login-Seite keine rechtlichen Links angezeigt. Es können allerdings Links für **Nutzungsbedingungen**, **Impressum** und **Datenschutzerklärung** hinterlegt werden.
