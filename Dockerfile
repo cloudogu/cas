@@ -32,8 +32,8 @@ RUN set -o errexit \
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=9 \
-	TOMCAT_VERSION=9.0.41 \
-	TOMCAT_TARGZ_SHA256=6a5fc1f79f002f25480e3a50daa1fb16fdb2f0a969bc2f806c88bc550002cf71 \
+	TOMCAT_VERSION=9.0.62 \
+	TOMCAT_TARGZ_SHA256=03157728a832cf9c83048cdc28d09600cbb3e4fa087f8b97d74c8b4f34cd89bb \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \

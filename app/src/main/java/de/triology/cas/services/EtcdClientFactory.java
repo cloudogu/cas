@@ -11,10 +11,10 @@ import java.net.URI;
 
 public class EtcdClientFactory {
 
-    private static final String DEFAULT_NOTE_MASTER_FILE = "/etc/ces/node_master";
+    private static final String DEFAULT_NODE_MASTER_FILE = "/etc/ces/node_master";
 
-    public EtcdClient createDefaultFactory() {
-        return createEtcdClient(EtcdClientFactory.DEFAULT_NOTE_MASTER_FILE);
+    public EtcdClient createDefaultClient() {
+        return createEtcdClient(EtcdClientFactory.DEFAULT_NODE_MASTER_FILE);
     }
 
     public EtcdClient createEtcdClient(String nodeMasterFilepath) {

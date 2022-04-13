@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import lombok.val;
 import mousio.etcd4j.EtcdClient;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ChainingServicesManager;
@@ -10,14 +9,10 @@ import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,7 +45,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
 
     public EtcdClient createEtcdClient() {
         EtcdClientFactory factory = new EtcdClientFactory();
-        return factory.createDefaultFactory();
+        return factory.createDefaultClient();
     }
 
     public RegistryEtcd createDoguRegistry(EtcdClient etcdClient) {

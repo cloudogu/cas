@@ -25,7 +25,7 @@ public class EtcdClientFactoryTest {
     @Test
     public void shouldUseDefaultConfigFileForUrl() {
         EtcdClientFactory etcdClientFactory = spy(new EtcdClientFactory());
-        EtcdClient etcdClient = etcdClientFactory.createDefaultFactory();
+        EtcdClient etcdClient = etcdClientFactory.createDefaultClient();
         assertNotNull(etcdClient);
         verify(etcdClientFactory).createEtcdClient("/etc/ces/node_master");
     }
