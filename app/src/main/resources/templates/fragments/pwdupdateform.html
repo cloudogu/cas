@@ -31,7 +31,7 @@
             Password Heading</h3>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
               th:object="${password}">
-            <div class="alert alert-danger mt-2 mb-5" th:if="${#fields.hasErrors('*')}">
+            <div class="alert alert-danger mt-2 mb-5" data-testid="login-reset-pw-msg" th:if="${#fields.hasErrors('*')}">
 
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
@@ -45,6 +45,7 @@
                                    type="password"
                                    name="password"
                                    id="password"
+                                   data-testid="password-input"
                                    th:field="*{password}"
                                    autocomplete="off" required/>
 
@@ -75,6 +76,7 @@
                                type="password"
                                name="confirmedPassword"
                                id="confirmedPassword"
+                               data-testid="confirmedPassword-input"
                                th:field="*{confirmedPassword}"
                                autocomplete="off" required/>
 
