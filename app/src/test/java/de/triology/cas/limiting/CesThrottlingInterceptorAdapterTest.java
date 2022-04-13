@@ -1,7 +1,6 @@
 package de.triology.cas.limiting;
 
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +43,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_decrement() throws InterruptedException {
         // Given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,1,1);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 1, 1);
 
         CesSubmissionListData dataInvalidLocked = new CesSubmissionListData();
         dataInvalidLocked.recordHostLock(getCurrentTime());
@@ -86,7 +85,7 @@ public class CesThrottlingInterceptorAdapterTest {
         HttpServletResponse responseMock = mock(HttpServletResponse.class);
         when(responseMock.getStatus()).thenReturn(HttpServletResponse.SC_OK);
 
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,60,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 60, 60);
 
         // when
         boolean result = throttlingAdapter.shouldResponseBeRecordedAsFailure(responseMock);
@@ -100,7 +99,7 @@ public class CesThrottlingInterceptorAdapterTest {
         // Given
         HttpServletResponse responseMock = mock(HttpServletResponse.class);
         when(responseMock.getStatus()).thenReturn(HttpServletResponse.SC_UNAUTHORIZED);
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,60,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 60, 60);
 
         // when
         boolean result = throttlingAdapter.shouldResponseBeRecordedAsFailure(responseMock);
@@ -112,7 +111,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_getTimeDiffInSeconds() throws InterruptedException {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,60,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 60, 60);
         ZonedDateTime time = getCurrentTime();
         Thread.sleep(550);
         ZonedDateTime time500 = getCurrentTime();
@@ -120,8 +119,8 @@ public class CesThrottlingInterceptorAdapterTest {
         ZonedDateTime time1050 = getCurrentTime();
 
         // when
-        long diff500 = (long)throttlingAdapter.getTimeDiffInSeconds(time500, time);
-        long diff1000 = (long)throttlingAdapter.getTimeDiffInSeconds(time1050, time);
+        long diff500 = (long) throttlingAdapter.getTimeDiffInSeconds(time500, time);
+        long diff1000 = (long) throttlingAdapter.getTimeDiffInSeconds(time1050, time);
 
         // then
         assertEquals(0, diff500);
@@ -131,7 +130,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_invalidateLockIfRequired_do_not_invalidate() throws InterruptedException {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,30,1);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 30, 1);
         CesSubmissionListData data = new CesSubmissionListData();
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, data);
         throttlingAdapter.recordSubmissionFailure(null);
@@ -148,7 +147,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_invalidateLockIfRequired_do_invalidate() throws InterruptedException {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,30,1);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 30, 1);
         CesSubmissionListData data = new CesSubmissionListData();
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, data);
         throttlingAdapter.recordSubmissionFailure(null);
@@ -167,7 +166,7 @@ public class CesThrottlingInterceptorAdapterTest {
         // given
         CesSubmissionListData cesSubmissionListData = new CesSubmissionListData();
 
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,0,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 0, 60);
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, cesSubmissionListData);
 
         // when
@@ -178,13 +177,13 @@ public class CesThrottlingInterceptorAdapterTest {
         assertNull(cesSubmissionListData.getFirstSubmissionFailure());
         assertEquals(0, cesSubmissionListData.getFailedSubmissions());
     }
-    
+
     @Test
     public void test_invalidateSubmissionDataIfRequired_notInvalidated() {
         // given
         CesSubmissionListData cesSubmissionListData = new CesSubmissionListData();
 
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,60,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 60, 60);
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, cesSubmissionListData);
 
         // when
@@ -199,7 +198,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_activateLockIfRequired_emptyInput() {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,30,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 30, 60);
         CesSubmissionListData data = new CesSubmissionListData();
 
         // when
@@ -212,7 +211,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_activateLockIfRequired_maxNumberExceeded() {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1,30,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(1, 30, 60);
         CesSubmissionListData data = new CesSubmissionListData();
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, data);
         throttlingAdapter.recordSubmissionFailure(null);
@@ -228,7 +227,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_activateLockIfRequired_maxNumberNotExceeded() {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,30,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 30, 60);
         CesSubmissionListData data = new CesSubmissionListData();
         throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID, data);
         throttlingAdapter.recordSubmissionFailure(null);
@@ -244,7 +243,7 @@ public class CesThrottlingInterceptorAdapterTest {
     @Test
     public void test_getHostIdentifier() {
         // given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2,30,60);
+        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 30, 60);
 
         // when
         String hostIdentifier = throttlingAdapter.getHostIdentifier();

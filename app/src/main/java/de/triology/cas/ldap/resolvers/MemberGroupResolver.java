@@ -1,19 +1,11 @@
-/**
- * Copyright (c) 2015 TRIOLOGY GmbH. All Rights Reserved.
- * <p>
- * Copyright notice
- */
-package de.triology.cas.ldap;
-
+package de.triology.cas.ldap.resolvers;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
-
 import org.ldaptive.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.naming.directory.SearchControls;
 import java.time.Duration;
 import java.util.Collections;
@@ -28,51 +20,21 @@ public class MemberGroupResolver implements GroupResolver {
     private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
 
     private final String baseDN;
-
-    /**
-     * Search controls.
-     */
     private final SearchControls searchControls;
-
-    /**
-     * LDAP connection factory.
-     */
-    private final ConnectionFactory connectionFactory;
-
-    /**
-     * LDAP search filter.
-     */
-    private final String searchFilter;
-
-    /**
-     * LDAP search scope.
-     */
     private SearchScope searchScope;
-
-     /**
-     * LDAP group name attribute.
-     */
-    private String nameAttribute = "cn";
+    private final ConnectionFactory connectionFactory;
+    private final String searchFilter;
+    private final String nameAttribute = "cn";
 
 
-    public MemberGroupResolver(String baseDN, SearchControls searchControls, ConnectionFactory connectionFactory, String searchFilter) {
+    public MemberGroupResolver(String baseDN, ConnectionFactory connectionFactory, String searchFilter) {
         this.baseDN = baseDN;
-        this.searchControls = searchControls;
+        this.searchControls = new SearchControls();
+        this.searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        this.searchScope = SearchScope.SUBTREE;
+
         this.connectionFactory = connectionFactory;
         this.searchFilter = searchFilter;
-    }
-
-    /**
-     * Initializes the object after properties are set.
-     */
-    @PostConstruct
-    public void initialize() {
-        for (final SearchScope scope : SearchScope.values()) {
-            if (scope.ordinal() == this.searchControls.getSearchScope()) {
-                this.searchScope = scope;
-                break;
-            }
-        }
     }
 
     @Override
@@ -87,12 +49,19 @@ public class MemberGroupResolver implements GroupResolver {
     }
 
     private Set<String> resolveGroupsByLdapFilter(FilterTemplate filter) {
+        LOG.trace("resolveGroupsByLdapFilter");
         final SearchResponse response;
         try {
+            SearchRequest request = createRequest(filter);
+            LOG.trace("resolveGroupsByLdapFilter - filter: {}", filter);
+            LOG.trace("resolveGroupsByLdapFilter - request: {}", request);
             response = new SearchOperation(connectionFactory).execute(createRequest(filter));
         } catch (final LdapException e) {
+            LOG.trace("resolveGroupsByLdapFilter - error: {}", e.getMessage());
             throw new RuntimeException("Failed executing LDAP query " + filter, e);
         }
+        LOG.trace("got response {}", response);
+        LOG.trace("got response entries{}", response.getEntries());
         final Set<String> groups = new HashSet<>();
         for (final LdapEntry entry : response.getEntries()) {
             String group = extractGroupName(entry);
@@ -116,7 +85,7 @@ public class MemberGroupResolver implements GroupResolver {
         request.setBaseDn(this.baseDN);
         request.setFilter(filter);
         request.setReturnAttributes(nameAttribute);
-        request.setSearchScope(this.searchScope);
+        request.setSearchScope(searchScope);
         request.setSizeLimit(Math.toIntExact(this.searchControls.getCountLimit()));
         request.setTimeLimit(Duration.ofMillis(this.searchControls.getTimeLimit()));
         return request;

@@ -14,8 +14,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,7 +30,6 @@ import java.util.concurrent.TimeoutException;
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
-@Component
 class RegistryEtcd implements Registry {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final JSONParser PARSER = new JSONParser();
@@ -68,11 +65,9 @@ class RegistryEtcd implements Registry {
      *
      * @throws RegistryException when the URI cannot be read
      */
-    @Autowired
     public RegistryEtcd(EtcdClient etcd) {
         this.etcd = etcd;
     }
-
 
     @Override
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, ICesServiceFactory factory) {

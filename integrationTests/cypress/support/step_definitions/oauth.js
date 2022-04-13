@@ -18,9 +18,8 @@ function resetData() {
     latestBody = ""
 }
 
-function serviceRequestsAuthorizationEndpoint(clientID) {
-    // this always fails and returns a window
-    cy.getOAuth20Authorize(clientID, false).then(function (window) {
+function serviceRequestsAuthorizationEndpoint(clientID, failOnErrorCode = false) {
+    cy.getOAuth20Authorize(clientID, failOnErrorCode).then(function (window) {
         let href = window.location.href
         latestOAuthCode = href.match(CasServiceTicketPattern)
         console.log("Set OC to : " + latestOAuthCode)
@@ -30,6 +29,7 @@ function serviceRequestsAuthorizationEndpoint(clientID) {
 function serviceRequestsAccessTokenEndpoint(clientID, serviceTicket, failOnErrorCode = false) {
     cy.getOAuth20AccessToken(clientID, serviceTicket, failOnErrorCode).then(function (response) {
         latestBody = response.body
+        console.log("Latest body: " + JSON.stringify(latestBody))
         latestAccessToken = latestBody.access_token
         console.log("Set AT to : " + latestAccessToken)
     })
@@ -50,7 +50,7 @@ function casAdminLogin() {
 
     cy.get('input[data-testid=login-username-input-field]').type(env.GetAdminUsername())
     cy.get('input[data-testid=login-password-input-field]').type(env.GetAdminPassword())
-    cy.get('div[data-testid=login-form-login-button-container]').children('div').children('button').click()
+    cy.get('div[data-testid=login-form-login-button-container]').children('button').click()
 }
 
 Given("the admin logs into the ces", function () {
@@ -77,15 +77,7 @@ When("a registered service requests the OAuth authorization endpoint", function 
 });
 
 When("an unregistered service requests the OAuth authorization endpoint", function () {
-    cy.visit(Cypress.config().baseUrl + "/cas/oauth2.0/authorize", {
-        qs: {
-            client_id: 'notRegisteredService',
-            redirect_uri: 'https://oauthdebugger.com/debug',
-            response_type: 'code',
-            state: '673bac67-cb29-47b4-beed-dc26aa70eaeb',
-        },
-        retryOnStatusCodeFailure: false
-    })
+    serviceRequestsAuthorizationEndpoint("unregisteredServiceClientID", false)
 });
 
 When("a registered service requests the OAuth accessToken endpoint", function () {
@@ -114,10 +106,10 @@ Then("a ticket granting ticket is returned", function () {
 Then("a profile is returned", function () {
     console.log(JSON.stringify(latestProfile.attributes.groups))
     assert(latestProfile.toString() !== "", "Profile should not be empty")
-    assert(latestProfile.id === env.GetAdminUsername(), "Profile should contain the correct username" )
-    assert(latestProfile.attributes.username === env.GetAdminUsername(), "Profile should contain the correct username" )
-    assert(JSON.stringify(latestProfile.attributes.groups).includes("cesManager"), "Profile should contain the cesManager group" )
-    assert(JSON.stringify(latestProfile.attributes.groups).includes(env.GetAdminGroup()), "Profile should contain the admin group" )
+    assert(latestProfile.id === env.GetAdminUsername(), "Profile should contain the correct username")
+    assert(latestProfile.attributes.username === env.GetAdminUsername(), "Profile should contain the correct username")
+    assert(JSON.stringify(latestProfile.attributes.groups).includes("cesManager"), "Profile should contain the cesManager group")
+    assert(JSON.stringify(latestProfile.attributes.groups).includes(env.GetAdminGroup()), "Profile should contain the admin group")
     resetData()
 });
 

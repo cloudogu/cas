@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-    <title layout:title-pattern="$LAYOUT_TITLE"
+    <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
            th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}"/>
     </title>
 
@@ -24,20 +24,22 @@
     <!--/* Favicons */-->
     <link rel="shortcut icon" href="/favicon.ico"
           th:href="@{${#themes.code('webjars.ces-theme.favicon')}}"/>
-    <link rel="apple-touch-icon" sizes="180x180"  href="/images/apple-touch-icon"
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon"
           th:href="@{${#themes.code('webjars.ces-theme.apple-touch-icon')}}"/>
-    <link rel="icon" type="image/png" sizes="32x32"  href="/favicon-32x32.png"
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"
           th:href="@{${#themes.code('webjars.ces-theme.favicon.32')}}"/>
-    <link rel="icon" type="image/png" sizes="16x16"  href="/favicon-16x16.png"
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"
           th:href="@{${#themes.code('webjars.ces-theme.favicon.16')}}"/>
     <meta name="msapplication-TileColor" content="#00aba9">
     <meta name="theme-color" content="#ffffff">
 </head>
 
 <body class="bg-primary">
-<script th:replace="fragments/scripts"/>
+<script th:replace="fragments/scripts"></script>
 
-<div class="d-flex justify-content-center align-items-center auto-margin-top-bottom">
+<div class="mdc-drawer-scrim"></div>
+
+<div class="mdc-drawer-app-content mdc-top-app-bar--fixed-adjust d-flex justify-content-center align-items-center auto-margin-top-bottom">
     <main role="main" id="main-content" class="container-lg py-4">
         <div layout:fragment="content" id="content">
             CAS content will go here

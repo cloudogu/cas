@@ -13,7 +13,7 @@ public class CesSubmissionListDataTest extends TestCase {
     }
 
     @Test
-    public void test_SubmissionData_constructor(){
+    public void test_SubmissionData_constructor() {
         // when
         CesSubmissionListData data = new CesSubmissionListData();
 
@@ -24,7 +24,7 @@ public class CesSubmissionListDataTest extends TestCase {
     }
 
     @Test
-    public void test_SubmissionData_reset(){
+    public void test_SubmissionData_reset() {
         // given
         CesSubmissionListData data = new CesSubmissionListData();
         data.recordFailedSubmission(getCurrentTime());
@@ -44,7 +44,7 @@ public class CesSubmissionListDataTest extends TestCase {
     }
 
     @Test
-    public void test_SubmissionData_recordFailedSubmission(){
+    public void test_SubmissionData_recordFailedSubmission() {
         // given
         CesSubmissionListData data = new CesSubmissionListData();
 
@@ -70,7 +70,7 @@ public class CesSubmissionListDataTest extends TestCase {
     }
 
     @Test
-    public void test_SubmissionData_recordHostLock(){
+    public void test_SubmissionData_recordHostLock() {
         // given
         CesSubmissionListData data = new CesSubmissionListData();
 

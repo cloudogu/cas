@@ -4,18 +4,21 @@
                 && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'
                 || #messages.msgOrNull('legal.url.privacy.policy') != null
                 && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}"
-        class="py-4 d-flex justify-content-center cas-footer">
+        class="py-4 d-flex justify-content-center align-items-center cas-footer">
     <div>
         <ul class="footer-list">
-        <li th:if="${#messages.msgOrNull('legal.url.terms.of.service') != null && #messages.msgOrNull('legal.url.terms.of.service') !='legal.url.terms.of.service'}">
-            <a href="" th:href="#{legal.url.terms.of.service}" th:text="#{terms.of.service}" target="_blank" data-testid="footer-link-terms-of-service"></a>
-        </li>
-        <li th:if="${#messages.msgOrNull('legal.url.imprint') != null && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'}">
-            <a href="" th:href="#{legal.url.imprint}" th:text="#{imprint}" target="_blank" data-testid="footer-link-legal-url-imprint"></a>
-        </li>
-        <li th:if="${#messages.msgOrNull('legal.url.privacy.policy') != null && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}">
-            <a href="" th:href="#{legal.url.privacy.policy}" th:text="#{privacy.policy}" target="_blank" data-testid="footer-link-privacy-policy"></a>
-        </li>
+            <li th:if="${#messages.msgOrNull('legal.url.terms.of.service') != null && #messages.msgOrNull('legal.url.terms.of.service') !='legal.url.terms.of.service'}">
+                <a href="" th:href="#{legal.url.terms.of.service}" th:text="#{terms.of.service}" target="_blank"
+                   data-testid="footer-link-terms-of-service"></a>
+            </li>
+            <li th:if="${#messages.msgOrNull('legal.url.imprint') != null && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'}">
+                <a href="" th:href="#{legal.url.imprint}" th:text="#{imprint}" target="_blank"
+                   data-testid="footer-link-legal-url-imprint"></a>
+            </li>
+            <li th:if="${#messages.msgOrNull('legal.url.privacy.policy') != null && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}">
+                <a href="" th:href="#{legal.url.privacy.policy}" th:text="#{privacy.policy}" target="_blank"
+                   data-testid="footer-link-privacy-policy"></a>
+            </li>
         </ul>
     </div>
 </footer>

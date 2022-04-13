@@ -12,8 +12,10 @@ import java.util.HashMap;
 
 import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 /**

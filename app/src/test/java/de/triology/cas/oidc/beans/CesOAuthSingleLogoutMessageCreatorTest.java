@@ -3,10 +3,6 @@ package de.triology.cas.oidc.beans;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.CesServiceData;
-import de.triology.cas.services.dogu.CesDoguServiceFactory;
-import de.triology.cas.services.dogu.CesServiceCreationException;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -18,7 +14,6 @@ import java.net.URI;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**

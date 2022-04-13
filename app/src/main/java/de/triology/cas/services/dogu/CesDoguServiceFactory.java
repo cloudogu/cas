@@ -9,7 +9,7 @@ public class CesDoguServiceFactory implements ICesServiceFactory {
 
     public static final String SERVICE_CAS_IDENTIFIER = "cas";
 
-    public RegexRegisteredService createCASService(long id, String fqdn){
+    public RegexRegisteredService createCASService(long id, String fqdn) {
         RegexRegisteredService casService = new RegexRegisteredService();
         casService.setId(id);
         casService.setServiceId(String.format("https://%s(:443)?/cas(/.*)?", generateServiceIdFqdnRegex(fqdn)));

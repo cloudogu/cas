@@ -1,18 +1,9 @@
-/**
- * Copyright (c) 2015 TRIOLOGY GmbH. All Rights Reserved.
- * 
- * Copyright notice
- */
-
-package de.triology.cas.ldap;
+package de.triology.cas.ldap.resolvers;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,13 +13,8 @@ import java.util.Set;
 /**
  * Combines the result of multiple {@link GroupResolver}.
  */
-@Component
 public class CombinedGroupResolver implements GroupResolver {
-
     private static final Logger LOG = LoggerFactory.getLogger(CombinedGroupResolver.class);
-
-    @Autowired
-    @Qualifier("groupResolvers")
     private final List<GroupResolver> groupResolvers;
 
     /**
@@ -43,7 +29,7 @@ public class CombinedGroupResolver implements GroupResolver {
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         Set<String> groups = new HashSet<>();
-        for ( GroupResolver resolver : groupResolvers ) {
+        for (GroupResolver resolver : groupResolvers) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("resolve groups from {} with {}", principal.getId(), resolver.getClass());
             }
@@ -51,5 +37,4 @@ public class CombinedGroupResolver implements GroupResolver {
         }
         return groups;
     }
-
 }
