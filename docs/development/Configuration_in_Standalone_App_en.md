@@ -21,3 +21,11 @@ legal.url.imprint=https://cloudogu.com/
 legal.url.privacy.policy=https://www.triology.de/
 forgot.password.text=Contact your admin
 ```
+
+## Troubleshooting
+
+### Java compiler level does not match the version of the installed Java project
+CAS is a Gradle Project. Gradle does NOT use the currently configured SDK and needs to be configured separately. 
+If IntelliJ reports an errror like *Current Java version 15 does not match required Java version 11* go to
+"Settings" > "Build, Exceution, Deployment" > "Build Tools" > Gradle and select the correct SDK (currently Java 11).
+![configure sdk for gradle](figures/gradle_java_sdk.png)
