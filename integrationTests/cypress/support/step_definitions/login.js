@@ -15,16 +15,7 @@ Given("the user is currently not logged in the CES", function () {
 });
 
 Given("the browser shows the CAS login page and the browser language is set to German", function () {
-    cy.visit("/cas/login", {
-        onBeforeLoad(window) {
-            Object.defineProperty(window.navigator, 'language', {value: 'de-DE'});
-            Object.defineProperty(window.navigator, 'languages', {value: ['de-DE']});
-            Object.defineProperty(window.navigator, 'accept_languages', {value: ['de']});
-        },
-        headers: {
-            'Accept-Language': 'de'
-        },
-    });
+    cy.visit("/cas/login?locale=de")
     cy.clickWarpMenuCheckboxIfPossible()
 })
 
