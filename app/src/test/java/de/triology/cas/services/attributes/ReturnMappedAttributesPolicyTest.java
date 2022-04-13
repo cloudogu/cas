@@ -20,7 +20,7 @@ public class ReturnMappedAttributesPolicyTest extends TestCase {
         inputAttributes.put("ignoreMe", List.of("ignoring"));
 
         // when
-        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes, null, null);
+        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes);
 
         // then
         assertEquals(returnedAttributes.size(), 2);
@@ -40,7 +40,7 @@ public class ReturnMappedAttributesPolicyTest extends TestCase {
         inputAttributes.put("ignoreMe", List.of("ignoring"));
 
         // when
-        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes, null, null);
+        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes);
 
         // then
         assertEquals(returnedAttributes.size(), 1);
@@ -59,7 +59,7 @@ public class ReturnMappedAttributesPolicyTest extends TestCase {
         inputAttributes.put("ignoreMe", List.of("ignoring"));
 
         // when
-        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes, null, null);
+        Map<String, List<Object>> returnedAttributes = policy.authorizeReleaseOfAllowedAttributes(null, inputAttributes);
 
         // then
         assertEquals(returnedAttributes.size(), 0);

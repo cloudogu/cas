@@ -24,10 +24,8 @@ import java.util.stream.Collectors;
 class CesServicesManagerStageProductive extends CesServicesManagerStage {
 
     private String fqdn;
-
-    private Registry registry;
-
-    private List<CesServiceData> persistentServices;
+    private final Registry registry;
+    private final List<CesServiceData> persistentServices;
 
     public final CesOAuthServiceFactory oAuthServiceFactory;
     public final CesOIDCServiceFactory oidcServiceFactory;

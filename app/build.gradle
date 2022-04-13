@@ -1,28 +1,35 @@
 buildscript {
     repositories {
-        mavenLocal()
-        gradlePluginPortal()
-        mavenCentral()
-        jcenter()
-        maven {
-            url "https://repo.spring.io/libs-milestone"
-            mavenContent { releasesOnly() }
+        if (project.privateRepoUrl) {
+            maven {
+                url project.privateRepoUrl
+                credentials {
+                    username = project.privateRepoUsername
+                    password = System.env.PRIVATE_REPO_TOKEN
+                }
+            }
         }
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
         maven {
-            url "https://repo.spring.io/libs-snapshot"
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
     }
     dependencies {
-        classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
-        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
-        classpath "io.freefair.gradle:maven-plugin:${project.gradleMavenPluginVersion}"
-        classpath "io.freefair.gradle:lombok-plugin:${project.gradleLombokPluginVersion}"
+        classpath "io.freefair.gradle:maven-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.freefair.gradle:lombok-plugin:${project.gradleFreeFairPluginVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:${project.gradleDependencyManagementPluginVersion}"
+
+        classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
+        classpath "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
+        classpath "org.apereo.cas:cas-server-core-configuration-metadata-repository:${project.'cas.version'}"
     }
 }
 
@@ -32,117 +39,47 @@ plugins {
 }
 
 repositories {
+    if (project.privateRepoUrl) {
+        maven {
+            url project.privateRepoUrl
+            credentials {
+                username = project.privateRepoUsername
+                password = System.env.PRIVATE_REPO_TOKEN
+            }
+        }
+    }
     mavenLocal()
     mavenCentral()
-    jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
     maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
         mavenContent { snapshotsOnly() }
     }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
     maven {
+        url "https://repo.spring.io/milestone"
         mavenContent { releasesOnly() }
-        url "https://build.shibboleth.net/nexus/content/repositories/releases/"
-    }
-    maven {
-        mavenContent { releasesOnly() }
-        url "https://repo.spring.io/milestone/"
-    }
-    maven {
-        url "https://repo.spring.io/snapshot/"
-        mavenContent { snapshotsOnly() }
-    }
-    maven {
-        mavenContent { snapshotsOnly() }
-        url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
     }
 }
 
-def casServerVersion = project.'cas.version'
-def casWebApplicationBinaryName = "cas.war"
-
-project.ext."casServerVersion" = casServerVersion
-project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
-
 apply plugin: "io.freefair.war-overlay"
-apply plugin: "io.freefair.lombok"
-apply from: rootProject.file("gradle/tasks.gradle")
-
 apply plugin: "war"
-apply plugin: "eclipse"
+apply plugin: "org.springframework.boot"
+apply plugin: "io.freefair.lombok"
 apply plugin: "idea"
 
 apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/dockerjib.gradle")
-
-dependencies {
-    // Other CAS dependencies/modules may be listed here...
-    implementation "org.apereo.cas:cas-server-core-api-protocol:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-api-configuration-model:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-authentication-throttle:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-logout:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-logout-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-services:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-util:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-ldap:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-ldap-core:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oidc-core:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oidc-core-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oidc-services:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oauth-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oauth-core-api:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oauth-services:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-rest:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-swagger:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-saml:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-swagger:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-throttle:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-throttle-core:${casServerVersion}"
-
-    implementation 'org.mousio:etcd4j:2.11.0'
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
-    implementation 'org.webjars.bowergithub.cloudogu:ces-theme:0.4.0'
-    implementation 'org.pac4j:pac4j-core:4.3.1'
-
-    testCompile 'org.mockito:mockito-core:2.2.9'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile "com.github.tomakehurst:wiremock-jre8:2.31.0"
-    testCompile 'uk.org.lidalia:slf4j-test:1.2.0'
-}
-
-tasks.findByName("jibDockerBuild")
-        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-        .finalizedBy(deleteWebAppFromJib)
-
-tasks.findByName("jib")
-        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-        .finalizedBy(deleteWebAppFromJib)
+apply from: rootProject.file("gradle/tasks.gradle")
 
 configurations.all {
     resolutionStrategy {
         cacheChangingModulesFor 0, "seconds"
         cacheDynamicVersionsFor 0, "seconds"
-
         preferProjectModules()
-
         def failIfConflict = project.hasProperty("failOnVersionConflict") && Boolean.valueOf(project.getProperty("failOnVersionConflict"))
         if (failIfConflict) {
             failOnVersionConflict()
         }
-    }
-}
-
-eclipse {
-    classpath {
-        downloadSources = true
-        downloadJavadoc = true
     }
 }
 
@@ -151,4 +88,74 @@ idea {
         downloadJavadoc = true
         downloadSources = true
     }
+}
+
+war {
+    entryCompression = ZipEntryCompression.STORED
+    enabled = false
+}
+
+sourceSets {
+    bootRunSources {
+        resources {
+            srcDirs new File("//etc/cas/templates/"), new File("${project.getProjectDir()}/src/main/resources/")
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+    }
+}
+
+dependencies {
+    // Other CAS dependencies/modules may be listed here...
+    implementation "org.apereo.cas:cas-server-core-api-protocol:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-authentication-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-authentication-throttle:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-authentication-attributes:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-logout:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-logout-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-services:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-services-registry:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-services-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-web-api:${project.'cas.version'}"
+
+    implementation "org.apereo.cas:cas-server-support-ldap:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-ldap-core:${project.'cas.version'}"
+
+    implementation "org.apereo.cas:cas-server-support-oidc:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oidc-core:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oidc-core-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oidc-services:${project.'cas.version'}"
+
+    implementation "org.apereo.cas:cas-server-support-oauth-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oauth-core-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oauth-services:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-oauth-webflow:${project.'cas.version'}"
+
+    implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-saml:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-throttle:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-throttle-core:${project.'cas.version'}"
+
+    implementation 'org.mousio:etcd4j:2.11.0'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
+    implementation 'org.webjars.bowergithub.cloudogu:ces-theme:0.4.0'
+    implementation 'org.pac4j:pac4j-core:4.3.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.mockito:mockito-core:2.2.9'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation "com.github.tomakehurst:wiremock-jre8:2.31.0"
+    testImplementation 'uk.org.lidalia:slf4j-test:1.2.0'
+
+    developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
 }

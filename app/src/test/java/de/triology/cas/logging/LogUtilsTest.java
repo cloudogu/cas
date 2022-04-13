@@ -1,9 +1,8 @@
 package de.triology.cas.logging;
 
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.impl.Log4jLogEvent;
-import org.apache.logging.log4j.message.SimpleMessageFactory;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent.Builder;
+import org.apache.logging.log4j.message.SimpleMessageFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

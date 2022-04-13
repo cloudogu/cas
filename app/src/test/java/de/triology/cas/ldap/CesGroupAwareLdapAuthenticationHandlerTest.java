@@ -1,5 +1,6 @@
 package de.triology.cas.ldap;
 
+import de.triology.cas.ldap.resolvers.GroupResolver;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,39 +18,39 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CesGroupAwareLdapAuthenticationHandlerTest {
 
-  @Mock
-  private Authenticator authenticator;
+    @Mock
+    private Authenticator authenticator;
 
-  @Mock
-  private GroupResolver resolver;
-  
-  @InjectMocks
-  private CesGroupAwareLdapAuthenticationHandler handler;
-  
-  @Mock
-  private Principal principal;
-  
-  @Mock
-  private LdapEntry ldapEntry;
-  
-  @Test
-  public void attachGroups() {
-    Map<String,List<Object>> attributes = new HashMap<>();
-    attributes.put("user", Collections.singletonList("trillian"));
-    
-    Set<String> groups = new HashSet<>(Arrays.asList("a", "b"));
-    
-    when(principal.getId()).thenReturn("tricia");
-    when(principal.getAttributes()).thenReturn(attributes);
-    when(resolver.resolveGroups(principal, ldapEntry)).thenReturn(groups);
-    
-    handler.setGroupResolver(resolver);
-    
-    Principal principalWithGroups = handler.attachGroups(principal, ldapEntry);
-    assertNotNull(principalWithGroups);
-    assertNotSame(principalWithGroups, principal);
-    
-    assertEquals(new ArrayList<>(groups), principalWithGroups.getAttributes().get("groups"));
-  }
+    @Mock
+    private GroupResolver resolver;
+
+    @InjectMocks
+    private CesGroupAwareLdapAuthenticationHandler handler;
+
+    @Mock
+    private Principal principal;
+
+    @Mock
+    private LdapEntry ldapEntry;
+
+    @Test
+    public void attachGroups() {
+        Map<String, List<Object>> attributes = new HashMap<>();
+        attributes.put("user", Collections.singletonList("trillian"));
+
+        Set<String> groups = new HashSet<>(Arrays.asList("a", "b"));
+
+        when(principal.getId()).thenReturn("tricia");
+        when(principal.getAttributes()).thenReturn(attributes);
+        when(resolver.resolveGroups(principal, ldapEntry)).thenReturn(groups);
+
+        handler.setGroupResolver(resolver);
+
+        Principal principalWithGroups = handler.attachGroups(principal, ldapEntry);
+        assertNotNull(principalWithGroups);
+        assertNotSame(principalWithGroups, principal);
+
+        assertEquals(new ArrayList<>(groups), principalWithGroups.getAttributes().get("groups"));
+    }
 
 }

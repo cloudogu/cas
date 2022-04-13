@@ -22,6 +22,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
 
     /**
      * Creates a new empty service.
+     *
      * @return the created service.
      */
     protected OAuthRegisteredService createEmptyService() {
