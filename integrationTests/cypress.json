@@ -3,8 +3,8 @@
   "env": {
     "DoguName": "cas/login",
     "MaxLoginRetries": -1,
-    "AdminUsername":  "ces-admin",
-    "AdminPassword":  "ecosystem2016",
+    "AdminUsername":  "admin",
+    "AdminPassword":  "adminpw",
     "AdminGroup":  "CesAdministrators",
     "ClientID" : "inttest",
     "ClientSecret"  : "integrationTestClientSecret",
