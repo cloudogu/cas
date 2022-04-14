@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.3.7-5] - 2022-04-11
+### Changed
+- Set min-width for notch to fully display floating label for username (#143)
+
 ## [v6.3.7-4] - 2022-03-29
 ### Changed
 - Update java base image to 11.0.14-2 (#139)
