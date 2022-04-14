@@ -156,8 +156,8 @@ cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0
 # Configuration guide: https://apereo.github.io/cas/6.3.x/ticketing/Configuring-Ticket-Expiration-Policy.html#timeout
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#default
 # ----------------------------------------------------------------------------------------------------------------------
-cas.ticket.tgt.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
-cas.ticket.tgt.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
+cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
+cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
 ########################################################################################################################
 
 ########################################################################################################################
@@ -212,8 +212,7 @@ ces.services.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 # ----------------------------------------------------------------------------------------------------------------------
 # OIDC
 # assigns the issuer of oidc correctly
-cas.authn.oidc.issuer=${cas.server.prefix}/oidc
-cas.client.prefix=${cas.server.prefix}
+cas.authn.oidc.core.issuer=${cas.server.prefix}/oidc
 # ----------------------------------------------------------------------------------------------------------------------
 # OAuth2
 # Time for the code to expire

@@ -1,18 +1,17 @@
 package de.triology.cas.oidc.beans.delegation;
 
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -36,7 +35,7 @@ import java.util.Optional;
 public class CesCustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
     protected static final Logger LOG = LoggerFactory.getLogger(CesCustomDelegatedAuthenticationClientLogoutAction.class);
     private final Clients clients;
-    private final SessionStore<JEEContext> sessionStore;
+    private final SessionStore sessionStore;
     private final String redirectUri;
 
     /**
@@ -45,9 +44,9 @@ public class CesCustomDelegatedAuthenticationClientLogoutAction extends Abstract
      * @param webContext A web context (request + response).
      * @return The common profile active.
      */
-    private static CommonProfile findCurrentProfile(final JEEContext webContext) {
-        val pm = new ProfileManager<CommonProfile>(webContext, webContext.getSessionStore());
-        val profile = pm.get(true);
+    private UserProfile findCurrentProfile(final JEEContext webContext) {
+        val pm = new ProfileManager(webContext, this.sessionStore);
+        val profile = pm.getProfile();
         return profile.orElse(null);
     }
 
@@ -56,7 +55,7 @@ public class CesCustomDelegatedAuthenticationClientLogoutAction extends Abstract
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val context = new JEEContext(request, response, this.sessionStore);
+            val context = new JEEContext(request, response);
 
             val currentProfile = findCurrentProfile(context);
             val clientResult = currentProfile == null
@@ -65,10 +64,11 @@ public class CesCustomDelegatedAuthenticationClientLogoutAction extends Abstract
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
                 LOG.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
-                val actionResult = client.getLogoutAction(context, currentProfile, redirectUri);
+                val actionResult = client.getLogoutAction(context, this.sessionStore, currentProfile, redirectUri);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
-                    new JEEHttpActionAdapter().adapt(action, context);
+                    LOG.debug("Adapting logout action [{}] for client [{}]", action, client);
+                    JEEHttpActionAdapter.INSTANCE.adapt(action, context);
                 }
             } else {
                 LOG.debug("The current client cannot be found and no logout action will be executed.");

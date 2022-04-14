@@ -73,6 +73,10 @@
 
         <AsyncLogger name="org.pac4j" level="${sys:ces.log.level}" includeLocation="true"/>
 
+        <!-- prevent log spamming of unusable log entries -->
+        <AsyncLogger name="org.apache.catalina" level="error" includeLocation="true"/>
+        <AsyncLogger name="org.springframework.jndi" level="error" includeLocation="true"/>
+
         <!-- Log audit to all root appenders, and also to audit log (additivity is not false) -->
         <AsyncLogger name="org.apereo.inspektr.audit.support" level="${sys:ces.log.level}" includeLocation="true" >
             <AppenderRef ref="casAudit"/>

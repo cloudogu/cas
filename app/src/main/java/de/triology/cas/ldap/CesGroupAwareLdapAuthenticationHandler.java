@@ -1,5 +1,6 @@
 package de.triology.cas.ldap;
 
+import de.triology.cas.ldap.resolvers.GroupResolver;
 import lombok.Setter;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
@@ -11,9 +12,11 @@ import org.ldaptive.auth.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.security.auth.login.LoginException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Setter
 public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHandler {
@@ -29,17 +32,16 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
      * @param name             the name
      * @param servicesManager  the services manager
      * @param principalFactory the principal factory
-     * @param order            the order
      * @param authenticator    Ldaptive authenticator component.
      * @param strategy         the strategy
      * @param groupResolver    the resolver for resolving groups
      */
     public CesGroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager,
-                                                  PrincipalFactory principalFactory, Integer order,
+                                                  PrincipalFactory principalFactory,
                                                   Authenticator authenticator,
                                                   AuthenticationPasswordPolicyHandlingStrategy strategy,
                                                   GroupResolver groupResolver) {
-        super(name, servicesManager, principalFactory, order, authenticator, strategy);
+        super(name, servicesManager, principalFactory, 0, authenticator, strategy);
 
         this.groupResolver = groupResolver;
         LOG.trace("{} created with group attribute {} and group resolver {}",
@@ -54,7 +56,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
 
         if (groupResolver != null) {
             // resolve and attach groups
-           principal = attachGroups(principal, ldapEntry);
+            principal = attachGroups(principal, ldapEntry);
         }
 
         return principal;

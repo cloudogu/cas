@@ -18,7 +18,7 @@ interface Registry {
     /**
      * Retrieves all CAS Services Accounts which are currently registered in etcd.
      *
-     * @param factory The factory responsible to create a service of the given type
+     * @param factory            The factory responsible to create a service of the given type
      * @param serviceAccountType The type of service account that should be searched in the registry
      * @return an array of {@link CesServiceData} containing the information for all installed oauth service accounts
      * of the given type

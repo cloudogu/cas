@@ -201,7 +201,7 @@ parallel(
 
                             stage('Integration Tests - After Upgrade') {
                                 ecoSystem.runCypressIntegrationTests([
-                                        cypressImage     : "cypress/included:7.4.0",
+                                        cypressImage     : "cypress/included:8.6.0",
                                         enableVideo      : params.EnableVideoRecording,
                                         enableScreenshots: params.EnableScreenshotRecording])
                             }

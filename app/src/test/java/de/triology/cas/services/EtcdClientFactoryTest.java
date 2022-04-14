@@ -25,7 +25,7 @@ public class EtcdClientFactoryTest {
     @Test
     public void shouldUseDefaultConfigFileForUrl() {
         EtcdClientFactory etcdClientFactory = spy(new EtcdClientFactory());
-        EtcdClient etcdClient = etcdClientFactory.createEtcdClient();
+        EtcdClient etcdClient = etcdClientFactory.createDefaultClient();
         assertNotNull(etcdClient);
         verify(etcdClientFactory).createEtcdClient("/etc/ces/node_master");
     }
@@ -33,7 +33,7 @@ public class EtcdClientFactoryTest {
     @Test
     public void shouldReadExistingConfigFirForUrl() throws IOException {
         File file = temporaryFolder.newFile();
-        Files.write("example.com", file, Charsets.UTF_8);
+        Files.asCharSink(file, Charsets.UTF_8).write("example.com");
 
         EtcdClientFactory etcdClientFactory = spy(new EtcdClientFactory());
         EtcdClient etcdClient = etcdClientFactory.createEtcdClient(file.getAbsolutePath());
