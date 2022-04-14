@@ -139,9 +139,8 @@ dependencies {
 
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${project.'cas.version'}"
 
-
-    implementation "org.apereo.cas:cas-server-support-pm:${casServerVersion}"
-    implementation "org.apereo.cas:cas-server-support-pm-ldap:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-pm:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-pm-ldap:${project.'cas.version'}"
 
     implementation "org.apereo.cas:cas-server-support-rest:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
