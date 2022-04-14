@@ -122,8 +122,8 @@ spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfigurati
 # Password management (pm)
 # https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-password-management
 #========================================
-cas.authn.pm.enabled=true
-cas.authn.pm.policy-pattern=.*
+cas.authn.pm.core.enabled=true
+cas.authn.pm.core.password-policy-pattern=.*
 
 cas.authn.pm.ldap[0].type=GENERIC
 cas.authn.pm.ldap[0].ldap-url=${cas.authn.ldap[0].ldap-url}
