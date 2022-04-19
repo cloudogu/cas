@@ -120,7 +120,7 @@ spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfigurati
 {{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
 #========================================
 # Password management (pm)
-# https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-password-management
+# https://apereo.github.io/cas/6.5.x/password_management/Password-Management.html
 #========================================
 cas.authn.pm.core.enabled=true
 cas.authn.pm.core.password-policy-pattern=.*

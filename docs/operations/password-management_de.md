@@ -18,10 +18,10 @@ neu mit seinem nun geänderten Passwort anmelden.
 Das Passwort-Management wird über bestimmte CAS-Properties aktiviert. Für die allgemeine Aktivierung des
 Passwort-Managements sind beiden folgenden Propertys erforderlich.
 
-* `cas.authn.pm.enabled=true` - gibt mit dem Wert `true` an, dass das Passwort-Management aktiviert ist.
-* `cas.authn.pm.policy-pattern=.*` - gibt mit dem Wert `.*` (Regulärer Ausdruck) an, dass alle Passwörter gültig sind.
-  Diese Property ist verpflichtend und muss auch dann angegeben werden, wenn es keine Einschränkungen für das Passwort
-  gibt.
+* `cas.authn.pm.core.enabled=true` - gibt mit dem Wert `true` an, dass das Passwort-Management aktiviert ist.
+* `cas.authn.pm.core.password-policy-pattern=.*` - gibt mit dem Wert `.*` (Regulärer Ausdruck) an, dass alle Passwörter
+  gültig sind. Diese Property ist verpflichtend und muss auch dann angegeben werden, wenn es keine Einschränkungen für
+  das Passwort gibt.
 
 Damit der Nutzer direkt über das CAS sein Passwort im LDAP ändern kann, müssen hierzu die entsprechenden LDAP-Property
 für das Passwort-Management gesetzt werden. Diese Propertys können die Werte der allgemeinen LDAP-Property
