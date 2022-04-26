@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.3-1] - 2022-04-26
+- Upgrade cas to 6.5.3 (#147)
+
 ## [v6.5.2-1] - 2022-04-13
 ### Changed
 - Upgrade cas war overlay version to 6.5.2 (#141)
