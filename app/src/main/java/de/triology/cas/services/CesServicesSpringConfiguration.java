@@ -1,6 +1,7 @@
 package de.triology.cas.services;
 
 import mousio.etcd4j.EtcdClient;
+import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServicesManager;
@@ -8,11 +9,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,6 +61,13 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
         DefaultChainingServicesManager chain = new DefaultChainingServicesManager();
         chain.registerServiceManager(configureServicesManager());
         return chain;
+    }
+
+    @Bean(name = "serviceMatchingStrategy")
+    public ServiceMatchingStrategy serviceMatchingStrategy(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+        return new CesServiceMatchingStrategy(servicesManager);
     }
 
     @Override
