@@ -126,6 +126,22 @@ header > nav .cas-brand .cas-logo {
     padding: 2rem 2.5rem;
 }
 
+.password-forgotten {
+    display: flex;
+    flex-direction: column;
+    margin-left: 2.5rem;
+}
+
+.password-forgotten button {
+    padding-right:0;
+    align-self: flex-end;
+    font-size: 1.2rem;
+}
+
+#forgotPasswordInfo {
+    overflow-wrap: anywhere;
+}
+
 @media screen and (max-width: 767.99px) {
     .login-section {
         border-right: none;
@@ -136,7 +152,6 @@ header > nav .cas-brand .cas-logo {
     .login-section.login-form {
         padding-top: 2.5rem;
     }
-
 }
 
 .close {
@@ -760,6 +775,16 @@ body {
     color: #0e4259;
     background-color: #fff;
     font-size: 1.6rem;
+}
+
+.login-form-login-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.login-form-login-button-container > button {
+    flex-shrink: 0;
 }
 
 @media all and (min-width: 768px) {

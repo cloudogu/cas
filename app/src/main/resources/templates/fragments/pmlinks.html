@@ -15,7 +15,7 @@
 </script>
 
 <body>
-<div th:fragment="pmlinks" id="pmlinks" class="my-2">
+<div th:fragment="pmlinks" id="pmlinks">
 
     <!--    This part should currently not be used and is therefore disabled-->
     <form th:if="false" method="post" id="passwordManagementForm">
@@ -38,28 +38,32 @@
     <script>
         function toggleForgotPasswordInfo() {
             var x = document.getElementById("forgotPasswordInfo");
+            var y = document.getElementById("forgotPassword")
             if (x.style.display === "none") {
                 x.style.display = "block";
+                y.setAttribute("aria-expanded", true);
             } else {
                 x.style.display = "none";
+                y.setAttribute("aria-expanded", false);
             }
         }
     </script>
 
     <!-- The following div is usually disabled if passwordManagementEnabled is true, but is now always enabled as we do not use all features from password management.-->
     <div>
-        <div th:if="${#messages.msgOrNull('forgot.password.text') != null
+        <div class="password-forgotten" th:if="${#messages.msgOrNull('forgot.password.text') != null
                 && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
-
-            <button type="button" id="forgotPassword" class="link-underlined btn btn-default right"
+            <button type="button" id="forgotPassword" class="btn btn-link"
                     data-testid="login-forgot-password-button"
-                    aria-label="${passwordForgot}"
-                    onclick="toggleForgotPasswordInfo(); return false;"
-                    th:text="#{passwordForgot}">
-            </button>
 
+                    aria-controls="forgotPasswordInfo"
+                    aria-expanded="false"
+                    onclick="toggleForgotPasswordInfo(); return false;"
+                    th:text="#{passwordForgot}"
+            >
+            </button>
             <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}"
-               data-testid="login-forgot-password-text"></p>
+               data-testid="login-forgot-password-text" class="well mt-3" role="region" aria-live="polite"></p>
         </div>
     </div>
 </div>
