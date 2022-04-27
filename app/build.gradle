@@ -114,13 +114,14 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-api-protocol:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-authentication-api:${project.'cas.version'}"
-    implementation "org.apereo.cas:cas-server-core-authentication-throttle:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-authentication-attributes:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-authentication-throttle:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-logout:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-logout-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-services:${project.'cas.version'}"
-    implementation "org.apereo.cas:cas-server-core-services-registry:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-services-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-services-authentication:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-services-registry:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-web-api:${project.'cas.version'}"
 
@@ -148,6 +149,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-throttle:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-throttle-core:${project.'cas.version'}"
+
 
     implementation 'org.mousio:etcd4j:2.11.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'

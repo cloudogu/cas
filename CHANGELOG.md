@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.3-3] - 2022-04-27
+### Changed
+- fix proxy ticket validation with services contain ports (#150)
+
 ## [v6.5.3-2] - 2022-04-27
 - Activate password policy to allow changing password after first login (#145)
 
 ## [v6.5.3-1] - 2022-04-26
+### Changed
 - Upgrade cas to 6.5.3 (#147)
 
 ## [v6.5.2-1] - 2022-04-13
