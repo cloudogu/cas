@@ -16,7 +16,9 @@
 
 <body>
 <div th:fragment="pmlinks" id="pmlinks" class="my-2">
-    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementForm">
+
+    <!--    This part should currently not be used and is therefore disabled-->
+    <form th:if="false" method="post" id="passwordManagementForm">
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="resetPassword"/>
         <span class="fa fa-unlock"></span>
@@ -24,7 +26,8 @@
            onclick="document.getElementById('passwordManagementForm').submit();"/>
     </form>
 
-    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+    <!--    This part should currently not be used and is therefore disabled-->
+    <form th:if="false" method="post" id="passwordManagementUserForm">
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="forgotUsername"/>
         <span class="fa fa-unlock"></span>
@@ -42,8 +45,9 @@
             }
         }
     </script>
-    <div th:unless="${passwordManagementEnabled}">
 
+    <!-- The following div is usually disabled if passwordManagementEnabled is true, but is now always enabled as we do not use all features from password management.-->
+    <div>
         <div th:if="${#messages.msgOrNull('forgot.password.text') != null
                 && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
 
