@@ -6,11 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- fix proxy ticket validation with services contain ports (#150)
 
 ## [v6.5.3-2] - 2022-04-27
 - Activate password policy to allow changing password after first login (#145)
 
 ## [v6.5.3-1] - 2022-04-26
+### Changed
 - Upgrade cas to 6.5.3 (#147)
 
 ## [v6.5.2-1] - 2022-04-13
