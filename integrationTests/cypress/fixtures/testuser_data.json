@@ -4,5 +4,6 @@
   "givenname": "test",
   "surname": "test",
   "displayName": "test",
-  "mail": "test@cloudogu.com"
+  "mail": "test@cloudogu.com",
+  "newPassword": "testuserpassword_new"
 }

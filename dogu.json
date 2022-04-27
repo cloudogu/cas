@@ -28,7 +28,7 @@
     {
       "Type": "ldap",
       "Params": [
-        "ro"
+        "rw"
       ]
     }
   ],

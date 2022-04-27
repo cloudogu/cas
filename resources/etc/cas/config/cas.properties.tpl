@@ -117,7 +117,23 @@ cas.authn.accept.enabled=false
 # https://apereo.github.io/cas/6.3.x/configuration/Configuration-Management-Extensions.html#exclusions
 spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration
 
+{{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
+#========================================
+# Password management (pm)
+# https://apereo.github.io/cas/6.5.x/password_management/Password-Management.html
+#========================================
+cas.authn.pm.core.enabled=true
+cas.authn.pm.core.password-policy-pattern=.*
+
+cas.authn.pm.ldap[0].type=GENERIC
+cas.authn.pm.ldap[0].ldap-url=${cas.authn.ldap[0].ldap-url}
+cas.authn.pm.ldap[0].base-dn=${cas.authn.ldap[0].base-dn}
+cas.authn.pm.ldap[0].search-filter=${cas.authn.ldap[0].search-filter}
+
+cas.authn.pm.ldap[0].bind-dn=${cas.authn.ldap[0].bind-dn}
+cas.authn.pm.ldap[0].bind-credential=${cas.authn.ldap[0].bind-credential}
 ########################################################################################################################
+{{ end }}
 
 ########################################################################################################################
 # Throttling
