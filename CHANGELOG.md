@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.3-4] - 2022-04-28
+### Changed
+- Enhance forgot password feature, enhance accessibility (#152)
+
 ## [v6.5.3-3] - 2022-04-27
 ### Changed
 - fix proxy ticket validation with services contain ports (#150)
