@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fix wrong translation on password reset view (#154)
+- Change reset password view for better ui flow
 
 ## [v6.5.3-4] - 2022-04-28
 ### Changed
