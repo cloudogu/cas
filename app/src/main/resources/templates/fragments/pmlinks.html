@@ -17,7 +17,8 @@
 <body>
 <div th:fragment="pmlinks" id="pmlinks">
 
-    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementForm">
+    <form th:if="${passwordManagementEnabled && #messages.msgOrNull('is.password.reset.via.mail.enabled') == 'true'}"
+          method="post" id="passwordManagementForm">
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="resetPassword"/>
         <span class="fa fa-unlock"></span>
@@ -48,21 +49,22 @@
         }
     </script>
 
-    <!-- The following div is usually disabled if passwordManagementEnabled is true, but is now always enabled as we do not use all features from password management.-->
-    <div>
-        <div class="password-forgotten" th:if="${#messages.msgOrNull('forgot.password.text') != null
-                && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
-            <button type="button" id="forgotPassword" class="btn btn-link"
-                    data-testid="login-forgot-password-button"
+    <div th:if="${#messages.msgOrNull('is.password.reset.via.mail.enabled') != 'true'}">
+        <div>
+            <div class="password-forgotten" th:if="${#messages.msgOrNull('forgot.password.text') != null
+                    && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
+                <button type="button" id="forgotPassword" class="btn btn-link"
+                        data-testid="login-forgot-password-button"
 
-                    aria-controls="forgotPasswordInfo"
-                    aria-expanded="false"
-                    onclick="toggleForgotPasswordInfo(); return false;"
-                    th:text="#{passwordForgot}"
-            >
-            </button>
-            <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}"
-               data-testid="login-forgot-password-text" class="well mt-3" role="region" aria-live="polite"></p>
+                        aria-controls="forgotPasswordInfo"
+                        aria-expanded="false"
+                        onclick="toggleForgotPasswordInfo(); return false;"
+                        th:text="#{passwordForgot}"
+                >
+                </button>
+                <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}"
+                data-testid="login-forgot-password-text" class="well mt-3" role="region" aria-live="polite"></p>
+            </div>
         </div>
     </div>
 </div>

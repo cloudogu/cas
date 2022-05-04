@@ -53,8 +53,26 @@
       "Optional": true
     },
     {
+      "Name": "mail_sender",
+      "Description": "Email address to use as sender of the CAS dogu",
+      "Optional": true
+    },
+    {
+      "Name": "enable_password_reset_via_email",
+      "Description": "Specifies whether the functionality for resetting the password via a link sent by e-mail should be activated. This entry is set to 'true' by default.",
+      "Default": "true",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
       "Name": "forgot_password_text",
-      "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
+      "Description": "Text which shall be shown if a user clicks 'Forgot Password'. Note: The button 'Forgot password' is only visible if the value 'enable_password_reset_via_email' is not `true`.",
       "Optional": true
     },
     {
@@ -301,11 +319,6 @@
     {
       "Name": "oidc/principal_attribute",
       "Description": "Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.",
-      "Optional": true
-    },
-    {
-      "Name": "mail_sender",
-      "Description": "Email address to use as sender of the CAS dogu",
       "Optional": true
     }
   ],
