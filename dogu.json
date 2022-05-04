@@ -16,6 +16,10 @@
     {
       "Type": "dogu",
       "Name": "nginx"
+    },
+    {
+      "type": "dogu",
+      "name": "postfix"
     }
   ],
   "OptionalDependencies": [
@@ -297,6 +301,11 @@
     {
       "Name": "oidc/principal_attribute",
       "Description": "Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.",
+      "Optional": true
+    },
+    {
+      "Name": "mail_sender",
+      "Description": "Email address to use as sender of the CAS dogu",
       "Optional": true
     }
   ],
