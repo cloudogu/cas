@@ -58,7 +58,7 @@
       "Optional": true
     },
     {
-      "Name": "enable_password_reset_via_email",
+      "Name": "password_management/enable_password_reset_via_email",
       "Description": "Specifies whether the functionality for resetting the password via a link sent by e-mail should be activated. This entry is set to 'true' by default.",
       "Default": "true",
       "Optional": true,
@@ -69,6 +69,16 @@
           "false"
         ]
       }
+    },
+    {
+      "Name": "password_management/reset_password_subject",
+      "Description": "Specifies the title of the e-mail when resetting the password.",
+      "Optional": true
+    },
+    {
+      "Name": "password_management/reset_password_text",
+      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with %s",
+      "Optional": true
     },
     {
       "Name": "forgot_password_text",
