@@ -59,14 +59,23 @@ die folgenden Propertys gesetzt werden:
 * cas.authn.pm.reset.mail.from - gibt die E-Mail-Adresse an, die als Absender der E-Mail angezeigt wird. Dieser Wert
   kann über den etcd-Eintrag `mail_sender` konfiguriert werden. Wird kein Wert angegeben, wird ein Default-Wert
   verwendet.
+* cas.authn.pm.reset.mail.subject - gibt den Betreff der E-Mails an. Dieser Wert kann über den
+  etcd-Eintrag `password_management/reset_password_subject` konfiguriert werden. Wird kein Wert angegeben, wird ein
+  Default-Wert verwendet.
+* cas.authn.pm.reset.mail.text - gibt den Text der E-Mail an. Dieser Wert kann über den
+  etcd-Eintrag `password_management/reset_password_text` konfiguriert werden. Es ist zwingend erforderlich, dass in dem
+  Text ein `%s` als Platzhalter für den Passwort-Zurücksetzen-Link enthalten ist. Ist im etcd kein Wert angegeben, wird
+  ein Default-Wert verwendet.
+* cas.authn.pm.reset.expiration - definiert die Dauer für die Gültigkeit des Passwort-Zurücksetzen-Links. Die Angabe
+  erfolgt in der `java.time.Duration`-Syntax
 * cas.authn.pm.reset.security-questions-enabled - gibt mit `false` an, dass zum Zurücksetzen des Passworts keine
   Sicherheitsfragen beantwortet werden müssen
 
 ### Deaktivierung der Passwort-Zurücksetzen-Funktion
 
 Es besteht die Möglichkeit, die Passwort-Zurücksetzen-Funktion durch Setzen eines entsprechenden etcd-Eintrags zu
-deaktivieren. Um die Passwort-Zurücksetzen-Funktion zu deaktivieren, muss der Wert `enable_password_reset_via_email` auf
-`false` gesetzt werden.
+deaktivieren. Um die Passwort-Zurücksetzen-Funktion zu deaktivieren, muss der
+Wert `password_management/enable_password_reset_via_email` auf`false` gesetzt werden.
 
 Anstelle des Links `Passwort zurücksetzen` wird stattdessen der Button `Passwort vergessen` angezeigt - sofern im etcd
 ein Wert für den Eintrag `forgot_password_text` hinterlegt ist. Wenn ein Nutzer auf den `Passwort vergessen`-Button
