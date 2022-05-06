@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Password Reset Functionality. For more information see [docs](docs/operations/password-management_en.md) (#156)
 
+### Fixed
+- Forgotten password button has always been displayed. If no text has been defined in etcd, a useless default text has 
+been displayed. (#157)
+
 ## [v6.5.3-5] - 2022-04-29
 ### Fixed
 - Fix wrong translation on password reset view (#154)
