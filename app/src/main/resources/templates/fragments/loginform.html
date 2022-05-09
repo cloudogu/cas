@@ -304,10 +304,10 @@
                     <hr class="my-4"/>
                 </span>
 
-                <span th:if="${loginFormViewable and loginFormEnabled}">
+                <div th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
                          th:replace="fragments/pmlinks :: pmlinks"/>
-                </span>
+                </div>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/

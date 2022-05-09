@@ -21,8 +21,7 @@
           method="post" id="passwordManagementForm">
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="resetPassword"/>
-        <span class="fa fa-unlock"></span>
-        <a id="forgotPasswordLink" th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)"
+        <button id="forgotPasswordLink" th:utext="#{screen.pm.button.resetPassword}" class="btn btn-link btn-xs"
            onclick="document.getElementById('passwordManagementForm').submit();"/>
     </form>
 
