@@ -55,13 +55,21 @@ To send the password reset link, in addition to the general email send setup, th
   the etcd entry `ldap/attribute_mail`.
 * cas.authn.pm.reset.mail.from - specifies the email address that is displayed as the sender of the email. This value
   can be configured via the etcd entry `mail_sender`. If no value is specified, a default value is used.
+* cas.authn.pm.reset.mail.subject - specifies the subject of the emails. This value can be configured via the etcd
+  entry `password_management/reset_password_subject`. If no value is specified, a default value is used.
+* cas.authn.pm.reset.mail.text - specifies the text of the email. This value can be configured via the etcd
+  entry `password_management/reset_password_text`. It is mandatory that the text contains a `%s` as a placeholder for
+  the password reset link. Note that umlauts must be encoded. If no value is specified in the etcd a default value is
+  used.
+* cas.authn.pm.reset.expiration - defines the duration for the validity of the password reset link. The specification is
+  done in the `java.time.Duration` syntax.
 * cas.authn.pm.reset.security-questions-enabled - specifies with `false` that no security questions have to be answered
   to reset the password. security questions need to be answered to reset the password
 
 ### Deactivating the password reset function
 
 It is possible to deactivate the password reset function by setting a corresponding etcd entry. To disable the password
-reset function, the value `enable_password_reset_via_email` must be set to `false`.
+reset function, the value `password_management/enable_password_reset_via_email` must be set to `false`.
 
 Instead of the link `reset password`, the button `forgotten password` is displayed instead - provided that in the etcd a
 value for the entry `forgot_password_text` is stored. If a user clicks on the `forgot password` button, the text stored

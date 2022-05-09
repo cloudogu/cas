@@ -72,7 +72,7 @@
     },
     {
       "Name": "password_management/reset_password_subject",
-      "Description": "Specifies the title of the e-mail when resetting the password.",
+      "Description": "Specifies the subject of the e-mail when resetting the password.",
       "Optional": true
     },
     {
