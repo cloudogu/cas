@@ -9,7 +9,7 @@ Hierzu werden die folgenden Konfigurations-Parameter des CAS-Moduls genutzt:
 
 * `login.limit.maxNumber` Setzt die maximal erlaubte Anzahl an Fehlversuchen pro Benutzerkonto.
   Wird diese Anzahl innerhalb der mit den weiteren Parametern definierten zeitlichen Rahmen
-  überschritten, wird das Konto temporär gesperrt.
+  überschritten, wird die IP-Adresse des Nutzers temporär gesperrt.
 
   Wird der Wert auf `0` gesetzt, ist das Feature deaktiviert und es findet keine Limitierung statt.
   Bei einem Wert größer Null müssen die anderen Parameter auf sinnvolle Werte gesetzt werden. 
@@ -18,7 +18,7 @@ Hierzu werden die folgenden Konfigurations-Parameter des CAS-Moduls genutzt:
   werden die Fehlschläge zurückgesetzt.
 
   Die Zeit wird in Sekunden angegeben und muss größer Null sein, wenn das Feature aktiviert ist.
-* `login.limit.lockTime` Gibt an, wie lange das Konto im Falle einer Überschreitung der Anmeldeversuche gesperrt werden
+* `login.limit.lockTime` Gibt an, wie lange die IP-Adresse im Falle einer Überschreitung der Anmeldeversuche gesperrt werden
   soll.
 
   Die Zeit wird in Sekunden angegeben und muss größer Null sein, wenn das Feature aktiviert ist.
