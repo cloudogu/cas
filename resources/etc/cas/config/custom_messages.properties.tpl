@@ -10,3 +10,5 @@ legal.url.privacy.policy={{ .Config.Get "legal_urls/privacy_policy"}}
 {{if .Config.Exists "forgot_password_text" }}
 forgot.password.text={{ .Config.Get "forgot_password_text"}}
 {{end}}
+# No real text; auxiliary variable/workaround required for Thymeleaf template
+is.password.reset.via.mail.enabled={{ .Config.GetOrDefault "password_management/enable_password_reset_via_email" "true"}}

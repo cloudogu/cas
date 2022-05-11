@@ -25,3 +25,7 @@ how a user should handle it if he has forgotten his password.
 For this only the etcd key `config/cas/forgot_password_text` must be set to the desired value and the CAS Dogu new
 and restart the CAS Dogu. The text can now be changed in the login screen
 by clicking on "Forgot password?".
+
+Note that the `Forgot Password` button is only displayed if the password reset function is deactivated 
+(see [Deactivating the password reset function](password-management_en.md#deactivating-the-password-reset-function)) and a value has 
+been assigned to the etcd key `config/cas/forgot_password_text`.
