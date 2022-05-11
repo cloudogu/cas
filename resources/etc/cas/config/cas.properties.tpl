@@ -22,6 +22,15 @@ logging.config=file:/etc/cas/config/log4j2.xml
 ########################################################################################################################
 
 ########################################################################################################################
+# Email configuration
+# https://apereo.github.io/cas/6.5.x/notifications/Sending-Email-Configuration.html
+#------------------------------------------------------------------------------------------------------------------------
+spring.mail.host=postfix
+spring.mail.port=25
+spring.mail.protocol=smtp
+########################################################################################################################
+
+########################################################################################################################
 # LDAP
 # Configuration guide: https://apereo.github.io/cas/6.3.x/installation/LDAP-Authentication.html
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-authentication
@@ -122,9 +131,11 @@ spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfigurati
 # Password management (pm)
 # https://apereo.github.io/cas/6.5.x/password_management/Password-Management.html
 #========================================
+# General properties for password management
 cas.authn.pm.core.enabled=true
 cas.authn.pm.core.password-policy-pattern=.*
 
+# Properties for the connection to LDAP (required for changing the password of a user in LDAP)
 cas.authn.pm.ldap[0].type=GENERIC
 cas.authn.pm.ldap[0].ldap-url=${cas.authn.ldap[0].ldap-url}
 cas.authn.pm.ldap[0].base-dn=${cas.authn.ldap[0].base-dn}
@@ -132,6 +143,14 @@ cas.authn.pm.ldap[0].search-filter=${cas.authn.ldap[0].search-filter}
 
 cas.authn.pm.ldap[0].bind-dn=${cas.authn.ldap[0].bind-dn}
 cas.authn.pm.ldap[0].bind-credential=${cas.authn.ldap[0].bind-credential}
+
+# Properties for sending an e-mail with a link to the CAS for changing the password
+cas.authn.pm.reset.mail.attribute-name={{ .Config.Get "ldap/attribute_mail"}}
+cas.authn.pm.reset.mail.from={{ .Config.GetOrDefault "mail_sender" "cas.dogu@cloudogu.com"}}
+cas.authn.pm.reset.mail.subject={{ .Config.GetOrDefault "password_management/reset_password_subject" "Reset password"}}
+cas.authn.pm.reset.mail.text={{ .Config.GetOrDefault "password_management/reset_password_text" "Hello!\\n\\nSomeone has just requested to change the login details of your CES account. If it was you, please follow the link below to reset them.\\n%s\\n\\nThis link will expire in 15 minutes.\\n\\nIf you do not wish to reset your credentials, simply ignore this message and nothing will change."}}
+cas.authn.pm.reset.expiration=PT15M
+cas.authn.pm.reset.security-questions-enabled=false
 ########################################################################################################################
 {{ end }}
 

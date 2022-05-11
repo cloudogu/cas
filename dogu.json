@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "6.5.3-5",
+  "Version": "6.5.3-4",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "http://jasig.github.io/cas",
@@ -16,6 +16,10 @@
     {
       "Type": "dogu",
       "Name": "nginx"
+    },
+    {
+      "type": "dogu",
+      "name": "postfix"
     }
   ],
   "OptionalDependencies": [
@@ -49,8 +53,36 @@
       "Optional": true
     },
     {
+      "Name": "mail_sender",
+      "Description": "Email address to use as sender of the CAS dogu",
+      "Optional": true
+    },
+    {
+      "Name": "password_management/enable_password_reset_via_email",
+      "Description": "Specifies whether the functionality for resetting the password via a link sent by e-mail should be activated. This entry is set to 'true' by default.",
+      "Default": "true",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "password_management/reset_password_subject",
+      "Description": "Specifies the subject of the e-mail when resetting the password.",
+      "Optional": true
+    },
+    {
+      "Name": "password_management/reset_password_text",
+      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with %s",
+      "Optional": true
+    },
+    {
       "Name": "forgot_password_text",
-      "Description": "Text which shall be shown if a user clicks 'Forgot Password'",
+      "Description": "Text which shall be shown if a user clicks 'Forgot Password'. Note: The button 'Forgot password' is only visible if the value 'enable_password_reset_via_email' is not `true`.",
       "Optional": true
     },
     {

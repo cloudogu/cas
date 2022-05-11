@@ -652,6 +652,10 @@ p {
     color: #fff;
 }
 
+#forgotPasswordLink {
+    padding-left: 0;
+}
+
 kbd, code {
     font-size: 1.4rem !important;
 }

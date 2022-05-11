@@ -22,3 +22,7 @@ werden, wie ein Nutzer damit umgehen soll, wenn dieser sein Passwort vergessen h
 Dafür muss nur der etcd key `config/cas/forgot_password_text` auf den gewünschten Wert
 gesetzt werden und das CAS Dogu neu gestartet werden. Der Text kann nun in der Login Maske
 durch einen Klick auf "Passwort vergessen?" ein- und ausgeblendet werden.
+
+Beachte, dass der `Passwort vergessen`-Button nur angezeigt wird, wenn die Passwort-Zurücksetzen-Funktion deaktiviert ist 
+(s. [Deaktivierung der Passwort-Zurücksetzen-Funktion](password-management_de.md#deaktivierung-der-passwort-zurcksetzen-funktion))
+und dem etcd key `config/cas/forgot_password_text` ein Wert zugewiesen worden ist.
