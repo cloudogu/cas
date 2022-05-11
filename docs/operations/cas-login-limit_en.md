@@ -7,7 +7,7 @@ irrelevant, whether the account exists or not (that is even not existing account
 Configuration is done in the CAS module using the following parameters:
 
 * `login.limit.maxNumber` Max number of login retries per account. If failed attempts exceed this number in a given time
-  specified with the parameters below, the account is locked temporarily.
+  specified with the parameters below, the users ip address is locked temporarily.
   Setting this parameter to `0` disables this feature.
   For a value greater zero the other parameters have to be set appropriate.
 
@@ -15,5 +15,5 @@ Configuration is done in the CAS module using the following parameters:
   time without login attempts this number will be reset.
   The time is specified in seconds and has to be greater than zero, if the feature is activated.
 
-* `login.limit.lockTime` Time the account will be locked after exceeding the number of login attempts.
+* `login.limit.lockTime` Time the ip address will be locked after exceeding the number of login attempts.
   The time is specified in seconds and has to be greater than zero, if the feature is activated.
