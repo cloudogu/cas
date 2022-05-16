@@ -46,4 +46,4 @@ The following steps describe a successful OAuth authentication flow.
 3. long term token can now be used to authenticate against resources.
    Currently CAS offers only user's profile as resource: [profile endpoint](endpoint_profile_en.md)
 
-![CesServiceFactory](figures/sequence_diagramm_oauth.png)
+![CesServiceFactory](figures/sequenzediagramm_oauth.png)
