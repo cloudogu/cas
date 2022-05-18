@@ -20,7 +20,7 @@ RUN ./gradlew clean build --parallel --no-daemon
 FROM registry.cloudogu.com/official/java:11.0.14-3
 
 LABEL NAME="official/cas" \
-      VERSION="6.5.3-6" \
+      VERSION="6.5.3-7" \
       maintainer="hello@cloudogu.com"
 
 # update packages of the image
