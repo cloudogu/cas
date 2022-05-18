@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- If CAS version 6.3.7-5, 6.5.2-1 or 6.5.3-1 has been used and an upgrade to a version >= 6.5.3.2 has been carried out,
+the migration of the service account for the LDAP from the read account to the write account is not performed. This 
+resulted in a password change not being saved by the user and the user receiving an error message. This error has now 
+been corrected. (#159)
 
 ## [v6.5.3-6] - 2022-05-11
 ### Added

@@ -73,15 +73,15 @@ fi
 FQDN="$(cat /etc/ces/node_master)"
 echo "FQDN: ${FQDN}"
 
-# Every version above 6.3.7-4 needs a service account that can read and write. To ensure it is not readonly like the
+# Every version above 6.5.3-6 needs a service account that can read and write. To ensure it is not readonly like the
 # versions below we delete the old service account.
 echo "${FROM_VERSION} to ${TO_VERSION}"
-LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT="6.3.7-4"
+LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT="6.5.3-6"
 if versionXLessOrEqualThanY "${FROM_VERSION}" "${LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT}" ; then
-  echo "FROM version <= 6.3.7-4"
+  echo "FROM version <= 6.5.3-6"
   if ! versionXLessOrEqualThanY "${TO_VERSION}" "${LAST_VERSION_WITH_READONLY_SERVICE_ACCOUNT}" ; then
-    echo "TO version > 6.3.7-4"
-    echo "Upgrade FROM version below v6.3.7-4 TO ${TO_VERSION} -> delete old ldap service account"
+    echo "TO version > 6.5.3-6"
+    echo "Upgrade FROM version below v6.5.3-6 TO ${TO_VERSION} -> delete old ldap service account"
     # This is a workaround because `doguctl -rm` cannot delete folders and the cesapp checks if the path
     # `sa-<servicename> is present. Deleting the sa-ldap/username and sa-ldap/password keys does therefore not work.
     curl "http://${FQDN}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
