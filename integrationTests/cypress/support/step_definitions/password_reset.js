@@ -5,7 +5,7 @@ const {
 const env = require("@cloudogu/dogu-integration-test-library/lib/environment_variables");
 
 When("the user clicks on the reset password link", function () {
-    cy.get('button[data-testid="forgot-password-link"]').click()
+    cy.get('button[data-testid="reset-password-button"]').click()
 })
 
 Then("the user is taken to a password reset page", function () {
