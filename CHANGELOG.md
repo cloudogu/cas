@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.3-8] - 2022-05-25
+### Changed
+- Suppress determination of an existing username via password reset function (#161)
+  - Previously, an error message has been displayed if a username does not exist in the system. If the username is 
+  present in the system, a confirmation that an email has been sent followed. Now a confirmation page with customised 
+  text is displayed in both cases.
+
 ## [v6.5.3-7] - 2022-05-18
 ### Fixed
 - If CAS version 6.3.7-5, 6.5.2-1 or 6.5.3-1 has been used and an upgrade to a version >= 6.5.3.2 has been carried out,

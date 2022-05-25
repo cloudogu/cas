@@ -22,7 +22,8 @@
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="resetPassword"/>
         <button id="forgotPasswordLink" th:utext="#{screen.pm.button.resetPassword}" class="btn btn-link btn-xs"
-           onclick="document.getElementById('passwordManagementForm').submit();"/>
+           onclick="document.getElementById('passwordManagementForm').submit();"
+           data-testid="reset-password-button"/>
     </form>
 
     <!--    This part should currently not be used and is therefore disabled-->
