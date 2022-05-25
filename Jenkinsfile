@@ -123,7 +123,6 @@ parallel(
                             ecoSystem.setup([registryConfig:"""
                                 "cas": {
                                     "forgot_password_text": "Contact your admin",
-                                    "password_management/enable_password_reset_via_email": "false",
                                     "legal_urls": {
                                         "privacy_policy": "https://www.triology.de/",
                                         "terms_of_service": "https://docs.cloudogu.com/",
@@ -175,7 +174,7 @@ parallel(
                             ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
                             ecoSystem.runCypressIntegrationTests([
-                                    cypressImage     : "cypress/included:9.5.4",
+                                    cypressImage     : "cypress/included:9.7.0",
                                     enableVideo      : params.EnableVideoRecording,
                                     enableScreenshots: params.EnableScreenshotRecording])
                         }

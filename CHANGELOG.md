@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Suppress determination of an existing username via password reset function (#161)
+  - Previously, an error message has been displayed if a username does not exist in the system. If the username is 
+  present in the system, a confirmation that an email has been sent followed. Now a confirmation page with customised 
+  text is displayed in both cases.
 
 ## [v6.5.3-7] - 2022-05-18
 ### Fixed

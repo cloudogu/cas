@@ -19,6 +19,6 @@ Then("the legal links in the footer are translated to German", function () {
     cy.get('footer').get('[data-testId=footer-link-privacy-policy]').contains('Datenschutzerklärung')
 });
 
-Then("the forgot password button is translated to German", function () {
-    cy.get('button[data-testid="login-forgot-password-button"]').contains('Passwort vergessen?')
+Then("the reset password button is translated to German", function () {
+    cy.get('button[data-testid="reset-password-button"]').contains('Passwort zurücksetzen')
 });
