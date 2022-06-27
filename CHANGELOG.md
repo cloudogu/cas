@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- When resetting the password, certain e-mail addresses are declared invalid in the original CAS code, e.g. 
-`admin@ces.local`. This has now been adjusted. E-mails are now sent to all e-mail addresses (concretely: forwarded to 
-Postfix). (#163)
+- When resetting the password, certain e-mail addresses are declared invalid in the original CAS code, e.g.
+  `admin@ces.local`. This has now been adjusted. E-mails are now sent to all e-mail addresses (concretely: forwarded to
+  Postfix). (#163)
+
+### Changed
+- Update cas to v6.5.5 (#164)
 
 ## [v6.5.3-8] - 2022-05-25
 ### Changed
