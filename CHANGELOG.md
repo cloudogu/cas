@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.5-1] - 2022-06-30
+### Changed
+- Update cas to v6.5.5 (#164)
+
 ## [v6.5.3-8] - 2022-05-25
 ### Changed
 - Suppress determination of an existing username via password reset function (#161)
