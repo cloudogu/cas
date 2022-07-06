@@ -2,9 +2,7 @@ package de.triology.cas.pm;
 
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -18,9 +16,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Extends the class {@link LdapPasswordManagementService}.
+ * <p>
+ * In the original classes, email addresses are validated and even with supposedly valid email addresses (e.g.
+ * admin@ces.local) the validation fails.
+ * <p>
+ * To deactivate the validation, the method responsible for this has been adapted accordingly.
+ */
 public class CesLdapPasswordManagementService extends LdapPasswordManagementService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesSendPasswordResetInstructionsAction.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CesLdapPasswordManagementService.class.getName());
 
     public CesLdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                             final String issuer,

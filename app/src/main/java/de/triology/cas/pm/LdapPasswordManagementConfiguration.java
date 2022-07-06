@@ -20,9 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link LdapPasswordManagementConfiguration}.
- *
- * @author Misagh Moayyed
- * @since 5.2.0
  */
 @Configuration(value = "LdapPasswordManagementConfiguration", proxyBeanMethods = false)
 @ConditionalOnProperty(name = "cas.authn.pm.ldap[0].ldap-url")
