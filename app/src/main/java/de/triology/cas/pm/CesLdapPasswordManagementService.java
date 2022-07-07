@@ -22,7 +22,8 @@ import java.util.Map;
  * In the original classes, email addresses are validated and even with supposedly valid email addresses (e.g.
  * admin@ces.local) the validation fails.
  * <p>
- * To deactivate the validation, the method responsible for this has been adapted accordingly.
+ * As CAS should not exclude any email addresses and the emails should be sent to all email addresses, validation is
+ * deactivated. The method responsible for this has been adapted accordingly.
  */
 public class CesLdapPasswordManagementService extends LdapPasswordManagementService {
 
