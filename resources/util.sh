@@ -20,12 +20,12 @@ function exitOnErrorWithMessage() {
 # Creates the regular expression for the password policy.
 # The various requirements for the password policy can be configured in etcd.
 function createPasswordPolicyPattern() {
-  MUST_CONTAIN_CAPITAL_LETTER=true
-  MUST_CONTAIN_LOWER_CASE_LETTER=true
-  MUST_CONTAIN_DIGIT=true
-  MUST_CONTAIN_SPECIAL_CHARACTER=true
+  MUST_CONTAIN_CAPITAL_LETTER=$(doguctl config -default false --global password-policy/must_contain_capital_letter)
+  MUST_CONTAIN_LOWER_CASE_LETTER=$(doguctl config -default false --global password-policy/must_contain_capital_letter)
+  MUST_CONTAIN_DIGIT=$(doguctl config -default false --global password-policy/must_contain_digit)
+  MUST_CONTAIN_SPECIAL_CHARACTER=$(doguctl config -default false --global password-policy/must_contain_special_character)
 
-  MIN_LENGTH=14
+  MIN_LENGTH=$(doguctl config -default 1 --global password-policy/min_length)
 
   echo "Create password policy pattern"
   PASSWORD_POLICY_PATTERN='^'
