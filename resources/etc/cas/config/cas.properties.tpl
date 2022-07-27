@@ -133,7 +133,7 @@ spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfigurati
 #========================================
 # General properties for password management
 cas.authn.pm.core.enabled=true
-cas.authn.pm.core.password-policy-pattern=.*
+cas.authn.pm.core.password-policy-pattern={{ .Env.Get "PASSWORD_POLICY_PATTERN" }}
 
 # Properties for the connection to LDAP (required for changing the password of a user in LDAP)
 cas.authn.pm.ldap[0].type=GENERIC

@@ -17,6 +17,60 @@ function exitOnErrorWithMessage() {
   exit 2
 }
 
+# Creates the regular expression for the password policy.
+# The various requirements for the password policy can be configured in etcd.
+function createPasswordPolicyPattern() {
+  MUST_CONTAIN_CAPITAL_LETTER=true
+  MUST_CONTAIN_LOWER_CASE_LETTER=true
+  MUST_CONTAIN_DIGIT=true
+  MUST_CONTAIN_SPECIAL_CHARACTER=true
+
+  MIN_LENGTH=14
+
+  echo "Create password policy pattern"
+  PASSWORD_POLICY_PATTERN='^'
+
+  if $MUST_CONTAIN_CAPITAL_LETTER
+  then
+    echo "Password must contain a capital letter"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"(?=.*[A-Z\u00c4\u00d6\u00dc])"
+  fi
+
+  if $MUST_CONTAIN_LOWER_CASE_LETTER
+  then
+    echo "Password must contain a lower case letter"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"(?=.*[a-z\u00e4\u00f6\u00fc])"
+  fi
+
+  if $MUST_CONTAIN_DIGIT
+  then
+    echo "Password must contain a digit"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"(?=.*[0-9])"
+  fi
+
+  if $MUST_CONTAIN_SPECIAL_CHARACTER
+  then
+    echo "Password must contain a special character"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"(?=.*[^a-zA-Z0-9\u00c4\u00e4\u00d6\u00f6\u00dc\u00fc\u00df])"
+  fi
+
+  PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}'[\\S]'
+
+  if [ "$MIN_LENGTH" -gt "0" ];
+  then
+    echo "Password must have a minimum length of ${MIN_LENGTH} characters"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"{"$MIN_LENGTH",}"
+  else
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"{1,}"
+  fi
+
+  PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"$"
+
+  echo "Password Policy is ${PASSWORD_POLICY_PATTERN}"
+
+  export PASSWORD_POLICY_PATTERN
+}
+
 # Sets general configuration option for the cas server
 function configureCAS() {
   DOMAIN=$(doguctl config --global domain)
@@ -59,6 +113,8 @@ function configureCAS() {
   LDAP_ATTRIBUTE_USERNAME=$(doguctl config ldap/attribute_id)
   LDAP_SEARCH_FILTER="(&$(doguctl config ldap/search_filter)($LDAP_ATTRIBUTE_USERNAME={user}))"
   export LDAP_SEARCH_FILTER
+
+  createPasswordPolicyPattern
 
   CAS_PROPERTIES_TEMPLATE="/etc/cas/config/cas.properties.tpl"
   CAS_PROPERTIES="/etc/cas/config/cas.properties"
