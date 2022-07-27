@@ -59,7 +59,7 @@ function createPasswordPolicyPattern() {
   if [ "$MIN_LENGTH" -gt "0" ];
   then
     echo "Password must have a minimum length of ${MIN_LENGTH} characters"
-    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"{"$MIN_LENGTH",}"
+    PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"{${MIN_LENGTH},}"
   else
     PASSWORD_POLICY_PATTERN=${PASSWORD_POLICY_PATTERN}"{1,}"
   fi
