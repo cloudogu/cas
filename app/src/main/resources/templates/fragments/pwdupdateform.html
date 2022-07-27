@@ -136,6 +136,12 @@
                     <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy
                         requirement.</strong>
+                    <ul>
+                        <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}" >At least 1 capital letter must be included</li>
+                        <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}">At least 1 lower case letter must be included</li>
+                        <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}" >At least 1 digit must be included</li>
+                        <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}" >At least 1 special character must be included</li>
+                    </ul>
                 </div>
                 <div id="password-confirm-mismatch-msg" class="alert alert-danger p-2" role="alert"
                      style="display: none;">

@@ -27,6 +27,12 @@ function createPasswordPolicyPattern() {
 
   MIN_LENGTH=$(doguctl config -default 1 --global password-policy/min_length)
 
+  export MUST_CONTAIN_CAPITAL_LETTER
+  export MUST_CONTAIN_LOWER_CASE_LETTER
+  export MUST_CONTAIN_DIGIT
+  export MUST_CONTAIN_SPECIAL_CHARACTER
+  export MIN_LENGTH
+
   echo "Create password policy pattern"
   PASSWORD_POLICY_PATTERN='^'
 
