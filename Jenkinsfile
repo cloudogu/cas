@@ -142,6 +142,15 @@ parallel(
                                         "scopes": "openid email profile groups",
                                         "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
                                     }
+                                },
+                                "_global": {
+                                    "password-policy": {
+                                        "must_contain_capital_letter": "true",
+                                        "must_contain_lower_case_letter": "true",
+                                        "must_contain_digit": "true",
+                                        "must_contain_special_character": "true",
+                                        "min_length": "14"
+                                    }
                                 }
                             """, registryConfigEncrypted:'''
                                  "cas" : {
