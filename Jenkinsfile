@@ -105,6 +105,10 @@ parallel(
                         shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
                     }
 
+                    stage('Shell tests') {
+                        executeShellTests()
+                    }
+
                     try {
                         stage('Provision') {
                             ecoSystem.provision("/dogu")
@@ -250,5 +254,22 @@ void gitWithCredentials(String command) {
                 script: "git -c credential.helper=\"!f() { echo username='\$GIT_AUTH_USR'; echo password='\$GIT_AUTH_PSW'; }; f\" " + command,
                 returnStdout: true
         )
+    }
+}
+
+def executeShellTests() {
+    def bats_base_image = "bats/bats"
+    def bats_custom_image = "cloudogu/bats"
+    def bats_tag = "1.2.1"
+
+    def batsImage = docker.build("${bats_custom_image}:${bats_tag}", "--build-arg=BATS_BASE_IMAGE=${bats_base_image} --build-arg=BATS_TAG=${bats_tag} ./unitTests")
+    try {
+        sh "mkdir -p target"
+
+        batsContainer = batsImage.inside("--entrypoint='' -v ${WORKSPACE}:/workspace") {
+            sh "make unit-test-shell-ci"
+        }
+    } finally {
+        junit allowEmptyResults: true, testResults: 'target/shell_test_reports/*.xml'
     }
 }
