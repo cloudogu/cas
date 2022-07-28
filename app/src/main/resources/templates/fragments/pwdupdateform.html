@@ -141,6 +141,7 @@
                         <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}">At least 1 lower case letter must be included</li>
                         <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}" >At least 1 digit must be included</li>
                         <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}" >At least 1 special character must be included</li>
+                        <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|" >Minimum length</li>
                     </ul>
                 </div>
                 <div id="password-confirm-mismatch-msg" class="alert alert-danger p-2" role="alert"

@@ -18,3 +18,4 @@ pwdMustContainCapitalLetterActivated={{ .Env.Get "MUST_CONTAIN_CAPITAL_LETTER" }
 pwdMustContainLowerCaseLetterActivated={{ .Env.Get "MUST_CONTAIN_LOWER_CASE_LETTER" }}
 pwdMustContainDigitActivated={{ .Env.Get "MUST_CONTAIN_DIGIT" }}
 pwdMustContainSpecialCharacterActivated={{ .Env.Get "MUST_CONTAIN_SPECIAL_CHARACTER" }}
+pwdMinLengthNo={{ .Env.Get "MIN_LENGTH" }}
