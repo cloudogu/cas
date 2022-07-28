@@ -132,16 +132,22 @@
             </div>
             <div class="cas-field my-3 text-danger" id="password-strength-notes">
                 <div id="password-policy-violation-msg" class="alert alert-danger p-2" role="alert"
-                     style="display: none;">
+                     style="display: none;" data-testid="password-policy-violation-msg-div">
                     <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
                     <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy
                         requirement.</strong>
                     <ul>
-                        <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}" >At least 1 capital letter must be included</li>
-                        <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}">At least 1 lower case letter must be included</li>
-                        <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}" >At least 1 digit must be included</li>
-                        <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}" >At least 1 special character must be included</li>
-                        <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|" >Minimum length</li>
+                        <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}"
+                            data-testid="pwd-rule-capital-letter-li" >
+                            At least 1 capital letter must be included</li>
+                        <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}"
+                            data-testid="pwd-rule-lower-case-letter-li">At least 1 lower case letter must be included</li>
+                        <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}"
+                            data-testid="pwd-rule-digit-li"> At least 1 digit must be included</li>
+                        <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}"
+                            data-testid="pwd-rule-special-character-li" >>At least 1 special character must be included</li>
+                        <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|"
+                            data-testid="pwd-rule-min-length">Minimum length</li>
                     </ul>
                 </div>
                 <div id="password-confirm-mismatch-msg" class="alert alert-danger p-2" role="alert"
