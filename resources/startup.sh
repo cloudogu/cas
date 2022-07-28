@@ -42,15 +42,14 @@ if [[ "$LDAP_TYPE" == 'embedded' ]]; then
   fi
 fi
 
-# from utils.sh - configures the cas server
-echo "Create general configuration..."
+# from utils.sh - configures the CAS server
+echo "Create CAS configuration..."
 configureCAS
-configureLegalURLs
 
 echo "Creating truststore, which is used in the setenv.sh..."
 create_truststore.sh > /dev/null
 
 doguctl state ready
 
-echo "Starting cas..."
+echo "Starting CAS..."
 ${CATALINA_SH} run
