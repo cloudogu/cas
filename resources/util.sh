@@ -68,7 +68,7 @@ function createPasswordPolicyPattern() {
   echo "Create password policy pattern..."
 
   MUST_CONTAIN_CAPITAL_LETTER=$(doguctl config -default false --global password-policy/must_contain_capital_letter)
-  MUST_CONTAIN_LOWER_CASE_LETTER=$(doguctl config -default false --global password-policy/must_contain_capital_letter)
+  MUST_CONTAIN_LOWER_CASE_LETTER=$(doguctl config -default false --global password-policy/must_contain_lower_case_letter)
   MUST_CONTAIN_DIGIT=$(doguctl config -default false --global password-policy/must_contain_digit)
   MUST_CONTAIN_SPECIAL_CHARACTER=$(doguctl config -default false --global password-policy/must_contain_special_character)
 
