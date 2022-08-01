@@ -72,5 +72,6 @@ teardown() {
    run createPasswordPolicyPattern
 
    assert_equal "$(mock_get_call_num "${doguctl}")" "5"
+   assert_line 'Warning: Specified minimum length is not an integer; password minimum length is set to 1'
    assert_line 'Password Policy is ^[\\S]{1,}$'
 }

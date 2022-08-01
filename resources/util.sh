@@ -73,6 +73,11 @@ function createPasswordPolicyPattern() {
   MUST_CONTAIN_SPECIAL_CHARACTER=$(doguctl config -default false --global password-policy/must_contain_special_character)
 
   MIN_LENGTH=$(doguctl config -default 1 --global password-policy/min_length)
+  NUM_REGEX='^[0-9]+$'
+  if ! [[ $MIN_LENGTH =~ $NUM_REGEX ]]; then
+     echo "Warning: Specified minimum length is not an integer; password minimum length is set to 1"
+     MIN_LENGTH=1
+  fi
 
   export MUST_CONTAIN_CAPITAL_LETTER
   export MUST_CONTAIN_LOWER_CASE_LETTER
