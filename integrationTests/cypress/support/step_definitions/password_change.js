@@ -24,3 +24,20 @@ When("the test user logs in with changed credentials", function () {
         cy.login(testuser.username, testuser.newPassword)
     })
 });
+
+When("the user enters an invalid password", function () {
+    cy.get('input[data-testid="password-input"]').type("invalid_pwd")
+    cy.get('input[data-testid="confirmedPassword-input"]').type("invalid_pwd")
+});
+
+Then("CAS displays a notice of an invalid password", function () {
+    cy.get('div[data-testid=password-policy-violation-msg-div').should('be.visible')
+})
+
+Then("CAS displays the password policy criteria", function () {
+    cy.get('li[data-testid=pwd-rule-capital-letter-li').should('be.visible')
+    cy.get('li[data-testid=pwd-rule-lower-case-letter-li').should('be.visible')
+    cy.get('li[data-testid=pwd-rule-digit-li').should('be.visible')
+    cy.get('li[data-testid=pwd-rule-special-character-li').should('be.visible')
+    cy.get('li[data-testid=pwd-rule-min-length').should('be.visible')
+})
