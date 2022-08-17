@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.5-3] - 2022-08-17
+### Added
+- Make password policy configurable. For more information see [docs](docs/operations/password-management_en.md#Configuration-of-password-rules-in-etcd) (#167)
+
 ## [v6.5.5-2] - 2022-07-07
 ### Changed
 - When resetting the password, certain e-mail addresses are declared invalid in the original CAS code, e.g.

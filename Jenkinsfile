@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@v1.48.0', 'github.com/cloudogu/dogu-build-lib@v1.4.1'])
+@Library(['github.com/cloudogu/ces-build-lib@1.55.0', 'github.com/cloudogu/dogu-build-lib@v1.6.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -105,6 +105,10 @@ parallel(
                         shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
                     }
 
+                    stage('Shell tests') {
+                        executeShellTests()
+                    }
+
                     try {
                         stage('Provision') {
                             ecoSystem.provision("/dogu")
@@ -141,6 +145,15 @@ parallel(
                                         "optional": "true",
                                         "scopes": "openid email profile groups",
                                         "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+                                    }
+                                },
+                                "_global": {
+                                    "password-policy": {
+                                        "must_contain_capital_letter": "true",
+                                        "must_contain_lower_case_letter": "true",
+                                        "must_contain_digit": "true",
+                                        "must_contain_special_character": "true",
+                                        "min_length": "14"
                                     }
                                 }
                             """, registryConfigEncrypted:'''
@@ -241,5 +254,22 @@ void gitWithCredentials(String command) {
                 script: "git -c credential.helper=\"!f() { echo username='\$GIT_AUTH_USR'; echo password='\$GIT_AUTH_PSW'; }; f\" " + command,
                 returnStdout: true
         )
+    }
+}
+
+def executeShellTests() {
+    def bats_base_image = "bats/bats"
+    def bats_custom_image = "cloudogu/bats"
+    def bats_tag = "1.2.1"
+
+    def batsImage = docker.build("${bats_custom_image}:${bats_tag}", "--build-arg=BATS_BASE_IMAGE=${bats_base_image} --build-arg=BATS_TAG=${bats_tag} ./unitTests")
+    try {
+        sh "mkdir -p target"
+
+        batsContainer = batsImage.inside("--entrypoint='' -v ${WORKSPACE}:/workspace") {
+            sh "make unit-test-shell-ci"
+        }
+    } finally {
+        junit allowEmptyResults: true, testResults: 'target/shell_test_reports/*.xml'
     }
 }
