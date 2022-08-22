@@ -137,6 +137,7 @@ cas.authn.pm.core.password-policy-pattern={{ .Env.Get "PASSWORD_POLICY_PATTERN" 
 
 # Properties for the connection to LDAP (required for changing the password of a user in LDAP)
 cas.authn.pm.ldap[0].type=GENERIC
+cas.authn.pm.ldap[0].min-pool-size=${cas.authn.ldap[0].min-pool-size}
 cas.authn.pm.ldap[0].ldap-url=${cas.authn.ldap[0].ldap-url}
 cas.authn.pm.ldap[0].base-dn=${cas.authn.ldap[0].base-dn}
 cas.authn.pm.ldap[0].search-filter=${cas.authn.ldap[0].search-filter}
