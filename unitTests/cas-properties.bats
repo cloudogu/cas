@@ -32,12 +32,21 @@ escape(){
 @test "all configured ldaps have pool size of zero" {
   PROPFILE="/workspace/resources/etc/cas/config/cas.properties.tpl"
 
-  EXIT_CODE="$(cat "${PROPFILE}" | grep "ces.ldap-pool-size=0" > /dev/null; echo $?)"
-  assert_equal "${EXIT_CODE}" "0"
+  EXIT_CODE="$(cat "${PROPFILE}" | grep "^ces.ldap-pool-size=0$" > /dev/null; echo $?)"
+  ERROR=""
+  if [[ "${EXIT_CODE}" != "0" ]]; then
+    ERROR="Missing required configuration value 'ces.ldap-pool-size=0'"
+  fi
+  assert_equal "${ERROR}" ""
+
 
   for f in $(cat "${PROPFILE}" |grep "\.ldap\[" | sed 's/\(^[^$]*ldap\[[0-9]*\]\.\).*$/\1/g' |grep -v "#" | sort | uniq); do
     ESCAPED="$(escape "${f}")"
     EXIT_CODE="$(cat "${PROPFILE}" |grep "${ESCAPED}" | grep "=\${ces.ldap-pool-size}" > /dev/null; echo $?)"
-    assert_equal "${EXIT_CODE}" "0"
+    ERROR=""
+    if [[ "${EXIT_CODE}" != "0" ]]; then
+      ERROR="Configuration '${f}' does not have configured the key 'min-pool-size' with value '\${ces.ldap-pool-size}'"
+    fi
+    assert_equal "${ERROR}" ""
   done
 }
