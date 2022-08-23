@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Set the `ldap-min-pool-size` to zero also for the password management ldap (#136, #169)
+
 ## [v6.5.5-3] - 2022-08-17
 ### Added
 - Make password policy configurable. For more information see [docs](docs/operations/password-management_en.md#Configuration-of-password-rules-in-etcd) (#167)
