@@ -7,6 +7,9 @@ cas.server.prefix=${cas.server.name}/cas
 
 ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
 
+# This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
+ces.ldap-pool-size=0
+
 # Unique CAS node name
 # host.name is used to generate unique Service Ticket IDs and SAMLArtifacts. This is usually set to the specific
 # hostname of the machine running the CAS node, but it could be any label so long as it is unique in the cluster.
@@ -70,7 +73,8 @@ ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,gr
 #========================================
 # LDAP connection pool configuration
 #========================================
-cas.authn.ldap[0].min-pool-size=0
+# This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
+cas.authn.ldap[0].min-pool-size=${ces.ldap-pool-size}
 cas.authn.ldap[0].max-pool-size=10
 cas.authn.ldap[0].validate-on-checkout=false
 cas.authn.ldap[0].validate-periodically=true
@@ -102,6 +106,9 @@ cas.authn.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
 cas.authn.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
 
 # member search settings
+
+# This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
+cas.authn.attributeRepository.ldap[0].min-pool-size=${ces.ldap-pool-size}
 
 # settings for ldap group search by member
 # base dn for group search e.g.: o=ces.local,dc=cloudogu,dc=com
@@ -137,7 +144,9 @@ cas.authn.pm.core.password-policy-pattern={{ .Env.Get "PASSWORD_POLICY_PATTERN" 
 
 # Properties for the connection to LDAP (required for changing the password of a user in LDAP)
 cas.authn.pm.ldap[0].type=GENERIC
-cas.authn.pm.ldap[0].min-pool-size=${cas.authn.ldap[0].min-pool-size}
+
+# This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
+cas.authn.pm.ldap[0].min-pool-size=${ces.ldap-pool-size}
 cas.authn.pm.ldap[0].ldap-url=${cas.authn.ldap[0].ldap-url}
 cas.authn.pm.ldap[0].base-dn=${cas.authn.ldap[0].base-dn}
 cas.authn.pm.ldap[0].search-filter=${cas.authn.ldap[0].search-filter}
