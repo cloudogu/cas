@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.5-4] - 2022-08-23
 ### Changed
 - Set the `ldap-min-pool-size` to zero also for the password management ldap (#136, #169)
 
