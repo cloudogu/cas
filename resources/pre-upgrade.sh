@@ -90,7 +90,7 @@ if versionXLessOrEqualThanY "${FROM_VERSION}" "${LAST_VERSION_WITH_READONLY_SERV
 fi
 
 echo "Set registry flag so startup script waits for post-upgrade to finish..."
-doguctl state "upgrading"
+#doguctl state "upgrading"
 
 echo "CAS pre-upgrade done"
 
