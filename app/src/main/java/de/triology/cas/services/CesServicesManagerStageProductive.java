@@ -56,7 +56,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
             return;
         }
         log.debug("Cas started in production stage. Only installed dogus can get an ST.");
-        fqdn = "[" + registry.getFqdn() + "]";
+        fqdn = registry.getFqdn();
         addPersistentServices();
         synchronizeServicesWithRegistry();
         registerChangeListener();

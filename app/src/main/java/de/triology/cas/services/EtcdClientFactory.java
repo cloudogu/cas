@@ -41,7 +41,7 @@ public class EtcdClientFactory {
             if (StringUtils.isBlank(nodeMaster)) {
                 throw new IOException("failed to read " + nodeMasterFilePath + " file");
             }
-            return "http://[".concat(nodeMaster).concat("]:4001");
+            return "http://".concat(nodeMaster).concat(":4001");
         }
     }
 }
