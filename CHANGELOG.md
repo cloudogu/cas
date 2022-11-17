@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v6.5.8-1] - 2022-11-17
 - Upgrade cas to 6.5.8 (#171)
 
 ## [v6.5.5-4] - 2022-08-23
