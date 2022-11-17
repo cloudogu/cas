@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.8-1] - 2022-11-17
+- Upgrade cas to 6.5.8 (#171)
+
 ## [v6.5.5-4] - 2022-08-23
 ### Changed
 - Set the `ldap-min-pool-size` to zero also for the password management ldap (#136, #169)
@@ -32,15 +35,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v6.5.3-8] - 2022-05-25
 ### Changed
 - Suppress determination of an existing username via password reset function (#161)
-  - Previously, an error message has been displayed if a username does not exist in the system. If the username is 
-  present in the system, a confirmation that an email has been sent followed. Now a confirmation page with customised 
+  - Previously, an error message has been displayed if a username does not exist in the system. If the username is
+  present in the system, a confirmation that an email has been sent followed. Now a confirmation page with customised
   text is displayed in both cases.
 
 ## [v6.5.3-7] - 2022-05-18
 ### Fixed
 - If CAS version 6.3.7-5, 6.5.2-1 or 6.5.3-1 has been used and an upgrade to a version >= 6.5.3.2 has been carried out,
-the migration of the service account for the LDAP from the read account to the write account is not performed. This 
-resulted in a password change not being saved by the user and the user receiving an error message. This error has now 
+the migration of the service account for the LDAP from the read account to the write account is not performed. This
+resulted in a password change not being saved by the user and the user receiving an error message. This error has now
 been corrected. (#159)
 
 ## [v6.5.3-6] - 2022-05-11
@@ -48,7 +51,7 @@ been corrected. (#159)
 - Password Reset Functionality. For more information see [docs](docs/operations/password-management_en.md) (#156)
 
 ### Fixed
-- Forgotten password button has always been displayed. If no text has been defined in etcd, a useless default text has 
+- Forgotten password button has always been displayed. If no text has been defined in etcd, a useless default text has
 been displayed. (#157)
 
 ## [v6.5.3-5] - 2022-04-29
@@ -98,7 +101,7 @@ been displayed. (#157)
 ### Fixed
 - The name entered at login previously has been directly transferred to the session (including upper and lower case).
   This has led to some problems and has now been changed to use the name and spelling from the LDAP entry. (#133)
-- On the logout page, English text was displayed in the German version. The correct German text is now displayed here 
+- On the logout page, English text was displayed in the German version. The correct German text is now displayed here
   for the English text.
 
 ## [v6.3.7-1] - 2021-12-20
@@ -165,7 +168,7 @@ been displayed. (#157)
 - Remove dogu configuration key ```ldap/use_user_connection_to_fetch_attributes```. From now on, all connections to the LDAP to fetch user attributes are made via the system connection. (#103)
 
 ### Fixed
-- At log level debug, the password has been output in plain text in some classes. The password is now no longer output 
+- At log level debug, the password has been output in plain text in some classes. The password is now no longer output
   in plain text anywhere. (#86)
 
 ### Removed
@@ -237,9 +240,9 @@ been displayed. (#157)
 - Add automated release flow
 
 ## [v4.0.7.20-8](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-8) - 2020-04-08
-### Added 
+### Added
 
-A new CES registry key `logging/root` is evaluated to override the default root log level (#49). One of these values can be set in order to increase the log verbosity: `ERROR`, `WARN`, `INFO`, `DEBUG`. 
+A new CES registry key `logging/root` is evaluated to override the default root log level (#49). One of these values can be set in order to increase the log verbosity: `ERROR`, `WARN`, `INFO`, `DEBUG`.
 
 CAS's Log4J log levels are directly applied from the root log level.
 
@@ -258,7 +261,7 @@ Tomcat log levels are mapped from the root log level as follows:
 ### Fixed
 - PerformanceStats are no longer logged to the container filesystem for reasons of discoverability and performance. Instead they are logged to the usual CES logging facility. (#48)
 
-## [v4.0.7.20-7](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-7) - 2020-03-12 
+## [v4.0.7.20-7](https://github.com/cloudogu/cas/releases/tag/v4.0.7.20-7) - 2020-03-12
 ### Added
 * cas config etcd key `session_tgt/max_time_to_live_in_seconds` to configure maximum session timeout
 * cas config etcd key `session_tgt/time_to_kill_in_seconds` to configure idle session timeout
