@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix file system exhaustion from Tomcat access logs in `/opt/apache-tomcat/logs` (#173)
+  - The access logs will be streamed to Stdout instead, t. i., the logs will be accommodated by the hosts `/var/lib/docker/cas.log`
 
 ## [v6.5.8-1] - 2022-11-17
 - Upgrade cas to 6.5.8 (#171)
