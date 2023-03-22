@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.5.8-2] - 2023-03-22
+### Fixed
+- Fix file system exhaustion from Tomcat access logs in `/opt/apache-tomcat/logs` (#173)
+  - The access logs will be streamed to Stdout instead, t. i., the logs will be accommodated by the hosts `/var/lib/docker/cas.log`
+
 ## [v6.5.8-1] - 2022-11-17
 - Upgrade cas to 6.5.8 (#171)
 
