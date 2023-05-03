@@ -1,8 +1,12 @@
+ARG TOMCAT_MAJOR_VERSION=9
+ARG TOMCAT_VERSION=9.0.74
+ARG TOMCAT_TARGZ_SHA256=f177b68bb99f6ed86e08f92696ebc61358cdfb3803c0e5f01df95e4ac6227cd2
+
 FROM adoptopenjdk/openjdk11:alpine-slim AS builder
 
 RUN mkdir -p /cas-overlay
 COPY ./app/gradle/ /cas-overlay/gradle/
-COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
+COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.lockfile ./app/gradle.properties /cas-overlay/
 WORKDIR /cas-overlay
 
 # Cache gradle
@@ -16,12 +20,34 @@ RUN ./gradlew clean build --parallel --no-daemon
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
+FROM registry.cloudogu.com/official/base:3.17.3-2 as tomcat
+
+ARG TOMCAT_MAJOR_VERSION
+ARG TOMCAT_VERSION
+ARG TOMCAT_TARGZ_SHA256
+
+ENV TOMCAT_MAJOR_VERSION=${TOMCAT_MAJOR_VERSION} \
+    TOMCAT_VERSION=${TOMCAT_VERSION} \
+    TOMCAT_TARGZ_SHA256=${TOMCAT_TARGZ_SHA256}
+
+RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+  "http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+  && echo "${TOMCAT_TARGZ_SHA256} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha256sum -c - \
+  && gunzip "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+  && tar xf "apache-tomcat-${TOMCAT_VERSION}.tar" -C /opt \
+  && rm "apache-tomcat-${TOMCAT_VERSION}.tar"
+
+
+
+
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.14-3
+FROM registry.cloudogu.com/official/java:11.0.18-1
 
 LABEL NAME="official/cas" \
       VERSION="6.5.8-2" \
       maintainer="hello@cloudogu.com"
+
+ARG TOMCAT_VERSION
 
 # update packages of the image
 RUN set -o errexit \
@@ -31,9 +57,7 @@ RUN set -o errexit \
   && apk upgrade
 
 # configure environment
-ENV TOMCAT_MAJOR_VERSION=9 \
-	TOMCAT_VERSION=9.0.62 \
-	TOMCAT_TARGZ_SHA256=03157728a832cf9c83048cdc28d09600cbb3e4fa087f8b97d74c8b4f34cd89bb \
+ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
@@ -42,19 +66,17 @@ ENV TOMCAT_MAJOR_VERSION=9 \
     GROUP=cas \
     SSL_BASE_DIRECTORY="/etc/ssl"
 
-# run installation
+# setup user
 RUN set -x \
  # create group and user for cas
  && addgroup -S -g 1000 ${GROUP} \
- && adduser -S -h "/var/lib/${USER}" -s /bin/bash -G ${GROUP} -u 1000 ${USER} \
- # install tomcat
- && mkdir -p /opt \
- && wget --progress=bar:force:noscroll "http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
- && echo "${TOMCAT_TARGZ_SHA256} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha256sum -c - \
- && tar -C /opt -xzvf "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
- && rm -f "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
- && mv /opt/apache-tomcat-* ${CATALINA_BASE} \
- && rm -rf ${CATALINA_BASE}/webapps/* \
+ && adduser -S -h "/var/lib/${USER}" -s /bin/bash -G ${GROUP} -u 1000 ${USER}
+
+## copy tomcat \
+COPY --from=tomcat /opt/apache-tomcat-${TOMCAT_VERSION} ${CATALINA_BASE}
+
+## configure tomcat
+RUN rm -rf ${CATALINA_BASE}/webapps/* \
  # install cas webapp application
  && mkdir ${CATALINA_BASE}/webapps/cas/ \
  && mkdir -p /etc/cas/config \
