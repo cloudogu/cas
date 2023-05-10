@@ -6,7 +6,7 @@ FROM adoptopenjdk/openjdk11:alpine-slim AS builder
 
 RUN mkdir -p /cas-overlay
 COPY ./app/gradle/ /cas-overlay/gradle/
-COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.lockfile ./app/gradle.properties /cas-overlay/
+COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
 WORKDIR /cas-overlay
 
 # Cache gradle
