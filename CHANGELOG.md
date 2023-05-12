@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Upgrade cas to 6.5.9.1 (#175)
+
+### Security
+- spring-framework: CVE-2023-20861
+- sprint-boot: CVE-2022-22965 / CVE-2023-20873 / CVE-2022-22965 / GHSA-36p3-wjmg-h94x / CVE-2023-20873
+- snakeyaml: CVE-2022-25857 / CVE-2022-38749 / CVE-2022-38749 / CVE-2022-38749 /  CVE-2022-38752 / CVE-2022-41854 / CVE-2022-1471
+- commons-text: CVE-2022-42889
+- netty: CVE-2019-20444 / CVE-2019-20445 / CVE-2019-16869 / CVE-2021-21290 / CVE-2021-21409 / CVE-2021-43797 / CVE-2022-24823
+- jackson.core: CVE-2020-36518 / CVE-2020-36518 / CVE-2022-42004 / CVE-2022-42003
+- junit: CVE-2020-15250
+- smart-json: CVE-2023-1370
+- jose4j: GHSA-jgvc-jfgh-rjvv
+- json: CVE-2022-45688
+- jsoup: CVE-2022-36033
 
 ## [v6.5.8-2] - 2023-03-22
 ### Fixed
