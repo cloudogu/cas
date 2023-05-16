@@ -17,13 +17,13 @@ Nach Abschluss der folgenden Schritte ist ein Login mit diesem User möglich.
 Folgende Befehle im Ecosystem ausführen:
 ```sh
 etcdctl set /config/cas/oidc/display_name keycloak
-etcdctl set /config/cas/oidc/attribute_mapping mail:mail,surname:surname,givenName:givenName,username:username,displayName:displayName
+etcdctl set /config/cas/oidc/attribute_mapping "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
 etcdctl set /config/cas/oidc/enabled true
 etcdctl set /config/cas/oidc/discovery_uri http://192.168.56.1:8080/realms/master/.well-known/openid-configuration
 etcdctl set /config/cas/oidc/client_id ecosystem
 etcdctl set /config/cas/oidc/optional true
 etcdctl set /config/cas/oidc/principal_attribute username
-etcdctl set /config/cas/oidc/scopes openid mail surname givenName username displayName
+etcdctl set /config/cas/oidc/scopes "openid email profile roles"
 cesapp edit-config cas oidc/client_secret 9AcJiF7Xpvv9Jfg4c3QtrwPukKuLFjwO
 docker restart cas
 ```
