@@ -110,6 +110,9 @@ java {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
     // Other CAS dependencies/modules may be listed here...
     implementation "org.apereo.cas:cas-server-core-api-protocol:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
@@ -154,6 +157,13 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-swagger:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-throttle:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-throttle-core:${project.'cas.version'}"
+
+
+    implementation "org.apereo.cas:cas-server-support-pac4j-core-clients:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-pac4j-api:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-pac4j-authentication:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-pac4j-core:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-cookie-api:${project.'cas.version'}"
 
 
     implementation 'org.mousio:etcd4j:2.11.0'

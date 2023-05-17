@@ -2,14 +2,21 @@ package de.triology.cas.oidc.config;
 
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationClientLogoutAction;
+import de.triology.cas.oidc.beans.CESDelegatedClientAuthenticationHandler;
+import lombok.val;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.config.OidcConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,5 +52,28 @@ public class CesOidcConfiguration {
         String redirectURI = redirectUri.isEmpty() ? casServerPrefix + "/logout" : redirectUri;
         return new CesCustomDelegatedAuthenticationClientLogoutAction(builtClients.getObject(),
                 delegatedClientDistributedSessionStore.getObject(), redirectURI);
+    }
+
+    @RefreshScope()
+    @Bean
+    public AuthenticationHandler clientAuthenticationHandler(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("clientPrincipalFactory")
+            final PrincipalFactory clientPrincipalFactory,
+            @Qualifier("builtClients")
+            final Clients builtClients,
+            @Qualifier(DelegatedClientUserProfileProvisioner.BEAN_NAME)
+            final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
+            @Qualifier("delegatedClientDistributedSessionStore")
+            final SessionStore delegatedClientDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+        val pac4j = casProperties.getAuthn().getPac4j().getCore();
+        val h = new CESDelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
+                servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
+                delegatedClientDistributedSessionStore);
+        h.setTypedIdUsed(pac4j.isTypedIdUsed());
+        h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
+        return h;
     }
 }
