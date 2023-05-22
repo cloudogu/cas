@@ -1,6 +1,7 @@
 package de.triology.cas.oidc.beans;
 
 import de.triology.cas.ldap.resolvers.AllUserResolver;
+import de.triology.cas.ldap.resolvers.SingleUserUpdater;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -35,6 +36,7 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
     private final Clients clients;
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
     private final AllUserResolver allUserResolver;
+    private final SingleUserUpdater userUpdater;
 
     public CESDelegatedClientAuthenticationHandler(final String name,
                                                    final Integer order,
@@ -43,12 +45,14 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
                                                    final Clients clients,
                                                    final DelegatedClientUserProfileProvisioner profileProvisioner,
                                                    final SessionStore sessionStore,
-                                                   final AllUserResolver allUserResolver
+                                                   final AllUserResolver allUserResolver,
+                                                   final SingleUserUpdater userUpdater
     ) {
         super(name, order, servicesManager, principalFactory, clients, profileProvisioner, sessionStore);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
         this.allUserResolver = allUserResolver;
+        this.userUpdater = userUpdater;
     }
 
     @Override
@@ -118,6 +122,6 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
     }
 
     private void updateUserInLdap(UserProfile profile) {
-
+        this.userUpdater.updateUser(profile);
     }
 }

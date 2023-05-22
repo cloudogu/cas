@@ -2,6 +2,7 @@ package de.triology.cas.oidc.config;
 
 import de.triology.cas.ldap.resolvers.AllUserResolver;
 import de.triology.cas.ldap.resolvers.UserResolver;
+import de.triology.cas.ldap.resolvers.UserUpdater;
 import de.triology.cas.oidc.beans.CESDelegatedClientAuthenticationHandler;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationClientLogoutAction;
@@ -72,6 +73,7 @@ public class CesOidcConfiguration {
             @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
         val allUserResolver = new UserResolver("ou=People,o=ces.local,dc=cloudogu,dc=com", searchPooledLdapConnectionFactory(casProperties));
+        val singleUserUpdater = new UserUpdater("ou=People,o=ces.local,dc=cloudogu,dc=com", searchPooledLdapConnectionFactory(casProperties));
         val pac4j = casProperties.getAuthn().getPac4j().getCore();
         val h = new CESDelegatedClientAuthenticationHandler(
                 pac4j.getName(),
@@ -81,7 +83,8 @@ public class CesOidcConfiguration {
                 builtClients,
                 clientUserProfileProvisioner,
                 delegatedClientDistributedSessionStore,
-                allUserResolver
+                allUserResolver,
+                singleUserUpdater
         );
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
