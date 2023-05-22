@@ -1,8 +1,10 @@
 package de.triology.cas.oidc.config;
 
+import de.triology.cas.ldap.resolvers.AllUserResolver;
+import de.triology.cas.ldap.resolvers.UserResolver;
+import de.triology.cas.oidc.beans.CESDelegatedClientAuthenticationHandler;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationClientLogoutAction;
-import de.triology.cas.oidc.beans.CESDelegatedClientAuthenticationHandler;
 import lombok.val;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -11,6 +13,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.util.LdapUtils;
+import org.ldaptive.ConnectionFactory;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.slf4j.Logger;
@@ -53,25 +57,32 @@ public class CesOidcConfiguration {
         return new CesCustomDelegatedAuthenticationClientLogoutAction(builtClients.getObject(),
                 delegatedClientDistributedSessionStore.getObject(), redirectURI);
     }
+    ConnectionFactory searchPooledLdapConnectionFactory(CasConfigurationProperties properties) {
+        var ldapProperties = properties.getAuthn().getLdap().get(0);
+        return LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
+    }
 
     @RefreshScope()
     @Bean
     public AuthenticationHandler clientAuthenticationHandler(
             final CasConfigurationProperties casProperties,
-            @Qualifier("clientPrincipalFactory")
-            final PrincipalFactory clientPrincipalFactory,
-            @Qualifier("builtClients")
-            final Clients builtClients,
-            @Qualifier(DelegatedClientUserProfileProvisioner.BEAN_NAME)
-            final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
-            @Qualifier("delegatedClientDistributedSessionStore")
-            final SessionStore delegatedClientDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            @Qualifier("clientPrincipalFactory") final PrincipalFactory clientPrincipalFactory,
+            @Qualifier("builtClients") final Clients builtClients,
+            @Qualifier(DelegatedClientUserProfileProvisioner.BEAN_NAME) final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
+            @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+        val allUserResolver = new UserResolver("ou=People,o=ces.local,dc=cloudogu,dc=com", searchPooledLdapConnectionFactory(casProperties));
         val pac4j = casProperties.getAuthn().getPac4j().getCore();
-        val h = new CESDelegatedClientAuthenticationHandler(pac4j.getName(), pac4j.getOrder(),
-                servicesManager, clientPrincipalFactory, builtClients, clientUserProfileProvisioner,
-                delegatedClientDistributedSessionStore);
+        val h = new CESDelegatedClientAuthenticationHandler(
+                pac4j.getName(),
+                pac4j.getOrder(),
+                servicesManager,
+                clientPrincipalFactory,
+                builtClients,
+                clientUserProfileProvisioner,
+                delegatedClientDistributedSessionStore,
+                allUserResolver
+        );
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         h.setPrincipalAttributeId(pac4j.getPrincipalAttributeId());
         return h;

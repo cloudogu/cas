@@ -1,15 +1,14 @@
 package de.triology.cas.oidc.beans;
 
+import de.triology.cas.ldap.resolvers.AllUserResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
-import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
@@ -35,17 +34,23 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
 
     private final Clients clients;
     private final DelegatedClientUserProfileProvisioner profileProvisioner;
+    private final AllUserResolver allUserResolver;
+
     public CESDelegatedClientAuthenticationHandler(final String name,
-                                                final Integer order,
-                                                final ServicesManager servicesManager,
-                                                final PrincipalFactory principalFactory,
-                                                final Clients clients,
-                                                final DelegatedClientUserProfileProvisioner profileProvisioner,
-                                                final SessionStore sessionStore) {
+                                                   final Integer order,
+                                                   final ServicesManager servicesManager,
+                                                   final PrincipalFactory principalFactory,
+                                                   final Clients clients,
+                                                   final DelegatedClientUserProfileProvisioner profileProvisioner,
+                                                   final SessionStore sessionStore,
+                                                   final AllUserResolver allUserResolver
+    ) {
         super(name, order, servicesManager, principalFactory, clients, profileProvisioner, sessionStore);
         this.clients = clients;
         this.profileProvisioner = profileProvisioner;
+        this.allUserResolver = allUserResolver;
     }
+
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
         try {
@@ -62,6 +67,10 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
             val client = BaseClient.class.cast(clientResult.get());
             log.trace("CESWAY: Delegated client is: [{}]", client);
 
+            if (!isOidcClient(client)){
+                return super.doAuthentication(credential);
+            }
+
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = new JEEContext(Objects.requireNonNull(request),
@@ -77,7 +86,7 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
             }
             val userProfile = userProfileResult.get();
 
-            if (this.userExistsInLdap(userProfile)){
+            if (this.userExistsInLdap(userProfile)) {
                 this.updateUserInLdap(userProfile);
 
                 storeUserProfile(webContext, userProfile);
@@ -91,15 +100,24 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
         }
     }
 
-    private boolean isOidcClient(BaseClient client){
+    private boolean isOidcClient(BaseClient client) {
         return client.getName().equals("keycloak");
     }
 
-    private boolean userExistsInLdap(UserProfile profile){
-        return profile.getAttribute("preferred_username").equals("ecosystem");
+    private boolean userExistsInLdap(UserProfile profile) {
+        val username = (String)profile.getAttribute("preferred_username");
+        log.debug("userExistsInLdap: Check if user " + username + " exists in ldap.");
+        try {
+            val availableUsernames = this.allUserResolver.resolveAllUserNames();
+            return availableUsernames.contains(username);
+        } catch (Exception e) {
+            log.debug("Error checking for user " + username + " to exist.");
+            log.debug(e.getMessage());
+            return false;
+        }
     }
 
-    private void updateUserInLdap(UserProfile profile){
+    private void updateUserInLdap(UserProfile profile) {
 
     }
 }
