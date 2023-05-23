@@ -64,7 +64,7 @@ public class UserResolver implements AllUserResolver {
         val request = new SearchRequest();
         request.setBaseDn(this.baseDN);
         request.setReturnAttributes(uidAttribute);
-        request.setFilter("(objectClass=person)");
+        request.setFilter("(&(objectClass=person)(external=TRUE))");
         request.setSearchScope(searchScope);
         request.setSizeLimit(Math.toIntExact(this.searchControls.getCountLimit()));
         request.setTimeLimit(Duration.ofMillis(this.searchControls.getTimeLimit()));
