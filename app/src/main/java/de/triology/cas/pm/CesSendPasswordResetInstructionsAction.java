@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -19,10 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.net.URL;
+
 /**
  * Extends the class {@link SendPasswordResetInstructionsAction}.
  *
- * In the original class, an error is thrown if no email address is found for the user name entered.
+ * In the original class, an error is thrown if no email address is found for the username entered.
  * This is also the case if the user does not exist in the system.
  *
  * In order to prevent the CAS from finding out whether a user exists in the system, the method responsible for this
@@ -32,8 +35,8 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CesSendPasswordResetInstructionsAction.class.getName());
 
-    public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver) {
-        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver);
+    public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver, PasswordResetUrlBuilder passwordResetUrlBuilder) {
+        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder);
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,

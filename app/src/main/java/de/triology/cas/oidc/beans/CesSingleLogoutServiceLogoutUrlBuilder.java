@@ -2,7 +2,7 @@ package de.triology.cas.oidc.beans;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
@@ -28,7 +28,7 @@ public class CesSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutS
         if (registeredService == null) return false;
         if (singleLogoutService == null) return false;
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) return false;
-        return registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME) ||
+        return registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME) ||
                 registeredService.getFriendlyName().equalsIgnoreCase(OAUTH_CLIENT_FRIENDLY_NAME);
     }
 }

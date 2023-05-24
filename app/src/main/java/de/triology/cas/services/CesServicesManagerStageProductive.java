@@ -4,7 +4,7 @@ import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
 import java.net.URI;
@@ -126,12 +126,12 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     void addNewService(String serviceName, CesServiceData serviceData) throws CesServiceCreationException {
         try {
             URI logoutUri = registry.getCasLogoutUri(serviceName);
-            RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
+            var service = serviceData.getFactory().createNewService(createId(), fqdn, logoutUri, serviceData);
             addNewService(service);
         } catch (GetCasLogoutUriException e) {
             log.debug("GetCasLogoutUriException: CAS logout URI of service {} could not be retrieved: {}", serviceName, e.toString());
             log.info("Adding service without CAS logout URI");
-            RegexRegisteredService service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
+            var service = serviceData.getFactory().createNewService(createId(), fqdn, null, serviceData);
             addNewService(service);
         }
     }

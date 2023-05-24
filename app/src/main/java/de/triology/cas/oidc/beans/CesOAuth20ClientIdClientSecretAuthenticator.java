@@ -8,7 +8,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenCipherExecutor;
+import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -24,8 +31,8 @@ import java.io.Serializable;
  */
 public class CesOAuth20ClientIdClientSecretAuthenticator extends OAuth20ClientIdClientSecretAuthenticator {
 
-    public CesOAuth20ClientIdClientSecretAuthenticator(ServicesManager servicesManager, ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory, AuditableExecution registeredServiceAccessStrategyEnforcer, CipherExecutor<Serializable, String> registeredServiceCipherExecutor, TicketRegistry ticketRegistry, PrincipalResolver principalResolver) {
-        super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer, registeredServiceCipherExecutor, ticketRegistry, principalResolver);
+    public CesOAuth20ClientIdClientSecretAuthenticator(ServicesManager servicesManager, ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory, AuditableExecution registeredServiceAccessStrategyEnforcer, TicketRegistry ticketRegistry, PrincipalResolver principalResolver, OAuth20RequestParameterResolver requestParameterResolver, OAuth20ClientSecretValidator clientSecretValidator) {
+        super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer, ticketRegistry, principalResolver, requestParameterResolver, clientSecretValidator);
     }
 
     protected static final Logger LOG = LoggerFactory.getLogger(CesOAuth20ClientIdClientSecretAuthenticator.class);

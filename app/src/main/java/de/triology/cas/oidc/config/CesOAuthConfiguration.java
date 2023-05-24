@@ -14,6 +14,8 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilderConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -53,13 +55,15 @@ public class CesOAuthConfiguration {
             ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
             ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
-            ObjectProvider<CipherExecutor<Serializable, String>> oidcRegisteredServiceJwtAccessTokenCipherExecutor) {
+            ObjectProvider<OAuth20RequestParameterResolver>  requestParameterResolver,
+            ObjectProvider<OAuth20ClientSecretValidator> clientSecretValidator) {
         return new CesOAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
                 webApplicationServiceFactory.getObject(),
                 registeredServiceAccessStrategyEnforcer.getObject(),
-                oidcRegisteredServiceJwtAccessTokenCipherExecutor.getObject(),
                 ticketRegistry.getObject(),
-                defaultPrincipalResolver.getObject());
+                defaultPrincipalResolver.getObject(),
+                requestParameterResolver.getObject(),
+                clientSecretValidator.getObject());
     }
 
     @Bean

@@ -55,10 +55,16 @@ abstract class CesServicesManagerStage {
      *
      * @param service service object to register
      */
-    protected void addNewService(RegexRegisteredService service) {
-        service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
+    protected void addNewService(BaseRegisteredService service) {
+        var proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy();
+        proxyPolicy.setPattern("^https?://.*");
+        if(service instanceof CasRegisteredService) {
+            var casRegisteredService = (CasRegisteredService)service;
+            casRegisteredService.setProxyPolicy(proxyPolicy);
+        }
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
+
         if (managerConfig.isOidcAuthenticationDelegationEnabled()) {
             configureOidcDelegationService(service);
         }
@@ -72,7 +78,7 @@ abstract class CesServicesManagerStage {
      *
      * @param service The service that should be configured
      */
-    private void configureOidcDelegationService(RegexRegisteredService service) {
+    private void configureOidcDelegationService(BaseRegisteredService service) {
         if (managerConfig.getOidcPrincipalsAttribute() != null && !managerConfig.getOidcPrincipalsAttribute().isEmpty()) {
             var principalProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
             principalProvider.setUsernameAttribute(managerConfig.getOidcPrincipalsAttribute());

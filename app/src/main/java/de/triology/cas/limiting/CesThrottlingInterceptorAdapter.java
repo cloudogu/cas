@@ -9,8 +9,8 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class CesThrottlingInterceptorAdapter
-        extends HandlerInterceptorAdapter
-        implements ThrottledSubmissionHandlerInterceptor {
+        implements ThrottledSubmissionHandlerInterceptor, AsyncHandlerInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(CesThrottlingInterceptorAdapter.class);
 
     /**
@@ -162,7 +161,7 @@ public class CesThrottlingInterceptorAdapter
     }
 
     @Override
-    public void decrement() {
+    public void release() {
         LOG.info("Beginning audit cleanup...");
         LOG.info("Before:" + submissionIpMap);
         this.submissionIpMap.entrySet().removeIf(entry -> {

@@ -3,8 +3,8 @@ package de.triology.cas.oidc.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import de.triology.cas.services.dogu.ICesServiceFactory;
-import org.apereo.cas.services.RegexRegisteredService;
+import de.triology.cas.services.dogu.CesServiceFactory;
+import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.net.URI;
 /**
  * This factory is responsible to create and to configure new OAuth services.
  */
-public class CesOAuthServiceFactory implements ICesServiceFactory {
+public class CesOAuthServiceFactory implements CesServiceFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(CesOAuthServiceFactory.class);
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_ID = "oauth_client_id";
@@ -63,7 +63,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
     }
 
     @Override
-    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException {
+    public BaseRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException {
         if (serviceData.getAttributes() == null) {
             throw new CesServiceCreationException("Cannot create service; Cannot find attributes");
         }

@@ -26,7 +26,7 @@ public class CesOAuthSingleLogoutMessageCreator implements SingleLogoutMessageCr
         var ticket = request.getExecutionRequest().getTicketGrantingTicket();
         var service = request.getRegisteredService();
         var logoutRequest = "";
-        LOG.debug("Generate oauth logout request for: [{}] to [{}]", service.getName(), service.getLogoutUrl());
+        LOG.debug("Generate oauth logout request for: [{}] to [{}]", service.getName(), request.getLogoutUrl());
 
         for (String childTicket : ticket.getDescendantTickets()) {
             if (childTicket.startsWith("AT-")) {

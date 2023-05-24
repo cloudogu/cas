@@ -3,8 +3,8 @@ package de.triology.cas.services;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
      * The dev service accepts all services
      */
     private void addDevService() {
-        RegexRegisteredService devService = new RegexRegisteredService();
+        CasRegisteredService devService = new CasRegisteredService();
         devService.setId(createId());
         devService.setServiceId("^(https?|imaps?)://.*");
         devService.setName("10000001");

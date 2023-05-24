@@ -3,7 +3,8 @@ package de.triology.cas.oidc.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import junit.framework.TestCase;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import java.net.URI;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public class CesOAuthServiceFactoryTest extends TestCase {
 
-    protected void verifyService(RegexRegisteredService service) {
+    protected void verifyService(RegisteredService service) {
         assertEquals(1, service.getId());
         assertEquals("CesOAuthServiceFactory clientName", service.getName());
         assertEquals("https://((?i)192\\.168\\.56\\.2)(:443)?/clientName(/.*)?", service.getServiceId());
@@ -37,7 +38,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
         OAuthRegisteredService service = factory.createEmptyService();
 
         // then
-        assertTrue(service instanceof OAuthRegisteredService);
+        assertTrue(service != null);
     }
 
     /**
@@ -114,7 +115,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
 
         // when
-        RegexRegisteredService service = factory.createNewService(1, fqdn, null, serviceData);
+        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
 
         // then
         verifyService(service);
@@ -136,7 +137,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
 
         // when
-        RegexRegisteredService service = factory.createNewService(1, fqdn, logoutUri, serviceData);
+        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
 
         // then
         verifyService(service);

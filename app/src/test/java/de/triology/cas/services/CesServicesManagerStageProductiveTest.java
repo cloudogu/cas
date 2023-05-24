@@ -238,14 +238,14 @@ public class CesServicesManagerStageProductiveTest {
         GetCasLogoutUriException expectedException = new GetCasLogoutUriException("expected exception");
         when(etcdRegistry.getCasLogoutUri(any())).thenThrow(expectedException);
         CesServiceData testServiceData = new CesServiceData("testService", doguServiceFactory);
-        RegexRegisteredService testService = doguServiceFactory.createNewService(
+        var testService = doguServiceFactory.createNewService(
                 productiveStage.createId(), EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME, null, testServiceData);
 
         // when
         productiveStage.addNewService(testService);
 
         // then
-        RegisteredService registeredService = productiveStage.getRegisteredServices().get(1L);
+        CasRegisteredService registeredService = (CasRegisteredService) productiveStage.getRegisteredServices().get(1L);
         assertNull(registeredService.getLogoutUrl());
     }
 

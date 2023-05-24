@@ -1,7 +1,7 @@
 package de.triology.cas.services;
 
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.services.dogu.ICesServiceFactory;
+import de.triology.cas.services.dogu.CesServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -70,7 +70,7 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, ICesServiceFactory factory) {
+    public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, CesServiceFactory factory) {
         log.debug("Get [{}] service accounts from registry", type);
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
@@ -93,7 +93,7 @@ class RegistryEtcd implements Registry {
      * @param type          the type of service accounts that should be extracted
      * @return a list containing the identifier for all registered service accounts of cas
      */
-    private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, ICesServiceFactory factory) {
+    private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, CesServiceFactory factory) {
         log.debug("Entered extractServiceAccountClientsByType");
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
@@ -121,7 +121,7 @@ class RegistryEtcd implements Registry {
         return serviceDataList;
     }
 
-    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
+    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, CesServiceFactory factory) {
         log.debug("Entered extractDogusFromDoguRootDir");
         List<CesServiceData> doguServices = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
@@ -142,7 +142,7 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory) {
+    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
         log.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();

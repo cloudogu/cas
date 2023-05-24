@@ -5,13 +5,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,8 +28,8 @@ public class CesSendPasswordResetInstructionsActionTest {
      * Since one method uses a static method that cannot be mocked with Mockito, this method is overwritten.
      */
     class CesSendPasswordResetInstructionsActionExtensionForUnitTest extends CesSendPasswordResetInstructionsAction {
-        public CesSendPasswordResetInstructionsActionExtensionForUnitTest(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver) {
-            super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver);
+        public CesSendPasswordResetInstructionsActionExtensionForUnitTest(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver, PasswordResetUrlBuilder passwordResetUrlBuilder) {
+            super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder);
         }
 
         @Override
@@ -61,11 +62,14 @@ public class CesSendPasswordResetInstructionsActionTest {
     @Mock
     private PasswordManagementQuery passwordManagementQuery;
 
+    @Mock
+    private PasswordResetUrlBuilder passwordResetUrlBuilder;
+
     private CesSendPasswordResetInstructionsActionExtensionForUnitTest cesSendPasswordResetInstructionsAction;
 
     @Before
     public void setup() {
-        cesSendPasswordResetInstructionsAction = new CesSendPasswordResetInstructionsActionExtensionForUnitTest(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver);
+        cesSendPasswordResetInstructionsAction = new CesSendPasswordResetInstructionsActionExtensionForUnitTest(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder);
     }
 
     @Test

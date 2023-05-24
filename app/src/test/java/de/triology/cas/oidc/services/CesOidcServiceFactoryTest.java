@@ -3,8 +3,10 @@ package de.triology.cas.oidc.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import junit.framework.TestCase;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -86,7 +88,7 @@ public class CesOidcServiceFactoryTest extends TestCase {
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
         // when
-        RegexRegisteredService service = factory.createNewService(1, fqdn, null, serviceData);
+        OidcRegisteredService service = (OidcRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
 
         // then
         verifyService(service);
@@ -108,14 +110,14 @@ public class CesOidcServiceFactoryTest extends TestCase {
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
         // when
-        RegexRegisteredService service = factory.createNewService(1, fqdn, logoutUri, serviceData);
+        OidcRegisteredService service = (OidcRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
 
         // then
         verifyService(service);
         assertEquals("https://192.168.56.2/oidcClient/api/auth/oidc/logout", service.getLogoutUrl());
     }
 
-    private void verifyService(RegexRegisteredService service) {
+    private void verifyService(RegisteredService service) {
         assertEquals(1, service.getId());
         assertEquals("CesOIDCServiceFactory oidcClient", service.getName());
         assertEquals("https://((?i)192\\.168\\.56\\.2)(:443)?/oidcClient(/.*)?", service.getServiceId());
