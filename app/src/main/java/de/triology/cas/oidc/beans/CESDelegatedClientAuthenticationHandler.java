@@ -19,6 +19,7 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -113,6 +114,7 @@ public class CESDelegatedClientAuthenticationHandler extends DelegatedClientAuth
         log.debug("userExistsInLdap: Check if user " + username + " exists in ldap.");
         try {
             val availableUsernames = this.allUserResolver.resolveAllUserNames();
+            log.debug("Users: " + Arrays.toString(availableUsernames.toArray()));
             return availableUsernames.contains(username);
         } catch (Exception e) {
             log.debug("Error checking for user " + username + " to exist.");

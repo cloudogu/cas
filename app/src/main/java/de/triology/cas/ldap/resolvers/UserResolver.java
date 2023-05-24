@@ -2,16 +2,12 @@ package de.triology.cas.ldap.resolvers;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.*;
 
 import javax.naming.directory.SearchControls;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 
 
 // ALL-USERS: ldapsearch -x -b "ou=People,o=ces.local,dc=cloudogu,dc=com" "(objectClass=person)"
@@ -35,22 +31,22 @@ public class UserResolver implements AllUserResolver {
     }
 
     public Set<String> resolveAllUserNames() {
-        log.trace("resolveAllUserNames");
+        log.debug("resolveAllUserNames");
         final SearchResponse response;
         try {
             final SearchRequest request = createRequest();
-            log.trace("resolveAllUserNames - request: {}", request);
+            log.debug("resolveAllUserNames - request: {}", request);
             response = new SearchOperation(connectionFactory).execute(request);
         } catch (final LdapException e) {
-            log.trace("resolveAllUserNames - error: {}", e.getMessage());
+            log.debug("resolveAllUserNames - error: {}", e.getMessage());
             throw new RuntimeException("Failed executing LDAP query ", e);
         }
-        log.trace("got response {}", response);
-        log.trace("got response entries{}", response.getEntries());
+        log.debug("got response {}", response);
+        log.debug("got response entries{}", response.getEntries());
         final Set<String> users = new HashSet<>();
         for (final LdapEntry entry : response.getEntries()) {
             String group = extractGroupName(entry);
-            log.trace("added user {} to attribute map", group);
+            log.debug("added user {} to attribute map", group);
             users.add(group);
         }
         return users;
