@@ -26,7 +26,7 @@ public class CesOAuthServiceFactory implements CesServiceFactory {
      * @return the created service.
      */
     protected OAuthRegisteredService createEmptyService() {
-        return new OAuthRegisteredService();
+        return new CasOAuthRegisteredService();
     }
 
     /**
@@ -41,7 +41,7 @@ public class CesOAuthServiceFactory implements CesServiceFactory {
      * @param clientSecretHash secret key from the OAUTH application used for authentication
      * @return a new client server for the given information of the OAUTH application
      */
-    protected OAuthRegisteredService createOAUTHClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
+    protected CasOAuthRegisteredService createOAUTHClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
         var service = createEmptyService();
         service.setId(id);
         service.setName(name);
@@ -59,7 +59,7 @@ public class CesOAuthServiceFactory implements CesServiceFactory {
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
         LOG.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
         LOG.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
-        return service;
+        return (CasOAuthRegisteredService)service;
     }
 
     @Override

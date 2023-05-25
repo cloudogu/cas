@@ -10,6 +10,6 @@ public class CesOIDCServiceFactory extends CesOAuthServiceFactory {
 
     @Override
     protected OAuthRegisteredService createEmptyService() {
-        return new OidcRegisteredService();
+        return new CasOidcRegisteredService();
     }
 }

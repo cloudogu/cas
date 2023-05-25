@@ -64,10 +64,8 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     }
 
     @Bean(name = "serviceMatchingStrategy")
-    public ServiceMatchingStrategy serviceMatchingStrategy(
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-        return new CesServiceMatchingStrategy(servicesManager);
+    public ServiceMatchingStrategy serviceMatchingStrategy() {
+        return new CesServiceMatchingStrategy();
     }
 
     @Override

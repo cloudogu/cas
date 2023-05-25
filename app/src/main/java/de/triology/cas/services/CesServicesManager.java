@@ -89,9 +89,18 @@ public class CesServicesManager implements ServicesManager {
     }
 
     @Override
-    public <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz) {
-        LOG.trace("findServiceBy2: {}", clazz);
-        throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
+    public RegisteredService findServiceBy(Service service, Class clazz) {
+        LOG.debug("findServiceBy2: {} {}", service, clazz);
+//        throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
+        final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
+
+        for (final RegisteredService registeredService : registeredServices) {
+            if (registeredService.matches(service)) {
+                return registeredService;
+            }
+        }
+
+        return null;
     }
 
     @Override
