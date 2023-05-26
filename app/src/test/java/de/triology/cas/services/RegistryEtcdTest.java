@@ -3,8 +3,9 @@ package de.triology.cas.services;
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import de.triology.cas.oidc.services.CasOAuthRegisteredService;
+import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
@@ -174,7 +175,7 @@ public class RegistryEtcdTest {
     @Test
     public void getOidcDogus() {
         RegistryEtcd registry = createRegistry();
-        var factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
         List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, factory)
                 .stream().map(CesServiceData::getName).collect(Collectors.toList());
         assertThat(installedServiceAccounts, containsInAnyOrder("cas-oidc-client"));
@@ -184,7 +185,7 @@ public class RegistryEtcdTest {
     @Test
     public void getOidcDogus_CheckSecrets() {
         RegistryEtcd registry = createRegistry();
-        var factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
         List<CesServiceData> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory);
         assertEquals(1, installedServiceAccounts.size());
 
@@ -197,7 +198,7 @@ public class RegistryEtcdTest {
     @Test
     public void getOAuthDogus() {
         RegistryEtcd registry = createRegistry();
-        var factory = new CesOAuthServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
         List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory)
                 .stream().map(CesServiceData::getName).collect(Collectors.toList());
         assertThat(installedServiceAccounts, containsInAnyOrder("portainer"));
@@ -207,7 +208,7 @@ public class RegistryEtcdTest {
     @Test
     public void getOAuthDogus_CheckSecrets() {
         RegistryEtcd registry = createRegistry();
-        var factory = new CesOAuthServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
         List<CesServiceData> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, factory);
         assertEquals(1, installedServiceAccounts.size());
 

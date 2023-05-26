@@ -2,6 +2,7 @@ package de.triology.cas.services.dogu;
 
 import de.triology.cas.services.CesServiceData;
 import org.apereo.cas.services.BaseRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 
 import java.net.URI;
 
@@ -17,7 +18,7 @@ public interface CesServiceFactory {
      * @param fqdn        fqdn of the service
      * @param serviceData data for the service
      */
-    BaseRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException;
+    BaseWebBasedRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException;
 
     static CesServiceFactory getDefault() {
         return new CesDoguServiceFactory();

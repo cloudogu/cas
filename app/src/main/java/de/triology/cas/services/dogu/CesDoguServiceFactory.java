@@ -9,8 +9,8 @@ public class CesDoguServiceFactory implements CesServiceFactory {
 
     public static final String SERVICE_CAS_IDENTIFIER = "cas";
 
-    public CasRegisteredService createCASService(long id, String fqdn) {
-        CasRegisteredService casService = new CasRegisteredService();
+    public CesCasRegisteredService createCASService(long id, String fqdn) {
+        CesCasRegisteredService casService = new CesCasRegisteredService();
         casService.setId(id);
         casService.setServiceId(String.format("https://%s(:443)?/cas(/.*)?", generateServiceIdFqdnRegex(fqdn)));
         casService.setName(CesDoguServiceFactory.class.getSimpleName() + " " + SERVICE_CAS_IDENTIFIER);

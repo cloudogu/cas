@@ -1,5 +1,6 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oidc.services.ProxyPolicySetter;
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
 import org.apereo.cas.services.*;
 import org.slf4j.Logger;
@@ -56,12 +57,12 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(BaseRegisteredService service) {
-        var proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy();
-        proxyPolicy.setPattern("^https?://.*");
-        if(service instanceof CasRegisteredService) {
-            var casRegisteredService = (CasRegisteredService)service;
-            casRegisteredService.setProxyPolicy(proxyPolicy);
+        RegisteredServiceProxyPolicy proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.*");
+
+        if(service instanceof ProxyPolicySetter) {
+            ((ProxyPolicySetter)service).setProxyPolicy(proxyPolicy);
         }
+
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
 

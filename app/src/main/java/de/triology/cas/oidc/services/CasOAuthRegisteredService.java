@@ -15,7 +15,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
-public class CasOAuthRegisteredService extends OAuthRegisteredService implements CasModelRegisteredService {
+public class CasOAuthRegisteredService extends OAuthRegisteredService implements CasModelRegisteredService, ProxyPolicySetter {
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
     private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
     private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;

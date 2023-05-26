@@ -1,10 +1,10 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
-import org.apereo.cas.services.OidcRegisteredService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,12 +44,12 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         log.debug("Creating development service...");
 
         try {
-            var factory = new CesOIDCServiceFactory();
+            var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
             var oidcClientName = "cas-oidc-client";
             Map<String, String> attributes = new HashMap<>();
             attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, oidcClientName);
             attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "df0576c3d0b3b449eef75f71894fffe86baa555eba1d52ed18ec324c96025d10");
-            OidcRegisteredService service = (OidcRegisteredService) factory.createNewService(createId(), "", null, new CesServiceData(oidcClientName, factory, attributes));
+            BaseWebBasedRegisteredService service = factory.createNewService(createId(), "", null, new CesServiceData(oidcClientName, factory, attributes));
             service.setName(oidcClientName);
             service.setServiceId(".*");
             addNewService(service);

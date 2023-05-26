@@ -15,11 +15,11 @@ import java.util.Map;
 public class CesOidcServiceFactoryTest extends TestCase {
 
     /**
-     * Test for {@link CesOIDCServiceFactory#createNewService(long, String, URI, CesServiceData)}
+     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
      */
     public void testCreateNewService_noAttributes() {
         // given
-        CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, null);
 
         try {
@@ -34,11 +34,11 @@ public class CesOidcServiceFactoryTest extends TestCase {
     }
 
     /**
-     * Test for {@link CesOIDCServiceFactory#createNewService(long, String, URI, CesServiceData)}
+     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
      */
     public void testCreateNewService_noClientID() {
         // given
-        CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
@@ -54,13 +54,13 @@ public class CesOidcServiceFactoryTest extends TestCase {
     }
 
     /**
-     * Test for {@link CesOIDCServiceFactory#createNewService(long, String, URI, CesServiceData)}
+     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
      */
     public void testCreateNewService_noClientSecret() {
         // given
-        CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
-        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
         try {
@@ -75,20 +75,20 @@ public class CesOidcServiceFactoryTest extends TestCase {
     }
 
     /**
-     * Test for {@link CesOIDCServiceFactory#createNewService(long, String, URI, CesServiceData)}
+     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
      */
     public void testCreateNewService_emptyLogoutURI() throws CesServiceCreationException {
         // given
-        CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
 
         String fqdn = "192.168.56.2";
         Map<String, String> attributes = new HashMap<>();
-        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
-        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
         // when
-        OidcRegisteredService service = (OidcRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
+        CasOidcRegisteredService service = (CasOidcRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
 
         // then
         verifyService(service);
@@ -96,21 +96,21 @@ public class CesOidcServiceFactoryTest extends TestCase {
     }
 
     /**
-     * Test for {@link CesOIDCServiceFactory#createNewService(long, String, URI, CesServiceData)}
+     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
      */
     public void testCreateNewService_givenLogoutURI() throws CesServiceCreationException {
         // given
-        CesOIDCServiceFactory factory = new CesOIDCServiceFactory();
+        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
 
         String fqdn = "192.168.56.2";
         URI logoutUri = URI.create("/api/auth/oidc/logout");
         Map<String, String> attributes = new HashMap<>();
-        attributes.put(CesOIDCServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
+        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
         // when
-        OidcRegisteredService service = (OidcRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
+        CasOidcRegisteredService service = (CasOidcRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
 
         // then
         verifyService(service);
@@ -119,11 +119,11 @@ public class CesOidcServiceFactoryTest extends TestCase {
 
     private void verifyService(RegisteredService service) {
         assertEquals(1, service.getId());
-        assertEquals("CesOIDCServiceFactory oidcClient", service.getName());
+        assertEquals("CesOAuthServiceFactory oidcClient", service.getName());
         assertEquals("https://((?i)192\\.168\\.56\\.2)(:443)?/oidcClient(/.*)?", service.getServiceId());
 
-        assertTrue(service instanceof OidcRegisteredService);
-        OidcRegisteredService oidcService = (OidcRegisteredService) service;
+        assertTrue(service instanceof CasOidcRegisteredService);
+        CasOidcRegisteredService oidcService = (CasOidcRegisteredService) service;
         assertEquals("[application/json, code]", oidcService.getSupportedResponseTypes().toString());
         assertEquals("[authorization_code]", oidcService.getSupportedGrantTypes().toString());
         assertEquals("superID", oidcService.getClientId());

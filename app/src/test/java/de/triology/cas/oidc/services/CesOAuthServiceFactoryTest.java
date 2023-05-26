@@ -32,13 +32,13 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateEmptyService() {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
 
         // when
         OAuthRegisteredService service = factory.createEmptyService();
 
         // then
-        assertTrue(service != null);
+        assertNotNull(service);
     }
 
     /**
@@ -46,7 +46,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noAttributes() {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
         CesServiceData serviceData = new CesServiceData("clientName", factory, null);
 
         try {
@@ -65,7 +65,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientID() {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
 
@@ -85,7 +85,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientSecret() {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
@@ -106,7 +106,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_emptyLogoutURI() throws CesServiceCreationException {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
 
         String fqdn = "192.168.56.2";
         Map<String, String> attributes = new HashMap<>();
@@ -127,7 +127,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_givenLogoutURI() throws CesServiceCreationException {
         // given
-        CesOAuthServiceFactory factory = new CesOAuthServiceFactory();
+        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
 
         String fqdn = "192.168.56.2";
         URI logoutUri = URI.create("/api/auth/oidc/logout");

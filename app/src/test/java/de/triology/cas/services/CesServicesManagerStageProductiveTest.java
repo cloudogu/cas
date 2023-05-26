@@ -1,7 +1,8 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oidc.services.CasOAuthRegisteredService;
+import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.Registry.DoguChangeListener;
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
@@ -26,8 +27,8 @@ public class CesServicesManagerStageProductiveTest {
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME = "fully/qualified";
     private static final String EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX = CesDoguServiceFactory.generateServiceIdFqdnRegex("fully/qualified");
     private static final CesDoguServiceFactory doguServiceFactory = new CesDoguServiceFactory();
-    private static final CesOAuthServiceFactory oAuthServiceFactory = new CesOAuthServiceFactory();
-    private static final CesOIDCServiceFactory oidcServiceFactory = new CesOIDCServiceFactory();
+    private static final CesOAuthServiceFactory<CasOAuthRegisteredService> oAuthServiceFactory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+    private static final CesOAuthServiceFactory<CasOidcRegisteredService> oidcServiceFactory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
     private static final CesServiceData EXPECTED_SERVICE_DATA_1 = new CesServiceData("nexus", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_DATA_2 = new CesServiceData("smeagol", doguServiceFactory);
     private static final CesServiceData EXPECTED_SERVICE_CAS = new CesServiceData("cas", doguServiceFactory);

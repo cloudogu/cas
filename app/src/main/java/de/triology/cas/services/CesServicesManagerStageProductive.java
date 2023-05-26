@@ -1,7 +1,8 @@
 package de.triology.cas.services;
 
+import de.triology.cas.oidc.services.CasOAuthRegisteredService;
+import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.oidc.services.CesOIDCServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import org.apereo.cas.services.CasRegisteredService;
@@ -27,8 +28,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private final Registry registry;
     private final List<CesServiceData> persistentServices;
 
-    public final CesOAuthServiceFactory oAuthServiceFactory;
-    public final CesOIDCServiceFactory oidcServiceFactory;
+    public final CesOAuthServiceFactory<CasOAuthRegisteredService> oAuthServiceFactory;
+    public final CesOAuthServiceFactory<CasOidcRegisteredService> oidcServiceFactory;
     public final CesDoguServiceFactory doguServiceFactory;
 
     private boolean initialized = false;
@@ -38,8 +39,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();
-        this.oAuthServiceFactory = new CesOAuthServiceFactory();
-        this.oidcServiceFactory = new CesOIDCServiceFactory();
+        this.oAuthServiceFactory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+        this.oidcServiceFactory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
     }
 
     /**

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.services.*;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -15,7 +14,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
-public class CasOidcRegisteredService extends OidcRegisteredService implements CasModelRegisteredService {
+public class CasOidcRegisteredService extends OidcRegisteredService implements CasModelRegisteredService, ProxyPolicySetter {
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
     private RegisteredServiceProxyTicketExpirationPolicy proxyTicketExpirationPolicy;
     private RegisteredServiceProxyGrantingTicketExpirationPolicy proxyGrantingTicketExpirationPolicy;
