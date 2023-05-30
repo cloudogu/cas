@@ -86,12 +86,11 @@ public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements
             throw new CesServiceCreationException("Cannot create service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH);
         }
 
-        String serviceId = String.format("https://%s(:443)?/%s(/.*)?", CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn), serviceData.getName());
+        String serviceId = String.format("https://%s/%s%s", fqdn, serviceData.getName(), serviceData.getName().endsWith("/")? "" : "/");
+        String logoutUri = null;
         if (casLogoutUri != null) {
-            String logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutUri);
-            return createOAUTHClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
-        } else {
-            return createOAUTHClientService(id, null, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+            logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutUri);
         }
+        return createOAUTHClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
     }
 }

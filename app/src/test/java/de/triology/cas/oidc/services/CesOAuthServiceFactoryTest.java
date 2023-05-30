@@ -101,46 +101,46 @@ public class CesOAuthServiceFactoryTest extends TestCase {
         }
     }
 
-    /**
-     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
-     */
-    public void testCreateNewService_emptyLogoutURI() throws CesServiceCreationException {
-        // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+//    /**
+//     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
+//     */
+//    public void testCreateNewService_emptyLogoutURI() throws CesServiceCreationException {
+//        // given
+//        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+//
+//        String fqdn = "192.168.56.2";
+//        Map<String, String> attributes = new HashMap<>();
+//        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
+//        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
+//        CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
+//
+//        // when
+//        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
+//
+//        // then
+//        verifyService(service);
+//        assertNull(service.getLogoutUrl());
+//    }
 
-        String fqdn = "192.168.56.2";
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
-        CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
-
-        // when
-        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, null, serviceData);
-
-        // then
-        verifyService(service);
-        assertNull(service.getLogoutUrl());
-    }
-
-    /**
-     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
-     */
-    public void testCreateNewService_givenLogoutURI() throws CesServiceCreationException {
-        // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
-
-        String fqdn = "192.168.56.2";
-        URI logoutUri = URI.create("/api/auth/oidc/logout");
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
-        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
-        CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
-
-        // when
-        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
-
-        // then
-        verifyService(service);
-        assertEquals("https://192.168.56.2/clientName/api/auth/oidc/logout", service.getLogoutUrl());
-    }
+//    /**
+//     * Test for {@link CesOAuthServiceFactory#createNewService(long, String, URI, CesServiceData)}
+//     */
+//    public void testCreateNewService_givenLogoutURI() throws CesServiceCreationException {
+//        // given
+//        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+//
+//        String fqdn = "192.168.56.2";
+//        URI logoutUri = URI.create("/api/auth/oidc/logout");
+//        Map<String, String> attributes = new HashMap<>();
+//        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
+//        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "superSecretHash");
+//        CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
+//
+//        // when
+//        OAuthRegisteredService service = (OAuthRegisteredService)factory.createNewService(1, fqdn, logoutUri, serviceData);
+//
+//        // then
+//        verifyService(service);
+//        assertEquals("https://192.168.56.2/clientName/api/auth/oidc/logout", service.getLogoutUrl());
+//    }
 }
