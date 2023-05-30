@@ -1,22 +1,15 @@
 package de.triology.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import mousio.etcd4j.EtcdClient;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ChainingServicesManager;
-import org.apereo.cas.services.DefaultChainingServicesManager;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerExecutionPlanConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apereo.cas.services.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,8 +19,8 @@ import java.util.Map;
 @Configuration("CesServicesSpringConfiguration")
 @ComponentScan("de.triology.cas.services")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CesServicesSpringConfiguration implements ServicesManagerExecutionPlanConfigurer {
-    protected static final Logger LOG = LoggerFactory.getLogger(CesServicesSpringConfiguration.class);
 
     @Value("${ces.services.stage:production}")
     private String stage;
@@ -73,7 +66,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
         EtcdClient etcdClient = createEtcdClient();
         RegistryEtcd doguRegistry = createDoguRegistry(etcdClient);
 
-        LOG.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
+        LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
         var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
         return new CesServicesManager(managerConfig, doguRegistry);

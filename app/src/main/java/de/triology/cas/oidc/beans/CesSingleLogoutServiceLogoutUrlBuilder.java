@@ -1,19 +1,18 @@
 package de.triology.cas.oidc.beans;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
+@Slf4j
 public class CesSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
-    protected static final Logger LOG = LoggerFactory.getLogger(CesSingleLogoutServiceLogoutUrlBuilder.class);
 
     private static final String OAUTH_CLIENT_FRIENDLY_NAME = "OAuth2 Client";
 

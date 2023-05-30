@@ -1,13 +1,11 @@
 package de.triology.cas.oidc.services;
 
 import de.triology.cas.services.CesServiceData;
-import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.dogu.CesServiceFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.function.Supplier;
@@ -15,11 +13,11 @@ import java.util.function.Supplier;
 /**
  * This factory is responsible to create and to configure new OAuth services.
  */
+@Slf4j
 public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements CesServiceFactory {
 
     private final Supplier<T> supplier;
 
-    protected static final Logger LOG = LoggerFactory.getLogger(CesOAuthServiceFactory.class);
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_ID = "oauth_client_id";
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH = "oauth_client_secret";
 
@@ -65,8 +63,8 @@ public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements
         service.setBypassApprovalPrompt(true);
 
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
-        LOG.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
-        LOG.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
+        LOGGER.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
+        LOGGER.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
         return service;
     }
 

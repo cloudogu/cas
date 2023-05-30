@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.util.LoggingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -18,18 +16,18 @@ import java.nio.charset.StandardCharsets;
  * but omits service ports
  */
 @Getter
+@Slf4j
 public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(CesServiceMatchingStrategy.class);
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {
         try {
             val thisUrl = removePortFromUrl(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8));
             val serviceUrl = removePortFromUrl(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
 
-            LOG.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+            LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);
         } catch (final Exception e) {
-            LoggingUtils.error(LOG, e);
+            LoggingUtils.error(LOGGER, e);
         }
         return false;
     }

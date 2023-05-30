@@ -1,13 +1,12 @@
 package de.triology.cas.limiting;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,9 +24,9 @@ import java.util.stream.Collectors;
  * Has the ability to remove locked IPs after a certain period of time.
  */
 @Getter
+@Slf4j
 public class CesThrottlingInterceptorAdapter
         implements ThrottledSubmissionHandlerInterceptor, AsyncHandlerInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(CesThrottlingInterceptorAdapter.class);
 
     /**
      * Throttled login attempt action code used to tag the attempt in audit records.
@@ -104,13 +103,13 @@ public class CesThrottlingInterceptorAdapter
     public final boolean preHandle(final HttpServletRequest request,
                                    final HttpServletResponse response, final Object o) throws Exception {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOG.trace("Letting the request through given http method is [{}]", request.getMethod());
+            LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
             return true;
         }
 
         boolean throttled = isHostLocked();
         if (throttled) {
-            LOG.warn("Throttling submission from [{}]. The host is locked and cannot send any requests. " +
+            LOGGER.warn("Throttling submission from [{}]. The host is locked and cannot send any requests. " +
                     "More than [{}] failed login attempts within [{}] seconds.", request.getRemoteAddr(), max_number, failure_store_time);
             return throttledRequestResponseHandler.handle(request, response);
         }
@@ -121,16 +120,16 @@ public class CesThrottlingInterceptorAdapter
     public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                  final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
-            LOG.trace("Skipping authentication throttling for requests other than POST");
+            LOGGER.trace("Skipping authentication throttling for requests other than POST");
             return;
         }
 
         val recordEvent = shouldResponseBeRecordedAsFailure(response);
         if (recordEvent) {
-            LOG.debug("Recording submission failure for [{}]", request.getRequestURI());
+            LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         } else {
-            LOG.trace("Skipping to record submission failure for [{}] with response status [{}]",
+            LOGGER.trace("Skipping to record submission failure for [{}] with response status [{}]",
                     request.getRequestURI(), response.getStatus());
         }
     }
@@ -153,7 +152,7 @@ public class CesThrottlingInterceptorAdapter
         invalidateSubmissionDataIfRequired(hostSubmissionData);
 
         // record failed submission
-        LOG.debug("Recording submission failure [{}]", hostIdentifier);
+        LOGGER.debug("Recording submission failure [{}]", hostIdentifier);
         hostSubmissionData.recordFailedSubmission(now);
 
         // lock the host when necessary
@@ -162,8 +161,8 @@ public class CesThrottlingInterceptorAdapter
 
     @Override
     public void release() {
-        LOG.info("Beginning audit cleanup...");
-        LOG.info("Before:" + submissionIpMap);
+        LOGGER.info("Beginning audit cleanup...");
+        LOGGER.info("Before:" + submissionIpMap);
         this.submissionIpMap.entrySet().removeIf(entry -> {
             CesSubmissionListData data = entry.getValue();
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
@@ -183,8 +182,8 @@ public class CesThrottlingInterceptorAdapter
                 return true;
             }
         });
-        LOG.info("After:" + submissionIpMap);
-        LOG.debug("Done decrementing count for throttler.");
+        LOGGER.info("After:" + submissionIpMap);
+        LOGGER.debug("Done decrementing count for throttler.");
     }
 
     @Override

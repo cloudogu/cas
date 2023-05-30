@@ -2,9 +2,8 @@ package de.triology.cas.services;
 
 import de.triology.cas.oidc.services.ProxyPolicySetter;
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementations must initialize their registered services by implementing the template method
  * {@link #initRegisteredServices()}.
  */
+@Slf4j
 abstract class CesServicesManagerStage {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CesServiceManagerConfiguration managerConfig;
 
@@ -70,7 +69,7 @@ abstract class CesServicesManagerStage {
             configureOidcDelegationService(service);
         }
 
-        log.debug("Adding new service to service manager {}", service);
+        LOGGER.debug("Adding new service to service manager {}", service);
         registeredServices.put(service.getId(), service);
     }
 

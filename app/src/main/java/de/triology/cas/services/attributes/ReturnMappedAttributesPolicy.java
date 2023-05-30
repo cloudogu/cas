@@ -1,10 +1,9 @@
 package de.triology.cas.services.attributes;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +18,8 @@ import java.util.TreeMap;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@Slf4j
 public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final Logger LOG = LoggerFactory.getLogger(ReturnMappedAttributesPolicy.class);
 
     private List<String> allowedAttributes;
     private Map<String, String> attributesMappingRules;
@@ -56,12 +55,12 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
                 .stream()
                 .filter(resolvedAttributes::containsKey)
                 .forEach(attr -> {
-                    LOG.debug("Found attribute [{}] in the list of allowed attributes", attr);
+                    LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
                     attributesToRelease.put(attr, resolvedAttributes.get(attr));
                 });
 
 
-        LOG.debug("Attributes to release [{}]", resolvedAttributes);
+        LOGGER.debug("Attributes to release [{}]", resolvedAttributes);
         return attributesToRelease;
     }
 
@@ -75,11 +74,11 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
             return attributes;
         }
 
-        LOG.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
+        LOGGER.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
 
         Map<String, List<Object>> mappedAttributes = new TreeMap<>();
         attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> {
-            LOG.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
+            LOGGER.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
             mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s));
         });
         attributes.keySet().stream().filter(s -> !attributesMappingRules.containsKey(s)).forEach(s -> mappedAttributes.put(s, attributes.get(s)));

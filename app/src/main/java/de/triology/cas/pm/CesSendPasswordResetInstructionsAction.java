@@ -1,5 +1,6 @@
 package de.triology.cas.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditActionResolvers;
@@ -15,12 +16,9 @@ import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.net.URL;
 
 /**
  * Extends the class {@link SendPasswordResetInstructionsAction}.
@@ -31,9 +29,8 @@ import java.net.URL;
  * In order to prevent the CAS from finding out whether a user exists in the system, the method responsible for this
  * has been adapted accordingly.
  */
+@Slf4j
 public class CesSendPasswordResetInstructionsAction extends SendPasswordResetInstructionsAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesSendPasswordResetInstructionsAction.class.getName());
 
     public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver, PasswordResetUrlBuilder passwordResetUrlBuilder) {
         super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder);
