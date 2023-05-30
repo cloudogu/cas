@@ -38,22 +38,11 @@ public class CesOAuthConfiguration {
     }
 
     @Bean
-    @RefreshScope
-    public Authenticator oAuthClientAuthenticator(
-            ObjectProvider<ServicesManager> servicesManager,
-            ObjectProvider<TicketRegistry> ticketRegistry,
-            ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
-            ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-            ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
-            ObjectProvider<OAuth20RequestParameterResolver>  requestParameterResolver,
-            ObjectProvider<OAuth20ClientSecretValidator> clientSecretValidator) {
-        return new CesOAuth20ClientIdClientSecretAuthenticator(servicesManager.getObject(),
-                webApplicationServiceFactory.getObject(),
-                registeredServiceAccessStrategyEnforcer.getObject(),
-                ticketRegistry.getObject(),
-                defaultPrincipalResolver.getObject(),
-                requestParameterResolver.getObject(),
-                clientSecretValidator.getObject());
+    @RefreshScope()
+    public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+        return new CesOAuthClientSecretValidator(oauthRegisteredServiceCipherExecutor);
     }
 
     @Bean
