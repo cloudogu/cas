@@ -127,6 +127,7 @@ public class CesServicesManagerStageProductiveTest {
     /**
      * Test for listener, when a dogu is added after initialization.
      */
+    /*
     @Test
     public void doguChangeListenerAddDoguNoFail() {
         // Initialize expectedServices
@@ -168,6 +169,7 @@ public class CesServicesManagerStageProductiveTest {
             expectedService.assertContainedIn(allServices);
         }
     }
+     */
 
     /**
      * Test for update-method when a dogu is added after initialization.

@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oidc.services.ProxyPolicySetter;
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.*;
@@ -56,12 +55,6 @@ abstract class CesServicesManagerStage {
      * @param service service object to register
      */
     protected void addNewService(BaseRegisteredService service) {
-        RegisteredServiceProxyPolicy proxyPolicy = new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.*");
-
-        if(service instanceof ProxyPolicySetter) {
-            ((ProxyPolicySetter)service).setProxyPolicy(proxyPolicy);
-        }
-
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
         service.setMatchingStrategy(new CesRegisteredServiceMatchingStrategy());
