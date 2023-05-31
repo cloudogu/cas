@@ -1,11 +1,11 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
+import org.apereo.cas.services.OidcRegisteredService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ class CesServicesManagerStageDevelopment extends CesServicesManagerStage {
         LOGGER.debug("Creating development service...");
 
         try {
-            var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+            var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
             var oidcClientName = "cas-oidc-client";
             Map<String, String> attributes = new HashMap<>();
             attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, oidcClientName);

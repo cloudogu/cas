@@ -32,7 +32,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateEmptyService() {
         // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+        CesOAuthServiceFactory<OAuthRegisteredService> factory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
 
         // when
         OAuthRegisteredService service = factory.createEmptyService();
@@ -46,7 +46,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noAttributes() {
         // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+        CesOAuthServiceFactory<OAuthRegisteredService> factory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
         CesServiceData serviceData = new CesServiceData("clientName", factory, null);
 
         try {
@@ -65,7 +65,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientID() {
         // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+        CesOAuthServiceFactory<OAuthRegisteredService> factory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);
 
@@ -85,7 +85,7 @@ public class CesOAuthServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientSecret() {
         // given
-        CesOAuthServiceFactory<CasOAuthRegisteredService> factory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
+        CesOAuthServiceFactory<OAuthRegisteredService> factory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
         CesServiceData serviceData = new CesServiceData("clientName", factory, attributes);

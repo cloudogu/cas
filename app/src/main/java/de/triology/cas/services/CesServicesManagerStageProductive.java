@@ -1,12 +1,12 @@
 package de.triology.cas.services;
 
-import de.triology.cas.oidc.services.CasOAuthRegisteredService;
-import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private final Registry registry;
     private final List<CesServiceData> persistentServices;
 
-    public final CesOAuthServiceFactory<CasOAuthRegisteredService> oAuthServiceFactory;
-    public final CesOAuthServiceFactory<CasOidcRegisteredService> oidcServiceFactory;
+    public final CesOAuthServiceFactory<OAuthRegisteredService> oAuthServiceFactory;
+    public final CesOAuthServiceFactory<OidcRegisteredService> oidcServiceFactory;
     public final CesDoguServiceFactory doguServiceFactory;
 
     private boolean initialized = false;
@@ -40,8 +40,8 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
         this.registry = registry;
         this.persistentServices = new ArrayList<>();
         this.doguServiceFactory = new CesDoguServiceFactory();
-        this.oAuthServiceFactory = new CesOAuthServiceFactory<>(CasOAuthRegisteredService::new);
-        this.oidcServiceFactory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        this.oAuthServiceFactory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
+        this.oidcServiceFactory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
     }
 
     /**

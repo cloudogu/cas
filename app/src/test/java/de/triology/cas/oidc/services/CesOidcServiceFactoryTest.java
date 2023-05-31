@@ -3,9 +3,7 @@ package de.triology.cas.oidc.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import junit.framework.TestCase;
-import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
 import java.net.URI;
@@ -19,7 +17,7 @@ public class CesOidcServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noAttributes() {
         // given
-        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, null);
 
         try {
@@ -38,7 +36,7 @@ public class CesOidcServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientID() {
         // given
-        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
 
@@ -58,7 +56,7 @@ public class CesOidcServiceFactoryTest extends TestCase {
      */
     public void testCreateNewService_noClientSecret() {
         // given
-        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         Map<String, String> attributes = new HashMap<>();
         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "superID");
         CesServiceData serviceData = new CesServiceData("oidcClient", factory, attributes);
@@ -122,8 +120,8 @@ public class CesOidcServiceFactoryTest extends TestCase {
         assertEquals("CesOAuthServiceFactory oidcClient", service.getName());
         assertEquals("https://((?i)192\\.168\\.56\\.2)(:443)?/oidcClient(/.*)?", service.getServiceId());
 
-        assertTrue(service instanceof CasOidcRegisteredService);
-        CasOidcRegisteredService oidcService = (CasOidcRegisteredService) service;
+        assertTrue(service instanceof OidcRegisteredService);
+        OidcRegisteredService oidcService = (OidcRegisteredService) service;
         assertEquals("[application/json, code]", oidcService.getSupportedResponseTypes().toString());
         assertEquals("[authorization_code]", oidcService.getSupportedGrantTypes().toString());
         assertEquals("superID", oidcService.getClientId());

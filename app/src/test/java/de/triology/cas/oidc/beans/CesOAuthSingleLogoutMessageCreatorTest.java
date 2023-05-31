@@ -1,11 +1,11 @@
 package de.triology.cas.oidc.beans;
 
-import de.triology.cas.oidc.services.CasOidcRegisteredService;
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.CesServiceData;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class CesOAuthSingleLogoutMessageCreatorTest {
         CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator();
 
         // given - data
-        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         Map<String, String> serviceAttributes = new HashMap<>();
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
@@ -60,7 +60,7 @@ public class CesOAuthSingleLogoutMessageCreatorTest {
         CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator();
 
         // given - data
-        var factory = new CesOAuthServiceFactory<>(CasOidcRegisteredService::new);
+        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         Map<String, String> serviceAttributes = new HashMap<>();
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
         serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
