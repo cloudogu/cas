@@ -57,7 +57,6 @@ abstract class CesServicesManagerStage {
     protected void addNewService(BaseRegisteredService service) {
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
-        service.setMatchingStrategy(new CesRegisteredServiceMatchingStrategy());
 
         if (managerConfig.isOidcAuthenticationDelegationEnabled()) {
             configureOidcDelegationService(service);
