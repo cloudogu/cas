@@ -1,6 +1,7 @@
 package de.triology.cas.oidc.services;
 
 import de.triology.cas.services.CesServiceData;
+import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.dogu.CesServiceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -86,11 +87,13 @@ public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements
             throw new CesServiceCreationException("Cannot create service; Cannot find attribute: " + ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH);
         }
 
-        String serviceId = String.format("https://%s/%s%s", fqdn, serviceData.getName(), serviceData.getName().endsWith("/")? "" : "/");
-        String logoutUri = null;
+        String serviceId = String.format("https://%s(:443)?/%s(/.*)?", CesDoguServiceFactory.generateServiceIdFqdnRegex(fqdn), serviceData.getName());
         if (casLogoutUri != null) {
-            logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutUri);
+            String logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutUri);
+            return createOAUTHClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
         }
-        return createOAUTHClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+
+        return createOAUTHClientService(id, null, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+
     }
 }
