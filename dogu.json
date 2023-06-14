@@ -332,15 +332,7 @@
       "Optional": true
     }
   ],
-  "Volumes": [
-    {
-      "Name": "data",
-      "Path": "/var/lib/cas",
-      "Owner": "1000",
-      "Group": "1000",
-      "NeedsBackup": true
-    }
-  ],
+  "Volumes": [],
   "ExposedCommands": [
     {
       "Name": "service-account-create",
