@@ -158,7 +158,7 @@ cas.authn.pm.ldap[0].bind-credential=${cas.authn.ldap[0].bind-credential}
 cas.authn.pm.reset.mail.attribute-name={{ .Config.Get "ldap/attribute_mail"}}
 cas.authn.pm.reset.mail.from={{ .Config.GetOrDefault "mail_sender" "cas.dogu@cloudogu.com"}}
 cas.authn.pm.reset.mail.subject={{ .Config.GetOrDefault "password_management/reset_password_subject" "Reset password"}}
-cas.authn.pm.reset.mail.text={{ .Config.GetOrDefault "password_management/reset_password_text" "Hello!\\n\\nSomeone has just requested to change the login details of your CES account. If it was you, please follow the link below to reset them.\\n%s\\n\\nThis link will expire in 15 minutes.\\n\\nIf you do not wish to reset your credentials, simply ignore this message and nothing will change."}}
+cas.authn.pm.reset.mail.text={{ .Config.GetOrDefault "password_management/reset_password_text" "Hello!\\n\\nSomeone has just requested to change the login details of your CES account. If it was you, please follow the link below to reset them.\\n${url}\\n\\nThis link will expire in 15 minutes.\\n\\nIf you do not wish to reset your credentials, simply ignore this message and nothing will change."}}
 cas.authn.pm.reset.expiration=PT15M
 cas.authn.pm.reset.security-questions-enabled=false
 ########################################################################################################################

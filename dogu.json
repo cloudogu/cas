@@ -77,7 +77,7 @@
     },
     {
       "Name": "password_management/reset_password_text",
-      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with %s",
+      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with ${url}",
       "Optional": true
     },
     {
