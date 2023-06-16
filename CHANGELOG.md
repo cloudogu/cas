@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Update CAS to 6.6.7 (#178)
+- Update CAS to 6.6.8 (#178)
 
 ### Removed
 - Remove /var/lib/cas Volume
