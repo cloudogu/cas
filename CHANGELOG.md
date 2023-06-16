@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v6.6.8-1] - 2023-06-16
 ### Changed
-- Update CAS to 6.6.7 (#178)
+- Update CAS to 6.6.8 (#178)
 
 ### Removed
 - Remove /var/lib/cas Volume
