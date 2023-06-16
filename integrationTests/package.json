@@ -3,7 +3,7 @@
     "@badeball/cypress-cucumber-preprocessor": "^16.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
     "@cloudogu/dogu-integration-test-library": "6.0.0",
-    "cypress": "^12.9.0",
+    "cypress": "^12.14.0",
     "@bahmutov/cy-api": "^2.2.4"
   },
   "scripts": {
