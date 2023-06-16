@@ -1,7 +1,7 @@
 const {
     When,
     Then
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 const env = require("@cloudogu/dogu-integration-test-library/lib/environment_variables");
 
 When("the user clicks on the reset password link", function () {
@@ -27,6 +27,7 @@ Then("CAS shows a confirmation page about a sent email", function () {
     if (browserLanguage.startsWith("en") ) {
         cy.get("h2").contains("Password Reset Instructions Sent Successfully")
     } else if (browserLanguage.startsWith("de")) {
+        console.log(browserLanguage);
         cy.get("h2").contains("Anweisungen zum Zurücksetzen des Passworts erfolgreich versandt")
     } else {
         throw new Error("Test fails, unknown browser language")

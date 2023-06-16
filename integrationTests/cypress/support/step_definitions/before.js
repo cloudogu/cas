@@ -1,6 +1,6 @@
 const {
     Before,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 
 /**

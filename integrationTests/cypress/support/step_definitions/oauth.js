@@ -2,7 +2,7 @@ const {
     Given,
     When,
     Then
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
 
 const CasServiceTicketPattern = "OC-[0-9]*-[a-zA-Z0-9-]*"
@@ -121,7 +121,7 @@ Then("cas shows that the service is not authorized to access this endpoint", fun
 });
 
 Then("an invalid request respond is send", function () {
-    assert(JSON.stringify(latestBody) === '{"error":"invalid_request"}', "body should contain invalid request")
+    assert(JSON.stringify(latestBody) === '{"error":"invalid_grant"}', "body should contain invalid request")
     resetData()
 });
 

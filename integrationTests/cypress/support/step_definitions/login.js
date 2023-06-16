@@ -2,7 +2,7 @@ const {
     Given,
     When,
     Then
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
 
 Given("the browser shows the CAS login page", function () {

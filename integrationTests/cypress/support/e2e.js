@@ -1,4 +1,4 @@
-// Loads all commands from the dogu integration library into this project
+// Loads all commands from the dogu e2e library into this project
 const doguTestLibrary = require('@cloudogu/dogu-integration-test-library')
 doguTestLibrary.registerCommands()
 

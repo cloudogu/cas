@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update CAS to 6.6.7 (#178)
 
+### Removed
+- Remove /var/lib/cas Volume
+
 ## [v6.5.9-1] - 2023-05-12
 ### Changed
 - Upgrade cas to 6.5.9.1 (#175)
