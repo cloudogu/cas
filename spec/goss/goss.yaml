@@ -70,7 +70,7 @@ user:
     gid: 1000
     groups:
     - cas
-    home: /var/lib/cas
+    home: /home/cas
     shell: /bin/bash
 group:
   cas:
