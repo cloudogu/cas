@@ -20,7 +20,7 @@ public class CesServiceMatchingStrategyTest {
         Service service = new TestService(serviceUrl);
         String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.2:443/scm/api/v2/cas/auth/", StandardCharsets.UTF_8.name());
         Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy(null);
+        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
 
         // when
         boolean result = strategy.matches(service, serviceToMatch);
@@ -36,7 +36,7 @@ public class CesServiceMatchingStrategyTest {
         Service service = new TestService(serviceUrl);
         String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.1:443/scm/auth", StandardCharsets.UTF_8.name());
         Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy(null);
+        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
 
         // when
         boolean result = strategy.matches(service, serviceToMatch);
@@ -52,7 +52,7 @@ public class CesServiceMatchingStrategyTest {
         Service service = new TestService(serviceUrl);
         String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.1/scm/auth", StandardCharsets.UTF_8.name());
         Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy(null);
+        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
 
         // when
         boolean result = strategy.matches(service, serviceToMatch);

@@ -6,7 +6,7 @@ FROM adoptopenjdk/openjdk11:alpine-slim AS builder
 
 RUN mkdir -p /cas-overlay
 COPY ./app/gradle/ /cas-overlay/gradle/
-COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties /cas-overlay/
+COPY ./app/gradlew ./app/settings.gradle ./app/build.gradle ./app/gradle.properties ./app/lombok.config /cas-overlay/
 WORKDIR /cas-overlay
 
 # Cache gradle
@@ -70,7 +70,7 @@ ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
 RUN set -x \
  # create group and user for cas
  && addgroup -S -g 1000 ${GROUP} \
- && adduser -S -h "/var/lib/${USER}" -s /bin/bash -G ${GROUP} -u 1000 ${USER}
+ && adduser -S -s /bin/bash -G ${GROUP} -u 1000 ${USER}
 
 ## copy tomcat \
 COPY --from=tomcat /opt/apache-tomcat-${TOMCAT_VERSION} ${CATALINA_BASE}

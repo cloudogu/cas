@@ -1,7 +1,8 @@
 package de.triology.cas.services;
 
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.services.dogu.ICesServiceFactory;
+import de.triology.cas.services.dogu.CesServiceFactory;
+import lombok.extern.slf4j.Slf4j;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
@@ -12,8 +13,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,8 +29,8 @@ import java.util.concurrent.TimeoutException;
  * <code>/dogu/${name of dogu}/current</code>. In addition, 'cas' has to be in the dependencies of the Dogu.
  * Changes of the <code>/dogu</code> directory can be recognized using {@link #addDoguChangeListener(DoguChangeListener)}.
  */
+@Slf4j
 class RegistryEtcd implements Registry {
-    private final Logger log = LoggerFactory.getLogger(getClass());
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu";
     private final EtcdClient etcd;
@@ -70,8 +69,8 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, ICesServiceFactory factory) {
-        log.debug("Get [{}] service accounts from registry", type);
+    public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, CesServiceFactory factory) {
+        LOGGER.debug("Get [{}] service accounts from registry", type);
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
             return extractServiceAccountClientsByType(nodes, type, factory);
@@ -93,8 +92,8 @@ class RegistryEtcd implements Registry {
      * @param type          the type of service accounts that should be extracted
      * @return a list containing the identifier for all registered service accounts of cas
      */
-    private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, ICesServiceFactory factory) {
-        log.debug("Entered extractServiceAccountClientsByType");
+    private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, CesServiceFactory factory) {
+        LOGGER.debug("Entered extractServiceAccountClientsByType");
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
@@ -121,8 +120,8 @@ class RegistryEtcd implements Registry {
         return serviceDataList;
     }
 
-    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, ICesServiceFactory factory) {
-        log.debug("Entered extractDogusFromDoguRootDir");
+    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, CesServiceFactory factory) {
+        LOGGER.debug("Entered extractDogusFromDoguRootDir");
         List<CesServiceData> doguServices = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
             JSONObject json;
@@ -142,8 +141,8 @@ class RegistryEtcd implements Registry {
     }
 
     @Override
-    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory) {
-        log.debug("Get Dogus from registry");
+    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
+        LOGGER.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
             return extractDogusFromDoguRootDir(nodes, factory);
@@ -158,7 +157,7 @@ class RegistryEtcd implements Registry {
     }
 
     public String getEtcdValueForKey(String key) {
-        log.debug("Get {} from registry", key);
+        LOGGER.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
@@ -175,12 +174,12 @@ class RegistryEtcd implements Registry {
      * @return the value for the given key if present, otherwise an empty string.
      */
     public String getEtcdValueForKeyIfPresent(String key) {
-        log.debug("Get {} from registry", key);
+        LOGGER.debug("Get {} from registry", key);
         try {
             return etcd.get(key).send().get().getNode().getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
-                log.debug("Failed to getEtcdValueForKeyIfPresent: key \"{}\" not found", key);
+                LOGGER.debug("Failed to getEtcdValueForKeyIfPresent: key \"{}\" not found", key);
                 //Valid case if key is not found return an empty string
                 return "";
             } else {
@@ -240,7 +239,7 @@ class RegistryEtcd implements Registry {
             try {
                 while (true) {
                     EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(DOGU_DIR).recursive().waitForChange().send();
-                    log.info("wait for changes under /dogu");
+                    LOGGER.info("wait for changes under /dogu");
                     responsePromise.get();
                     doguChangeListener.onChange();
                 }
@@ -254,7 +253,7 @@ class RegistryEtcd implements Registry {
             try {
                 while (true) {
                     EtcdResponsePromise<EtcdKeysResponse> responsePromise = etcd.getDir(CAS_SERVICE_ACCOUNT_DIR).recursive().waitForChange().send();
-                    log.info("wait for changes under /config/cas/service_accounts");
+                    LOGGER.info("wait for changes under /config/cas/service_accounts");
                     responsePromise.get();
                     doguChangeListener.onChange();
                 }

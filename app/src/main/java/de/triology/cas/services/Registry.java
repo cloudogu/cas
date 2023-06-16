@@ -1,6 +1,6 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.dogu.ICesServiceFactory;
+import de.triology.cas.services.dogu.CesServiceFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -13,7 +13,7 @@ interface Registry {
     /**
      * @return an array of {@link CesServiceData} containing the information for all installed dogus
      */
-    List<CesServiceData> getInstalledDogusWhichAreUsingCAS(ICesServiceFactory factory);
+    List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory);
 
     /**
      * Retrieves all CAS Services Accounts which are currently registered in etcd.
@@ -23,7 +23,7 @@ interface Registry {
      * @return an array of {@link CesServiceData} containing the information for all installed oauth service accounts
      * of the given type
      */
-    List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, ICesServiceFactory factory);
+    List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, CesServiceFactory factory);
 
     /**
      * @return the fully qualified domain name

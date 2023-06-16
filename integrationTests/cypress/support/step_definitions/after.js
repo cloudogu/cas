@@ -1,6 +1,6 @@
 const {
     After,
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 module.exports.register = function () {
     /**

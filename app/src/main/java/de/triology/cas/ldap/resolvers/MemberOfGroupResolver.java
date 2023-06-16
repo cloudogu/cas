@@ -1,10 +1,9 @@
 package de.triology.cas.ldap.resolvers;
 
 import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,9 +13,8 @@ import java.util.Set;
  * have to add the name of the attribute to the additionalAttributes list of
  * {@link CesGroupAwareLdapAuthenticationHandler}.
  */
+@Slf4j
 public class MemberOfGroupResolver implements GroupResolver {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MemberOfGroupResolver.class);
 
     private final String attribute;
 
@@ -26,20 +24,20 @@ public class MemberOfGroupResolver implements GroupResolver {
 
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
-        LOG.trace("resolve groups from ldap attribute {}", attribute);
+        LOGGER.trace("resolve groups from ldap attribute {}", attribute);
         Set<String> groups = new HashSet<>();
         var ldapAttribute = ldapEntry.getAttribute(attribute);
 
-        LOG.trace("ldap-attribute: {}", ldapAttribute);
+        LOGGER.trace("ldap-attribute: {}", ldapAttribute);
 
         if (ldapAttribute != null && !ldapAttribute.isBinary()) {
             for (String value : ldapAttribute.getStringValues()) {
                 String group = normalizeName(value);
-                LOG.trace("added group {} to attribute map", group);
+                LOGGER.trace("added group {} to attribute map", group);
                 groups.add(group);
             }
         } else {
-            LOG.debug("could not find text based group attribute {} at {}", attribute, ldapEntry.getDn());
+            LOGGER.debug("could not find text based group attribute {} at {}", attribute, ldapEntry.getDn());
         }
         return groups;
     }

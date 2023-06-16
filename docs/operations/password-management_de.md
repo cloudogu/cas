@@ -65,7 +65,7 @@ die folgenden Propertys gesetzt werden:
   Default-Wert verwendet.
 * cas.authn.pm.reset.mail.text - gibt den Text der E-Mail an. Dieser Wert kann über den
   etcd-Eintrag `password_management/reset_password_text` konfiguriert werden. Es ist zwingend erforderlich, dass in dem
-  Text ein `%s` als Platzhalter für den Passwort-Zurücksetzen-Link enthalten ist. Umlaute müssen enkodiert angegeben
+  Text ein `${url}` als Platzhalter für den Passwort-Zurücksetzen-Link enthalten ist. Umlaute müssen enkodiert angegeben
   werden. Ist im etcd kein Wert angegeben, wird ein Default-Wert verwendet.
 * cas.authn.pm.reset.expiration - definiert die Dauer für die Gültigkeit des Passwort-Zurücksetzen-Links. Die Angabe
   erfolgt in der `java.time.Duration`-Syntax

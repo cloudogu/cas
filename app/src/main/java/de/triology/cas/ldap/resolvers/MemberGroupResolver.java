@@ -1,10 +1,9 @@
 package de.triology.cas.ldap.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.naming.directory.SearchControls;
 import java.time.Duration;
@@ -15,9 +14,8 @@ import java.util.Set;
 /**
  * Resolves groups by searching the directory server for a member attribute, which contains the dn of the ldap entry.
  */
+@Slf4j
 public class MemberGroupResolver implements GroupResolver {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MemberGroupResolver.class);
 
     private final String baseDN;
     private final SearchControls searchControls;
@@ -40,32 +38,32 @@ public class MemberGroupResolver implements GroupResolver {
     @Override
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         if (StringUtils.isEmpty(searchFilter)) {
-            LOG.trace("skip resolving groups for member, because of missing search filter");
+            LOGGER.trace("skip resolving groups for member, because of missing search filter");
             return Collections.emptySet();
         }
-        LOG.debug("resolve groups for {}", ldapEntry.getDn());
+        LOGGER.debug("resolve groups for {}", ldapEntry.getDn());
         FilterTemplate filter = createFilter(principal, ldapEntry);
         return resolveGroupsByLdapFilter(filter);
     }
 
     private Set<String> resolveGroupsByLdapFilter(FilterTemplate filter) {
-        LOG.trace("resolveGroupsByLdapFilter");
+        LOGGER.trace("resolveGroupsByLdapFilter");
         final SearchResponse response;
         try {
             SearchRequest request = createRequest(filter);
-            LOG.trace("resolveGroupsByLdapFilter - filter: {}", filter);
-            LOG.trace("resolveGroupsByLdapFilter - request: {}", request);
+            LOGGER.trace("resolveGroupsByLdapFilter - filter: {}", filter);
+            LOGGER.trace("resolveGroupsByLdapFilter - request: {}", request);
             response = new SearchOperation(connectionFactory).execute(createRequest(filter));
         } catch (final LdapException e) {
-            LOG.trace("resolveGroupsByLdapFilter - error: {}", e.getMessage());
+            LOGGER.trace("resolveGroupsByLdapFilter - error: {}", e.getMessage());
             throw new RuntimeException("Failed executing LDAP query " + filter, e);
         }
-        LOG.trace("got response {}", response);
-        LOG.trace("got response entries{}", response.getEntries());
+        LOGGER.trace("got response {}", response);
+        LOGGER.trace("got response entries{}", response.getEntries());
         final Set<String> groups = new HashSet<>();
         for (final LdapEntry entry : response.getEntries()) {
             String group = extractGroupName(entry);
-            LOG.trace("added group {} to attribute map", group);
+            LOGGER.trace("added group {} to attribute map", group);
             groups.add(group);
         }
         return groups;

@@ -1,5 +1,6 @@
 package de.triology.cas.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
@@ -9,8 +10,6 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.ldaptive.ConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,9 +24,8 @@ import java.util.Map;
  * As CAS should not exclude any email addresses and the emails should be sent to all email addresses, validation is
  * deactivated. The method responsible for this has been adapted accordingly.
  */
+@Slf4j
 public class CesLdapPasswordManagementService extends LdapPasswordManagementService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CesLdapPasswordManagementService.class.getName());
 
     public CesLdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                             final String issuer,

@@ -1,11 +1,10 @@
 package de.triology.cas.oidc.beans;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,8 +18,8 @@ import java.util.Map;
  * Currently we need the custom renderer to transform the LDAP-Groups
  * into a simplified form consisting only of the groups name.
  */
+@Slf4j
 public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
-    protected static final Logger LOG = LoggerFactory.getLogger(CesOAuthProfileRenderer.class);
 
     /**
      * The group attributes that contains all groups of a user.
@@ -29,7 +28,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
 
     @Override
     public ResponseEntity render(Map<String, Object> model, OAuth20AccessToken accessToken, HttpServletResponse response) {
-        LOG.debug("Using custom profile renderer {}", model);
+        LOGGER.debug("Using custom profile renderer {}", model);
         val userProfile = getRenderedUserProfile(model, accessToken, response);
         return renderProfileForModel(userProfile, accessToken, response);
     }
@@ -59,7 +58,7 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
-        LOG.debug("Before - Profile: {}", model);
+        LOGGER.debug("Before - Profile: {}", model);
         val customModel = new LinkedHashMap<String, Object>();
 
         // Add all entries other than the attributes
@@ -74,14 +73,14 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
             LinkedList<String> newGroups = new LinkedList<>();
             if (attributes.containsKey(modelAttributesGroup)) {
                 Object groupsObject = attributes.get(modelAttributesGroup);
-                LOG.debug("Class of object: {}", groupsObject);
+                LOGGER.debug("Class of object: {}", groupsObject);
                 List<String> groups = (List<String>) groupsObject;
                 groups.forEach(o -> newGroups.add(o));
             }
             attributes.put(modelAttributesGroup, newGroups);
             customModel.put(MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
         }
-        LOG.debug("After - Profile: {}", customModel);
+        LOGGER.debug("After - Profile: {}", customModel);
         return customModel;
     }
 }

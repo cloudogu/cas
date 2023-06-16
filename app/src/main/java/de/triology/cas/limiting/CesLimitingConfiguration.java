@@ -1,10 +1,9 @@
 package de.triology.cas.limiting;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -15,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration("CesLimitingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CesLimitingConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(CesLimitingConfiguration.class);
 
     @Value("${cas.authn.throttle.failure.max_number:0}")
     private long max_number;
@@ -39,11 +38,11 @@ public class CesLimitingConfiguration {
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(ConcurrentHashMap<String, CesSubmissionListData> createCustomThrottleSubmissionMap,
                                                                         ThrottledRequestResponseHandler throttledRequestResponseHandler) {
         if (max_number <= 0 && failure_store_time <= 0) {
-            LOG.debug("Authentication throttling is disabled since no max_number and no failure_store_time is defined");
+            LOGGER.debug("Authentication throttling is disabled since no max_number and no failure_store_time is defined");
             return ThrottledSubmissionHandlerInterceptor.noOp();
         }
 
-        LOG.debug("Activating CES authentication throttling based on IP address. Configuration[MaxNumber:[{}], FailureStoreTime:[{}], LockTime:[{}]]", max_number, failure_store_time, lockTime);
+        LOGGER.debug("Activating CES authentication throttling based on IP address. Configuration[MaxNumber:[{}], FailureStoreTime:[{}], LockTime:[{}]]", max_number, failure_store_time, lockTime);
         return new CesThrottlingInterceptorAdapter(
                 createCustomThrottleSubmissionMap,
                 throttledRequestResponseHandler,

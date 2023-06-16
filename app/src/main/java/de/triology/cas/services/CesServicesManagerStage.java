@@ -1,9 +1,8 @@
 package de.triology.cas.services;
 
 import de.triology.cas.services.attributes.ReturnMappedAttributesPolicy;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementations must initialize their registered services by implementing the template method
  * {@link #initRegisteredServices()}.
  */
+@Slf4j
 abstract class CesServicesManagerStage {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final CesServiceManagerConfiguration managerConfig;
 
@@ -55,15 +54,15 @@ abstract class CesServicesManagerStage {
      *
      * @param service service object to register
      */
-    protected void addNewService(RegexRegisteredService service) {
-        service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.*"));
+    protected void addNewService(BaseRegisteredService service) {
         service.setEvaluationOrder((int) service.getId());
         service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
+
         if (managerConfig.isOidcAuthenticationDelegationEnabled()) {
             configureOidcDelegationService(service);
         }
 
-        log.debug("Adding new service to service manager {}", service);
+        LOGGER.debug("Adding new service to service manager {}", service);
         registeredServices.put(service.getId(), service);
     }
 
@@ -72,7 +71,7 @@ abstract class CesServicesManagerStage {
      *
      * @param service The service that should be configured
      */
-    private void configureOidcDelegationService(RegexRegisteredService service) {
+    private void configureOidcDelegationService(BaseRegisteredService service) {
         if (managerConfig.getOidcPrincipalsAttribute() != null && !managerConfig.getOidcPrincipalsAttribute().isEmpty()) {
             var principalProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
             principalProvider.setUsernameAttribute(managerConfig.getOidcPrincipalsAttribute());

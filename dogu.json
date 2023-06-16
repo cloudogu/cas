@@ -77,7 +77,7 @@
     },
     {
       "Name": "password_management/reset_password_text",
-      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with %s",
+      "Description": "Specifies the text for the password reset email. Note: The password reset link must be inserted mandatory with ${url}",
       "Optional": true
     },
     {
@@ -332,15 +332,7 @@
       "Optional": true
     }
   ],
-  "Volumes": [
-    {
-      "Name": "data",
-      "Path": "/var/lib/cas",
-      "Owner": "1000",
-      "Group": "1000",
-      "NeedsBackup": true
-    }
-  ],
+  "Volumes": [],
   "ExposedCommands": [
     {
       "Name": "service-account-create",

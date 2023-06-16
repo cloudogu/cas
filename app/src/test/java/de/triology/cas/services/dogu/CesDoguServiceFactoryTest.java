@@ -2,7 +2,7 @@ package de.triology.cas.services.dogu;
 
 import de.triology.cas.services.CesServiceData;
 import junit.framework.TestCase;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,7 +55,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
         CesServiceData data = new CesServiceData(serviceName, factory);
 
         // when
-        RegexRegisteredService service = factory.createNewService(id, fqdn, logoutProperty, data);
+        CasRegisteredService service = factory.createNewService(id, fqdn, logoutProperty, data);
 
         // then
         assertEquals(1, service.getId());
@@ -78,7 +78,7 @@ public class CesDoguServiceFactoryTest extends TestCase {
         CesServiceData data = new CesServiceData(serviceName, factory);
 
         // when
-        RegexRegisteredService service = factory.createNewService(id, fqdn, null, data);
+        CasRegisteredService service = factory.createNewService(id, fqdn, null, data);
 
         // then
         assertEquals(1, service.getId());

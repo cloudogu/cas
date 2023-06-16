@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Set;
