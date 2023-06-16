@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -29,9 +30,11 @@ public class PmConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory) {
+            final TicketFactory ticketFactory,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
+            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
 
         return new CesSendPasswordResetInstructionsAction(casProperties, communicationsManager,
-                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver);
+                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver, passwordResetUrlBuilder);
     }
 }

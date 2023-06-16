@@ -1,6 +1,10 @@
-// Loads all steps from the dogu integration library into this project
+// Loads all steps from the dogu e2e library into this project
 const doguTestLibrary = require('@cloudogu/dogu-integration-test-library')
 doguTestLibrary.registerSteps()
+const {
+    When,
+    Then,
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 When("the user clicks the dogu logout button", function () {
     // a ui button does not exist -> use backlog

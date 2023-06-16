@@ -1,7 +1,7 @@
 const {
     When,
     Then
-} = require("cypress-cucumber-preprocessor/steps");
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 Then("CAS prompts the test user to change his password", function () {
     cy.get("body").get("div[data-testid=\"login-reset-pw-msg\"]")

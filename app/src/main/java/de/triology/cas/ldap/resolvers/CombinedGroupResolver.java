@@ -1,9 +1,8 @@
 package de.triology.cas.ldap.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,8 +12,8 @@ import java.util.Set;
 /**
  * Combines the result of multiple {@link GroupResolver}.
  */
+@Slf4j
 public class CombinedGroupResolver implements GroupResolver {
-    private static final Logger LOG = LoggerFactory.getLogger(CombinedGroupResolver.class);
     private final List<GroupResolver> groupResolvers;
 
     /**
@@ -30,8 +29,8 @@ public class CombinedGroupResolver implements GroupResolver {
     public Set<String> resolveGroups(Principal principal, LdapEntry ldapEntry) {
         Set<String> groups = new HashSet<>();
         for (GroupResolver resolver : groupResolvers) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("resolve groups from {} with {}", principal.getId(), resolver.getClass());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("resolve groups from {} with {}", principal.getId(), resolver.getClass());
             }
             groups.addAll(resolver.resolveGroups(principal, ldapEntry));
         }

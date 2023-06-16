@@ -3,30 +3,36 @@ package de.triology.cas.oidc.services;
 import de.triology.cas.services.CesServiceData;
 import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
-import de.triology.cas.services.dogu.ICesServiceFactory;
-import org.apereo.cas.services.RegexRegisteredService;
+import de.triology.cas.services.dogu.CesServiceFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.function.Supplier;
 
 /**
  * This factory is responsible to create and to configure new OAuth services.
  */
-public class CesOAuthServiceFactory implements ICesServiceFactory {
+@Slf4j
+public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements CesServiceFactory {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(CesOAuthServiceFactory.class);
+    private final Supplier<T> supplier;
+
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_ID = "oauth_client_id";
     public static final String ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH = "oauth_client_secret";
+
+    public CesOAuthServiceFactory(Supplier<T> supplier) {
+        this.supplier = supplier;
+    }
 
     /**
      * Creates a new empty service.
      *
      * @return the created service.
      */
-    protected OAuthRegisteredService createEmptyService() {
-        return new OAuthRegisteredService();
+    protected T createEmptyService() {
+        return this.supplier.get();
     }
 
     /**
@@ -41,7 +47,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
      * @param clientSecretHash secret key from the OAUTH application used for authentication
      * @return a new client server for the given information of the OAUTH application
      */
-    protected OAuthRegisteredService createOAUTHClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
+    protected T createOAUTHClientService(long id, String logoutURI, String name, String serviceID, String clientID, String clientSecretHash) {
         var service = createEmptyService();
         service.setId(id);
         service.setName(name);
@@ -49,6 +55,7 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         if (logoutURI != null) {
             service.setLogoutUrl(logoutURI);
         }
+
         service.getSupportedResponseTypes().add("application/json");
         service.getSupportedResponseTypes().add("code");
         service.getSupportedGrantTypes().add("authorization_code");
@@ -57,13 +64,13 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         service.setBypassApprovalPrompt(true);
 
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
-        LOG.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
-        LOG.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
+        LOGGER.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);
+        LOGGER.debug("Partition: {}", service.getSingleSignOnParticipationPolicy());
         return service;
     }
 
     @Override
-    public RegexRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException {
+    public BaseWebBasedRegisteredService createNewService(long id, String fqdn, URI casLogoutUri, CesServiceData serviceData) throws CesServiceCreationException {
         if (serviceData.getAttributes() == null) {
             throw new CesServiceCreationException("Cannot create service; Cannot find attributes");
         }
@@ -84,8 +91,9 @@ public class CesOAuthServiceFactory implements ICesServiceFactory {
         if (casLogoutUri != null) {
             String logoutUri = String.format("https://%s/%s%s", fqdn, serviceData.getName(), casLogoutUri);
             return createOAUTHClientService(id, logoutUri, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
-        } else {
-            return createOAUTHClientService(id, null, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
         }
+
+        return createOAUTHClientService(id, null, serviceData.getIdentifier(), serviceId, clientID, clientSecret);
+
     }
 }

@@ -5,6 +5,7 @@ import de.triology.cas.ldap.resolvers.CombinedGroupResolver;
 import de.triology.cas.ldap.resolvers.GroupResolver;
 import de.triology.cas.ldap.resolvers.MemberGroupResolver;
 import de.triology.cas.ldap.resolvers.MemberOfGroupResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
@@ -23,8 +24,6 @@ import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -39,8 +38,8 @@ import java.util.Map;
 
 @Configuration("GroupResolverConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(LdapConfiguration.class);
 
     @NotNull
     @Value("${cas.authn.ldap[0].search-filter}")
@@ -93,7 +92,7 @@ public class LdapConfiguration {
 
     private Multimap<String, Object> createPrincipalAttributes(LdapAuthenticationProperties ldapProperties) {
         Multimap<String, Object> multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(ldapProperties.getPrincipalAttributeList());
-        LOG.debug("Created and mapped principal attributes [{}] ...", multiMapAttributes);
+        LOGGER.debug("Created and mapped principal attributes [{}] ...", multiMapAttributes);
 
         return multiMapAttributes;
     }
@@ -101,7 +100,7 @@ public class LdapConfiguration {
     private Authenticator createAuthenticator(LdapAuthenticationProperties ldapProperties,
                                               Multimap<String, Object> multiMapAttributes) {
         Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(ldapProperties);
-        LOG.debug("Ldap authenticator configured with return attributes [{}] and baseDn [{}]",
+        LOGGER.debug("Ldap authenticator configured with return attributes [{}] and baseDn [{}]",
                 multiMapAttributes.keySet(), ldapProperties.getBaseDn());
 
         return authenticator;
@@ -157,24 +156,24 @@ public class LdapConfiguration {
 
     private void configureCredentialCriteria(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isNotBlank(ldapProperties.getCredentialCriteria())) {
-            LOG.debug("Ldap authentication is filtering credentials by [{}]", ldapProperties.getCredentialCriteria());
+            LOGGER.debug("Ldap authentication is filtering credentials by [{}]", ldapProperties.getCredentialCriteria());
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(ldapProperties.getCredentialCriteria()));
         }
     }
 
     private void configurePrincipalAttributeId(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties) {
         if (StringUtils.isBlank(ldapProperties.getPrincipalAttributeId())) {
-            LOG.debug("No principal id attribute is found for LDAP authentication");
+            LOGGER.debug("No principal id attribute is found for LDAP authentication");
         } else {
             handler.setPrincipalIdAttribute(ldapProperties.getPrincipalAttributeId());
-            LOG.debug("Using principal id attribute [{}] for LDAP authentication", ldapProperties.getPrincipalAttributeId());
+            LOGGER.debug("Using principal id attribute [{}] for LDAP authentication", ldapProperties.getPrincipalAttributeId());
         }
     }
 
     private void configurePasswordPolicy(LdapAuthenticationHandler handler, LdapAuthenticationProperties ldapProperties, Authenticator authenticator, Multimap<String, Object> multiMapAttributes) {
         LdapPasswordPolicyProperties passwordPolicy = ldapProperties.getPasswordPolicy();
         if (passwordPolicy.isEnabled()) {
-            LOG.debug("Password policy is enabled. Constructing password policy configuration");
+            LOGGER.debug("Password policy is enabled. Constructing password policy configuration");
             PasswordPolicyContext cfg = LdapUtils.createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
             handler.setPasswordPolicyConfiguration(cfg);
         }

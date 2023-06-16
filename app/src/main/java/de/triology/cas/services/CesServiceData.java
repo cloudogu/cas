@@ -1,22 +1,22 @@
 package de.triology.cas.services;
 
-import de.triology.cas.services.dogu.ICesServiceFactory;
+import de.triology.cas.services.dogu.CesServiceFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CesServiceData {
     private String name;
-    private ICesServiceFactory factory;
+    private CesServiceFactory factory;
     private Map<String, String> attributes;
 
-    public CesServiceData(String name, ICesServiceFactory factory, Map<String, String> attributes) {
+    public CesServiceData(String name, CesServiceFactory factory, Map<String, String> attributes) {
         this.name = name;
         this.factory = factory;
         this.attributes = attributes;
     }
 
-    public CesServiceData(String name, ICesServiceFactory factory) {
+    public CesServiceData(String name, CesServiceFactory factory) {
         this.name = name;
         this.factory = factory;
         this.attributes = new HashMap<>();
@@ -26,7 +26,7 @@ public class CesServiceData {
         return this.name;
     }
 
-    public ICesServiceFactory getFactory() {
+    public CesServiceFactory getFactory() {
         return this.factory;
     }
 

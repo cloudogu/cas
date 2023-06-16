@@ -158,7 +158,7 @@ cas.authn.pm.ldap[0].bind-credential=${cas.authn.ldap[0].bind-credential}
 cas.authn.pm.reset.mail.attribute-name={{ .Config.Get "ldap/attribute_mail"}}
 cas.authn.pm.reset.mail.from={{ .Config.GetOrDefault "mail_sender" "cas.dogu@cloudogu.com"}}
 cas.authn.pm.reset.mail.subject={{ .Config.GetOrDefault "password_management/reset_password_subject" "Reset password"}}
-cas.authn.pm.reset.mail.text={{ .Config.GetOrDefault "password_management/reset_password_text" "Hello!\\n\\nSomeone has just requested to change the login details of your CES account. If it was you, please follow the link below to reset them.\\n%s\\n\\nThis link will expire in 15 minutes.\\n\\nIf you do not wish to reset your credentials, simply ignore this message and nothing will change."}}
+cas.authn.pm.reset.mail.text={{ .Config.GetOrDefault "password_management/reset_password_text" "Hello!\\n\\nSomeone has just requested to change the login details of your CES account. If it was you, please follow the link below to reset them.\\n${url}\\n\\nThis link will expire in 15 minutes.\\n\\nIf you do not wish to reset your credentials, simply ignore this message and nothing will change."}}
 cas.authn.pm.reset.expiration=PT15M
 cas.authn.pm.reset.security-questions-enabled=false
 ########################################################################################################################
@@ -187,6 +187,16 @@ cas.authn.throttle.failure.lockTime={{ .Config.GetOrDefault "limit/lock_time" "0
 # ----------------------------------------------------------------------------------------------------------------------
 cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
 cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
+########################################################################################################################
+
+########################################################################################################################
+# Ticket Expiration Policies
+# Configuration guide: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#ticket-granting-ticket-policies
+# Properties: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#default
+# ----------------------------------------------------------------------------------------------------------------------
+# only-track-most-recent-session means only most recent STs and PTs are stored so there is only one valid ST / PT
+# per service
+cas.ticket.tgt.core.only-track-most-recent-session=false
 ########################################################################################################################
 
 ########################################################################################################################

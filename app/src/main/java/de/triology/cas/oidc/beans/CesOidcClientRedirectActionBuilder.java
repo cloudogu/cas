@@ -1,6 +1,7 @@
 package de.triology.cas.oidc.beans;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -10,8 +11,6 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.exception.http.RedirectionAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -20,8 +19,8 @@ import java.util.Optional;
  * of the GET parameter prompt which meddles with the general SSO/SSL flow.
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CesOidcClientRedirectActionBuilder implements OAuth20CasClientRedirectActionBuilder {
-    protected static final Logger LOG = LoggerFactory.getLogger(CesOidcClientRedirectActionBuilder.class);
 
     @Override
     public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
@@ -34,10 +33,10 @@ public class CesOidcClientRedirectActionBuilder implements OAuth20CasClientRedir
                 + CasProtocolConstants.PARAMETER_SERVICE + '=' + EncodingUtils.urlEncode(serviceUrl)
                 + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
                 + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
-        LOG.debug("Final redirect url is [{}]", redirectionUrl);
+        LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
         Optional<RedirectionAction> action = Optional.of(new FoundAction(redirectionUrl));
 
-        LOG.debug("Final redirect action is [{}]", action);
+        LOGGER.debug("Final redirect action is [{}]", action);
         return action;
     }
 }

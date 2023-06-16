@@ -8,7 +8,8 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
 
 import java.util.*;
 

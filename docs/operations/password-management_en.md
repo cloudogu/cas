@@ -62,7 +62,7 @@ To send the password reset link, in addition to the general email send setup, th
 * cas.authn.pm.reset.mail.subject - specifies the subject of the emails. This value can be configured via the etcd
   entry `password_management/reset_password_subject`. If no value is specified, a default value is used.
 * cas.authn.pm.reset.mail.text - specifies the text of the email. This value can be configured via the etcd
-  entry `password_management/reset_password_text`. It is mandatory that the text contains a `%s` as a placeholder for
+  entry `password_management/reset_password_text`. It is mandatory that the text contains a `${url}` as a placeholder for
   the password reset link. Note that umlauts must be encoded. If no value is specified in the etcd a default value is
   used.
 * cas.authn.pm.reset.expiration - defines the duration for the validity of the password reset link. The specification is

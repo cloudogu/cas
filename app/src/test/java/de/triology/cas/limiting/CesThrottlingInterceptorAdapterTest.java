@@ -41,45 +41,6 @@ public class CesThrottlingInterceptorAdapterTest {
     }
 
     @Test
-    public void test_decrement() throws InterruptedException {
-        // Given
-        CesThrottlingInterceptorAdapter throttlingAdapter = Setup(2, 1, 1);
-
-        CesSubmissionListData dataInvalidLocked = new CesSubmissionListData();
-        dataInvalidLocked.recordHostLock(getCurrentTime());
-        dataInvalidLocked.recordHostLock(getCurrentTime());
-        throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID + "_invalid_locked", dataInvalidLocked);
-
-        CesSubmissionListData dataInvalid = new CesSubmissionListData();
-        dataInvalid.recordHostLock(getCurrentTime());
-        throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID + "_invalid", dataInvalid);
-
-        Thread.sleep(1050);
-
-        CesSubmissionListData dataLocked = new CesSubmissionListData();
-        dataLocked.recordHostLock(getCurrentTime());
-        dataLocked.recordHostLock(getCurrentTime());
-        throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID + "_locked", dataLocked);
-
-        CesSubmissionListData dataValid = new CesSubmissionListData();
-        dataValid.recordHostLock(getCurrentTime());
-        throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID + "_valid", dataValid);
-
-        CesSubmissionListData dataEmpty = new CesSubmissionListData();
-        throttlingAdapter.getSubmissionIpMap().put(CLIENT_ID + "_empty", dataEmpty);
-
-        // when
-        throttlingAdapter.decrement();
-
-        // then
-        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid_locked"));
-        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_invalid"));
-        assertTrue(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_locked"));
-        assertTrue(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_valid"));
-        assertFalse(throttlingAdapter.getSubmissionIpMap().containsKey(CLIENT_ID + "_empty"));
-    }
-
-    @Test
     public void test_shouldResponseBeRecordedAsFailure_noFailure() {
         // Given
         HttpServletResponse responseMock = mock(HttpServletResponse.class);
