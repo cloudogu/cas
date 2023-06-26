@@ -113,3 +113,6 @@ app/node_modules
 app/src/main/webapp/themes/ces-theme
 app/overlays
 /target/
+
+.env
+/.bin
