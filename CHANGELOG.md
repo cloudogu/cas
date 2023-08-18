@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v6.6.10-1] - 2023-08-18
 ### Changed
 - Update CAS to 6.6.10 to fix a OpenID-Connect and OAuth vulnerability (#182)
   - see https://apereo.github.io/2023/07/21/oidc-vuln/
