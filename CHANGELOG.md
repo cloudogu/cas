@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.6.12-1] - 2023-09-21
+### Changed
+- Update CAS to 6.6.12 to fix a OpenID-Connect and OAuth vulnerability (#184)
+  - see https://apereo.github.io/2023/09/14/oauth-vuln/
+
 ## [v6.6.10-1] - 2023-08-18
 ### Changed
 - Update CAS to 6.6.10 to fix a OpenID-Connect and OAuth vulnerability (#182)

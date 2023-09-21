@@ -22,7 +22,7 @@ configurations {
 
             // Fix CVE-2019-20444 / CVE-2019-20445 / CVE-2019-16869 / CVE-2021-21290 / CVE-2021-21409 / CVE-2021-43797 // CVE-2022-24823
             if (details.requested.group == 'io.netty') {
-                useVersion '4.1.92.Final'
+                useVersion '4.1.94.Final'
             }
 
             // Fix CVE-2020-36518 / CVE-2020-36518 / CVE-2022-42004 / CVE-2022-42003 /
@@ -30,18 +30,9 @@ configurations {
                 useVersion '2.13.5'
             }
 
-            // Fix CVE-2020-15250
-//            if (details.requested.group == 'junit') {
-//                useVersion '4.13.2'
-//            }
-
             // Fix CVE-2023-1370
             if (details.requested.group == 'net.minidev') {
                 useVersion '2.4.9'
-            }
-
-            if (details.requested.name == 'nimbus-jose-jwt') {
-                useVersion '9.24.4'
             }
 
             // Fix GHSA-jgvc-jfgh-rjvv
@@ -54,16 +45,15 @@ configurations {
                 useVersion '20230227'
             }
 
-            // Fix CVE-2022-36033
-            if (details.requested.group == 'org.jsoup') {
-                useVersion '1.15.4'
-            }
-
             // Fix CVE-2022-40151 / CVE-2022-40152
             if (details.requested.group == 'com.fasterxml.woodstox') {
                 useVersion '6.4.0'
             }
 
+            // Fix CVE-2023-39017
+            if (details.requested.group == 'org.quartz-scheduler') {
+                useVersion '2.4.0-rc2'
+            }
         }
     }
 }
@@ -184,10 +174,9 @@ bootWar {
                     "WEB-INF/lib/tomcat-*-9.0.74.jar", // as we use an external tomcat server we can remove the embedded on
                     "WEB-INF/lib/json-smart-2.4.8.jar", // upgraded
                     "WEB-INF/lib/accessors-smart-2.4.8.jar", // upgraded
-                    "WEB-INF/lib/nimbus-jose-jwt-9.23.3.jar", // upgraded
                     "WEB-INF/lib/jose4j-0.8.0.jar", // upgraded
                     "WEB-INF/lib/json-20160810.jar", // upgraded
-                    "WEB-INF/lib/jsoup-1.15.3.jar", // upgraded
+                    "WEB-INF/lib/quartz-2.3*.jar", // upgraded
             ]
         }
     }
