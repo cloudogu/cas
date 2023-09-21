@@ -1,14 +1,14 @@
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.14-3
+FROM registry.cloudogu.com/official/java:11.0.20-1
 
 LABEL NAME="official/cas" \
-      VERSION="6.3.3-1" \
+      VERSION="6.6.12-1" \
       maintainer="hello@cloudogu.com"
 
 # configure environment
 ENV TOMCAT_MAJOR_VERSION=9 \
-	TOMCAT_VERSION=9.0.62 \
-	TOMCAT_TARGZ_SHA256=03157728a832cf9c83048cdc28d09600cbb3e4fa087f8b97d74c8b4f34cd89bb \
+	TOMCAT_VERSION=9.0.74 \
+	TOMCAT_TARGZ_SHA256=f177b68bb99f6ed86e08f92696ebc61358cdfb3803c0e5f01df95e4ac6227cd2 \
 	CATALINA_BASE=/opt/apache-tomcat \
 	CATALINA_PID=/var/run/tomcat7.pid \
 	CATALINA_SH=/opt/apache-tomcat/bin/catalina.sh \
