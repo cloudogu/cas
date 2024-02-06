@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v6.6.8-1] - 2023-06-16
 ### Changed
 - Update CAS to 6.6.8 (#178)
+- Update Tomcat to 9.0.85
 
 ### Removed
 - Remove /var/lib/cas Volume
