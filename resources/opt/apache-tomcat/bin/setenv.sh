@@ -4,6 +4,7 @@ JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"
 JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"
 JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/ssl/truststore.jks"
 JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStorePassword=changeit"
+JAVA_OPTS="$JAVA_OPTS -DbaseDir=/logs"
 if [ "$(doguctl config "container_config/memory_limit" -d "empty")" != "empty" ];  then
   # Retrieve configurable java limits from etcd, valid default values exist
   MEMORY_LIMIT_MAX_PERCENTAGE=$(doguctl config "container_config/java_max_ram_percentage")
