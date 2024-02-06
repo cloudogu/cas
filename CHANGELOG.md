@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.6.12-2] - 2024-02-06
+### Added
+- add new volume `/logs` to avoid logging into the container file system (#173)
+
+### Changed
+- generated log files now reside under `/logs` instead of `/opt/apache-tomcat/logs` (#173)
+
+### Fixed
+- log files no longer spam the container file system which lead to resource exhaustion in the host file system (#173)
+
 ## [v6.6.12-1] - 2023-09-21
 ### Changed
 - Update CAS to 6.6.12 to fix a OpenID-Connect and OAuth vulnerability (#184)
@@ -24,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v6.6.8-1] - 2023-06-16
 ### Changed
 - Update CAS to 6.6.8 (#178)
+- Update Tomcat to 9.0.85
 
 ### Removed
 - Remove /var/lib/cas Volume

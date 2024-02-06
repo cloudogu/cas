@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=9
-ARG TOMCAT_VERSION=9.0.74
-ARG TOMCAT_TARGZ_SHA256=f177b68bb99f6ed86e08f92696ebc61358cdfb3803c0e5f01df95e4ac6227cd2
+ARG TOMCAT_VERSION=9.0.85
+ARG TOMCAT_TARGZ_SHA256=a1874d5e2e72003a81276e5a9520004aca113f135fc841334229b68f6d25ba1e
 
 FROM adoptopenjdk/openjdk11:alpine-slim AS builder
 
@@ -44,7 +44,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 FROM registry.cloudogu.com/official/java:11.0.20-1
 
 LABEL NAME="official/cas" \
-      VERSION="6.6.12-1" \
+      VERSION="6.6.12-2" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
