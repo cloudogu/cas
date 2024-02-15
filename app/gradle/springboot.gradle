@@ -54,6 +54,12 @@ configurations {
             if (details.requested.group == 'org.quartz-scheduler') {
                 useVersion '2.4.0-rc2'
             }
+
+            if (details.requested.group == 'org.springframework.security'
+                    && details.requested.name != 'spring-security-rsa'
+                    && details.requested.name != 'spring-security-config') {
+                useVersion('5.7.10')
+            }
         }
     }
 }
@@ -168,6 +174,7 @@ bootWar {
                     "WEB-INF/lib/spring-boot*-2.7.3.jar", // upgraded
                     "WEB-INF/lib/spring-*-5.3.22.jar", // upgraded
                     "WEB-INF/lib/snakeyaml-1.31.jar", // upgraded
+                    "WEB-INF/lib/snakeyaml-1.33.jar", // upgraded
                     "WEB-INF/lib/netty-*-4.1.80.Final.jar", // upgraded
                     "WEB-INF/lib/jackson-*-2.13.4.jar", // upgraded
                     "WEB-INF/lib/woodstox-core-6.3.1.jar", // upgraded
@@ -177,6 +184,10 @@ bootWar {
                     "WEB-INF/lib/jose4j-0.8.0.jar", // upgraded
                     "WEB-INF/lib/json-20160810.jar", // upgraded
                     "WEB-INF/lib/quartz-2.3*.jar", // upgraded
+                    "WEB-INF/lib/spring-security-core-5.7.3.jar", // upgraded
+                    "WEB-INF/lib/spring-security-cas-5.7.3.jar", // upgraded
+                    "WEB-INF/lib/spring-security-crypto-5.7.3.jar", // upgraded
+                    "WEB-INF/lib/spring-security-web-5.7.3.jar", // upgraded
             ]
         }
     }

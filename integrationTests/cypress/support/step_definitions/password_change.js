@@ -19,7 +19,7 @@ Then("CAS confirms the successful change of the password", function () {
     cy.get(`h2[data-testid="h2-pwd-change-successful"]`)
 });
 
-When("the test user logs in with changed credentials", function () {
+Then("the test user can login with new credentials", function () {
     cy.fixture("testuser_data").then(function (testuser) {
         cy.login(testuser.username, testuser.newPassword)
     })
