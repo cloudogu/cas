@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.6.15-1] - 2024-02-15
+### Changed
+- Upgrade CAS to 6.6.15 
+
+### Security
+- spring-security-core: CVE-2022-31692 / CVE-2023-20862
+
+
 ## [v6.6.12-2] - 2024-02-06
 ### Added
 - add new volume `/logs` to avoid logging into the container file system (#173)

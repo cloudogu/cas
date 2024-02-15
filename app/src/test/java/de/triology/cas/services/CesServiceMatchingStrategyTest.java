@@ -76,6 +76,11 @@ class TestService implements Service {
     }
 
     @Override
+    public String getOriginalUrl() {
+        return "";
+    }
+
+    @Override
     public String getId() {
         return this.id;
     }
