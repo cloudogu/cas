@@ -8,7 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class CesSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutS
                             final Optional<HttpServletRequest> httpRequest) {
         if (registeredService == null) return false;
         if (singleLogoutService == null) return false;
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) return false;
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, singleLogoutService)) return false;
         return registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME) ||
                 registeredService.getFriendlyName().equalsIgnoreCase(OAUTH_CLIENT_FRIENDLY_NAME);
     }

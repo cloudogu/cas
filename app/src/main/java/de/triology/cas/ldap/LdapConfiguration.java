@@ -5,6 +5,7 @@ import de.triology.cas.ldap.resolvers.CombinedGroupResolver;
 import de.triology.cas.ldap.resolvers.GroupResolver;
 import de.triology.cas.ldap.resolvers.MemberGroupResolver;
 import de.triology.cas.ldap.resolvers.MemberOfGroupResolver;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -31,7 +32,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

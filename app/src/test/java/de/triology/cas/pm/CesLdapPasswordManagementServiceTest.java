@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +91,7 @@ public class CesLdapPasswordManagementServiceTest {
 
         when(passwordManagementProperties.getReset()).thenReturn(resetPasswordManagementProperties);
         when(resetPasswordManagementProperties.getMail()).thenReturn(emailProperties);
-        when(emailProperties.getAttributeName()).thenReturn("mail");
+        when(emailProperties.getAttributeName()).thenReturn(Collections.singletonList("mail"));
     }
 
     @Test

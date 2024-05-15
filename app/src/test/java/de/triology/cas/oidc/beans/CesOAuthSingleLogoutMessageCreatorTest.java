@@ -2,7 +2,7 @@ package de.triology.cas.oidc.beans;
 
 import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.CesServiceData;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.OidcRegisteredService;

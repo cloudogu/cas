@@ -12,7 +12,7 @@ configurations {
 
             // Fix CVE-2022-22965 / CVE-2023-20873 / CVE-2022-22965 / GHSA-36p3-wjmg-h94x / CVE-2023-20873 / CVE-2023-20883
             if (details.requested.group == 'org.springframework.boot') {
-                details.useVersion '2.7.12'
+                details.useVersion '3.2.1'
             }
 
             // Fix CVE-2022-25857 / CVE-2022-38749 / CVE-2022-38749 / CVE-2022-38749 /  CVE-2022-38752 / CVE-2022-41854 / CVE-2022-1471
@@ -154,8 +154,9 @@ bootWar {
     } else {
         logger.info "WAR artifact is not marked as an executable"
     }
-    archiveName "cas.war"
-    baseName "cas"
+
+    archiveFileName = "cas.war"
+    archiveBaseName = "cas"
 
     entryCompression = ZipEntryCompression.STORED
 
@@ -171,8 +172,8 @@ bootWar {
             provided = false
             excludes = [
                     "WEB-INF/lib/servlet-api-2*.jar",
-                    "WEB-INF/lib/spring-boot*-2.7.3.jar", // upgraded
-                    "WEB-INF/lib/spring-*-5.3.22.jar", // upgraded
+                    "WEB-INF/lib/spring-boot*-3.1.2.jar", // upgraded
+                    "WEB-INF/lib/spring-*-6.1.*.jar", // upgraded
                     "WEB-INF/lib/snakeyaml-1.31.jar", // upgraded
                     "WEB-INF/lib/snakeyaml-1.33.jar", // upgraded
                     "WEB-INF/lib/netty-*-4.1.80.Final.jar", // upgraded

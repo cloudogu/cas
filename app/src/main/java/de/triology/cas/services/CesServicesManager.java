@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,11 @@ public class CesServicesManager implements ServicesManager {
     public Collection<RegisteredService> getServicesForDomain(String domain) {
         LOGGER.trace("getServicesForDomain: {}", domain);
         throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
+    }
+
+    @Override
+    public Stream<RegisteredService> findServicesBy(RegisteredServiceQuery... queries) {
+        return Stream.empty();
     }
 
     @Override

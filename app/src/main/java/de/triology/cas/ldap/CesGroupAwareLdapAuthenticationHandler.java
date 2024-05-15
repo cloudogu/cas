@@ -48,7 +48,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
     }
 
     @Override
-    protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws LoginException {
+    protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws Throwable {
         LOGGER.trace("createPrincipal from LdapEntry: {}", ldapEntry);
         var principal = super.createPrincipal(username, ldapEntry);
         LOGGER.trace("created Principal from super method is: {} ", principal);
@@ -68,7 +68,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
      * @param ldapEntry ldap entry
      * @return new principal with groups attribute
      */
-    protected Principal attachGroups(Principal principal, LdapEntry ldapEntry) {
+    protected Principal attachGroups(Principal principal, LdapEntry ldapEntry) throws Throwable {
         Map<String, List<Object>> attributes = new LinkedHashMap<>(principal.getAttributes());
         List<Object> groups = new ArrayList<>(groupResolver.resolveGroups(principal, ldapEntry));
         LOGGER.debug("adding groups {} to user attributes", groups);
