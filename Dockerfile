@@ -1,8 +1,8 @@
-ARG TOMCAT_MAJOR_VERSION=9
-ARG TOMCAT_VERSION=9.0.85
-ARG TOMCAT_TARGZ_SHA256=a1874d5e2e72003a81276e5a9520004aca113f135fc841334229b68f6d25ba1e
+ARG TOMCAT_MAJOR_VERSION=10
+ARG TOMCAT_VERSION=10.1.24
+ARG TOMCAT_TARGZ_SHA256=216db5c726a6857e2a698ba5f9406fa862d037733f98ab2338feb3fc511c3068
 
-FROM adoptopenjdk/openjdk11:alpine-slim AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 RUN mkdir -p /cas-overlay
 COPY ./app/gradle/ /cas-overlay/gradle/
@@ -20,7 +20,7 @@ RUN ./gradlew clean build --parallel --no-daemon
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.18.3-1 as tomcat
+FROM registry.cloudogu.com/official/base:3.19.1-1 as tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
@@ -41,7 +41,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.20-1
+FROM registry.cloudogu.com/official/java:21.0.3-1
 
 LABEL NAME="official/cas" \
       VERSION="6.6.15-1" \

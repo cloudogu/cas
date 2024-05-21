@@ -98,7 +98,7 @@ war {
 sourceSets {
     bootRunSources {
         resources {
-            srcDirs new File("//etc/cas/templates/"), new File("${project.getProjectDir()}/src/main/resources/")
+            srcDirs new File("etc/cas/templates/"), new File("${project.getProjectDir()}/src/main/resources/")
         }
     }
 }
