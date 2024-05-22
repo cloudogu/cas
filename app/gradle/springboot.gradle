@@ -2,66 +2,6 @@ apply plugin: "org.springframework.boot"
 
 configurations {
     bootRunConfig.extendsFrom compileClasspath
-
-    configureEach {
-        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            // Fix CVE-2023-20861
-            if (details.requested.group == 'org.springframework') {
-                details.useVersion '5.3.27'
-            }
-
-            // Fix CVE-2022-22965 / CVE-2023-20873 / CVE-2022-22965 / GHSA-36p3-wjmg-h94x / CVE-2023-20873 / CVE-2023-20883
-            if (details.requested.group == 'org.springframework.boot') {
-                details.useVersion '3.2.1'
-            }
-
-            // Fix CVE-2022-25857 / CVE-2022-38749 / CVE-2022-38749 / CVE-2022-38749 /  CVE-2022-38752 / CVE-2022-41854 / CVE-2022-1471
-            if (details.requested.name == 'snakeyaml') {
-                details.useVersion '2.0'
-            }
-
-            // Fix CVE-2019-20444 / CVE-2019-20445 / CVE-2019-16869 / CVE-2021-21290 / CVE-2021-21409 / CVE-2021-43797 // CVE-2022-24823
-            if (details.requested.group == 'io.netty') {
-                useVersion '4.1.94.Final'
-            }
-
-            // Fix CVE-2020-36518 / CVE-2020-36518 / CVE-2022-42004 / CVE-2022-42003 /
-            if (details.requested.group == 'com.fasterxml.jackson.core') {
-                useVersion '2.13.5'
-            }
-
-            // Fix CVE-2023-1370
-            if (details.requested.group == 'net.minidev') {
-                useVersion '2.4.9'
-            }
-
-            // Fix GHSA-jgvc-jfgh-rjvv
-            if (details.requested.name == 'jose4j') {
-                useVersion '0.9.3'
-            }
-
-            // Fix CVE-2022-45688
-            if (details.requested.group == 'org.json') {
-                useVersion '20230227'
-            }
-
-            // Fix CVE-2022-40151 / CVE-2022-40152
-            if (details.requested.group == 'com.fasterxml.woodstox') {
-                useVersion '6.4.0'
-            }
-
-            // Fix CVE-2023-39017
-            if (details.requested.group == 'org.quartz-scheduler') {
-                useVersion '2.4.0-rc2'
-            }
-
-            if (details.requested.group == 'org.springframework.security'
-                    && details.requested.name != 'spring-security-rsa'
-                    && details.requested.name != 'spring-security-config') {
-                useVersion('5.7.10')
-            }
-        }
-    }
 }
 
 dependencies {
@@ -172,23 +112,7 @@ bootWar {
             provided = false
             excludes = [
                     "WEB-INF/lib/servlet-api-2*.jar",
-                    "WEB-INF/lib/spring-boot*-3.1.2.jar", // upgraded
-                    "WEB-INF/lib/spring-*-6.1.*.jar", // upgraded
-                    "WEB-INF/lib/snakeyaml-1.31.jar", // upgraded
-                    "WEB-INF/lib/snakeyaml-1.33.jar", // upgraded
-                    "WEB-INF/lib/netty-*-4.1.80.Final.jar", // upgraded
-                    "WEB-INF/lib/jackson-*-2.13.4.jar", // upgraded
-                    "WEB-INF/lib/woodstox-core-6.3.1.jar", // upgraded
-                    "WEB-INF/lib/tomcat-*-9.0.74.jar", // as we use an external tomcat server we can remove the embedded on
-                    "WEB-INF/lib/json-smart-2.4.8.jar", // upgraded
-                    "WEB-INF/lib/accessors-smart-2.4.8.jar", // upgraded
-                    "WEB-INF/lib/jose4j-0.8.0.jar", // upgraded
-                    "WEB-INF/lib/json-20160810.jar", // upgraded
-                    "WEB-INF/lib/quartz-2.3*.jar", // upgraded
-                    "WEB-INF/lib/spring-security-core-5.7.3.jar", // upgraded
-                    "WEB-INF/lib/spring-security-cas-5.7.3.jar", // upgraded
-                    "WEB-INF/lib/spring-security-crypto-5.7.3.jar", // upgraded
-                    "WEB-INF/lib/spring-security-web-5.7.3.jar", // upgraded
+                    "WEB-INF/lib/tomcat-*-10.1.24.jar", // as we use an external tomcat server we can remove the embedded on
             ]
         }
     }
