@@ -15,22 +15,26 @@ function versionXLessOrEqualThanY() {
     return 0
   fi
 
-  declare -r semVerRegex='([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9]+)'
+  declare -r semVerRegex='([0-9]+)\.([0-9]+)\.([0-9]+)(\.([0-9]+))?-([0-9]+)'
 
    sourceMajor=0
    sourceMinor=0
    sourceBugfix=0
+   sourceHotfix=0
    sourceDogu=0
    targetMajor=0
    targetMinor=0
    targetBugfix=0
+   targetHotfix=0
    targetDogu=0
 
   if [[ ${sourceVersion} =~ ${semVerRegex} ]]; then
     sourceMajor=${BASH_REMATCH[1]}
     sourceMinor="${BASH_REMATCH[2]}"
     sourceBugfix="${BASH_REMATCH[3]}"
-    sourceDogu="${BASH_REMATCH[4]}"
+    # BASH_REMATCH[4] includes the . delimiter for technical reasons
+    sourceHotfix="${BASH_REMATCH[5]}"
+    sourceDogu="${BASH_REMATCH[6]}"
   else
     echo "ERROR: source dogu version ${sourceVersion} does not seem to be a semantic version"
     exit 1
@@ -40,7 +44,9 @@ function versionXLessOrEqualThanY() {
     targetMajor=${BASH_REMATCH[1]}
     targetMinor="${BASH_REMATCH[2]}"
     targetBugfix="${BASH_REMATCH[3]}"
-    targetDogu="${BASH_REMATCH[4]}"
+    # BASH_REMATCH[4] includes the . delimiter for technical reasons
+    targetHotfix="${BASH_REMATCH[5]}"
+    targetDogu="${BASH_REMATCH[6]}"
   else
     echo "ERROR: target dogu version ${targetVersion} does not seem to be a semantic version"
     exit 1
@@ -58,6 +64,9 @@ function versionXLessOrEqualThanY() {
   if [[ $((sourceMajor)) -le $((targetMajor)) && $((sourceMinor)) -le $((targetMinor)) && $((sourceBugfix)) -le $((targetBugfix)) && $((sourceDogu)) -lt $((targetDogu)) ]] ; then
     return 0;
   fi
+  if [[ $((sourceMajor)) -le $((targetMajor)) && $((sourceMinor)) -le $((targetMinor)) && $((sourceBugfix)) -le $((targetBugfix)) && $((sourceDogu)) -lt $((targetDogu)) && $((sourceHotfix)) -lt $((targetHotfix)) ]] ; then
+      return 0;
+    fi
 
   return 1
 }
