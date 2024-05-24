@@ -20,6 +20,16 @@ teardown() {
 @test "versionXLessOrEqualThanY() should return true for versions less than or equal to another" {
   source /workspace/resources/pre-upgrade.sh
 
+  run versionXLessOrEqualThanY "6.6.15-3" "6.6.15.1-1"
+  assert_success
+  run versionXLessOrEqualThanY "6.6.15-1" "6.6.15.1-1"
+  assert_success
+  run versionXLessOrEqualThanY "0.0.0.2-8" "0.0.0.3-1"
+  assert_success
+  run versionXLessOrEqualThanY "0.0.0.2-1" "0.0.0.3-1"
+  assert_success
+  run versionXLessOrEqualThanY "0.0.0.2-1" "0.0.0.2-1"
+  assert_success
   run versionXLessOrEqualThanY "1.0.0-1" "1.0.0-1"
   assert_success
   run versionXLessOrEqualThanY "1.0.0-1" "1.0.0-2"
@@ -52,6 +62,14 @@ teardown() {
 @test "versionXLessOrEqualThanY() should return false for versions greater than another" {
   source /workspace/resources/pre-upgrade.sh
 
+  run versionXLessOrEqualThanY "6.6.15.1-1" "6.6.15-1"
+  assert_failure
+  run versionXLessOrEqualThanY "6.6.15.1-1" "6.6.15-3"
+  assert_failure
+  run versionXLessOrEqualThanY "0.0.0.3-1" "0.0.0.2-8"
+  assert_failure
+  run versionXLessOrEqualThanY "0.0.0.3-1" "0.0.0.2-1"
+  assert_failure
   run versionXLessOrEqualThanY "0.0.0-10" "0.0.0-9"
   assert_failure
   run versionXLessOrEqualThanY "1.0.0-1" "0.0.0-9"
@@ -83,71 +101,5 @@ teardown() {
   run versionXLessOrEqualThanY "2.0.1-1" "1.0.0-1"
   assert_failure
   run versionXLessOrEqualThanY "2.1.1-1" "1.0.0-1"
-  assert_failure
-}
-
-@test "versionXLessThanY() should return true for versions less than another" {
-  source /workspace/resources/pre-upgrade.sh
-
-  run versionXLessThanY "1.0.0-1" "1.0.0-2"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "1.1.0-2"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "1.0.2-2"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "1.0.0-2"
-  assert_success
-  run versionXLessThanY "1.1.0-1" "1.1.0-2"
-  assert_success
-  run versionXLessThanY "1.0.2-1" "1.0.2-2"
-  assert_success
-  run versionXLessThanY "1.2.3-4" "1.2.3-5"
-  assert_success
-
-  run versionXLessThanY "1.0.0-1" "2.0.0-1"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "2.1.0-1"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "2.0.1-1"
-  assert_success
-  run versionXLessThanY "1.0.0-1" "2.1.1-1"
-  assert_success
-}
-
-@test "versionXLessThanY() should return false for versions greater than another" {
-  source /workspace/resources/pre-upgrade.sh
-
-  run versionXLessThanY "1.0.0-1" "1.0.0-1"
-  assert_failure
-  run versionXLessThanY "0.0.0-10" "0.0.0-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-1" "0.0.0-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-1" "0.0.9-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-1" "0.9.9-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-0" "0.9.9-9"
-  assert_failure
-  run versionXLessThanY "1.1.0-1" "0.0.0-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-1" "0.0.9-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-1" "0.9.9-9"
-  assert_failure
-  run versionXLessThanY "1.0.0-0" "0.9.9-9"
-
-  run versionXLessThanY "1.2.3-4" "0.1.2-3"
-  assert_failure
-  run versionXLessThanY "1.2.3-5" "0.1.2-3"
-  assert_failure
-
-  run versionXLessThanY "2.0.0-1" "1.0.0-1"
-  assert_failure
-  run versionXLessThanY "2.1.0-1" "1.0.0-1"
-  assert_failure
-  run versionXLessThanY "2.0.1-1" "1.0.0-1"
-  assert_failure
-  run versionXLessThanY "2.1.1-1" "1.0.0-1"
   assert_failure
 }
