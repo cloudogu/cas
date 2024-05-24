@@ -3,7 +3,7 @@
   "Version": "6.6.15-1",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
-  "Url": "https://apereo.github.io",
+  "Url": "https://apereo.github.io/cas",
   "Category": "Base",
   "Tags": [
     "authentication",
