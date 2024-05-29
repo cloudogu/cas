@@ -77,7 +77,7 @@ public class LdapConfiguration {
                                                                         @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                                                                 ServicesManager servicesManager,
                                                                         CombinedGroupResolver combinedGroupResolver) {
-        LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().get(0);
+        LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().getFirst();
 
         Multimap<String, Object> multiMapAttributes = createPrincipalAttributes(ldapProperties);
         Authenticator authenticator = createAuthenticator(ldapProperties, multiMapAttributes);

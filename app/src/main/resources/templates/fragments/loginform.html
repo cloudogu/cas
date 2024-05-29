@@ -15,7 +15,7 @@
     <!-- Login form template begins here -->
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
-                loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
 
         <div class="form-wrapper">
             <form method="post" id="fm1" th:object="${credential}" action="login">
@@ -58,7 +58,7 @@
                                        data-testid="login-username-input-field"
                                        size="25"
                                        type="text"
-                                       th:readonly="!${@casThymeleafLoginFormDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                       th:readonly="!${@casThymeleafTemplatesDirector.isLoginFormUsernameInputVisible(#vars)}"
                                        th:field="*{username}"
                                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                        autocapitalize="none"
@@ -75,8 +75,8 @@
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            var username = /*[[${@casThymeleafLoginFormDirector.getLoginFormUsername(#vars)}]]*/;
-                            var disabled = /*[[${@casThymeleafLoginFormDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            var username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
+                            var disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
                                 if (username != null && username !== '') {
                                     $('#username').val(username);
@@ -246,7 +246,7 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
 
-                        <p th:if="${#request.getMethod().equalsIgnoreCase('POST')}">
+                        <p th:if="${#strings.equalsIgnoreCase(httpRequestMethod, 'POST')}">
                             <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
                                 <span th:each="entryValue : ${entry.value}" th:remove="tag">
                                     <input type="hidden" th:name="${entry.key}" th:value="${entryValue}"/>

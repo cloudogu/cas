@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -27,7 +28,7 @@
             </div>
             <div id="loginForm"
                  class="login-section login-form"
-                 th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                 th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
                 <div th:replace="fragments/loginform :: loginform">
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>

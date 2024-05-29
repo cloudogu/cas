@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -36,20 +37,26 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        LOGGER.trace("Entered getAllServices method with return {}", Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values()));
+        LOGGER.debug("Entered getAllServices method with return {}", Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values()));
         return Collections.unmodifiableCollection(serviceStage.getRegisteredServices().values());
     }
 
     @Override
     public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
-        LOGGER.trace("Entered getAllServicesOfType method with type: {}", clazz);
+        LOGGER.debug("Entered getAllServicesOfType method with type: {}", clazz);
         if (supports(clazz)) {
-            return serviceStage.getRegisteredServices().values()
+            Collection<RegisteredService> collection =
+                    serviceStage.getRegisteredServices().values()
                     .stream()
                     .filter(s -> clazz.isAssignableFrom(s.getClass()))
                     .sorted()
                     .peek(RegisteredService::initialize)
                     .collect(Collectors.toList());
+            LOGGER.info("########################");
+            LOGGER.info("getAllServicesOfType");
+            LOGGER.info(collection.toString());
+            LOGGER.info("########################");
+            return collection;
         } else {
             return new ArrayList<>();
         }
@@ -64,18 +71,22 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(String domain) {
-        LOGGER.trace("getServicesForDomain: {}", domain);
+        LOGGER.debug("getServicesForDomain: {}", domain);
         throw new UnsupportedOperationException("Operation getServicesForDomain is not supported.");
     }
 
     @Override
     public Stream<RegisteredService> findServicesBy(RegisteredServiceQuery... queries) {
+        LOGGER.info("##############################");
+        LOGGER.info("CALLED NEW FINDSERVICEBY METHOD");
+        LOGGER.info(Arrays.toString(queries));
+        LOGGER.info("##############################");
         return Stream.empty();
     }
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        LOGGER.trace("findServiceBy: {}", service);
+        LOGGER.debug("findServiceBy: {}", service);
         final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
 
         for (final RegisteredService registeredService : registeredServices) {
@@ -89,7 +100,7 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(Predicate<RegisteredService> clazz) {
-        LOGGER.trace("findServiceBy1: {}", clazz);
+        LOGGER.debug("findServiceBy1: {}", clazz);
         throw new UnsupportedOperationException("Operation findServiceBy is not supported.");
     }
 
@@ -107,55 +118,55 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        LOGGER.trace("findServiceBy: {}", id);
+        LOGGER.debug("findServiceBy: {}", id);
         return serviceStage.getRegisteredServices().get(id);
     }
 
     @Override
     public RegisteredService findServiceByName(String name) {
-        LOGGER.trace("findServiceByName: {}", name);
+        LOGGER.debug("findServiceByName: {}", name);
         throw new UnsupportedOperationException("Operation findServiceByName is not supported.");
     }
 
     @Override
     public void save(Stream<RegisteredService> toSave) {
-        LOGGER.trace("save1: {}", toSave);
+        LOGGER.debug("save1: {}", toSave);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        LOGGER.trace("save2: {}", registeredService);
+        LOGGER.debug("save2: {}", registeredService);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public RegisteredService save(RegisteredService registeredService, boolean publishEvent) {
-        LOGGER.trace("save3: {} - {}", registeredService, publishEvent);
+        LOGGER.debug("save3: {} - {}", registeredService, publishEvent);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public void save(Supplier<RegisteredService> supplier, Consumer<RegisteredService> andThenConsume, long countExclusive) {
-        LOGGER.trace("save4: {} - {}", supplier, andThenConsume);
+        LOGGER.debug("save4: {} - {}", supplier, andThenConsume);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
 
     @Override
     public void deleteAll() {
-        LOGGER.trace("deleteAll:");
+        LOGGER.debug("deleteAll:");
         throw new UnsupportedOperationException("Operation deleteAll is not supported.");
     }
 
     @Override
     public RegisteredService delete(final long id) {
-        LOGGER.trace("delete1: {}", id);
+        LOGGER.debug("delete1: {}", id);
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 
     @Override
     public RegisteredService delete(RegisteredService svc) {
-        LOGGER.trace("delete2: {}", svc);
+        LOGGER.debug("delete2: {}", svc);
         throw new UnsupportedOperationException("Operation delete is not supported.");
     }
 

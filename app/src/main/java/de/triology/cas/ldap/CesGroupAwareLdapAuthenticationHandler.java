@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
 
-import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

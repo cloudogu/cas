@@ -111,7 +111,7 @@ bootWar {
             from "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}@war"
             provided = false
             excludes = [
-                    "WEB-INF/lib/servlet-api-2*.jar",
+                    "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/tomcat-*-10.1.24.jar", // as we use an external tomcat server we can remove the embedded on
             ]
         }
