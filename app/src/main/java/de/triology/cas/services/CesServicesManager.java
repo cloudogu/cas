@@ -2,14 +2,14 @@ package de.triology.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -47,11 +47,11 @@ public class CesServicesManager implements ServicesManager {
         if (supports(clazz)) {
             Collection<RegisteredService> collection =
                     serviceStage.getRegisteredServices().values()
-                    .stream()
-                    .filter(s -> clazz.isAssignableFrom(s.getClass()))
-                    .sorted()
-                    .peek(RegisteredService::initialize)
-                    .collect(Collectors.toList());
+                            .stream()
+                            .filter(s -> clazz.isAssignableFrom(s.getClass()))
+                            .sorted()
+                            .peek(RegisteredService::initialize)
+                            .collect(Collectors.toList());
             LOGGER.info("########################");
             LOGGER.info("getAllServicesOfType");
             LOGGER.info(collection.toString());
@@ -77,16 +77,32 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public Stream<RegisteredService> findServicesBy(RegisteredServiceQuery... queries) {
-        LOGGER.info("##############################");
-        LOGGER.info("CALLED NEW FINDSERVICEBY METHOD");
-        LOGGER.info(Arrays.toString(queries));
-        LOGGER.info("##############################");
-        return Stream.empty();
+        final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
+        final Collection<RegisteredService> resultServiceList = new ArrayList<>();
+
+        for (RegisteredServiceQuery query : queries) {
+            if (query.getName().equals("clientId")) {
+                for (final RegisteredService registeredService : registeredServices.stream().filter(s -> query.getType().isAssignableFrom(s.getClass())).toList()) {
+                    boolean matches = switch (registeredService) {
+                        case OAuthRegisteredService c -> c.getClientId().equals(query.getValue());
+                        default -> throw new RuntimeException(String.format("unexpected class of type %s, expected OAuthRegisteredService. Unable to handle.",
+                                        registeredService.getClass().getSimpleName()));
+                    };
+                    if (matches) {
+                        resultServiceList.add(registeredService);
+                    }
+                }
+            } else {
+                LOGGER.warn("RegisteredServiceQuery has property name of value: {} that does not match expected value 'clientId', unable to handle this query.", query.getName());
+            }
+        }
+
+        return resultServiceList.stream();
     }
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        LOGGER.debug("findServiceBy: {}", service);
+        LOGGER.debug("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww: {}", service);
         final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
 
         for (final RegisteredService registeredService : registeredServices) {
@@ -147,7 +163,8 @@ public class CesServicesManager implements ServicesManager {
     }
 
     @Override
-    public void save(Supplier<RegisteredService> supplier, Consumer<RegisteredService> andThenConsume, long countExclusive) {
+    public void save(Supplier<RegisteredService> supplier, Consumer<RegisteredService> andThenConsume,
+                     long countExclusive) {
         LOGGER.debug("save4: {} - {}", supplier, andThenConsume);
         throw new UnsupportedOperationException("Operation save is not supported.");
     }
