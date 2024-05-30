@@ -7,6 +7,8 @@ import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CompressionUtils;
 
 /**
@@ -18,12 +20,20 @@ import org.apereo.cas.util.CompressionUtils;
 @RequiredArgsConstructor
 public class CesOAuthSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
+    private final TicketRegistry ticketRegistry;
+
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
         var ticket = request.getExecutionRequest().getTicketGrantingTicket();
         var service = request.getRegisteredService();
         var logoutRequest = "";
         LOGGER.debug("Generate oauth logout request for: [{}] to [{}]", service.getName(), request.getLogoutUrl());
+
+
+        for (Ticket ticketRegistryTicket : ticketRegistry.getTickets()) {
+            LOGGER.info("tickte: {}", ticketRegistryTicket.getId());
+        }
+
 
         for (String childTicket : ticket.getDescendantTickets()) {
             if (childTicket.startsWith("AT-")) {

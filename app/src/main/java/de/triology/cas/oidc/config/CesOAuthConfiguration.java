@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
@@ -54,8 +55,8 @@ public class CesOAuthConfiguration {
 
     @Bean
     @RefreshScope
-    public SingleLogoutMessageCreator oauthSingleLogoutMessageCreator() {
-        return new CesOAuthSingleLogoutMessageCreator();
+    public SingleLogoutMessageCreator oauthSingleLogoutMessageCreator(final TicketRegistry ticketRegistry) {
+        return new CesOAuthSingleLogoutMessageCreator(ticketRegistry);
     }
 
     @Bean
@@ -65,9 +66,10 @@ public class CesOAuthConfiguration {
             CasConfigurationProperties casProperties,
             ObjectProvider<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilder,
             ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan,
-            ObjectProvider<ServicesManager> servicesManager) {
+            ObjectProvider<ServicesManager> servicesManager,
+            TicketRegistry ticketRegistry) {
         return new CesOAuthSingleLogoutServiceMessageHandler(noRedirectHttpClient.getObject(),
-                oauthSingleLogoutMessageCreator(),
+                oauthSingleLogoutMessageCreator(ticketRegistry),
                 servicesManager.getObject(),
                 singleLogoutServiceLogoutUrlBuilder.getObject(),
                 casProperties.getSlo().isAsynchronous(),
