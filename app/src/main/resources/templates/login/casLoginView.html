@@ -22,27 +22,27 @@
         <section class="login-options">
             <div id="loginProviders" class="login-section login-form"
                  th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
-                <div th:replace="fragments/loginProviders :: loginProviders">
+                <div th:replace="~{fragments/loginProviders :: loginProviders}">
                     <a href="fragments/loginProviders.html">loginProviders</a>
                 </div>
             </div>
             <div id="loginForm"
                  class="login-section login-form"
                  th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
-                <div th:replace="fragments/loginform :: loginform">
+                <div th:replace="~{fragments/loginform :: loginform}">
                     <a href="fragments/loginform.html">Login Form goes here</a>
                 </div>
             </div>
 
 
             <div id="acceptto" class="login-section login-qr d-xs-none d-md-block" th:if="${accepttoApplicationId}">
-                <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
+                <div th:replace="~{fragments/accepttoQRCode :: accepttoQRCode}">
                     <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>
                 </div>
             </div>
 
             <div id="qrlogin" class="login-section login-qr d-xs-none d-md-block" th:if="${qrAuthenticationEnabled}">
-                <div th:replace="fragments/qrAuthentication :: qrAuthentication">
+                <div th:replace="~{fragments/qrAuthentication :: qrAuthentication}">
                     <a href="fragments/qrAuthentication.html">qrAuthentication</a>
                 </div>
             </div>
