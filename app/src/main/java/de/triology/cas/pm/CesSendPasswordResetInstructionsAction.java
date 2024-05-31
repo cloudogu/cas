@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * In the original class, an error is thrown if no email address is found for the username entered.
  * This is also the case if the user does not exist in the system.
- *
+ *S
  * In order to prevent the CAS from finding out whether a user exists in the system, the method responsible for this
  * has been adapted accordingly.
  */
@@ -37,8 +37,7 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
 
     public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver,
                                                   PasswordResetUrlBuilder passwordResetUrlBuilder, MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector, AuthenticationSystemSupport authenticationSystemSupport, ApplicationContext applicationContext) {
-        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder,
-                multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
