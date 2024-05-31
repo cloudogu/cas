@@ -1,6 +1,8 @@
 package de.triology.cas.pm;
 
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -37,9 +39,11 @@ public class PmConfiguration {
             final PasswordResetUrlBuilder passwordResetUrlBuilder,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             final ApplicationContext applicationContext) {
 
         return new CesSendPasswordResetInstructionsAction(casProperties, communicationsManager,
-                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver, passwordResetUrlBuilder, authenticationSystemSupport, applicationContext);
+                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
     }
 }
