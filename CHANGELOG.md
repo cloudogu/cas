@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v6.6.15.1-1] - 2024-05-24
+### Changed
+- Upgrade CAS to 6.6.15.1 (#190)
+
+### Security
+- see https://apereo.github.io/2024/05/18/oauth-vuln/
+
+
 ## [v6.6.15-1] - 2024-02-15
 ### Changed
 - Upgrade CAS to 6.6.15 
