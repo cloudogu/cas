@@ -61,14 +61,14 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
         try {
             email = passwordManagementService.findEmail(query);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Could not find email for {}", query, e);
         }
 
         String phone = "";
         try {
             phone = passwordManagementService.findPhone(query);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Could not find phone number for {}", query, e);
         }
 
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {

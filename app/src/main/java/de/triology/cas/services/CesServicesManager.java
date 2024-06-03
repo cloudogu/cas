@@ -88,8 +88,7 @@ public class CesServicesManager implements ServicesManager {
                             LOGGER.debug("Unable to match query {} to actual {} client id", query.getValue(),((OAuthRegisteredService) registeredService).getClientId());
                         }
                     } else {
-                        throw new RuntimeException(String.format("unexpected class of type %s, expected OAuthRegisteredService. Unable to handle.",
-                                registeredService.getClass().getSimpleName()));
+                        LOGGER.error("unexpected class of type {}, expected OAuthRegisteredService. Unable to handle.", registeredService.getClass().getSimpleName());
                     }
                 }
             } else {
@@ -102,7 +101,7 @@ public class CesServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        LOGGER.debug("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww: {}", service);
+        LOGGER.debug("findServiceBy: {}", service);
         final Collection<RegisteredService> registeredServices = serviceStage.getRegisteredServices().values();
 
         for (final RegisteredService registeredService : registeredServices) {

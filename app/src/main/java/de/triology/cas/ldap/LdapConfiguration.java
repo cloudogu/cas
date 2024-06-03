@@ -62,7 +62,7 @@ public class LdapConfiguration {
     }
 
     ConnectionFactory searchPooledLdapConnectionFactory(CasConfigurationProperties properties) {
-        var ldapProperties = properties.getAuthn().getLdap().get(0);
+        var ldapProperties = properties.getAuthn().getLdap().getFirst();
         return LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
     }
 

@@ -14,7 +14,7 @@ RUN chmod 750 ./gradlew \
     && ./gradlew --version
 
 # Cache dependencies
-RUN ./gradlew clean build --parallel --no-daemon
+RUN ./gradlew --no-daemon dependencies
 
 # Copy source code and build overlay
 COPY ./app/src /cas-overlay/src/
