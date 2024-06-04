@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Upgrade CAS to 7.0.4.1 (#189)
+  - CAS 7.0 contains a "weak password detection" that checks on every login if the password complies with the configured password-rules.
+    If a password does not comply a warning is displayed and the user has to enter a new password that complies with the rules.
 
 ## [v6.6.15.1-1] - 2024-05-24
 ### Changed
