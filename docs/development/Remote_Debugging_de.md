@@ -10,7 +10,10 @@ Um den CAS im Debugging Modus zu starten müssen folgenden Änderungen in `resou
   Hiermit wird eine Debugging Session auf Port 8000 gestartet.
 * `resources/startup.sh` den Eintrag `${CATALINA_SH} run` zu `${CATALINA_SH} jpda run` ändern.
 
-## Hinzufügen des Port-Mappings im bestehenden Container
+## Debug in Classic CES
+Um den CAS im Classic CES zu debuggen, müssen folgende Schritte durchgeführt werden.
+
+### Hinzufügen des Port-Mappings im bestehenden Container
 
 Mit den oben beschriebenen Anpassungen kann der CAS wie gewohnt im lokalen CES gebaut und ausgeführt werden. Initial
 horcht der Container auf den internen Port 8080, stellt jedoch kein Port-Mapping nach außen bereit. Um das Remote
@@ -69,7 +72,7 @@ Mit dem Start des Docker-Dienstes werden die Configs neu eingelesen und der CAS 
    cesapp start cas
 ```
 
-## CAS Location im Nginx anpassen
+### CAS Location im Nginx anpassen
 
 Mit dem Hinzufügen des Ports-Mappings ist der CAS aktuell nicht mehr unter der URL `https://192.168.56.2/cas` erreichbar. 
 Ursächlich hierfür ist eine Änderung des Pfades im Reverse Proxy nginx. Durch das exposen von zwei Ports werden mittels 
@@ -89,7 +92,7 @@ nginx neu laden:
 
 Der CAS sollte nun wieder über die Browser erreichbar sein. 
 
-## SSH Tunnel mit lokalen Port-Forwarding starten
+### SSH Tunnel mit lokalen Port-Forwarding starten
 
 Um eine Verbindung von dem Entwicklerrechner (IDE) zum CAS innerhalb der VM (lokales CES) zu bekommen, wird SSH Tunnel mit lokalem 
 Port-Forwarding eingerichtet, der den lokalen Port 5005 auf den Port 8000 innerhalb der VM weiterleitet. Hierfür muss der
@@ -101,10 +104,22 @@ folgende Befehl im lokalen Repository des Ecosystems ausgeführt werden:
 
 Der Port 8000 in der VM ist nun über den Port 5000 auf dem Localhost (Entwicklerrechner) erreichbar.
 
-## Hinzufügen einer Remote Debugging Run Configuration 
+### Hinzufügen einer Remote Debugging Run Configuration 
 
 Als abschließender Schritt muss in der IDE, hier Intellij, im CAS Projekt nur noch eine Run Configuration für das Remote Debuggung hinzufügt 
 werden.
 
 ![RunConfiguration fuer Remote Debuggig](figures/Remote_Debugging_RunConfig.png)
+
+## Debug in CES-Multinode
+
+Um den CAS in CES-Multinode zu debuggen muss lediglich ein Port-Forward für Port 8000 auf den CAS-Pod erstellt werden.
+Der Port-Forward kann mit kubectl oder mit k9s erstellt werden.
+
+```shell
+kubectl port-forward cas-6d7b47cd7b-pqprr 8000:8000
+```
+
+Anschließend kann sich der Remote-Debugger auf mit `localhost:8000` verbinden.
+
 

@@ -10,12 +10,12 @@ In diesem Abschnitt werden die benötigten Schritte beschrieben, um die Integrat
 
 Damit alle Integrationstests auch einwandfrei funktionieren, müssen vorher einige Daten konfiguriert werden. 
 
-**integrationTests/cypress.json** [[Link zur Datei](../../integrationTests/cypress.json)]
+**integrationTests/cypress.config.js** [[Link zur Datei](../../integrationTests/cypress.config.js)]
 
 1) Es muss die base-URL auf das Hostsystem angepasst werden.
-   Dafür muss das Feld `baseUrl` auf die Host-FQDN angepasst werden (`https://local.cloudogu.com`)
+   Dafür muss das Feld `baseUrl` auf die Host-FQDN angepasst werden (`https://192.168.56.2`)
 2) Es müssen noch weitere Aspekte konfiguriert werden. 
-   Diese werden als Umgebungsvariablen in der `cypress.json` gesetzt:
+   Diese werden als Umgebungsvariablen in der `cypress.config.js` gesetzt:
 - `DoguName` - Bestimmt den Namen des jetzigen Dogus und wir beim Routing benutzt.
 - `MaxLoginRetries` - Bestimmt die Anzahl der Loginversuche, bevor ein Test fehlschlägt.
 - `AdminUsername` - Der Benutzername des CES-Admins.
@@ -28,24 +28,33 @@ Damit alle Integrationstests auch einwandfrei funktionieren, müssen vorher eini
 - `TermsOfServiceURL` - Der erwartete Link für die Nutzungsbedingungen
 - `ImprintURL` - Der erwartete Link für das Impressum
   
-Eine Beispiel-`cypress.json` sieht folgendermaßen aus:
-```json
-{
-  "baseUrl": "https://192.168.56.2",
-  "env": {
-    "DoguName": "cas/login",
-    "MaxLoginRetries": 3,
-    "AdminUsername":  "ces-admin",
-    "AdminPassword":  "ecosystem2016",
-    "AdminGroup":  "CesAdministrators", 
-    "ClientID" : "inttest",
-    "ClientSecret"  : "integrationTestClientSecret",
-    "PasswordHintText": "Contact your admin",
-    "PrivacyPolicyURL": "https://www.triology.de/",
-    "TermsOfServiceURL": "https://www.itzbund.de/",
-    "ImprintURL": "https://cloudogu.com/"
-  }
-}
+Eine Beispiel-`cypress.config.js` sieht folgendermaßen aus:
+```javascript
+module.exports = defineConfig({
+    e2e: {
+        "baseUrl": "https://192.168.56.2",
+        "env": {
+            "DoguName": "cas/login",
+            "MaxLoginRetries": 3,
+            "AdminUsername": "ces-admin",
+            "AdminPassword": "ecosystem2016",
+            "AdminGroup": "CesAdministrators",
+            "ClientID": "inttest",
+            "ClientSecret": "integrationTestClientSecret",
+            "PasswordHintText": "Contact your admin",
+            "PrivacyPolicyURL": "https://www.triology.de/",
+            "TermsOfServiceURL": "https://www.itzbund.de/",
+            "ImprintURL": "https://cloudogu.com/"
+        },
+
+        specPattern: ["cypress/e2e/**/*.feature"],
+        videoCompression: false,
+        setupNodeEvents,
+        nonGlobalStepBaseDir: false,
+        chromeWebSecurity: false,
+        experimentalRunAllSpecs: true,
+    }
+})
 ```
 
 ## Vorbereiten der Integrationstests
@@ -56,9 +65,9 @@ Damit die Integrationstests für CAS erfolgreich durchlaufen müssen vorher folg
 
 Es muss ein registrierter Service für CAS angelegt werden, damit die Tests mit den Endpunkten von CAS kommunizieren darf. Dies kann einfach simuliert werden, indem wir folgende Keys in den etcd schreiben: 
 ```bash
-   etcdctl mkdir /dogu/inttest
-   etcdctl set /dogu/inttest/0.0.1 '{"Name":"official/inttest","Dependencies":["cas"]}'
-   etcdctl set /dogu/inttest/current "0.0.1"
+etcdctl mkdir /dogu/inttest
+etcdctl set /dogu/inttest/0.0.1 '{"Name":"official/inttest","Dependencies":["cas"]}'
+etcdctl set /dogu/inttest/current "0.0.1"
 ```
 Nun existiert ein "leeres" Dogu, für welches der CAS einen Service registriert. Dieser wird von den Integrationstests benutzt, um mit den notwendigen Endpunkten zu kommunizieren. Der Name des leeren Dogus muss mit dem Wert für die `ClientID` aus der `cypress.json` übereinstimmen. 
 
@@ -76,10 +85,19 @@ Damit unsere Tests für die Passwort-Vergessen-Funktion durchgeführt werden kö
 Auf folgende Weise kann ein entsprechender Eintrag im etcd konfiguriert werden:
 
 ```bash
-   etcdctl set /config/cas/forgot_password_text 'Contact your admin'
+etcdctl set /config/cas/forgot_password_text 'Contact your admin'
 ```
 
-Der von den Tests erwartete Wert ist in der `cypress.json` unter dem Attribut `PasswordHintText` definiert.
+Der von den Tests erwartete Wert ist in der `cypress.config.js` unter dem Attribut `PasswordHintText` definiert.
+
+Außerdem müssen die Passwort-Regeln entsprechend gesetzt werden:
+```bash
+etcdctl set /config/_global/password-policy/must_contain_capital_letter true
+etcdctl set /config/_global/password-policy/must_contain_lower_case_letter true
+etcdctl set /config/_global/password-policy/must_contain_digit true
+etcdctl set /config/_global/password-policy/must_contain_special_character true
+etcdctl set /config/_global/password-policy/min_length 14
+```
 
 **Schritt 4**
 
@@ -87,9 +105,9 @@ Damit unsere Tests für die rechtlichen URLs wie dem Impressum durchgeführt wer
 Auf folgende Weise können entsprechende Einträge im etcd konfiguriert werden:
 
 ```bash
-   etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
-   etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
-   etcdctl set /config/cas/legal_urls/terms_of_service 'https://docs.cloudogu.com/'
+etcdctl set /config/cas/legal_urls/imprint 'https://cloudogu.com/'
+etcdctl set /config/cas/legal_urls/privacy_policy 'https://www.triology.de/'
+etcdctl set /config/cas/legal_urls/terms_of_service 'https://docs.cloudogu.com/'
 ```
 
 Die von den Tests erwarteten URLs sind in der `cypress.json` unter den Attributen `PrivacyPolicyURL`, `TermsOfServiceURL` und `ImprintURL` definiert.
