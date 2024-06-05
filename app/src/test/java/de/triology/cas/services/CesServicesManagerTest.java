@@ -1,6 +1,5 @@
 package de.triology.cas.services;
 
-import net.shibboleth.shared.logic.AllMatchPredicate;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;

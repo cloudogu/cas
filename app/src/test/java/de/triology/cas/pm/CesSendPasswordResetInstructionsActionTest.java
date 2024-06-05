@@ -4,6 +4,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.model.support.pm.ResetPasswordManagementProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -15,11 +18,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,5 +105,83 @@ public class CesSendPasswordResetInstructionsActionTest {
 
         assertNotNull(result);
         assertEquals("success", result.getId());
+    }
+
+    @Test
+    public void doExecuteThrowsErrorWhenMailSenderAndSmsSenderIsNotDefined() throws Exception {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(false);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(false);
+
+        MessageContext mockMsgCtx = mock(MessageContext.class);
+        when(requestContext.getMessageContext()).thenReturn(mockMsgCtx);
+
+        Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
+
+        assertNotNull(result);
+        assertEquals("error", result.getId());
+    }
+
+    @Test
+    public void doExecuteThrowsErrorWhenNoUsernameCouldBeDetermined() throws Exception {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+
+        MessageContext mockMsgCtx = mock(MessageContext.class);
+        when(requestContext.getMessageContext()).thenReturn(mockMsgCtx);
+
+        Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
+
+        assertNotNull(result);
+        assertEquals("error", result.getId());
+    }
+
+    @Test
+    public void doExecuteWithoutErrorWhenEmailWasNotFound() throws Throwable {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
+        when(passwordManagementService.findEmail(any())).thenThrow(new Throwable("Test exception"));
+
+        Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
+
+        assertNotNull(result);
+        assertEquals("success", result.getId());
+    }
+
+    @Test
+    public void doExecuteWithoutErrorWhenPhoneWasNotFound() throws Throwable {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
+        when(passwordManagementService.findPhone(any())).thenThrow(new Throwable("Test exception"));
+
+        Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
+
+        assertNotNull(result);
+        assertEquals("success", result.getId());
+    }
+
+    @Test
+    public void doExecuteSuperWithErrorWhenEmailOrPhoneWasFound() throws Throwable {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
+        when(passwordManagementService.findEmail(any())).thenReturn("mail@test.com");
+        when(passwordManagementService.findPhone(any())).thenReturn("01234/56789");
+        when(requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        AuthenticationProperties mockAuthProps = mock(AuthenticationProperties.class);
+        when(casProperties.getAuthn()).thenReturn(mockAuthProps);
+        PasswordManagementProperties mockPmProperties = mock(PasswordManagementProperties.class);
+        when(mockAuthProps.getPm()).thenReturn(mockPmProperties);
+        ResetPasswordManagementProperties mockResetProps = mock(ResetPasswordManagementProperties.class);
+        when(mockPmProperties.getReset()).thenReturn(mockResetProps);
+        when(mockResetProps.isMultifactorAuthenticationEnabled()).thenReturn(false);
+        MessageContext mockMsgCtx = mock(MessageContext.class);
+        when(requestContext.getMessageContext()).thenReturn(mockMsgCtx);
+
+        Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
+
+        assertNotNull(result);
+        assertEquals("error", result.getId());
     }
 }
