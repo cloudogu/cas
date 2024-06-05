@@ -45,14 +45,12 @@ public class CesServicesManager implements ServicesManager {
     public Collection<RegisteredService> getAllServicesOfType(final Class clazz) {
         LOGGER.debug("Entered getAllServicesOfType method with type: {}", clazz);
         if (supports(clazz)) {
-            Collection<RegisteredService> collection =
-                    serviceStage.getRegisteredServices().values()
-                            .stream()
-                            .filter(s -> clazz.isAssignableFrom(s.getClass()))
-                            .sorted()
-                            .peek(RegisteredService::initialize)
-                            .collect(Collectors.toList());
-            return collection;
+            return serviceStage.getRegisteredServices().values()
+                    .stream()
+                    .filter(s -> clazz.isAssignableFrom(s.getClass()))
+                    .sorted()
+                    .peek(RegisteredService::initialize)
+                    .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
         }
@@ -77,23 +75,26 @@ public class CesServicesManager implements ServicesManager {
         final Collection<RegisteredService> resultServiceList = new ArrayList<>();
 
         for (RegisteredServiceQuery<?> query : queries) {
-            if (query.getName().equals("clientId")) {
-                final Collection<RegisteredService> queryMatchingRegisteredServices = registeredServices.stream()
-                        .filter(reg -> query.getType().isAssignableFrom(reg.getClass())).toList();
-                for (final RegisteredService registeredService : queryMatchingRegisteredServices) {
-                    if (registeredService instanceof OAuthRegisteredService) {
-                        if (((OAuthRegisteredService) registeredService).getClientId().equals(query.getValue())) {
-                            resultServiceList.add(registeredService);
-                        } else {
-                            LOGGER.debug("Unable to match query {} to actual {} client id", query.getValue(),((OAuthRegisteredService) registeredService).getClientId());
-                        }
-                    } else {
-                        LOGGER.error("unexpected class of type {}, expected OAuthRegisteredService. Unable to handle.", registeredService.getClass().getSimpleName());
-                    }
-                }
-            } else {
+            if (!query.getName().equals("clientId")) {
                 LOGGER.warn("RegisteredServiceQuery has property name of value: {} that does not match expected value 'clientId', unable to handle this query.", query.getName());
+                continue;
             }
+
+            final Collection<RegisteredService> queryMatchingRegisteredServices = registeredServices.stream()
+                    .filter(reg -> query.getType().isAssignableFrom(reg.getClass())).toList();
+
+            for (final RegisteredService registeredService : queryMatchingRegisteredServices) {
+                if (registeredService instanceof OAuthRegisteredService oauthService) {
+                    if (oauthService.getClientId().equals(query.getValue())) {
+                        resultServiceList.add(registeredService);
+                    } else {
+                        LOGGER.debug("Unable to match query {} to actual {} client id", query.getValue(), oauthService.getClientId());
+                    }
+                } else {
+                    LOGGER.error("unexpected class of type {}, expected OAuthRegisteredService. Unable to handle.", registeredService.getClass().getSimpleName());
+                }
+            }
+
         }
 
         return resultServiceList.stream();
