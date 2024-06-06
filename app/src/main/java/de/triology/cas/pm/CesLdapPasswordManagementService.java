@@ -37,7 +37,7 @@ public class CesLdapPasswordManagementService extends LdapPasswordManagementServ
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, List.of(properties.getReset().getMail().getAttributeName()),
+        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
                 CollectionUtils.wrap(query.getUsername()));
 
         if (StringUtils.isEmpty(email)) {

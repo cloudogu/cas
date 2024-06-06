@@ -5,6 +5,7 @@ import mousio.etcd4j.EtcdClient;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.*;
+import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

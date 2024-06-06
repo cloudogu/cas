@@ -35,7 +35,7 @@
 </head>
 
 <body class="bg-primary">
-<script th:replace="fragments/scripts"></script>
+<script th:replace="~{fragments/scripts}"></script>
 
 <div class="mdc-drawer-scrim"></div>
 
@@ -47,7 +47,7 @@
     </main>
 </div>
 
-<div th:replace="fragments/footer :: footer">
+<div th:replace="~{fragments/footer :: footer}">
     <a href="fragments/footer.html">Footer</a> fragment will go here
 </div>
 

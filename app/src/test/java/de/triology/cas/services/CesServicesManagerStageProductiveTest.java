@@ -109,24 +109,22 @@ public class CesServicesManagerStageProductiveTest {
             assertEquals("username", ((PrincipalAttributeRegisteredServiceUsernameProvider) expectedService.getUsernameAttributeProvider()).getUsernameAttribute());
             List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
             assertEquals(1, allowedProviders.size());
-            assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.get(0));
+            assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.getFirst());
         }
 
-        // Check services of oidc stage
+        // Check services of default stage
         Collection<RegisteredService> allServicesOfDefaultStage = stage.getRegisteredServices().values();
         for (RegisteredService expectedService : allServicesOfDefaultStage) {
             assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
             assertTrue(expectedService.getUsernameAttributeProvider() instanceof DefaultRegisteredServiceUsernameProvider);
             assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
-            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
-            assertEquals(0, allowedProviders.size());
+            assertNull(null, expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
         }
     }
 
     /**
      * Test for listener, when a dogu is added after initialization.
      */
-    /*
     @Test
     public void doguChangeListenerAddDoguNoFail() {
         // Initialize expectedServices
@@ -168,7 +166,6 @@ public class CesServicesManagerStageProductiveTest {
             expectedService.assertContainedIn(allServices);
         }
     }
-     */
 
     /**
      * Test for update-method when a dogu is added after initialization.

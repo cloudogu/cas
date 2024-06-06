@@ -6,12 +6,13 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.jee.context.JEEContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -64,7 +65,7 @@ public class CesCustomDelegatedAuthenticationClientLogoutAction extends Abstract
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
                 LOG.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
-                val actionResult = client.getLogoutAction(context, this.sessionStore, currentProfile, redirectUri);
+                val actionResult = client.getLogoutAction(new CallContext(context, this.sessionStore), currentProfile, redirectUri);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
                     LOG.debug("Adapting logout action [{}] for client [{}]", action, client);
