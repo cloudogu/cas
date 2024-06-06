@@ -3,12 +3,18 @@ package de.triology.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static de.triology.cas.services.CesServicesManager.STAGE_DEVELOPMENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -108,6 +114,11 @@ public class CesServicesManagerTest {
         // then
         MatcherAssert.assertThat(allOIDCServices, containsInAnyOrder(service4));
         assertEquals(allOIDCServices.size(), 1);
+
+        // when
+        Collection<RegisteredService> noServices = etcdServicesManger.getAllServicesOfType(CesServicesManager.class);
+        // then
+        assertEquals(noServices.size(), 0);
     }
 
     /**
@@ -119,6 +130,16 @@ public class CesServicesManagerTest {
         assertThrows(UnsupportedOperationException.class, () -> {
             Collection<RegisteredService> allServices = etcdServicesManger.getAllServices();
             allServices.add(mock(RegisteredService.class));
+        });
+    }
+
+    /**
+     * Test for {@link CesServicesManager#getServicesForDomain(String)}.
+     */
+    @Test
+    public void getServicesForDomain() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            etcdServicesManger.getServicesForDomain("someDomain");
         });
     }
 
@@ -158,6 +179,39 @@ public class CesServicesManagerTest {
     }
 
     /**
+     * Test for {@link CesServicesManager#findServicesBy(RegisteredServiceQuery[])}.
+     */
+    @Test
+    public void findServiceByQuery() {
+        OAuthRegisteredService expectedRegisteredService = mock(OAuthRegisteredService.class);
+        when(expectedRegisteredService.getClientId()).thenReturn("portainer");
+
+        OAuthRegisteredService otherRegisteredService = mock(OAuthRegisteredService.class);
+        when(otherRegisteredService.getClientId()).thenReturn("otherService");
+
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
+            put(0L, otherRegisteredService);
+            put(4L, mock(RegisteredService.class));
+            put(23L, expectedRegisteredService);
+        }};
+        when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
+
+        RegisteredServiceQuery query = mock(RegisteredServiceQuery.class);
+        when(query.getType()).thenReturn(OAuthRegisteredService.class);
+        when(query.getName()).thenReturn("clientId");
+        when(query.getValue()).thenReturn("portainer");
+        when(query.isIncludeAssignableTypes()).thenReturn(true);
+
+        RegisteredServiceQuery query2 = mock(RegisteredServiceQuery.class);
+        when(query2.getName()).thenReturn("notSupported");
+
+        List<RegisteredService> actualRegisteredServices = etcdServicesManger.findServicesBy(query, query2).toList();
+        assertEquals(1, actualRegisteredServices.size());
+        assertEquals("findServicesBy(Query) did not return registered service", expectedRegisteredService,
+                actualRegisteredServices.getFirst());
+    }
+
+    /**
      * Test for {@link CesServicesManager#findServiceBy(long)}.
      */
     @Test
@@ -187,6 +241,53 @@ public class CesServicesManagerTest {
     }
 
     /**
+     * Test for {@link CesServicesManager#findServiceBy(Predicate)}.
+     */
+    @Test
+    public void findServiceByPredicate() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            etcdServicesManger.findServiceBy(registeredService -> false);
+        });
+    }
+
+    /**
+     * Test for {@link CesServicesManager#findServiceBy(Service, Class)} .
+     */
+    @Test
+    public void findServiceByServiceAndClass() {
+        RegisteredService expectedRegisteredService = mock(RegisteredService.class);
+        HashMap<Long, RegisteredService> expectedServices = new HashMap<>() {{
+            put(0L, mock(RegisteredService.class));
+            put(23L, expectedRegisteredService);
+        }};
+        when(servicesManagerStage.getRegisteredServices()).thenReturn(expectedServices);
+
+        Service service = mock(Service.class);
+        when(expectedRegisteredService.matches(service)).thenReturn(true);
+
+        RegisteredService actualRegisteredService = etcdServicesManger.findServiceBy(service, RegisteredService.class);
+        assertEquals("findServiceBy(Service, Class) did not return registered service", expectedRegisteredService,
+                actualRegisteredService);
+
+
+        actualRegisteredService = etcdServicesManger.findServiceBy(null, RegisteredService.class);
+        assertNull("findServiceBy(Service, Class) did not return null",  actualRegisteredService);
+
+        actualRegisteredService = etcdServicesManger.findServiceBy(service, OAuthRegisteredService.class);
+        assertNull("findServiceBy(Service, Class) did not return null",  actualRegisteredService);
+    }
+
+    /**
+     * Test for {@link CesServicesManager#findServiceByName(String)}
+     */
+    @Test
+    public void findServiceByName() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            etcdServicesManger.findServiceByName("name");
+        });
+    }
+
+    /**
      * Test for {@link CesServicesManager#load()}.
      */
     @Test
@@ -204,11 +305,51 @@ public class CesServicesManagerTest {
     }
 
     /**
+     * Test for {@link CesServicesManager#save(Stream)} .
+     */
+    @Test
+    public void save1() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.save(Stream.empty()));
+    }
+
+    /**
+     * Test for {@link CesServicesManager#save(RegisteredService, boolean)}  .
+     */
+    @Test
+    public void save3() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.save(mock(RegisteredService.class), true));
+    }
+
+    /**
+     * Test for {@link CesServicesManager#save(Supplier, Consumer, long)}  .
+     */
+    @Test
+    public void save4() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.save(mock(Supplier.class), mock(Consumer.class), 3));
+    }
+
+    /**
+     * Test for {@link CesServicesManager#deleteAll()}   .
+     */
+    @Test
+    public void deleteAll() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.deleteAll());
+    }
+
+    /**
      * Test for {@link CesServicesManager#delete(long)}.
      */
     @Test
     public void delete() {
         assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.delete(42L));
+    }
+
+    /**
+     * Test for {@link CesServicesManager#delete(RegisteredService)}   .
+     */
+    @Test
+    public void delete2() {
+        assertThrows(UnsupportedOperationException.class, () -> etcdServicesManger.delete(mock(RegisteredService.class)));
     }
 
     /**

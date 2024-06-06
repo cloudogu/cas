@@ -7,7 +7,7 @@ const env = require('@cloudogu/dogu-integration-test-library/lib/environment_var
  * @returns The response of the request.
  */
 const getOAuth20Authorize = (clientID, exitOnFail = false) => {
-    cy.visit({
+    return cy.visit({
         method: "GET",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/authorize",
         qs: {
@@ -29,9 +29,8 @@ const getOAuth20Authorize = (clientID, exitOnFail = false) => {
  * @returns The response of the request.
  */
 const getOAuth20AccessToken = (clientID, accessToken, exitOnFail = false) => {
-    console.log("AccessToken: " + accessToken)
-    cy.request({
-        method: "GET",
+    return cy.request({
+        method: "POST",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/accessToken",
         headers: {
             "Accept": 'application/json',

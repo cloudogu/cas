@@ -35,7 +35,7 @@ public class CesGroupAwareLdapAuthenticationHandlerTest {
     private LdapEntry ldapEntry;
 
     @Test
-    public void attachGroups() {
+    public void attachGroups() throws Throwable {
         Map<String, List<Object>> attributes = new HashMap<>();
         attributes.put("user", Collections.singletonList("trillian"));
 

@@ -5,8 +5,8 @@ Generic CAS WAR overlay to exercise the latest versions of CAS. This overlay cou
 
 # Versions
 
-- CAS `6.6.15`
-- JDK `11`
+- CAS `7.0.4`
+- JDK `21`
 
 # Overview
 

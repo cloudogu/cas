@@ -53,7 +53,7 @@ public class RegistryEtcdTest {
         RegistryEtcd registry = createRegistry();
         var factory = new CesDoguServiceFactory();
         List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
-                .stream().map(CesServiceData::getName).collect(Collectors.toList());
+                .stream().map(CesServiceData::getName).toList();
         assertTrue(installedDogus.contains("redmine"));
         assertTrue(installedDogus.contains("usermgt"));
         assertTrue(installedDogus.contains("nexus"));
