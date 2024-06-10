@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#193] Move state that should be persistent between restarts to local config.
+- [#193] Update base image to java:21.0.3-2
 
 ## [v7.0.4.1-1] - 2024-06-06
 ### Changed
