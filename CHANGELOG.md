@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [#193] Move state that should be persistent between restarts to local config.
+- [#193] Update base image to java:11.0.23-1
 
 ## [v6.6.15.1-1] - 2024-05-24
 ### Changed
