@@ -1,9 +1,9 @@
 package de.triology.cas.limiting;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@1.65.1', 'github.com/cloudogu/dogu-build-lib@v2.2.0'])
+@Library(['github.com/cloudogu/ces-build-lib@2.2.1', 'github.com/cloudogu/dogu-build-lib@v2.3.1'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -17,6 +17,8 @@ GitFlow gitflow = new GitFlow(this, git)
 GitHub github = new GitHub(this, git)
 Changelog changelog = new Changelog(this)
 String productionReleaseBranch = "master"
+String developmentBranch = "develop"
+currentBranch = "${env.BRANCH_NAME}"
 String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
@@ -24,7 +26,7 @@ parallel(
             node('docker') {
                 timestamps {
                     project = "github.com/${repositoryOwner}/${doguName}"
-                    String gradleDockerImage = 'openjdk:11.0.10-jdk'
+                    String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
                     Gradle gradlew = new GradleWrapperInDocker(this, gradleDockerImage)
 
                     stage('Checkout') {
@@ -40,35 +42,35 @@ parallel(
                             gradlew 'test'
                             junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
                         }
+                    }
 
-                        stage('SonarQube') {
-                            withSonarQubeEnv {
-                                sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
-                                gitWithCredentials("fetch --all")
-                                String parameters = ' -Dsonar.projectKey=cas'
-                                if (branch == productionReleaseBranch) {
-                                    echo "This branch has been detected as the " + productionReleaseBranch + " branch."
-                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME}"
-                                } else if (branch == "develop") {
-                                    echo "This branch has been detected as the develop branch."
-                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=" + productionReleaseBranch
-                                } else if (env.CHANGE_TARGET) {
-                                    echo "This branch has been detected as a pull request."
-                                    parameters += " -Dsonar.branch.name=${env.CHANGE_BRANCH}-PR${env.CHANGE_ID} -Dsonar.branch.target=${env.CHANGE_TARGET}"
-                                } else if (branch.startsWith("feature/")) {
-                                    echo "This branch has been detected as a feature branch."
-                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=develop"
-                                } else {
-                                    echo "This branch has been detected as a miscellaneous branch."
-                                    parameters += " -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.branch.target=develop"
-                                }
-                                gradlew "sonarqube ${parameters}"
+                    stage('SonarQube') {
+                        def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                        withSonarQubeEnv {
+                            sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
+                            gitWithCredentials("fetch --all")
+
+                            if (currentBranch == productionReleaseBranch) {
+                                echo "This branch has been detected as the production branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else if (currentBranch == developmentBranch) {
+                                echo "This branch has been detected as the development branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else if (env.CHANGE_TARGET) {
+                                echo "This branch has been detected as a pull request."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${developmentBranch}"
+                            } else if (currentBranch.startsWith("feature/")) {
+                                echo "This branch has been detected as a feature branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else {
+                                echo "This branch has been detected as a miscellaneous branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} "
                             }
-                            timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
-                                def qGate = waitForQualityGate()
-                                if (qGate.status != 'OK') {
-                                    unstable("Pipeline unstable due to SonarQube quality gate failure")
-                                }
+                        }
+                        timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
+                            def qGate = waitForQualityGate()
+                            if (qGate.status != 'OK') {
+                                unstable("Pipeline unstable due to SonarQube quality gate failure")
                             }
                         }
                     }
@@ -196,7 +198,7 @@ parallel(
                             ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
                             ecoSystem.runCypressIntegrationTests([
-                                    cypressImage     : "cypress/included:12.14.0",
+                                    cypressImage     : "cypress/included:13.10.0",
                                     enableVideo      : params.EnableVideoRecording,
                                     enableScreenshots: params.EnableScreenshotRecording])
                         }
@@ -223,7 +225,7 @@ parallel(
 
                             stage('Integration Tests - After Upgrade') {
                                 ecoSystem.runCypressIntegrationTests([
-                                        cypressImage     : "cypress/included:12.14.0",
+                                        cypressImage     : "cypress/included:13.10.0",
                                         enableVideo      : params.EnableVideoRecording,
                                         enableScreenshots: params.EnableScreenshotRecording])
                             }

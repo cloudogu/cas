@@ -10,28 +10,29 @@ let latestOAuthCode = ""
 let latestAccessToken = ""
 let latestProfile = ""
 let latestBody = ""
+let latestStatus = undefined
 
 function resetData() {
     latestOAuthCode = ""
     latestAccessToken = ""
     latestProfile = ""
     latestBody = ""
+    latestStatus = undefined
 }
 
 function serviceRequestsAuthorizationEndpoint(clientID, failOnErrorCode = false) {
     cy.getOAuth20Authorize(clientID, failOnErrorCode).then(function (window) {
         let href = window.location.href
         latestOAuthCode = href.match(CasServiceTicketPattern)
-        console.log("Set OC to : " + latestOAuthCode)
     })
 }
 
 function serviceRequestsAccessTokenEndpoint(clientID, serviceTicket, failOnErrorCode = false) {
+    cy.log("serviceRequestsAccessTokenEndpoint with service-ticket: " + serviceTicket)
     cy.getOAuth20AccessToken(clientID, serviceTicket, failOnErrorCode).then(function (response) {
         latestBody = response.body
-        console.log("Latest body: " + JSON.stringify(latestBody))
+        latestStatus = response.status
         latestAccessToken = latestBody.access_token
-        console.log("Set AT to : " + latestAccessToken)
     })
 }
 
@@ -39,7 +40,6 @@ function serviceRequestsProfileEndpoint(ticketGrantingTicket) {
     cy.getOAuth20Profile(ticketGrantingTicket, false).then(function (response) {
         latestBody = response.body
         latestProfile = latestBody
-        console.log("Set profile to : " + JSON.stringify(latestProfile))
     })
 }
 
@@ -67,7 +67,6 @@ Given("a valid ticket granting ticket is currently available", function () {
     cy.getOAuth20Authorize(Cypress.env("ClientID"), false).then(function (response) {
         let href = response.location.href
         latestOAuthCode = href.match(CasServiceTicketPattern)
-        console.log("Set OC to : " + latestOAuthCode)
         serviceRequestsAccessTokenEndpoint(Cypress.env("ClientID"), latestOAuthCode, true)
     })
 });
@@ -104,7 +103,6 @@ Then("a ticket granting ticket is returned", function () {
 });
 
 Then("a profile is returned", function () {
-    console.log(JSON.stringify(latestProfile.attributes.groups))
     assert(latestProfile.toString() !== "", "Profile should not be empty")
     assert(latestProfile.id === env.GetAdminUsername(), "Profile should contain the correct username")
     assert(latestProfile.attributes.username === env.GetAdminUsername(), "Profile should contain the correct username")
@@ -126,7 +124,6 @@ Then("an invalid request respond is send", function () {
 });
 
 Then("an unauthorized json respond is send", function () {
-    assert(latestBody.status === 401, "body should have 401 status code")
-    assert(latestBody.error === "Unauthorized", "error should be 'Unauthorized'")
+    assert(latestStatus === 401, "body should have 401 status code")
     resetData()
 });
