@@ -33,7 +33,7 @@ public final class DefaultMappingPasswordRewritePolicy extends AbstractCASPasswo
     protected String replacePasswordValue(String originMessage) {
         String modifiedMessage = null;
         if (originMessage != null) {
-            modifiedMessage = originMessage.replaceAll("mappedValue = '\\S+'", "mappedValue = '****'");
+            modifiedMessage = originMessage.replaceAll("mappedValue = array<Character>\\[.*\\]", "mappedValue = '****'");
             modifiedMessage = modifiedMessage.replaceAll("originalValue = '\\S+'", "originValue = '****'");
         }
 

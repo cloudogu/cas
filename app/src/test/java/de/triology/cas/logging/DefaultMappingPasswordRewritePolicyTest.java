@@ -10,7 +10,7 @@ public class DefaultMappingPasswordRewritePolicyTest {
 
     @Test
     public void rewriteMessage() {
-        String message = "Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originalValue = 'adminpw', mappedValue = 'adminpw'";
+        String message = "Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originalValue = 'adminpw', mappedValue = array<Character>[a, d, m, i ,n, p, w]";
 
         Builder builder = new Builder();
         builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(message));
