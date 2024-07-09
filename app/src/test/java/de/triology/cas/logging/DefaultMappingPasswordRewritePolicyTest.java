@@ -17,7 +17,7 @@ public class DefaultMappingPasswordRewritePolicyTest {
 
         LogEvent rewrittenLogEvent = DefaultMappingPasswordRewritePolicy.createPolicy().rewrite(builder.build());
 
-        Assert.assertEquals("Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originValue = '****', mappedValue = '****'",
+        Assert.assertEquals("this log line contained sensitive data and was removed",
                 rewrittenLogEvent.getMessage().getFormattedMessage());
     }
 

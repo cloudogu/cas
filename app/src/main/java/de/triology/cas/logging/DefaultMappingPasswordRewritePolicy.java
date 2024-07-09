@@ -14,6 +14,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
  */
 public final class DefaultMappingPasswordRewritePolicy extends AbstractCASPasswordRewritePolicy {
     private static final String PARAMETER_PASSWORD_TEXT = "parameter:'password'";
+    private static final String REPLACEMENT_MESSAGE = "this log line contained sensitive data and was removed";
 
     @PluginFactory
     public static DefaultMappingPasswordRewritePolicy createPolicy() {
@@ -33,8 +34,7 @@ public final class DefaultMappingPasswordRewritePolicy extends AbstractCASPasswo
     protected String replacePasswordValue(String originMessage) {
         String modifiedMessage = null;
         if (originMessage != null) {
-            modifiedMessage = originMessage.replaceAll("mappedValue = array<Character>\\[.*\\]", "mappedValue = '****'");
-            modifiedMessage = modifiedMessage.replaceAll("originalValue = '\\S+'", "originValue = '****'");
+            return REPLACEMENT_MESSAGE;
         }
 
         return modifiedMessage;
