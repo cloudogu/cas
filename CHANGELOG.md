@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.4.1-2] - 2024-07-09
+### Fixed
+- Fix a bug where CAS logs the password in debug log level (#195)
+
 ## [v7.0.4.1-1] - 2024-06-06
 ### Changed
 - Upgrade CAS to 7.0.4.1 (#189)

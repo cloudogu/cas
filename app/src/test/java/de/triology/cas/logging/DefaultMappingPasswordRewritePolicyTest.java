@@ -10,14 +10,14 @@ public class DefaultMappingPasswordRewritePolicyTest {
 
     @Test
     public void rewriteMessage() {
-        String message = "Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originalValue = 'adminpw', mappedValue = 'adminpw'";
+        String message = "Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originalValue = 'adminpw', mappedValue = array<Character>[a, d, m, i ,n, p, w]";
 
         Builder builder = new Builder();
         builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(message));
 
         LogEvent rewrittenLogEvent = DefaultMappingPasswordRewritePolicy.createPolicy().rewrite(builder.build());
 
-        Assert.assertEquals("Adding mapping result [Success@7636f00b mapping = parameter:'password' -> password, code = 'success', error = false, originValue = '****', mappedValue = '****'",
+        Assert.assertEquals("this log line contained sensitive data and was removed",
                 rewrittenLogEvent.getMessage().getFormattedMessage());
     }
 
