@@ -8,12 +8,33 @@ import java.util.List;
 /**
  * Abstraction of a registry that provides service information.
  */
-interface Registry {
+public interface Registry {
+    enum CasServiceAccountTypes {
+        OAUTH("oauth"),
+        OIDC("oidc"),
 
-    /**
-     * @return an array of {@link CesServiceData} containing the information for all installed dogus
-     */
-    List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory);
+        CAS("cas"),
+        UNDEFINED("");
+
+        private final String id;
+
+        CasServiceAccountTypes(String id) {
+            this.id = id;
+        }
+
+        public static CasServiceAccountTypes getByString(String id) {
+            for (CasServiceAccountTypes e : values()) {
+                if (e.id.equals(id)) return e;
+            }
+            return UNDEFINED;
+        }
+    }
+
+    public static final String SERVICE_ACCOUNT_TYPE_OAUTH = "oauth";
+    public static final String SERVICE_ACCOUNT_TYPE_OIDC = "oidc";
+    public static final String SERVICE_ACCOUNT_TYPE_CAS = "cas";
+
+
 
     /**
      * Retrieves all CAS Services Accounts which are currently registered in etcd.

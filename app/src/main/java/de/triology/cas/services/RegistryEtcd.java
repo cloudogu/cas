@@ -37,28 +37,6 @@ class RegistryEtcd implements Registry {
 
     private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts";
 
-    private enum CasServiceAccountTypes {
-        OAUTH("oauth"),
-        OIDC("oidc"),
-        UNDEFINED("");
-
-        private final String id;
-
-        CasServiceAccountTypes(String id) {
-            this.id = id;
-        }
-
-        public static CasServiceAccountTypes getByString(String id) {
-            for (CasServiceAccountTypes e : values()) {
-                if (e.id.equals(id)) return e;
-            }
-            return UNDEFINED;
-        }
-    }
-
-    public static final String SERVICE_ACCOUNT_TYPE_OAUTH = "oauth";
-    public static final String SERVICE_ACCOUNT_TYPE_OIDC = "oidc";
-
     /**
      * Creates a etcd client that loads its URI from <code>/etc/ces/node_master</code>.
      *
@@ -72,6 +50,10 @@ class RegistryEtcd implements Registry {
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, CesServiceFactory factory) {
         LOGGER.debug("Get [{}] service accounts from registry", type);
         try {
+            if (Registry.SERVICE_ACCOUNT_TYPE_CAS.equals(type)) {
+                return getInstalledDogusWhichAreUsingCAS(factory);
+            }
+
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
             return extractServiceAccountClientsByType(nodes, type, factory);
         } catch (EtcdException e) {
@@ -101,7 +83,7 @@ class RegistryEtcd implements Registry {
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 HashMap<String, String> attributes = new HashMap<>();
 
-                switch (CasServiceAccountTypes.getByString(type)) {
+                switch (Registry.CasServiceAccountTypes.getByString(type)) {
                     case OIDC:
                     case OAUTH:
                         var clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID);
@@ -114,7 +96,7 @@ class RegistryEtcd implements Registry {
 
                 serviceDataList.add(new CesServiceData(clientID, factory, attributes));
             } catch (RegistryException ex) {
-                throw new RuntimeException("registry exception occurred", ex);
+                throw new RuntimeException("registry exception occurred ", ex);
             }
         }
         return serviceDataList;
@@ -140,8 +122,7 @@ class RegistryEtcd implements Registry {
         return doguServices;
     }
 
-    @Override
-    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
+    private List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
         LOGGER.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();

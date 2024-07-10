@@ -146,9 +146,9 @@ public class CesServicesManagerStageProductiveTest {
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
                 .when(registry).getInstalledDogusWhichAreUsingCAS(any());
         doReturn(new LinkedList<>(Collections.singletonList(correctOAuthService)))
-                .when(registry).getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, stage.oAuthServiceFactory);
+                .when(registry).getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, stage.oAuthServiceFactory);
         doReturn(new LinkedList<>(Collections.singletonList(correctOidcService)))
-                .when(registry).getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, stage.oidcServiceFactory);
+                .when(registry).getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, stage.oidcServiceFactory);
 
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));

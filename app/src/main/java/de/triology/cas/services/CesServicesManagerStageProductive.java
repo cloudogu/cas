@@ -87,11 +87,11 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void synchronizeServicesWithRegistry() {
         LOGGER.debug("Synchronize services with registry");
         List<CesServiceData> newServices = new ArrayList<>(persistentServices);
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory));
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory));
+        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory));
+        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory));
         List<String> serviceAccountServices = newServices.stream().map(CesServiceData::getName).collect(Collectors.toList());
 
-        List<CesServiceData> doguServices = registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory);
+        List<CesServiceData> doguServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory);
         newServices.addAll(doguServices.stream().filter(service -> !serviceAccountServices.contains(service.getName())).collect(Collectors.toList()));
         synchronizeServices(newServices);
         LOGGER.info("Loaded {} services:", registeredServices.size());
