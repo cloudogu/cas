@@ -14,18 +14,25 @@ set -o pipefail
 
   echo "Create sa for ${SERVICE} with account type: ${TYPE}..."
 
-  if [ "${TYPE}" != "oidc" ] && [ "${TYPE}" != "oauth" ]; then
-    echo "only the account_types: oidc, oauth are allowed"
+  if [ "${TYPE}" == "oidc" ] || [ "${TYPE}" == "oauth" ]; then
+    CLIENT_SECRET=$(doguctl random -l 16)
+    CLIENT_SECRET_HASH=$(echo -n "${CLIENT_SECRET}" | sha256sum | awk '{print $1}')
+
+    doguctl config "service_accounts/${TYPE}/${SERVICE}" "${CLIENT_SECRET_HASH}"
+  elif [ "${TYPE}" == "cas" ]; then
+    # Set value `created` because doguctl requires a value to be set
+    doguctl config "service_accounts/${TYPE}/${SERVICE}" "created"
+  else
+    echo "only the account_types: oidc, oauth, cas are allowed"
     exit 1
   fi
 
-  CLIENT_SECRET=$(doguctl random -l 16)
-  CLIENT_SECRET_HASH=$(echo -n "${CLIENT_SECRET}" | sha256sum | awk '{print $1}')
 
-  doguctl config "service_accounts/${TYPE}/${SERVICE}" "${CLIENT_SECRET_HASH}"
 
 } >/dev/null 2>&1
 
-# print OAuth credentials for the service
-echo "${TYPE}_client_id: ${SERVICE}"
-echo "${TYPE}_client_secret: ${CLIENT_SECRET}"
+if [ "${TYPE}" == "oidc" ] || [ "${TYPE}" == "oauth" ]; then
+  # print OAuth credentials for the service
+  echo "${TYPE}_client_id: ${SERVICE}"
+  echo "${TYPE}_client_secret: ${CLIENT_SECRET}"
+fi
