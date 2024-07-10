@@ -11,8 +11,8 @@ fi
 TYPE="${1}"
 SERVICE="${2}"
 
-if [ "${TYPE}" != "oidc" ] && [ "${TYPE}" != "oauth" ]; then
-  echo "only the account_types: oidc, oauth are allowed"
+if [ "${TYPE}" != "oidc" ] && [ "${TYPE}" != "oauth" ] && [ "${TYPE}" != "cas" ]; then
+  echo "only the account_types: oidc, oauth, cas are allowed"
   exit 1
 fi
 
