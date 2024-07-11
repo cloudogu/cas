@@ -4,21 +4,25 @@ import de.triology.cas.oidc.services.CesOAuthServiceFactory;
 import de.triology.cas.services.dogu.CesServiceFactory;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class RegistryLocal implements Registry{
 
     private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
@@ -26,42 +30,78 @@ public class RegistryLocal implements Registry{
 
     @Getter
     @Setter
+    private static class GlobalConfig {
+        private String fqdn;
+    }
+    @Getter
+    @Setter
     private static class LocalConfig {
         private ServiceAccounts service_accounts;
+    }
+    @Getter
+    @Setter
+    private static class ServiceAccountSecret {
+        private String secret;
+        private String logout_uri;
+    }
+    @Getter
+    @Setter
+    private static class ServiceAccountCas {
+        private boolean created;
+        private String logout_uri;
     }
 
     @Getter
     @Setter
     private static class ServiceAccounts {
-        private Map<String, String> cas;
-        private Map<String, String> oidc;
-        private Map<String, String> oauth;
+        private Map<String, ServiceAccountCas> cas;
+        private Map<String, ServiceAccountSecret> oidc;
+        private Map<String, ServiceAccountSecret> oauth;
+
+        private String getLogoutUri(String doguName) {
+            HashMap<String, String> serviceAccounts = new HashMap<>();
+
+            serviceAccounts.putAll(this.cas.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+            serviceAccounts.putAll(this.oidc.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+            serviceAccounts.putAll(this.oauth.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+
+            return serviceAccounts.get(doguName);
+        }
 
         List<CesServiceData> getByType(String serviceAccountType, CesServiceFactory factory) {
             return switch (CasServiceAccountTypes.getByString(serviceAccountType)) {
-                case OIDC -> extractServiceData(this.oidc, factory, true);
-                case OAUTH -> extractServiceData(this.oauth, factory, true);
-                case CAS -> extractServiceData(this.cas, factory, false);
+                case OIDC -> extractServiceDataSecret(this.oidc, factory);
+                case OAUTH -> extractServiceDataSecret(this.oauth, factory);
+                case CAS -> extractCasServiceData(this.cas, factory);
                 default ->
                         throw new RuntimeException(String.format("unknown service account type %s", serviceAccountType));
             };
         }
 
-        private static List<CesServiceData> extractServiceData(Map<String, String> serviceAccounts, CesServiceFactory factory, boolean oauthAttributes) {
+        private static List<CesServiceData> extractServiceDataSecret(Map<String, ServiceAccountSecret> serviceAccounts, CesServiceFactory factory) {
             List<CesServiceData> serviceDataList = new ArrayList<>();
 
             for (var serviceAccount : serviceAccounts.entrySet()) {
                 var clientID = serviceAccount.getKey();
-                var clientSecret = serviceAccount.getValue();
+                var clientSecret = serviceAccount.getValue().secret;
 
                 HashMap<String, String> attributes = new HashMap<>();
 
-                if (oauthAttributes) {
-                    attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                    attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
-                }
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
+                attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
 
                 serviceDataList.add(new CesServiceData(clientID, factory, attributes));
+            }
+
+            return serviceDataList;
+        }
+
+        private static List<CesServiceData> extractCasServiceData(Map<String, ServiceAccountCas> serviceAccounts, CesServiceFactory factory) {
+            List<CesServiceData> serviceDataList = new ArrayList<>();
+
+            for (var serviceAccount : serviceAccounts.entrySet()) {
+                var clientID = serviceAccount.getKey();
+                serviceDataList.add(new CesServiceData(clientID, factory));
             }
 
             return serviceDataList;
@@ -70,6 +110,10 @@ public class RegistryLocal implements Registry{
 
     @Override
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, CesServiceFactory factory) {
+        return readServiceAccounts().getByType(serviceAccountType, factory);
+    }
+
+    private static ServiceAccounts readServiceAccounts() {
         var localConfigFile = new File(LOCAL_CONFIG_FILE);
         FileInputStream fis = null;
         try {
@@ -78,24 +122,63 @@ public class RegistryLocal implements Registry{
             throw new RuntimeException(e);
         }
 
-        ServiceAccounts serviceAccounts = parseServiceAccounts(fis);
-        return serviceAccounts.getByType(serviceAccountType, factory);
+        return parseServiceAccounts(fis);
     }
 
-    // TODO: FQDN auslagern
+
     @Override
     public String getFqdn() {
-        return null;
+        var globalConfigFile = new File(GLOBAL_CONFIG_FILE);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(globalConfigFile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        return parseFqdn(fis);
     }
 
     @Override
     public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
-        return null;
+        var serviceAccounts = readServiceAccounts();
+        try {
+            String logoutUri = serviceAccounts.getLogoutUri(doguname);
+
+            if (logoutUri != null && !logoutUri.isEmpty()){
+                return new URI(logoutUri);
+            } else {
+                throw new GetCasLogoutUriException("Could not get logoutUri");
+            }
+        } catch (URISyntaxException e) {
+            throw new GetCasLogoutUriException(e);
+        }
     }
 
     @Override
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
+        Thread t1 = new Thread(() -> {
+            watcher(doguChangeListener);
+        });
+        t1.start();
+    }
 
+    private void watcher(DoguChangeListener doguChangeListener) {
+        Path path = Paths.get(LOCAL_CONFIG_FILE);
+        try(WatchService watchService = FileSystems.getDefault().newWatchService()) {
+            path.register(watchService);
+            var previousServiceAccounts = readServiceAccounts();
+            while (true) {
+                LOGGER.info("wait for changes under {}", LOCAL_CONFIG_FILE);
+                watchService.take();
+                var currentServiceAccounts = readServiceAccounts();
+                if (!previousServiceAccounts.equals(currentServiceAccounts)) {
+                    doguChangeListener.onChange();
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RegistryException("Failed to addDoguChangeListener for dogus: ", e);
+        }
     }
 
     private static ServiceAccounts parseServiceAccounts(InputStream yamlStream) {
@@ -103,4 +186,12 @@ public class RegistryLocal implements Registry{
         LocalConfig config = yaml.load(yamlStream);
         return config.getService_accounts();
     }
+
+    private static String parseFqdn(InputStream yamlStream) {
+        var yaml = new Yaml(new Constructor(GlobalConfig.class, new LoaderOptions()));
+        GlobalConfig config = yaml.load(yamlStream);
+        return config.getFqdn();
+    }
+
+
 }

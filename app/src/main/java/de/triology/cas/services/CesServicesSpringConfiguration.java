@@ -54,7 +54,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     }
 
     public Registry createLocalRegistry() {
-        return null;
+        return new RegistryLocal();
     }
 
     @Bean(name = ServicesManager.BEAN_NAME)
@@ -73,8 +73,10 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     public ServicesManager configureServicesManager() {
         Registry registry;
         if (isMultinode()) {
+            System.out.println("IsMultinode");
             registry = createLocalRegistry();
         } else {
+            System.out.println("IsNotMultinode");
             EtcdClient etcdClient = createEtcdClient();
             registry = createEtcdRegistry(etcdClient);
         }

@@ -171,6 +171,7 @@ class RegistryEtcd implements Registry {
         }
     }
 
+    @Override
     public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
         JSONObject doguMetaData;
         try {

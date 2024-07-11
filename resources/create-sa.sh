@@ -18,16 +18,18 @@ set -o pipefail
     CLIENT_SECRET=$(doguctl random -l 16)
     CLIENT_SECRET_HASH=$(echo -n "${CLIENT_SECRET}" | sha256sum | awk '{print $1}')
 
-    doguctl config "service_accounts/${TYPE}/${SERVICE}" "${CLIENT_SECRET_HASH}"
+    doguctl config "service_accounts/${TYPE}/${SERVICE}/secret" "${CLIENT_SECRET_HASH}"
   elif [ "${TYPE}" == "cas" ]; then
     # Set value `created` because doguctl requires a value to be set
-    doguctl config "service_accounts/${TYPE}/${SERVICE}" "created"
+    doguctl config "service_accounts/${TYPE}/${SERVICE}/created" "true"
   else
     echo "only the account_types: oidc, oauth, cas are allowed"
     exit 1
   fi
 
-
+  if [ -n "${3+x}" ]; then
+      doguctl config "service_accounts/${TYPE}/${SERVICE}/logout_uri" "${3}"
+  fi
 
 } >/dev/null 2>&1
 
