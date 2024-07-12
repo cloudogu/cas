@@ -73,10 +73,8 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     public ServicesManager configureServicesManager() {
         Registry registry;
         if (isMultinode()) {
-            System.out.println("IsMultinode");
             registry = createLocalRegistry();
         } else {
-            System.out.println("IsNotMultinode");
             EtcdClient etcdClient = createEtcdClient();
             registry = createEtcdRegistry(etcdClient);
         }
