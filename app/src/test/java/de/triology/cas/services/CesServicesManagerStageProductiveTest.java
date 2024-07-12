@@ -48,8 +48,8 @@ public class CesServicesManagerStageProductiveTest {
     @Before
     public void setUp() {
         when(registry.getFqdn()).thenReturn(EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME);
-        doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2)))
-                .when(registry).getInstalledDogusWhichAreUsingCAS(any());
+        when(registry.getInstalledCasServiceAccountsOfType(any(), any()))
+                .thenReturn(List.of(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2));
 
         expectedServices = new LinkedList<>(Arrays.asList(
                 new ExpectedService().name(EXPECTED_SERVICE_DATA_1.getIdentifier())
@@ -60,7 +60,8 @@ public class CesServicesManagerStageProductiveTest {
                         .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/smeagol/somethingElse"),
                 new ExpectedService().name(EXPECTED_SERVICE_CAS.getIdentifier())
                         .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/cas(/.*)?")
-                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingElse")));
+                        .serviceIdExample("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME + "/cas/somethingElse")
+        ));
     }
 
     /**
@@ -76,8 +77,7 @@ public class CesServicesManagerStageProductiveTest {
         CesServiceData serviceDataSCM = new CesServiceData(expectedServiceName3, doguServiceFactory);
 
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
-                .when(registry).getInstalledDogusWhichAreUsingCAS(any());
-
+                .when(registry).getInstalledCasServiceAccountsOfType(eq(Registry.SERVICE_ACCOUNT_TYPE_CAS), any());
         expectedServices.add(new ExpectedService().name(serviceDataSCM.getIdentifier())
                 .serviceId("https://" + EXPECTED_FULLY_QUALIFIED_DOMAIN_NAME_REGEX + "(:443)?/scm(/.*)?"));
         //Do not expect the o auth service as the attributes are missing
@@ -98,7 +98,7 @@ public class CesServicesManagerStageProductiveTest {
     @Test
     public void managerAddDelegatedAuthenticationProvider() {
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2)))
-                .when(registry).getInstalledDogusWhichAreUsingCAS(any());
+                .when(registry).getInstalledCasServiceAccountsOfType(any(), any());
 
         // Check services of oidc stage
         Collection<RegisteredService> allServicesOfOIDCStage = stageWithOIDC.getRegisteredServices().values();
@@ -144,7 +144,7 @@ public class CesServicesManagerStageProductiveTest {
         CesServiceData correctOidcService = new CesServiceData(EXPECTED_OIDC_SERVICE_DATA.getName(), oidcServiceFactory, attributes);
 
         doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)))
-                .when(registry).getInstalledDogusWhichAreUsingCAS(any());
+                .when(registry).getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, stage.doguServiceFactory);
         doReturn(new LinkedList<>(Collections.singletonList(correctOAuthService)))
                 .when(registry).getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, stage.oAuthServiceFactory);
         doReturn(new LinkedList<>(Collections.singletonList(correctOidcService)))
@@ -178,7 +178,7 @@ public class CesServicesManagerStageProductiveTest {
         String expectedServiceName3 = "scm";
         CesServiceData serviceDataSCM = new CesServiceData(expectedServiceName3, doguServiceFactory);
 
-        when(registry.getInstalledDogusWhichAreUsingCAS(any())).thenReturn(new LinkedList<>(
+        when(registry.getInstalledCasServiceAccountsOfType(any(), any())).thenReturn(new LinkedList<>(
                 Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2, serviceDataSCM)));
 
         ExpectedService service3 = new ExpectedService().name(serviceDataSCM.getIdentifier())
@@ -257,7 +257,7 @@ public class CesServicesManagerStageProductiveTest {
         DoguChangeListener doguChangeListener = initialize();
 
         // Remove service
-        when(registry.getInstalledDogusWhichAreUsingCAS(any())).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_DATA_2)));
+        when(registry.getInstalledCasServiceAccountsOfType(any(), any())).thenReturn(new LinkedList<>(Collections.singletonList(EXPECTED_SERVICE_DATA_2)));
         expectedServices = expectedServices.stream().filter(expectedService -> !EXPECTED_SERVICE_DATA_1.getIdentifier()
                 .equals(expectedService.name)).collect(Collectors.toList());
 

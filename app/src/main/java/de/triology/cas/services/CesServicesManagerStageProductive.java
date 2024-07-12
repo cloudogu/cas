@@ -85,15 +85,12 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * in {@link #registry} to <code>registeredServices</code>.
      */
     private void synchronizeServicesWithRegistry() {
-        LOGGER.debug("Synchronize services with registry");
-        List<CesServiceData> newServices = new ArrayList<>(persistentServices);
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory));
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory));
-        List<String> serviceAccountServices = newServices.stream().map(CesServiceData::getName).collect(Collectors.toList());
-
-        List<CesServiceData> doguServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory);
-        newServices.addAll(doguServices.stream().filter(service -> !serviceAccountServices.contains(service.getName())).collect(Collectors.toList()));
-        synchronizeServices(newServices);
+        // use map to filter duplicates
+        var newServices = persistentServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v));
+        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        synchronizeServices(newServices.values().stream().toList());
         LOGGER.info("Loaded {} services:", registeredServices.size());
         registeredServices.values().forEach(e -> LOGGER.debug("[{}]", e));
     }

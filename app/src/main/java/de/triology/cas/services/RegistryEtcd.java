@@ -122,7 +122,7 @@ class RegistryEtcd implements Registry {
         return doguServices;
     }
 
-    private List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
+    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
         LOGGER.debug("Get Dogus from registry");
         try {
             List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
