@@ -45,7 +45,34 @@ function migrateServiceAccounts() {
         doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
       }
   fi
+
+  OAUTH=('portainer')
+  OIDC=('teamscale')
+  CAS=('smeagol' 'jira' 'fidelia' 'nexus' 'cockpit' 'sonar' 'grafana' 'jenkins' 'scm' 'usermgt' 'admin' 'logging' 'redmine' 'backup')
+
+  migrateServiceAccountsFolderStructure "oauth" "${OAUTH[@]}"
+  migrateServiceAccountsFolderStructure "oidc" "${OIDC[@]}"
+  migrateServiceAccountsFolderStructure "cas" "${CAS[@]}"
+
   echo "Migrating service service_accounts... Done!"
+}
+
+function migrateServiceAccountsFolderStructure() {
+  TYPE=$1
+  SERVICES=("$@")
+
+  for service in "${SERVICES[@]}"
+  do
+    echo "Migrate service_account of service $service and type $TYPE"
+    CLIENT_SECRET_HASH=$(doguctl config "service_accounts/${TYPE}/${service}" --default "default")
+    if [[ "${CLIENT_SECRET_HASH}" != "default" ]]; then
+        {
+          doguctl config --remove "service_accounts/${TYPE}/${service}"
+          doguctl config "service_accounts/${TYPE}/${service}/secret" "${CLIENT_SECRET_HASH}"
+          # TODO logout_uri
+        }
+    fi
+  done
 }
 
 ##### Functions definition done; Executing post-upgrade now
