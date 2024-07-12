@@ -68,7 +68,7 @@ public class RegistryLocal implements Registry{
             return serviceAccounts.get(doguName);
         }
 
-        List<CesServiceData> getByType(String serviceAccountType, CesServiceFactory factory) {
+        List<CesServiceData> getByType(String serviceAccountType, CesServiceFactory factory) throws RuntimeException {
             return switch (CasServiceAccountTypes.getByString(serviceAccountType)) {
                 case OIDC -> extractServiceDataSecret(this.oidc, factory);
                 case OAUTH -> extractServiceDataSecret(this.oauth, factory);
@@ -114,29 +114,22 @@ public class RegistryLocal implements Registry{
     }
 
     private static ServiceAccounts readServiceAccounts() {
-        var localConfigFile = new File(LOCAL_CONFIG_FILE);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(localConfigFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        return parseServiceAccounts(fis);
+        return parseServiceAccounts(getFileInputStream(LOCAL_CONFIG_FILE));
     }
-
 
     @Override
     public String getFqdn() {
-        var globalConfigFile = new File(GLOBAL_CONFIG_FILE);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(globalConfigFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return parseFqdn(getFileInputStream(GLOBAL_CONFIG_FILE));
+    }
 
-        return parseFqdn(fis);
+    private static FileInputStream getFileInputStream(String path) {
+        FileInputStream fis;
+        try {
+            fis = new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            throw new RegistryException(String.format("Could not find file %s", path), e);
+        }
+        return fis;
     }
 
     @Override
@@ -177,21 +170,20 @@ public class RegistryLocal implements Registry{
                 }
             }
         } catch (IOException | InterruptedException e) {
-            throw new RegistryException("Failed to addDoguChangeListener for dogus: ", e);
+            throw new RegistryException("Failed to addDoguChangeListener", e);
         }
     }
 
     private static ServiceAccounts parseServiceAccounts(InputStream yamlStream) {
-        var yaml = new Yaml(new Constructor(LocalConfig.class, new LoaderOptions()));
-        LocalConfig config = yaml.load(yamlStream);
-        return config.getService_accounts();
+        return readYaml(LocalConfig.class, yamlStream).getService_accounts();
     }
 
     private static String parseFqdn(InputStream yamlStream) {
-        var yaml = new Yaml(new Constructor(GlobalConfig.class, new LoaderOptions()));
-        GlobalConfig config = yaml.load(yamlStream);
-        return config.getFqdn();
+        return readYaml(GlobalConfig.class, yamlStream).getFqdn();
     }
 
-
+    private static <T> T readYaml(Class<T> tClass, InputStream yamlStream){
+        var yaml = new Yaml(new Constructor(tClass, new LoaderOptions()));
+        return yaml.load(yamlStream);
+    }
 }
