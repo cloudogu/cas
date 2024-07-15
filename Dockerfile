@@ -54,7 +54,10 @@ RUN set -o errexit \
   && set -o nounset \
   && set -o pipefail \
   && apk update \
-  && apk upgrade
+  && apk upgrade \
+  && apk add --no-cache --update \
+    wget \
+    jq
 
 # configure environment
 ENV TOMCAT_VERSION=${TOMCAT_VERSION} \

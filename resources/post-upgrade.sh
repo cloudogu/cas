@@ -35,8 +35,8 @@ function removeDeprecatedKeys() {
   echo "Remove deprecated etcd Keys... Done!"
 }
 
-function migrateServiceAccounts() {
-  echo "Migrating service service_accounts..."
+function migratePortainerServiceAccount() {
+  echo "Migrating portainer service_account..."
   VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
   if [[ "${VALUE}" != "default" ]]; then
       {
@@ -45,34 +45,70 @@ function migrateServiceAccounts() {
         doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
       }
   fi
-
-  OAUTH=('portainer')
-  OIDC=('teamscale')
-  CAS=('smeagol' 'jira' 'fidelia' 'nexus' 'cockpit' 'sonar' 'grafana' 'jenkins' 'scm' 'usermgt' 'admin' 'logging' 'redmine' 'backup')
-
-  migrateServiceAccountsFolderStructure "oauth" "${OAUTH[@]}"
-  migrateServiceAccountsFolderStructure "oidc" "${OIDC[@]}"
-  migrateServiceAccountsFolderStructure "cas" "${CAS[@]}"
-
-  echo "Migrating service service_accounts... Done!"
+  echo "Migrating portainer service_accounts... Done!"
 }
 
-function migrateServiceAccountsFolderStructure() {
-  TYPE=$1
-  SERVICES=("$@")
+function migrateServiceAccounts() {
+  echo "Migrating service accounts..."
 
-  for service in "${SERVICES[@]}"
-  do
-    echo "Migrate service_account of service $service and type $TYPE"
-    CLIENT_SECRET_HASH=$(doguctl config "service_accounts/${TYPE}/${service}" --default "default")
-    if [[ "${CLIENT_SECRET_HASH}" != "default" ]]; then
+  migratePortainerServiceAccount
+
+  if [[ -n "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
+    migrateServiceAccountsToFolders
+    migrateLogoutUrl
+  fi
+
+  echo "Migrating service accounts... Done!"
+}
+
+function migrateServiceAccountsToFolders() {
+  local saTypesToMigrate
+  saTypesToMigrate=('oidc' 'oauth')
+  migrateServiceAccountsToFoldersByType "${saTypesToMigrate[@]}"
+}
+
+function migrateServiceAccountsToFoldersByType() {
+  local saType etcdSaUrl requestExitCode errFile outFile
+  saType="${1}"
+  etcdSaUrl='http://172.17.0.1:4001/v2/keys/config/cas/service_accounts'
+
+  errFile="$(mktemp)"
+  outFile="$(mktemp)"
+  cleanup() {
+    rm "${errFile}" "${outFile}"
+  }
+  trap cleanup EXIT
+
+  wget -O- "${etcdSaUrl}/${saType}?recursive=false" 1>"${outFile}" 2>"${errFile}" || requestExitCode=$?; true
+  if [[ "${requestExitCode}" -eq 8 ]] && grep -q '404 Not Found' "${errFile}"; then
+    echo "Service account type '${saType}' not found, skipping..."
+    return 0
+  elif [[ ! "${requestExitCode}" -eq 0 ]]; then
+    echo "Failed to list service accounts of type '${saType}'"
+    cat "${errFile}"
+    return "${requestExitCode}"
+  fi
+
+  jq -r ".node.nodes[] | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
+    while IFS=$'\t' read -r service clientSecretHash; do
+      echo "Migrate service_account of service '${service}' and type '${saType}'"
+      if [[ "${clientSecretHash}" != "default" ]]; then
         {
-          doguctl config --remove "service_accounts/${TYPE}/${service}"
-          doguctl config "service_accounts/${TYPE}/${service}/secret" "${CLIENT_SECRET_HASH}"
-          # TODO logout_uri
+          doguctl config --remove "service_accounts/${saType}/${service}"
+          doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
         }
-    fi
-  done
+      fi
+    done
+}
+
+function migrateLogoutUrl() {
+  local etcdDoguUrl etcdDoguResponse
+  etcdDoguUrl='http://172.17.0.1:4001/v2/keys/dogu?recursive=true'
+  etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
+
+  echo "${etcdDoguResponse}" | jq -r '.node.nodes[].nodes | .[] | select(.key | endswith("current")) | { dogu: .key | sub("\/dogu\/(?<name>.*)\/current";"\(.name)"), version: .value } | [.dogu, .version] | @tsv'
+  # TODO loop over dogus, get dogu descriptor and search for logoutUrl -> move into folder structure
+  # TODO question: should logoutUrl be gotten from folder structure in classic CES as well?
 }
 
 ##### Functions definition done; Executing post-upgrade now
