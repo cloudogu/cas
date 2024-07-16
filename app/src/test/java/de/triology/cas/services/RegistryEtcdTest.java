@@ -10,8 +10,6 @@ import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -24,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
+import org.hamcrest.MatcherAssert;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,17 +69,58 @@ public class RegistryEtcdTest {
     }
 
     @Test
-    public void getCorrectCasLogoutUri() throws ParseException, GetCasLogoutUriException {
+    public void getCorrectCasLogoutUri() throws GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
-        JSONObject properties = new JSONObject();
-        properties.put("logoutUri", "testDogu/logout");
-        JSONObject doguMetaData = new JSONObject();
-        doguMetaData.put("Properties", properties);
-        when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/cas/logout_uri")).thenReturn("testDogu/logout");
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oidc/logout_uri")).thenThrow(RegistryException.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oauth/logout_uri")).thenThrow(RegistryException.class);
         when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
 
         URI logoutURI = registry.getCasLogoutUri("testDogu");
         assertEquals("testDogu/logout", logoutURI.toString());
+    }
+
+    @Test
+    public void getCorrectOidcLogoutUriTypeAccount() throws GetCasLogoutUriException {
+        RegistryEtcd registry = mock(RegistryEtcd.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/cas/logout_uri")).thenThrow(RegistryException.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oidc/logout_uri")).thenReturn("testDogu/logout");
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oauth/logout_uri")).thenThrow(RegistryException.class);
+        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
+
+        URI logoutURI = registry.getCasLogoutUri("testDogu");
+        assertEquals("testDogu/logout", logoutURI.toString());
+    }
+
+    @Test
+    public void getCorrectOauthLogoutUri() throws GetCasLogoutUriException {
+        RegistryEtcd registry = mock(RegistryEtcd.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/cas/logout_uri")).thenThrow(RegistryException.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oidc/logout_uri")).thenThrow(RegistryException.class);
+        when(registry.getEtcdValueForKey("/config/cas/service_accounts/oauth/logout_uri")).thenReturn("testDogu/logout");
+        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
+
+        URI logoutURI = registry.getCasLogoutUri("testDogu");
+        assertEquals("testDogu/logout", logoutURI.toString());
+    }
+
+    @Test(expected = GetCasLogoutUriException.class)
+    public void getCasLogoutUriFromNonexistentDogu() throws GetCasLogoutUriException {
+        RegistryEtcd registry = mock(RegistryEtcd.class);
+
+        when(registry.getEtcdValueForKey(ArgumentMatchers.any())).thenThrow(RegistryException.class);
+        when(registry.getCasLogoutUri("NonexistentDogu")).thenCallRealMethod();
+
+        registry.getCasLogoutUri("NonexistentDogu");
+    }
+
+    @Test(expected = GetCasLogoutUriException.class)
+    public void getEmptyCasLogoutUri() throws GetCasLogoutUriException {
+        RegistryEtcd registry = mock(RegistryEtcd.class);
+        when(registry.getEtcdValueForKey(ArgumentMatchers.any())).thenReturn("");
+        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
+
+        registry.getCasLogoutUri("testDogu");
     }
 
     @Test
@@ -115,62 +155,6 @@ public class RegistryEtcdTest {
         assertTrue(dogus.contains("dogu"));
     }
 
-    @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromNonexistentDogu() throws GetCasLogoutUriException {
-        RegistryEtcd registry = mock(RegistryEtcd.class);
-
-        when(registry.getCasLogoutUri("NonexistentDogu")).thenCallRealMethod();
-
-        registry.getCasLogoutUri("NonexistentDogu");
-    }
-
-    @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithoutProperties() throws ParseException, GetCasLogoutUriException {
-        RegistryEtcd registry = mock(RegistryEtcd.class);
-        JSONObject doguMetaData = new JSONObject();
-        when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
-        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
-
-        registry.getCasLogoutUri("testDogu");
-    }
-
-    @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithmalformedProperties() throws ParseException, GetCasLogoutUriException {
-        RegistryEtcd registry = mock(RegistryEtcd.class);
-        JSONObject doguMetaData = new JSONObject();
-        doguMetaData.put("Properties", "malformedPropertiesData");
-
-        when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
-        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
-
-        registry.getCasLogoutUri("testDogu");
-    }
-
-    @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithoutLogoutUriInProperties() throws ParseException, GetCasLogoutUriException {
-        RegistryEtcd registry = mock(RegistryEtcd.class);
-        JSONObject properties = new JSONObject();
-        JSONObject doguMetaData = new JSONObject();
-        doguMetaData.put("Properties", properties);
-        when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
-        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
-
-        registry.getCasLogoutUri("testDogu");
-    }
-
-    @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguWithEmptyLogoutUriInProperties() throws ParseException, GetCasLogoutUriException {
-        RegistryEtcd registry = mock(RegistryEtcd.class);
-        JSONObject properties = new JSONObject();
-        properties.put("logoutUri", null);
-        JSONObject doguMetaData = new JSONObject();
-        doguMetaData.put("Properties", properties);
-        when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
-        when(registry.getCasLogoutUri("testDogu")).thenCallRealMethod();
-
-        registry.getCasLogoutUri("testDogu");
-    }
-
 
     @Test
     public void getOidcDogus() {
@@ -178,7 +162,7 @@ public class RegistryEtcdTest {
         var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
         List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, factory)
                 .stream().map(CesServiceData::getName).collect(Collectors.toList());
-        assertThat(installedServiceAccounts, containsInAnyOrder("cas-oidc-client"));
+        MatcherAssert.assertThat(installedServiceAccounts, containsInAnyOrder("cas-oidc-client"));
         assertEquals(1, registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, factory).size());
     }
 
@@ -201,7 +185,7 @@ public class RegistryEtcdTest {
         var factory = new CesOAuthServiceFactory<>(OAuthRegisteredService::new);
         List<String> installedServiceAccounts = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, factory)
                 .stream().map(CesServiceData::getName).collect(Collectors.toList());
-        assertThat(installedServiceAccounts, containsInAnyOrder("portainer"));
+        MatcherAssert.assertThat(installedServiceAccounts, containsInAnyOrder("portainer"));
         assertEquals(1, registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, factory).size());
     }
 

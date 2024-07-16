@@ -22,17 +22,22 @@ public interface Registry {
             this.id = id;
         }
 
-        public static CasServiceAccountTypes getByString(String id) {
+        public static CasServiceAccountTypes fromString(String id) {
             for (CasServiceAccountTypes e : values()) {
                 if (e.id.equals(id)) return e;
             }
             return UNDEFINED;
         }
+
+        @Override
+        public String toString() {
+            return id;
+        }
     }
 
-    public static final String SERVICE_ACCOUNT_TYPE_OAUTH = "oauth";
-    public static final String SERVICE_ACCOUNT_TYPE_OIDC = "oidc";
-    public static final String SERVICE_ACCOUNT_TYPE_CAS = "cas";
+    String SERVICE_ACCOUNT_TYPE_OAUTH = "oauth";
+    String SERVICE_ACCOUNT_TYPE_OIDC = "oidc";
+    String SERVICE_ACCOUNT_TYPE_CAS = "cas";
 
 
 

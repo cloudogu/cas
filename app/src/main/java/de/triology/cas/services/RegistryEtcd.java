@@ -83,7 +83,7 @@ class RegistryEtcd implements Registry {
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 HashMap<String, String> attributes = new HashMap<>();
 
-                switch (Registry.CasServiceAccountTypes.getByString(type)) {
+                switch (Registry.CasServiceAccountTypes.fromString(type)) {
                     case OIDC:
                     case OAUTH:
                         var clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID);
@@ -173,46 +173,21 @@ class RegistryEtcd implements Registry {
 
     @Override
     public URI getCasLogoutUri(String doguname) throws GetCasLogoutUriException {
-        JSONObject doguMetaData;
-        try {
-            doguMetaData = getCurrentDoguNode(doguname);
-            JSONObject properties;
-            if (doguMetaData != null) {
-                properties = getPropertiesFromMetaData(doguMetaData);
-            } else {
-                throw new GetCasLogoutUriException("Could not get dogu metadata");
+        String logoutUri;
+        for (var accountType : Registry.CasServiceAccountTypes.values()) {
+            try {
+                logoutUri = getEtcdValueForKey(String.format("/config/cas/service_accounts/%s/logout_uri", accountType.toString()));
+                if (logoutUri.isEmpty()) {
+                    throw new GetCasLogoutUriException("logout_uri is empty");
+                }
+                return new URI(logoutUri);
+            } catch (RegistryException ignored) {
+            } catch (URISyntaxException e) {
+                throw new GetCasLogoutUriException(e);
             }
-            return getLogoutUriFromProperties(properties);
-        } catch (ClassCastException | NullPointerException | ParseException | URISyntaxException | RegistryException e) {
-            throw new GetCasLogoutUriException(e);
         }
-    }
 
-    private URI getLogoutUriFromProperties(JSONObject properties) throws GetCasLogoutUriException, URISyntaxException {
-        Object logoutUri = properties.get("logoutUri");
-        if (logoutUri != null) {
-            String logoutUriString = logoutUri.toString();
-            if (logoutUriString != null) {
-                return new URI(logoutUriString);
-            } else {
-                throw new GetCasLogoutUriException("Could not get logoutUri from properties");
-            }
-        } else {
-            throw new GetCasLogoutUriException("Could not get logoutUri from properties");
-        }
-    }
-
-    private JSONObject getPropertiesFromMetaData(JSONObject doguMetaData) {
-        Object propertiesObject = doguMetaData.get("Properties");
-        if (propertiesObject != null) {
-            if (propertiesObject instanceof JSONObject) {
-                return (JSONObject) propertiesObject;
-            } else {
-                throw new ClassCastException("Properties are not in JSONObject format");
-            }
-        } else {
-            throw new NullPointerException("No Properties are set");
-        }
+        throw new GetCasLogoutUriException("No CAS logout URI found for " + doguname);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class RegistryLocal implements Registry{
         }
 
         List<CesServiceData> getByType(String serviceAccountType, CesServiceFactory factory) throws RuntimeException {
-            return switch (CasServiceAccountTypes.getByString(serviceAccountType)) {
+            return switch (CasServiceAccountTypes.fromString(serviceAccountType)) {
                 case OIDC -> extractServiceDataSecret(this.oidc, factory);
                 case OAUTH -> extractServiceDataSecret(this.oauth, factory);
                 case CAS -> extractCasServiceData(this.cas, factory);
