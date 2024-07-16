@@ -61,9 +61,15 @@ public class RegistryLocal implements Registry{
         private String getLogoutUri(String doguName) {
             HashMap<String, String> serviceAccounts = new HashMap<>();
 
-            serviceAccounts.putAll(this.cas.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
-            serviceAccounts.putAll(this.oidc.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
-            serviceAccounts.putAll(this.oauth.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+            serviceAccounts.putAll(this.cas.entrySet().stream()
+                    .filter(e -> e.getValue().logout_uri != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+            serviceAccounts.putAll(this.oidc.entrySet().stream()
+                    .filter(e -> e.getValue().logout_uri != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
+            serviceAccounts.putAll(this.oauth.entrySet().stream()
+                    .filter(e -> e.getValue().logout_uri != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().logout_uri)));
 
             return serviceAccounts.get(doguName);
         }
