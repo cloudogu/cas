@@ -35,6 +35,10 @@ function removeDeprecatedKeys() {
   echo "Remove deprecated etcd Keys... Done!"
 }
 
+function getEtcdEndpoint() {
+  tr -d '[:space:]' < '/etc/ces/node_master'
+}
+
 function migratePortainerServiceAccount() {
   echo "Migrating portainer service_account..."
   VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
@@ -48,29 +52,10 @@ function migratePortainerServiceAccount() {
   echo "Migrating portainer service_accounts... Done!"
 }
 
-function migrateServiceAccounts() {
-  echo "Migrating service accounts..."
-
-  migratePortainerServiceAccount
-
-  if [[ -n "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
-    migrateServiceAccountsToFolders
-    migrateLogoutUrl
-  fi
-
-  echo "Migrating service accounts... Done!"
-}
-
-function migrateServiceAccountsToFolders() {
-  local saTypesToMigrate
-  saTypesToMigrate=('oidc' 'oauth')
-  migrateServiceAccountsToFoldersByType "${saTypesToMigrate[@]}"
-}
-
 function migrateServiceAccountsToFoldersByType() {
   local saType etcdSaUrl requestExitCode errFile outFile
   saType="${1}"
-  etcdSaUrl='http://172.17.0.1:4001/v2/keys/config/cas/service_accounts'
+  etcdSaUrl="http://$(getEtcdEndpoint):4001/v2/keys/config/cas/service_accounts"
 
   errFile="$(mktemp)"
   outFile="$(mktemp)"
@@ -101,14 +86,40 @@ function migrateServiceAccountsToFoldersByType() {
     done
 }
 
+function migrateServiceAccountsToFolders() {
+  local saTypesToMigrate
+  saTypesToMigrate=('oidc' 'oauth')
+  migrateServiceAccountsToFoldersByType "${saTypesToMigrate[@]}"
+}
+
 function migrateLogoutUrl() {
   local etcdDoguUrl etcdDoguResponse
-  etcdDoguUrl='http://172.17.0.1:4001/v2/keys/dogu?recursive=true'
+  etcdDoguUrl="http://$(getEtcdEndpoint):4001/v2/keys/dogu?recursive=true"
   etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
 
-  echo "${etcdDoguResponse}" | jq -r '.node.nodes[].nodes | .[] | select(.key | endswith("current")) | { dogu: .key | sub("\/dogu\/(?<name>.*)\/current";"\(.name)"), version: .value } | [.dogu, .version] | @tsv'
-  # TODO loop over dogus, get dogu descriptor and search for logoutUrl -> move into folder structure
-  # TODO question: should logoutUrl be gotten from folder structure in classic CES as well?
+  echo "${etcdDoguResponse}" | jq -r '.node.nodes[].nodes | .[] | select(.key | endswith("current")) | { dogu: .key | sub("\/dogu\/(?<name>.*)\/current";"\(.name)"), version: .value } | [.dogu, .version] | @tsv' |
+    while IFS=$'\t' read -r dogu version; do
+      local doguDescriptor logoutUri saType
+      doguDescriptor="$(echo "${etcdDoguResponse}" | jq -r ".node.nodes[].nodes | .[] | select(.key == \"/dogu/${dogu}/${version}\") | .value")"
+      logoutUri="$(echo "${doguDescriptor}" | jq -r ".Properties.logoutUri")"
+      if [[ "${logoutUri}" != "null" ]]; then
+        saType="$(echo "${doguDescriptor}" | jq -rn "try (.ServiceAccounts[] | select(.Type == \"cas\") | .Params[0]) catch \"cas\"")"
+        doguctl config "service_accounts/${saType}/${dogu}/logout_uri" "${logoutUri}"
+      fi
+    done
+}
+
+function migrateServiceAccounts() {
+  echo "Migrating service accounts..."
+
+  migratePortainerServiceAccount
+
+  if [[ -n "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
+    migrateServiceAccountsToFolders
+    migrateLogoutUrl
+  fi
+
+  echo "Migrating service accounts... Done!"
 }
 
 ##### Functions definition done; Executing post-upgrade now
