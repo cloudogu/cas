@@ -120,12 +120,20 @@ public class RegistryLocal implements Registry{
     }
 
     private static ServiceAccounts readServiceAccounts() {
-        return parseServiceAccounts(getFileInputStream(LOCAL_CONFIG_FILE));
+        try (var fis = getFileInputStream(LOCAL_CONFIG_FILE)) {
+            return parseServiceAccounts(fis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to close local config file after reading service accounts.", e);
+        }
     }
 
     @Override
     public String getFqdn() {
-        return parseFqdn(getFileInputStream(GLOBAL_CONFIG_FILE));
+        try (var fis = getFileInputStream(GLOBAL_CONFIG_FILE)) {
+            return parseFqdn(fis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to close global config file after reading fqdn.", e);
+        }
     }
 
     private static FileInputStream getFileInputStream(String path) {
@@ -156,9 +164,7 @@ public class RegistryLocal implements Registry{
 
     @Override
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
-        Thread t1 = new Thread(() -> {
-            watcher(doguChangeListener);
-        });
+        Thread t1 = new Thread(() -> watcher(doguChangeListener));
         t1.start();
     }
 
