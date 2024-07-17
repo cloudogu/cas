@@ -140,9 +140,7 @@ public class RegistryEtcdTest {
                 if (dogus.contains("dogu")) {
                     try {
                         when(request.send()).thenThrow(new IOException("second call"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (IOException ignore) {}
                 }
                 dogus.add("dogu");
                 dogus.notify();
