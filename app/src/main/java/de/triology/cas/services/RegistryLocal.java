@@ -173,10 +173,10 @@ public class RegistryLocal implements Registry{
         try {
             String logoutUri = serviceAccounts.getLogoutUri(doguname);
 
-            if (logoutUri != null && !logoutUri.isEmpty()){
-                return new URI(logoutUri);
+            if (logoutUri == null || logoutUri.isEmpty()) {
+                throw new GetCasLogoutUriException(String.format("Could not get logoutUri for dogu %s", doguname));
             } else {
-                throw new GetCasLogoutUriException("Could not get logoutUri");
+                return new URI(logoutUri);
             }
         } catch (URISyntaxException e) {
             throw new GetCasLogoutUriException(e);
