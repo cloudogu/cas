@@ -298,7 +298,7 @@ public class RegistryLocalTest {
                         usermgt:
                             created: "true"
                             logout_uri: "/var/ces/config/local.yaml"
-                """;;
+                """;
         var yamlStream = new ByteArrayInputStream(localConfigYaml.getBytes(StandardCharsets.UTF_8));
         doReturn(yamlStream).when(registry).getInputStreamForFile("/var/ces/config/local.yaml");
 
@@ -390,5 +390,64 @@ public class RegistryLocalTest {
 
         var result = registry.getCasLogoutUri("my_dogu");
         assertThat(result, is(new URI("/api/logout")));
+    }
+
+    @Test
+    public void getFqdnFromNullConfig() {
+        var registry = spy(RegistryLocal.class);
+
+        var yamlStream = new ByteArrayInputStream("null".getBytes(StandardCharsets.UTF_8));
+        doReturn(yamlStream).when(registry).getInputStreamForFile("/etc/ces/config/global/config.yaml");
+
+        var fqdn = registry.getFqdn();
+        assertThat(fqdn, is(nullValue()));
+    }
+
+    @Test
+    public void getFqdnWhenNull() {
+        var registry = spy(RegistryLocal.class);
+
+        var yamlStream = new ByteArrayInputStream("fqdn: null".getBytes(StandardCharsets.UTF_8));
+        doReturn(yamlStream).when(registry).getInputStreamForFile("/etc/ces/config/global/config.yaml");
+
+        var fqdn = registry.getFqdn();
+        assertThat(fqdn, is(nullValue()));
+    }
+
+    @Test
+    public void getFqdnWhenEmpty() {
+        var registry = spy(RegistryLocal.class);
+
+        var yamlStream = new ByteArrayInputStream("fqdn: \"\"".getBytes(StandardCharsets.UTF_8));
+        doReturn(yamlStream).when(registry).getInputStreamForFile("/etc/ces/config/global/config.yaml");
+
+        var fqdn = registry.getFqdn();
+        assertThat(fqdn, isEmptyString());
+    }
+
+    @Test
+    public void getFqdnSuccess() {
+        var registry = spy(RegistryLocal.class);
+
+        var yamlStream = new ByteArrayInputStream("fqdn: \"ces.example.com\"".getBytes(StandardCharsets.UTF_8));
+        doReturn(yamlStream).when(registry).getInputStreamForFile("/etc/ces/config/global/config.yaml");
+
+        var fqdn = registry.getFqdn();
+        assertThat(fqdn, is("ces.example.com"));
+    }
+
+    @Test
+    public void getFqdnFailToCloseStream() throws IOException {
+        var yamlStream = spy(new ByteArrayInputStream("fqdn: \"ces.example.com\"".getBytes(StandardCharsets.UTF_8)));
+        doThrow(IOException.class).when(yamlStream).close();
+
+        var registry = spy(RegistryLocal.class);
+        doReturn(yamlStream).when(registry).getInputStreamForFile("/etc/ces/config/global/config.yaml");
+
+        exceptionGrabber.expect(RegistryException.class);
+        exceptionGrabber.expectMessage("Failed to close global config file after reading fqdn.");
+        exceptionGrabber.expectCause(isA(IOException.class));
+
+        registry.getFqdn();
     }
 }

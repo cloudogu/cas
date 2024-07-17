@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class RegistryLocal implements Registry{
 
     private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
-    private static final String GLOBAL_CONFIG_FILE = "/var/ces/config/global/config.yaml";
+    private static final String GLOBAL_CONFIG_FILE = "/etc/ces/config/global/config.yaml";
 
     @Getter
     @Setter
