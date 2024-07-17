@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
@@ -30,33 +32,33 @@ public class RegistryLocal implements Registry{
 
     @Getter
     @Setter
-    private static class GlobalConfig {
+    protected static class GlobalConfig {
         private String fqdn;
     }
     @Getter
     @Setter
-    private static class LocalConfig {
-        private ServiceAccounts service_accounts;
+    protected static class LocalConfig {
+        private ServiceAccounts service_accounts = new ServiceAccounts();
     }
     @Getter
     @Setter
-    private static class ServiceAccountSecret {
+    protected static class ServiceAccountSecret {
         private String secret;
         private String logout_uri;
     }
     @Getter
     @Setter
-    private static class ServiceAccountCas {
-        private boolean created;
+    protected static class ServiceAccountCas {
+        private String created;
         private String logout_uri;
     }
 
     @Getter
     @Setter
-    private static class ServiceAccounts {
-        private Map<String, ServiceAccountCas> cas;
-        private Map<String, ServiceAccountSecret> oidc;
-        private Map<String, ServiceAccountSecret> oauth;
+    protected static class ServiceAccounts {
+        private Map<String, ServiceAccountCas> cas = new HashMap<>();
+        private Map<String, ServiceAccountSecret> oidc = new HashMap<>();
+        private Map<String, ServiceAccountSecret> oauth = new HashMap<>();
 
         private String getLogoutUri(String doguName) {
             HashMap<String, String> serviceAccounts = new HashMap<>();
@@ -74,13 +76,13 @@ public class RegistryLocal implements Registry{
             return serviceAccounts.get(doguName);
         }
 
-        List<CesServiceData> getByType(String serviceAccountType, CesServiceFactory factory) throws RuntimeException {
+        List<CesServiceData> generateByType(String serviceAccountType, CesServiceFactory factory) throws RuntimeException {
             return switch (CasServiceAccountTypes.fromString(serviceAccountType)) {
                 case OIDC -> extractServiceDataSecret(this.oidc, factory);
                 case OAUTH -> extractServiceDataSecret(this.oauth, factory);
                 case CAS -> extractCasServiceData(this.cas, factory);
                 default ->
-                        throw new RuntimeException(String.format("unknown service account type %s", serviceAccountType));
+                        throw new RegistryException(String.format("Unknown service account type %s", serviceAccountType), null);
             };
         }
 
@@ -112,31 +114,50 @@ public class RegistryLocal implements Registry{
 
             return serviceDataList;
         }
+
+        static ServiceAccounts setDefaults(ServiceAccounts serviceAccounts) {
+            if (serviceAccounts == null) {
+                return new ServiceAccounts();
+            }
+
+            if (serviceAccounts.cas == null) {
+                serviceAccounts.cas = new HashMap<>();
+            }
+            if (serviceAccounts.oidc == null) {
+                serviceAccounts.oidc = new HashMap<>();
+            }
+            if (serviceAccounts.oauth == null) {
+                serviceAccounts.oauth = new HashMap<>();
+            }
+
+            return serviceAccounts;
+        }
     }
 
     @Override
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String serviceAccountType, CesServiceFactory factory) {
-        return readServiceAccounts().getByType(serviceAccountType, factory);
+        return readServiceAccounts().generateByType(serviceAccountType, factory);
     }
 
-    private static ServiceAccounts readServiceAccounts() {
-        try (var fis = getFileInputStream(LOCAL_CONFIG_FILE)) {
-            return parseServiceAccounts(fis);
+    ServiceAccounts readServiceAccounts() {
+        try (var fis = getInputStreamForFile(LOCAL_CONFIG_FILE)) {
+            var serviceAccounts = readYaml(LocalConfig.class, fis).getService_accounts();
+            return ServiceAccounts.setDefaults(serviceAccounts);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to close local config file after reading service accounts.", e);
+            throw new RegistryException("Failed to close local config file after reading service accounts.", e);
         }
     }
 
     @Override
     public String getFqdn() {
-        try (var fis = getFileInputStream(GLOBAL_CONFIG_FILE)) {
-            return parseFqdn(fis);
+        try (var fis = getInputStreamForFile(GLOBAL_CONFIG_FILE)) {
+            return readYaml(GlobalConfig.class, fis).getFqdn();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to close global config file after reading fqdn.", e);
+            throw new RegistryException("Failed to close global config file after reading fqdn.", e);
         }
     }
 
-    private static FileInputStream getFileInputStream(String path) {
+    InputStream getInputStreamForFile(String path) {
         FileInputStream fis;
         try {
             fis = new FileInputStream(path);
@@ -186,16 +207,23 @@ public class RegistryLocal implements Registry{
         }
     }
 
-    private static ServiceAccounts parseServiceAccounts(InputStream yamlStream) {
-        return readYaml(LocalConfig.class, yamlStream).getService_accounts();
-    }
-
-    private static String parseFqdn(InputStream yamlStream) {
-        return readYaml(GlobalConfig.class, yamlStream).getFqdn();
-    }
-
     private static <T> T readYaml(Class<T> tClass, InputStream yamlStream){
         var yaml = new Yaml(new Constructor(tClass, new LoaderOptions()));
-        return yaml.load(yamlStream);
+        try {
+            T result = yaml.load(yamlStream);
+            if (result == null) {
+                LOGGER.warn("Parsed yaml result for class {} is null; Replacing with non-null instance.", tClass.getName());
+                return tClass.getDeclaredConstructor().newInstance();
+            }
+
+            return result;
+        } catch (YAMLException e) {
+            throw new RegistryException(String.format("Failed to parse yaml stream to class %s", tClass.getName()), e);
+        } catch (InstantiationException |
+                IllegalAccessException |
+                InvocationTargetException |
+                NoSuchMethodException e) {
+            throw new RegistryException(String.format("Failed to construct new instance of %s", tClass.getName()), e);
+        }
     }
 }
