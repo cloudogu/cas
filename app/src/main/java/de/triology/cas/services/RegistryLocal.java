@@ -14,14 +14,12 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,6 +27,8 @@ public class RegistryLocal implements Registry{
 
     private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
     private static final String GLOBAL_CONFIG_FILE = "/etc/ces/config/global/config.yaml";
+
+    FileSystem fileSystem = FileSystems.getDefault();
 
     @Getter
     @Setter
@@ -45,12 +45,27 @@ public class RegistryLocal implements Registry{
     protected static class ServiceAccountSecret {
         private String secret;
         private String logout_uri;
+
+        boolean deepEquals(ServiceAccountSecret other) {
+            if (other == null) return false;
+            return stringsEqual(secret, other.secret) && stringsEqual(logout_uri, other.logout_uri);
+        }
     }
     @Getter
     @Setter
     protected static class ServiceAccountCas {
         private String created;
         private String logout_uri;
+
+        boolean deepEquals(ServiceAccountCas other) {
+            if (other == null) return false;
+            return stringsEqual(created, other.created) && stringsEqual(logout_uri, other.logout_uri);
+        }
+    }
+
+    private static boolean stringsEqual(String a, String b) {
+        if (a == null && b == null) return true;
+        else return a != null && a.equals(b);
     }
 
     @Getter
@@ -61,7 +76,7 @@ public class RegistryLocal implements Registry{
         private Map<String, ServiceAccountSecret> oauth = new HashMap<>();
 
         private String getLogoutUri(String doguName) {
-            HashMap<String, String> serviceAccounts = new HashMap<>();
+            var serviceAccounts = new HashMap<String, String>();
 
             serviceAccounts.putAll(this.cas.entrySet().stream()
                     .filter(e -> e.getValue().logout_uri != null)
@@ -86,14 +101,34 @@ public class RegistryLocal implements Registry{
             };
         }
 
+        boolean deepEquals(ServiceAccounts other) {
+            if ((other == null) ||
+                    (this.cas.size() != other.cas.size()) ||
+                    (this.oidc.size() != other.oidc.size()) ||
+                    (this.oauth.size() != other.oauth.size()))
+                return false;
+
+            for (var entry : this.cas.entrySet()) {
+                if (!entry.getValue().deepEquals(other.cas.get(entry.getKey()))) return false;
+            }
+            for (var entry : this.oidc.entrySet()) {
+                if (!entry.getValue().deepEquals(other.oidc.get(entry.getKey()))) return false;
+            }
+            for (var entry : this.oauth.entrySet()) {
+                if (!entry.getValue().deepEquals(other.oauth.get(entry.getKey()))) return false;
+            }
+
+            return true;
+        }
+
         private static List<CesServiceData> extractServiceDataSecret(Map<String, ServiceAccountSecret> serviceAccounts, CesServiceFactory factory) {
-            List<CesServiceData> serviceDataList = new ArrayList<>();
+            var serviceDataList = new ArrayList<CesServiceData>();
 
             for (var serviceAccount : serviceAccounts.entrySet()) {
                 var clientID = serviceAccount.getKey();
                 var clientSecret = serviceAccount.getValue().secret;
 
-                HashMap<String, String> attributes = new HashMap<>();
+                var attributes = new HashMap<String, String>();
 
                 attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
                 attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
@@ -105,7 +140,7 @@ public class RegistryLocal implements Registry{
         }
 
         private static List<CesServiceData> extractCasServiceData(Map<String, ServiceAccountCas> serviceAccounts, CesServiceFactory factory) {
-            List<CesServiceData> serviceDataList = new ArrayList<>();
+            var serviceDataList = new ArrayList<CesServiceData>();
 
             for (var serviceAccount : serviceAccounts.entrySet()) {
                 var clientID = serviceAccount.getKey();
@@ -190,16 +225,17 @@ public class RegistryLocal implements Registry{
     }
 
     private void watcher(DoguChangeListener doguChangeListener) {
-        Path path = Paths.get(LOCAL_CONFIG_FILE);
-        try(WatchService watchService = FileSystems.getDefault().newWatchService()) {
+        var path = Paths.get(LOCAL_CONFIG_FILE);
+        try(WatchService watchService = fileSystem.newWatchService()) {
             path.register(watchService);
             var previousServiceAccounts = readServiceAccounts();
             while (true) {
                 LOGGER.info("wait for changes under {}", LOCAL_CONFIG_FILE);
                 watchService.take();
                 var currentServiceAccounts = readServiceAccounts();
-                if (!previousServiceAccounts.equals(currentServiceAccounts)) {
+                if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
                     doguChangeListener.onChange();
+                    previousServiceAccounts = currentServiceAccounts;
                 }
             }
         } catch (IOException | InterruptedException e) {
