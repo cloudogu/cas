@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-function checkSameVersion() {
+checkSameVersion() {
   echo "Checking the CAS versions..."
   if [ "${FROM_VERSION}" = "${TO_VERSION}" ]; then
     echo "FROM and TO versions are the same"
@@ -15,7 +15,7 @@ function checkSameVersion() {
   echo "Checking the CAS versions... Done!"
 }
 
-function removeDeprecatedKeys() {
+removeDeprecatedKeys() {
   echo "Remove deprecated etcd Keys..."
   LDAP_VALUE=$(doguctl config "ldap/use_user_connection_to_fetch_attributes" --default "default")
   if [[ "${LDAP_VALUE}" == "true" ]]; then
@@ -35,11 +35,11 @@ function removeDeprecatedKeys() {
   echo "Remove deprecated etcd Keys... Done!"
 }
 
-function getEtcdEndpoint() {
-  tr -d '[:space:]' < '/etc/ces/node_master'
+getEtcdEndpoint() {
+  tr -d '[:space:]' < "${NODE_MASTER_FILE}"
 }
 
-function migratePortainerServiceAccount() {
+migratePortainerServiceAccount() {
   echo "Migrating portainer service_account..."
   VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
   if [[ "${VALUE}" != "default" ]]; then
@@ -52,8 +52,8 @@ function migratePortainerServiceAccount() {
   echo "Migrating portainer service_accounts... Done!"
 }
 
-function migrateServiceAccountsToFoldersByType() {
-  local saType etcdSaUrl requestExitCode errFile outFile
+migrateServiceAccountsToFoldersByType() {
+  local saType etcdSaUrl requestExitCode
   saType="${1}"
   etcdSaUrl="http://$(getEtcdEndpoint):4001/v2/keys/config/cas/service_accounts"
 
@@ -61,39 +61,36 @@ function migrateServiceAccountsToFoldersByType() {
   outFile="$(mktemp)"
   cleanup() {
     rm "${errFile}" "${outFile}"
+    unset errFile outFile
   }
   trap cleanup EXIT
 
-  wget -O- "${etcdSaUrl}/${saType}?recursive=false" 1>"${outFile}" 2>"${errFile}" || requestExitCode=$?; true
+  wget -O- "${etcdSaUrl}/${saType}?recursive=false" 1>"${outFile}" 2>"${errFile}"
+  requestExitCode=$?
   if [[ "${requestExitCode}" -eq 8 ]] && grep -q '404 Not Found' "${errFile}"; then
     echo "Service account type '${saType}' not found, skipping..."
-    return 0
+    return
   elif [[ ! "${requestExitCode}" -eq 0 ]]; then
     echo "Failed to list service accounts of type '${saType}'"
     cat "${errFile}"
-    return "${requestExitCode}"
+    exit "${requestExitCode}"
   fi
 
   jq -r ".node.nodes[] | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
     while IFS=$'\t' read -r service clientSecretHash; do
       echo "Migrate service_account of service '${service}' and type '${saType}'"
-      if [[ "${clientSecretHash}" != "default" ]]; then
-        {
-          doguctl config --remove "service_accounts/${saType}/${service}"
-          doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
-        }
-      fi
+      doguctl config --remove "service_accounts/${saType}/${service}"
+      doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
     done
 }
 
-function migrateServiceAccountsToFolders() {
-  local saTypesToMigrate
-  saTypesToMigrate=('oidc' 'oauth')
-  migrateServiceAccountsToFoldersByType "${saTypesToMigrate[@]}"
+migrateServiceAccountsToFolders() {
+  migrateServiceAccountsToFoldersByType 'oidc'
+  migrateServiceAccountsToFoldersByType 'oauth'
 }
 
-function migrateLogoutUrl() {
-  local etcdDoguUrl etcdDoguResponse
+migrateLogoutUrl() {
+  local etcdDoguUrl etcdDoguResponse dogu version
   etcdDoguUrl="http://$(getEtcdEndpoint):4001/v2/keys/dogu?recursive=true"
   etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
 
@@ -109,7 +106,7 @@ function migrateLogoutUrl() {
     done
 }
 
-function migrateServiceAccounts() {
+migrateServiceAccounts() {
   echo "Migrating service accounts..."
 
   migratePortainerServiceAccount
@@ -122,19 +119,26 @@ function migrateServiceAccounts() {
   echo "Migrating service accounts... Done!"
 }
 
+runPostUpgrade() {
+  FROM_VERSION="${1}"
+  TO_VERSION="${2}"
+
+  NODE_MASTER_FILE='/etc/ces/node_master'
+
+  echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ..."
+
+  checkSameVersion
+  removeDeprecatedKeys
+  migrateServiceAccounts
+
+  echo "Set registry flag so startup script can start afterwards..."
+  doguctl state "upgrade done"
+
+  echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ... Done!"
+}
+
 ##### Functions definition done; Executing post-upgrade now
 
-FROM_VERSION="${1}"
-TO_VERSION="${2}"
-
-echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ..."
-
-checkSameVersion
-removeDeprecatedKeys
-migrateServiceAccounts
-
-echo "Set registry flag so startup script can start afterwards..."
-doguctl state "upgrade done"
-
-echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ... Done!"
-
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  runPostUpgrade "$@"
+fi
