@@ -57,7 +57,7 @@ public class CesThrottlingInterceptorAdapter
     /**
      * Contains information about the current client. Required for testing.
      */
-    private IClientInfoProvider clientInfoProvider;
+    private final IClientInfoProvider clientInfoProvider;
 
 
     protected CesThrottlingInterceptorAdapter(

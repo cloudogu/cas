@@ -17,13 +17,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class CesLimitingConfiguration {
 
-    @Value("${cas.authn.throttle.failure.max_number:0}")
+    @Value("${cas.authn.throttle.failure.threshold:0}")
     private long max_number;
 
-    @Value("${cas.authn.throttle.failure.failure_store_time:0}")
+    @Value("${cas.authn.throttle.failure.range-seconds:0}")
     private long failure_store_time;
 
-    @Value("${cas.authn.throttle.failure.lockTime:0}")
+    @Value("${cas.authn.throttle.failure.throttle-window-seconds:0}")
     private long lockTime;
 
     @Bean
