@@ -30,6 +30,7 @@ setup() {
   wget="$(mock_create)"
   export wget
   ln -s "${wget}" "${BATS_TMPDIR}/wget"
+
   doguctl="$(mock_create)"
   export doguctl
   ln -s "${doguctl}" "${BATS_TMPDIR}/doguctl"
@@ -38,6 +39,7 @@ setup() {
 teardown() {
   unset wget
   rm "${BATS_TMPDIR}/wget"
+
   unset doguctl
   rm "${BATS_TMPDIR}/doguctl"
 }
@@ -88,8 +90,8 @@ teardown_file() {
 }
 
 @test 'migrateServiceAccountsToFolders() should succeed' {
-  mock_set_output "${wget}" "$(cat '/workspace/batsTests/oidc-sa-response.json')" '1'
-  mock_set_output "${wget}" "$(cat '/workspace/batsTests/oauth-sa-response.json')" '2'
+  mock_set_output "${wget}" "$(<'/workspace/batsTests/oidc-sa-response.json')" '1'
+  mock_set_output "${wget}" "$(<'/workspace/batsTests/oauth-sa-response.json')" '2'
 
   run migrateServiceAccountsToFolders
 
@@ -112,4 +114,20 @@ teardown_file() {
   assert_line "Migrate service_account of service 'another_oauth_dogu' and type 'oauth'"
   assert_equal "$(mock_get_call_args "${doguctl}" '7')" 'config --remove service_accounts/oauth/another_oauth_dogu'
   assert_equal "$(mock_get_call_args "${doguctl}" '8')" 'config service_accounts/oauth/another_oauth_dogu/secret VGFrZSBtZSBvbi4uLgo='
+}
+
+@test 'migrateLogoutUri() should succeed' {
+  mock_set_side_effect "${wget}" 'cat /workspace/batsTests/dogu-logoutUri-response.json'
+
+  run migrateLogoutUri
+
+  assert_success
+  assert_equal "$(mock_get_call_num "${wget}")" '1'
+  assert_equal "$(mock_get_call_args "${wget}")" '-O- http://192.168.56.2:4001/v2/keys/dogu?recursive=true'
+
+  assert_equal "$(mock_get_call_num "${doguctl}")" '2'
+  assert_line "Migrate logoutUri for dogu 'teamscale'"
+  assert_equal "$(mock_get_call_args "${doguctl}" '1')" 'config service_accounts/oidc/teamscale/logout_uri /api/auth/openid/logout'
+  assert_line "Migrate logoutUri for dogu 'grafana'"
+  assert_equal "$(mock_get_call_args "${doguctl}" '2')" 'config service_accounts/cas/grafana/logout_uri /api/auth/oauth/logout'
 }
