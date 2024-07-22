@@ -89,7 +89,7 @@ migrateServiceAccountsToFolders() {
   migrateServiceAccountsToFoldersByType 'oauth'
 }
 
-migrateLogoutUrl() {
+migrateLogoutUri() {
   local etcdDoguUrl etcdDoguResponse dogu version
   etcdDoguUrl="http://$(getEtcdEndpoint):4001/v2/keys/dogu?recursive=true"
   etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
@@ -98,9 +98,10 @@ migrateLogoutUrl() {
     while IFS=$'\t' read -r dogu version; do
       local doguDescriptor logoutUri saType
       doguDescriptor="$(echo "${etcdDoguResponse}" | jq -r ".node.nodes[].nodes | .[] | select(.key == \"/dogu/${dogu}/${version}\") | .value")"
-      logoutUri="$(echo "${doguDescriptor}" | jq -r ".Properties.logoutUri")"
+      logoutUri="$(echo "${doguDescriptor}" | jq -r '.Properties.logoutUri')"
       if [[ "${logoutUri}" != "null" ]]; then
-        saType="$(echo "${doguDescriptor}" | jq -rn "try (.ServiceAccounts[] | select(.Type == \"cas\") | .Params[0]) catch \"cas\"")"
+        echo "Migrate logoutUri for dogu '${dogu}'"
+        saType="$(echo "${doguDescriptor}" | jq -r 'try (.ServiceAccounts | map(select(.Type == "cas")) | .[].Params[0] // "cas") catch "cas"')"
         doguctl config "service_accounts/${saType}/${dogu}/logout_uri" "${logoutUri}"
       fi
     done
@@ -113,7 +114,7 @@ migrateServiceAccounts() {
 
   if [[ -n "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
     migrateServiceAccountsToFolders
-    migrateLogoutUrl
+    migrateLogoutUri
   fi
 
   echo "Migrating service accounts... Done!"
