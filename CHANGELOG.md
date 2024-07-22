@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix throttling settings (#198)
 
+### Updated
+- update Tomcat to 10.1.26
+
 ## [v7.0.4.1-2] - 2024-07-09
 ### Fixed
 - Fix a bug where CAS logs the password in debug log level (#195)
