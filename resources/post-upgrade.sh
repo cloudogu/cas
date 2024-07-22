@@ -112,7 +112,7 @@ migrateServiceAccounts() {
 
   migratePortainerServiceAccount
 
-  if [[ -n "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
+  if [[ -z "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
     migrateServiceAccountsToFolders
     migrateLogoutUri
   fi
