@@ -39,18 +39,26 @@
   "Configuration": [
     {
       "Name": "limit/max_number",
-      "Description": "Max number of login retries (0 means disabled)",
+      "Description": "Max number of login retries to calculate the failure threshold rate (0 means disabled)",
       "Optional": true
+    },
+    {
+      "Name": "limit/range_seconds",
+      "Description": "Time in seconds which defines the interval to calculate the failure threshold rate (must be a positive number if limit/max_number is greater than zero)",
+      "Optional": true,
+      "Default": "3"
     },
     {
       "Name": "limit/failure_store_time",
-      "Description": "Max time to store failed logins (in seconds); has to be set > 0 when limit/max_number is > 0",
-      "Optional": true
+      "Description": "Time in seconds to store failed logins (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Optional": true,
+      "Default": "60"
     },
     {
       "Name": "limit/lock_time",
-      "Description": "Time to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
-      "Optional": true
+      "Description": "Time in seconds to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Optional": true,
+      "Default": "600"
     },
     {
       "Name": "mail_sender",
