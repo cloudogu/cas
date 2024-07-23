@@ -170,15 +170,16 @@ cas.authn.pm.reset.security-questions-enabled=false
 # Configuration guide: https://apereo.github.io/cas/6.3.x/installation/Configuring-Authentication-Throttling.html
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#authentication-throttling
 # ----------------------------------------------------------------------------------------------------------------------
-{{ if ne (.Config.GetOrDefault "limit/max_number" "0") "0" }}
+{{ if ne (.Config.GetOrDefault "limit/failure_threshold" "0") "0" }}
 # Authentication Failure Throttling
 # Username parameter to use in order to extract the username from the request.
 cas.authn.throttle.core.username-parameter=username
 cas.authn.throttle.core.app-code=CAS
 cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
-# The failure threshold rate is calculated as: threshold / range-seconds. If the
-cas.authn.throttle.failure.threshold={{ .Config.GetOrDefault "limit/max_number" "0"}}
+# The failure threshold rate is calculated as: threshold / range-seconds
+cas.authn.throttle.failure.threshold={{ .Config.GetOrDefault "limit/failure_threshold" "0"}}
 cas.authn.throttle.failure.range-seconds={{ .Config.GetOrDefault "limit/range_seconds" "3"}}
+# The throttled account will be locked out for this many seconds
 cas.authn.throttle.failure.throttle-window-seconds={{ .Config.GetOrDefault "limit/lock_time" "600"}}
 
 # Configure clean-up of stale throttle attempts from the in-memory map
@@ -186,7 +187,7 @@ cas.authn.throttle.schedule.enabled=true
 # wait x seconds to start with cleaning old throttle attempts
 cas.authn.throttle.schedule.start-delay=PT10S
 # define an interval of x seconds after which stale throttle attempts are removed from the in-memory map
-cas.authn.throttle.schedule.repeat-interval=PT{{ .Config.GetOrDefault "limit/failure_store_time" "60"}}S
+cas.authn.throttle.schedule.repeat-interval=PT{{ .Config.GetOrDefault "limit/stale_removal_interval" "60"}}S
 {{ end }}
 ########################################################################################################################
 

@@ -38,25 +38,25 @@
   ],
   "Configuration": [
     {
-      "Name": "limit/max_number",
-      "Description": "Max number of login retries to calculate the failure threshold rate (0 means disabled)",
+      "Name": "limit/failure_threshold",
+      "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled)",
       "Optional": true
     },
     {
       "Name": "limit/range_seconds",
-      "Description": "Time in seconds which defines the interval to calculate the failure threshold rate (must be a positive number if limit/max_number is greater than zero)",
+      "Description": "Time in seconds defines timeframe over which the login failures are taken into account (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 3 seconds)",
       "Optional": true,
       "Default": "3"
     },
     {
-      "Name": "limit/failure_store_time",
-      "Description": "Time in seconds to store failed logins (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Name": "limit/stale_removal_interval",
+      "Description": "Time in seconds between background runs which finds and removes clean expired and stale login failures (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 60 seconds)",
       "Optional": true,
       "Default": "60"
     },
     {
       "Name": "limit/lock_time",
-      "Description": "Time in seconds to lock an account if limit/max_number is reached (in seconds); has to be set > 0 when limit/max_number is > 0",
+      "Description": "Time in seconds to lock an account if the throttling threshold was met; (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 600 seconds)",
       "Optional": true,
       "Default": "600"
     },
