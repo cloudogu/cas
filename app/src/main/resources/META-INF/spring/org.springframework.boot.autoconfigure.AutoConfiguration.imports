@@ -1,7 +1,6 @@
   de.triology.cas.services.CesServicesSpringConfiguration
   de.triology.cas.oidc.config.CesOidcConfiguration
   de.triology.cas.oidc.config.CesOAuthConfiguration
-  de.triology.cas.limiting.CesLimitingConfiguration
   de.triology.cas.ldap.CesAuthenticationEventExecutionPlanConfiguration
   de.triology.cas.ldap.LdapConfiguration
   de.triology.cas.pm.PmConfiguration
