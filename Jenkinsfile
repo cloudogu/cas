@@ -102,7 +102,8 @@ parallel(
                     }
 
                     stage('Lint') {
-                        lintDockerfile()
+                        Dockerfile dockerfile = new Dockerfile(this)
+                        dockerfile.lint()
                     }
 
                     stage('Shellcheck') {
