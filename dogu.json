@@ -41,7 +41,7 @@
       "Name": "limit/failure_threshold",
       "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled; defaults to 500)",
       "Optional": true,
-      "Default": 500
+      "Default": "500"
     },
     {
       "Name": "limit/range_seconds",
