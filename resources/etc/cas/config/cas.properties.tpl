@@ -166,19 +166,19 @@ cas.authn.pm.reset.security-questions-enabled=false
 
 ########################################################################################################################
 # Throttling
-# TODO fix version links to configuration
-# Configuration guide: https://apereo.github.io/cas/6.3.x/installation/Configuring-Authentication-Throttling.html
-# Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#authentication-throttling
+# Configuration guide: https://apereo.github.io/cas/7.0.x/authentication/Configuring-Authentication-Throttling.html
+# Properties: https://apereo.github.io/cas/7.0.x/authentication/Configuring-Authentication-Throttling.html#failure-throttling
 # ----------------------------------------------------------------------------------------------------------------------
-{{ if ne (.Config.GetOrDefault "limit/failure_threshold" "0") "0" }}
+{{ $failureThreshold := .Config.GetOrDefault "limit/failure_threshold" "500" }}
+{{ if ne $failureThreshold "0" }}
 # Authentication Failure Throttling
 # Username parameter to use in order to extract the username from the request.
 cas.authn.throttle.core.username-parameter=username
 cas.authn.throttle.core.app-code=CAS
 cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
 # The failure threshold rate is calculated as: threshold / range-seconds
-cas.authn.throttle.failure.threshold={{ .Config.GetOrDefault "limit/failure_threshold" "0"}}
-cas.authn.throttle.failure.range-seconds={{ .Config.GetOrDefault "limit/range_seconds" "3"}}
+cas.authn.throttle.failure.threshold={{ $failureThreshold }}
+cas.authn.throttle.failure.range-seconds={{ .Config.GetOrDefault "limit/range_seconds" "10"}}
 # The throttled account will be locked out for this many seconds
 cas.authn.throttle.failure.throttle-window-seconds={{ .Config.GetOrDefault "limit/lock_time" "600"}}
 

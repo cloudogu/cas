@@ -39,14 +39,15 @@
   "Configuration": [
     {
       "Name": "limit/failure_threshold",
-      "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled)",
-      "Optional": true
+      "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled; defaults to 500)",
+      "Optional": true,
+      "Default": 500
     },
     {
       "Name": "limit/range_seconds",
-      "Description": "Time in seconds defines timeframe over which the login failures are taken into account (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 3 seconds)",
+      "Description": "Time in seconds defines timeframe over which the login failures are taken into account (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 10 seconds)",
       "Optional": true,
-      "Default": "3"
+      "Default": "10"
     },
     {
       "Name": "limit/stale_removal_interval",
