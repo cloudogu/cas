@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - remove the custom throttling implementation in favor of the original CAS 7 failure throttling implementation (#198)
 
+### Security
+- Fix OAuth/OpenID vulnerability: see https://apereo.github.io/2024/06/26/oidc-vuln/
+
 ## [v7.0.4.1-2] - 2024-07-09
 ### Fixed
 - Fix a bug where CAS logs the password in debug log level (#195)
