@@ -239,6 +239,7 @@ public class RegistryLocal implements Registry{
                 }
             }
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RegistryException("Failed to addDoguChangeListener", e);
         }
     }

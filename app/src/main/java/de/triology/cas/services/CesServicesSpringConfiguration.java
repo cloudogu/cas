@@ -86,7 +86,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     }
 
     private static boolean isMultinode() {
-        ProcessBuilder pb = new ProcessBuilder("doguctl", "multinode");
+        ProcessBuilder pb = new ProcessBuilder("/usr/bin/doguctl", "multinode");
         String result;
         try {
             Process process = pb.start();
@@ -100,6 +100,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
             }
             result = builder.toString();
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
         return "true".equals(result);
