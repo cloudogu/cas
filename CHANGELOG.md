@@ -7,10 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fix throttling settings (#198)
+- Fix throttling and avoid rendering CES unusable (#198) 
+  - when intensely sending REST requests towards Nexus with an
+    internal user
 
-### Updated
+### Changed
+- migrate dogu configuration keys regarding throttling (#198)
+  - with CAS 7.x, throttling works way differently than before, and with different configuration keys as well
+  - `limit/max_numbers` no longer enables throttling in general
+    - now, `limit/failure_threshold` with a value other than zero takes it place. With a default value of `500` login failures / timeframe, it will receive a much higher default value though.
+  - `limit/range_seconds` is a new configuration key. It defines the timeframe in seconds and is used to build a failure rate with `limit/failure_threshold`.
+  - `limit/stale_removal_interval` is a new key which configures now the interval in seconds of when a background runner runs to remove stale login failures. The interval is independent of `limit/failure_threshold` 
+- update CAS to 7.0.5.1
 - update Tomcat to 10.1.26
+
+### Removed
+- remove the custom throttling implementation in favor of the original CAS 7 failure throttling implementation (#198)
 
 ## [v7.0.4.1-2] - 2024-07-09
 ### Fixed
