@@ -102,7 +102,8 @@ parallel(
                     }
 
                     stage('Lint') {
-                        lintDockerfile()
+                        Dockerfile dockerfile = new Dockerfile(this)
+                        dockerfile.lint()
                     }
 
                     stage('Shellcheck') {
@@ -170,7 +171,7 @@ parallel(
                             '''])
                         }
 
-                        stage('Build') {
+                        stage('Build dogu') {
                             ecoSystem.build("/dogu")
                         }
 

@@ -1,11 +1,11 @@
 # Remote Debugging im lokalen CES
 
-Um Verhalten des CAS gegenüber einer loken CES Instanz zu testen, ist es möglich, den CAS über eine Remote Debugging
+Um Verhalten des CAS gegenüber einer lokalen CES Instanz zu testen, ist es möglich, den CAS über eine Remote Debugging
 zu analysieren. Im folgenden Abschnitt werden die Schritte beschrieben, um das Remote Debugging zu ermöglichen. 
 
 ## Anpassungen im CAS Repository
 
-Um den CAS im Debugging Modus zu starten müssen folgenden Änderungen in `resources` Verzeichnis vorgenommen werden:
+Um den CAS im Debugging Modus zu starten, müssen folgenden Änderungen in `resources` Verzeichnis vorgenommen werden:
 * `resources/opt/apache-tomcat/bin/setenv.sh` um den Eintrag `JPDA_OPTS="-agentlib:jdwp=transport=dt_socket,address=*:8000,server=y,suspend=n"` ergänzen.
   Hiermit wird eine Debugging Session auf Port 8000 gestartet.
 * `resources/startup.sh` den Eintrag `${CATALINA_SH} run` zu `${CATALINA_SH} jpda run` ändern.

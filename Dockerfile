@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=10
-ARG TOMCAT_VERSION=10.1.24
-ARG TOMCAT_TARGZ_SHA256=216db5c726a6857e2a698ba5f9406fa862d037733f98ab2338feb3fc511c3068
+ARG TOMCAT_VERSION=10.1.26
+ARG TOMCAT_TARGZ_SHA256=f73f76760137833b3305dfb18ed174f87feac3ab78f65289a0835a851d7cfeb2
 
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.19.1-1 as tomcat
+FROM registry.cloudogu.com/official/base:3.19.1-1 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
