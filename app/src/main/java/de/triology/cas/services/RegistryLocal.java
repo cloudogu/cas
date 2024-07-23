@@ -238,7 +238,9 @@ public class RegistryLocal implements Registry{
                     previousServiceAccounts = currentServiceAccounts;
                 }
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            throw new RegistryException("Failed to addDoguChangeListener", e);
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RegistryException("Failed to addDoguChangeListener", e);
         }

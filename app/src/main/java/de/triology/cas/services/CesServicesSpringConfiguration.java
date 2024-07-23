@@ -99,7 +99,9 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
                 builder.append(line);
             }
             result = builder.toString();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
