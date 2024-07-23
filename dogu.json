@@ -384,6 +384,13 @@
       "Owner": "1000",
       "Group": "1000",
       "NeedsBackup": false
+    },
+    {
+      "Name": "localConfig",
+      "Path": "/var/ces/config",
+      "Owner": "1000",
+      "Group": "1000",
+      "NeedsBackup": true
     }
   ],
   "ExposedCommands": [

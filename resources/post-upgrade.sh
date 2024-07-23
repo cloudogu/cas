@@ -9,6 +9,7 @@ checkSameVersion() {
     echo "FROM and TO versions are the same"
     echo "Set registry flag so startup script can start afterwards..."
     doguctl state "upgrade done"
+    doguctl config --rm "local_state"
     echo "Exiting..."
     exit 0
   fi
@@ -134,6 +135,7 @@ runPostUpgrade() {
 
   echo "Set registry flag so startup script can start afterwards..."
   doguctl state "upgrade done"
+  doguctl config --rm "local_state"
 
   echo "Executing CAS post-upgrade from ${FROM_VERSION} to ${TO_VERSION} ... Done!"
 }
