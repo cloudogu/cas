@@ -171,7 +171,7 @@ parallel(
                             '''])
                         }
 
-                        stage('Build') {
+                        stage('Build dogu') {
                             ecoSystem.build("/dogu")
                         }
 
