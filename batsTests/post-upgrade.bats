@@ -12,6 +12,10 @@ load '/workspace/target/bats_libs/bats-file/load.bash'
 JQ_VERSION="1.7.1"
 
 setup_file() {
+  set -o errexit
+  set -o nounset
+  set -o pipefail
+
   export STARTUP_DIR=/workspace/resources
   export WORKDIR=/workspace
 
@@ -34,6 +38,10 @@ setup() {
   doguctl="$(mock_create)"
   export doguctl
   ln -s "${doguctl}" "${BATS_TMPDIR}/doguctl"
+
+  set +o errexit
+  set +o nounset
+  set +o pipefail
 }
 
 teardown() {
@@ -99,21 +107,25 @@ teardown_file() {
   assert_equal "$(mock_get_call_num "${wget}")" '2'
   assert_equal "$(mock_get_call_num "${doguctl}")" '8'
 
+  assert_line "Migrating service accounts of type 'oidc'..."
   assert_equal "$(mock_get_call_args "${wget}" '1')" '-O- http://192.168.56.2:4001/v2/keys/config/cas/service_accounts/oidc?recursive=false'
-  assert_line "Migrate service_account of service 'teamscale' and type 'oidc'"
+  assert_line "Migrating service account directory for 'teamscale'"
   assert_equal "$(mock_get_call_args "${doguctl}" '1')" 'config --remove service_accounts/oidc/teamscale'
   assert_equal "$(mock_get_call_args "${doguctl}" '2')" 'config service_accounts/oidc/teamscale/secret aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQo='
-  assert_line "Migrate service_account of service 'openproject' and type 'oidc'"
+  assert_line "Migrating service account directory for 'openproject'"
   assert_equal "$(mock_get_call_args "${doguctl}" '3')" 'config --remove service_accounts/oidc/openproject'
   assert_equal "$(mock_get_call_args "${doguctl}" '4')" 'config service_accounts/oidc/openproject/secret TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAuLi4K'
+  assert_line "Migrating service accounts of type 'oidc'... Done!"
 
+  assert_line "Migrating service accounts of type 'oauth'..."
   assert_equal "$(mock_get_call_args "${wget}" '2')" '-O- http://192.168.56.2:4001/v2/keys/config/cas/service_accounts/oauth?recursive=false'
-  assert_line "Migrate service_account of service 'portainer' and type 'oauth'"
+  assert_line "Migrating service account directory for 'portainer'"
   assert_equal "$(mock_get_call_args "${doguctl}" '5')" 'config --remove service_accounts/oauth/portainer'
   assert_equal "$(mock_get_call_args "${doguctl}" '6')" 'config service_accounts/oauth/portainer/secret aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kalYxMVhiYzkxNAo='
-  assert_line "Migrate service_account of service 'another_oauth_dogu' and type 'oauth'"
+  assert_line "Migrating service account directory for 'another_oauth_dogu'"
   assert_equal "$(mock_get_call_args "${doguctl}" '7')" 'config --remove service_accounts/oauth/another_oauth_dogu'
   assert_equal "$(mock_get_call_args "${doguctl}" '8')" 'config service_accounts/oauth/another_oauth_dogu/secret VGFrZSBtZSBvbi4uLgo='
+  assert_line "Migrating service accounts of type 'oauth'... Done!"
 }
 
 @test 'migrateLogoutUri() should succeed' {
@@ -126,8 +138,8 @@ teardown_file() {
   assert_equal "$(mock_get_call_args "${wget}")" '-O- http://192.168.56.2:4001/v2/keys/dogu?recursive=true'
 
   assert_equal "$(mock_get_call_num "${doguctl}")" '2'
-  assert_line "Migrate logoutUri for dogu 'teamscale'"
+  assert_line "Migrating logout URI for dogu 'teamscale'"
   assert_equal "$(mock_get_call_args "${doguctl}" '1')" 'config service_accounts/oidc/teamscale/logout_uri /api/auth/openid/logout'
-  assert_line "Migrate logoutUri for dogu 'grafana'"
+  assert_line "Migrating logout URI for dogu 'grafana'"
   assert_equal "$(mock_get_call_args "${doguctl}" '2')" 'config service_accounts/cas/grafana/logout_uri /api/auth/oauth/logout'
 }

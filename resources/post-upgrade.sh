@@ -41,33 +41,37 @@ getEtcdEndpoint() {
 }
 
 migratePortainerServiceAccount() {
-  echo "Migrating portainer service_account..."
+  echo "Migrating portainer service account..."
   VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
   if [[ "${VALUE}" != "default" ]]; then
       {
         CLIENT_SECRET="$(doguctl config service_accounts/portainer)"
         doguctl config --remove service_accounts/portainer
         doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
+        echo "Migrating portainer service account... Done!"
       }
+  else
+    echo "Migrating portainer service account... Nothing to do!"
   fi
-  echo "Migrating portainer service_accounts... Done!"
 }
 
 migrateServiceAccountsToFoldersByType() {
-  local saType etcdSaUrl requestExitCode
+  local saType etcdSaUrl errFile outFile requestExitCode
   saType="${1}"
   etcdSaUrl="http://$(getEtcdEndpoint):4001/v2/keys/config/cas/service_accounts"
 
+  echo "Migrating service accounts of type '${saType}'..."
+
   errFile="$(mktemp)"
   outFile="$(mktemp)"
-  cleanup() {
-    rm "${errFile}" "${outFile}"
-    unset errFile outFile
-  }
-  trap cleanup EXIT
+  # shellcheck disable=SC2064
+  trap "rm ${errFile} ${outFile}" EXIT
 
+  set +o errexit # temporarily disable immediate exit on error to handle not found
   wget -O- "${etcdSaUrl}/${saType}?recursive=false" 1>"${outFile}" 2>"${errFile}"
   requestExitCode=$?
+  set -o errexit
+
   if [[ "${requestExitCode}" -eq 8 ]] && grep -q '404 Not Found' "${errFile}"; then
     echo "Service account type '${saType}' not found, skipping..."
     return 0
@@ -79,10 +83,12 @@ migrateServiceAccountsToFoldersByType() {
 
   jq -r ".node.nodes[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
     while IFS=$'\t' read -r service clientSecretHash; do
-      echo "Migrate service_account of service '${service}' and type '${saType}'"
+      echo "Migrating service account directory for '${service}'"
       doguctl config --remove "service_accounts/${saType}/${service}"
       doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
     done
+
+  echo "Migrating service accounts of type '${saType}'... Done!"
 }
 
 migrateServiceAccountsToFolders() {
@@ -91,6 +97,8 @@ migrateServiceAccountsToFolders() {
 }
 
 migrateLogoutUri() {
+  echo "Migrating logout URIs..."
+
   local etcdDoguUrl etcdDoguResponse dogu version
   etcdDoguUrl="http://$(getEtcdEndpoint):4001/v2/keys/dogu?recursive=true"
   etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
@@ -101,11 +109,13 @@ migrateLogoutUri() {
       doguDescriptor="$(echo "${etcdDoguResponse}" | jq -r ".node.nodes[].nodes | .[] | select(.key == \"/dogu/${dogu}/${version}\") | .value")"
       logoutUri="$(echo "${doguDescriptor}" | jq -r '.Properties.logoutUri')"
       if [[ "${logoutUri}" != "null" ]]; then
-        echo "Migrate logoutUri for dogu '${dogu}'"
+        echo "Migrating logout URI for dogu '${dogu}'"
         saType="$(echo "${doguDescriptor}" | jq -r 'try (.ServiceAccounts | map(select(.Type == "cas")) | .[].Params[0] // "cas") catch "cas"')"
         doguctl config "service_accounts/${saType}/${dogu}/logout_uri" "${logoutUri}"
       fi
     done
+
+  echo "Migrating logout URIs... Done!"
 }
 
 migrateServiceAccounts() {
