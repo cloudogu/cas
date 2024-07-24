@@ -77,7 +77,7 @@ migrateServiceAccountsToFoldersByType() {
     exit "${requestExitCode}"
   fi
 
-  jq -r ".node.nodes[] | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
+  jq -r ".node.nodes[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
     while IFS=$'\t' read -r service clientSecretHash; do
       echo "Migrate service_account of service '${service}' and type '${saType}'"
       doguctl config --remove "service_accounts/${saType}/${service}"
