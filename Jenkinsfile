@@ -141,7 +141,9 @@ parallel(
                                     },
                                     "service_accounts": {
                                         "oauth": {
-                                            "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                            "inttest": {
+                                                secret: "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                            }
                                         }
                                     },
                                     "oidc": {
