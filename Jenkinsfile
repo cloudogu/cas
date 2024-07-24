@@ -142,7 +142,7 @@ parallel(
                                     "service_accounts": {
                                         "oauth": {
                                             "inttest": {
-                                                secret: "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                                "secret": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
                                             }
                                         }
                                     },
