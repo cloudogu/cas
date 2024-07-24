@@ -4,13 +4,16 @@ set -o nounset
 set -o pipefail
 
 {
-  if [ -z "${1+x}" ] || [ -z "${2+x}" ]; then
-    echo "usage create-sa.sh account_type servicename"
+  if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+    echo "usage create-sa.sh account_type [logout_uri] servicename"
     exit 1
   fi
 
   TYPE="${1}"
-  SERVICE="${2}"
+  SERVICE="${*: -1}"
+  if [ "$#" -eq 3 ]; then
+    LOGOUT_URI="${2}"
+  fi
 
   echo "Create sa for ${SERVICE} with account type: ${TYPE}..."
 
@@ -27,11 +30,11 @@ set -o pipefail
     exit 1
   fi
 
-  if [ -n "${3+x}" ]; then
-      doguctl config "service_accounts/${TYPE}/${SERVICE}/logout_uri" "${3}"
+  if [ -n "${LOGOUT_URI+x}" ]; then
+      doguctl config "service_accounts/${TYPE}/${SERVICE}/logout_uri" "${LOGOUT_URI}"
   fi
 
-} >/dev/null 2>&1
+} 1>&2
 
 if [ "${TYPE}" == "oidc" ] || [ "${TYPE}" == "oauth" ]; then
   # print OAuth credentials for the service
