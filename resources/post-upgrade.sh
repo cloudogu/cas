@@ -70,7 +70,7 @@ migrateServiceAccountsToFoldersByType() {
   requestExitCode=$?
   if [[ "${requestExitCode}" -eq 8 ]] && grep -q '404 Not Found' "${errFile}"; then
     echo "Service account type '${saType}' not found, skipping..."
-    return
+    return 0
   elif [[ ! "${requestExitCode}" -eq 0 ]]; then
     echo "Failed to list service accounts of type '${saType}'"
     cat "${errFile}"
