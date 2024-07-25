@@ -23,6 +23,7 @@ function resetData() {
 function serviceRequestsAuthorizationEndpoint(clientID, failOnErrorCode = false) {
     cy.getOAuth20Authorize(clientID, failOnErrorCode).then(function (window) {
         let href = window.location.href
+        console.log("###### HREF: ", href)
         latestOAuthCode = href.match(CasServiceTicketPattern)
     })
 }
