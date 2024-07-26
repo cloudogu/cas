@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class RegistryLocal implements Registry{
 
     private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
+    private static final String LOCAL_CONFIG_DIR = "/var/ces/config";
     private static final String GLOBAL_CONFIG_FILE = "/etc/ces/config/global/config.yaml";
 
     FileSystem fileSystem = FileSystems.getDefault();
@@ -223,12 +224,12 @@ public class RegistryLocal implements Registry{
     }
 
     private void watcher(DoguChangeListener doguChangeListener) {
-        var path = Paths.get(LOCAL_CONFIG_FILE);
+        var path = Paths.get(LOCAL_CONFIG_DIR);
         try(WatchService watchService = fileSystem.newWatchService()) {
             path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
             var previousServiceAccounts = readServiceAccounts();
             while (true) {
-                LOGGER.info("wait for changes under {}", LOCAL_CONFIG_FILE);
+                LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
                 watchService.take();
                 var currentServiceAccounts = readServiceAccounts();
                 if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
