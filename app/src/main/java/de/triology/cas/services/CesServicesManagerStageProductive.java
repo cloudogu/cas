@@ -87,9 +87,9 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void synchronizeServicesWithRegistry() {
         // use map to filter duplicates
         var newServices = persistentServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v));
+        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
         newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
         newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
-        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
         synchronizeServices(newServices.values().stream().toList());
         LOGGER.info("Loaded {} services:", registeredServices.size());
         registeredServices.values().forEach(e -> LOGGER.debug("[{}]", e));
