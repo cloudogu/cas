@@ -76,17 +76,17 @@ class RegistryEtcd implements Registry {
      */
     private List<CesServiceData> extractServiceAccountClientsByType(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, String type, CesServiceFactory factory) {
         LOGGER.debug("Entered extractServiceAccountClientsByType");
+        var clientPathPrefix = String.format("%s/%s/", CAS_SERVICE_ACCOUNT_DIR, type);
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
-                var clientPathPrefix = String.format("%s/%s/", CAS_SERVICE_ACCOUNT_DIR, type);
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 HashMap<String, String> attributes = new HashMap<>();
 
                 switch (Registry.CasServiceAccountTypes.fromString(type)) {
                     case OIDC:
                     case OAUTH:
-                        var clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID);
+                        var clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID + "/secret");
                         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
                         attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
                         break;
@@ -140,7 +140,12 @@ class RegistryEtcd implements Registry {
     public String getEtcdValueForKey(String key) {
         LOGGER.debug("Get {} from registry", key);
         try {
-            return etcd.get(key).send().get().getNode().getValue();
+            var node = etcd.get(key).send().get().getNode();
+            if (node.isDir()) {
+                throw new RegistryException(String.format("Failed to getEtcdValueForKey: key %s is a directory, not a file", key), null);
+            }
+
+            return node.getValue();
         } catch (EtcdException e) {
             throw new RegistryException(String.format("Failed to getEtcdValueForKey: %s", key), e);
         } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
@@ -157,17 +162,22 @@ class RegistryEtcd implements Registry {
     public String getEtcdValueForKeyIfPresent(String key) {
         LOGGER.debug("Get {} from registry", key);
         try {
-            return etcd.get(key).send().get().getNode().getValue();
+            var node = etcd.get(key).send().get().getNode();
+            if (node.isDir()) {
+                throw new RegistryException(String.format("Failed to getEtcdValueForKeyIfPresent: key %s is a directory, not a file", key), null);
+            }
+
+            return node.getValue();
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 LOGGER.debug("Failed to getEtcdValueForKeyIfPresent: key \"{}\" not found", key);
                 //Valid case if key is not found return an empty string
                 return "";
             } else {
-                throw new RegistryException("Failed to getEtcdValueForKey: ", e);
+                throw new RegistryException("Failed to getEtcdValueForKeyIfPresent: ", e);
             }
         } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
-            throw new RegistryException("Failed to getEtcdValueForKey: ", e);
+            throw new RegistryException("Failed to getEtcdValueForKeyIfPresent: ", e);
         }
     }
 
