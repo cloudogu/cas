@@ -101,7 +101,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void registerChangeListener() {
         LOGGER.debug("Entered registerChangeListener");
         registry.addDoguChangeListener(() -> {
-            LOGGER.debug("Registered change in /dogu");
+            LOGGER.debug("Registered change in dogu service accounts");
             synchronizeServicesWithRegistry();
         });
     }
