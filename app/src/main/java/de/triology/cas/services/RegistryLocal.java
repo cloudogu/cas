@@ -14,11 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -229,7 +225,7 @@ public class RegistryLocal implements Registry{
     private void watcher(DoguChangeListener doguChangeListener) {
         var path = Paths.get(LOCAL_CONFIG_FILE);
         try(WatchService watchService = fileSystem.newWatchService()) {
-            path.register(watchService);
+            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
             var previousServiceAccounts = readServiceAccounts();
             while (true) {
                 LOGGER.info("wait for changes under {}", LOCAL_CONFIG_FILE);
