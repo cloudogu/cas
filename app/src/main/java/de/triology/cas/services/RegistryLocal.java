@@ -186,9 +186,11 @@ public class RegistryLocal implements Registry{
     @Override
     public String getFqdn() {
         try (var fis = getInputStreamForFile(GLOBAL_CONFIG_FILE)) {
-            return readYaml(GlobalConfig.class, fis).getFqdn();
+            return readKeyOutOfYaml(fis, "fqdn").toString();
         } catch (IOException e) {
             throw new RegistryException("Failed to close global config file after reading fqdn.", e);
+        } catch (NullPointerException e) {
+            return null;
         }
     }
 
@@ -264,5 +266,11 @@ public class RegistryLocal implements Registry{
                 NoSuchMethodException e) {
             throw new RegistryException(String.format("Failed to construct new instance of %s", tClass.getName()), e);
         }
+    }
+
+    private static Object readKeyOutOfYaml(InputStream yamlStream, String key) {
+        Yaml yaml = new Yaml();
+        Map<String, Object> obj = yaml.load(yamlStream);
+        return obj.get(key);
     }
 }
