@@ -100,7 +100,7 @@ RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 # expose tomcat port
 EXPOSE 8080
 
-HEALTHCHECK CMD doguctl healthy cas || exit 1
+HEALTHCHECK --interval=5s CMD doguctl healthy cas || exit 1
 
 USER cas
 

@@ -9,13 +9,12 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
-<body class="bg-primary">
+<body class="">
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="justify-content-center d-flex">
 
         <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25 full-width">
             <section id="logo" class="justify-content-center cloudogu-logo logout-section">
-                <img th:src="@{${#themes.code('webjars.ces-theme.logo-blue-320')}}" alt="Cloudogu Logo"/>
             </section>
             <section class="justify-content-center logout-section">
                 <h2 class="banner-heading" th:utext="#{screen.logout.header}" th:attr="data-testid=logout-header">Logout
