@@ -6,4 +6,5 @@ docker exec -it cas bash -c "rm -rf /opt/apache-tomcat/webapps/cas/WEB-INF/class
 docker exec -it cas bash -c "rm -rf /opt/apache-tomcat/webapps/cas/WEB-INF/classes/static/css"
 docker cp app/src/main/resources/templates cas:/opt/apache-tomcat/webapps/cas/WEB-INF/classes
 docker cp app/src/main/resources/static/css cas:/opt/apache-tomcat/webapps/cas/WEB-INF/classes/static/css
-docker restart cas
+docker kill cas
+docker start cas
