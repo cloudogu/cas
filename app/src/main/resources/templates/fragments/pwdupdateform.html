@@ -10,14 +10,9 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
-<body class="login mdc-typography bg-primary">
-<div id="pwdmain" th:fragment="pwdupdateform" style="padding: 2rem"
-     class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25 full-width">
-    <section id="logo" class="justify-content-center cloudogu-logo">
-        <!--logo-->
-        <img th:src="@{${#themes.code('webjars.ces-theme.logo-blue-320')}}" alt="Cloudogu Logo"/>
-    </section>
-    <section class="login-options" style="margin-left: 15px">
+<body>
+<div id="pwdmain" th:fragment="pwdupdateform">
+    <section class="login-options">
         <script th:inline="javascript">
             /*<![CDATA[*/
 
@@ -33,28 +28,64 @@
 
             /*]]>*/
         </script>
-        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
-            Password Heading</h3>
+        <h1 class="text-default-text desktop:text-desktop-4xl mobile:text-mobile-4xl mb-2"
+            th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
+            Password Heading</h1>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
-              th:object="${password}">
-            <div class="alert alert-danger mt-2 mb-5" data-testid="login-reset-pw-msg"
+              th:object="${password}" class="gap-default-2x flex flex-col text-danger">
+            <div class="alert alert-danger" data-testid="login-reset-pw-msg"
                  th:if="${#fields.hasErrors('*')}">
-                <strong th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</strong>
+                <strong th:each="err : ${#fields.errors('*')}" th:if="${err == 'Could not update the account password'}"
+                        th:text="#{pwd.change.default.error}">Default error</strong>
+                <strong th:each="err : ${#fields.errors('*')}" th:if="${err != 'Could not update the account password'}"
+                        th:utext="${err}">Error text</strong>
             </div>
 
-            <section class="cas-field my-3 mdc-input-group">
-                <div class="mdc-input-group-field mdc-input-group-field-append">
-                    <div class="d-flex caps-check">
+            <details class="group desktop:text-desktop-regular mobile:text-mobile-regular mb-2 text-default-text">
+                <summary
 
-                        <label for="password"
-                               class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon form-group">
-                            <input class="mdc-text-field__input pwd"
-                                   type="password"
-                                   name="password"
-                                   id="password"
-                                   data-testid="password-input" th:field="*{password}"
-                                   autocomplete="off" required/>
+                        class="list-none cursor-pointer focus-visible:ces-focused outline-0 rounded"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                         viewBox="0,24,256,256"
+                         class="group-open:hidden align-middle inline mr-[8px] w-[24px] h-[24px]">
+                        <path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                         viewBox="0,24,256,256"
+                         class="hidden group-open:inline align-middle mr-[8px] w-[24px] h-[24px]">
+                        <path d="M216.49,168.49a12,12,0,0,1-17,0L128,97,56.49,168.49a12,12,0,0,1-17-17l80-80a12,12,0,0,1,17,0l80,80A12,12,0,0,1,216.49,168.49Z"></path>
+                    </svg>
+                    <span th:text="#{screen.pm.password.policyMustMatch}">
+                        The passwords must match the password policy
+                    </span>
+                </summary>
+                <div class="border-l-[3px] pl-[29px]">
+                    <ul>
+                        <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}"
+                            data-testid="pwd-rule-capital-letter-li">
+                            At least 1 capital letter must be included
+                        </li>
+                        <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}"
+                            data-testid="pwd-rule-lower-case-letter-li">At least 1 lower case letter must be included
+                        </li>
+                        <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}"
+                            data-testid="pwd-rule-digit-li"> At least 1 digit must be included
+                        </li>
+                        <li th:if="#{pwdMustContainSpecialCharacterActivated}"
+                            th:text="#{pwdMustContainSpecialCharacter}"
+                            data-testid="pwd-rule-special-character-li">>At least 1 special character must be included
+                        </li>
+                        <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|"
+                            data-testid="pwd-rule-min-length">Minimum length
+                        </li>
+                    </ul>
+                </div>
+            </details>
 
+            <section>
+                <label for="password"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                             <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <span class="mdc-notched-outline__notch">
@@ -63,26 +94,32 @@
                             </span>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
-                        </label>
 
-                        <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
 
+                    <div class="relative">
+                        <input
+                                class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                type="password"
+                                name="password"
+                                id="password"
+                                data-testid="password-input" th:field="*{password}"
+                                autocomplete="off" required/>
+                        <button data-testid="login-reveal-btn"
+                                type="button"
+                                id="password-toggle-1"
+                                class="w-[38px] h-[38px] absolute right-0 top-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
+                        >
+                            <img src="/cas/images/eye.svg" alt="Toggle Password" class="w-default-2x h-default-2x">
+                        </button>
                     </div>
-                </div>
+                </label>
+
+                <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
             </section>
 
-            <section class="cas-field my-3">
-                <div class="d-flex caps-check">
-
-                    <label for="confirmedPassword"
-                           class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon form-group">
-                        <input class="mdc-text-field__input pwd"
-                               type="password"
-                               name="confirmedPassword"
-                               id="confirmedPassword"
-                               data-testid="confirmedPassword-input" th:field="*{confirmedPassword}"
-                               autocomplete="off" required/>
-
+            <section>
+                <label for="confirmedPassword"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                         <span class="mdc-notched-outline">
                     <span class="mdc-notched-outline__leading"></span>
                     <span class="mdc-notched-outline__notch">
@@ -91,89 +128,117 @@
                     </span>
                     <span class="mdc-notched-outline__trailing"></span>
                 </span>
-                    </label>
+                    <div class="relative">
+                        <input
+                                class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                type="password"
+                                name="confirmedPassword"
+                                id="confirmedPassword"
+                                data-testid="confirmedPassword-input" th:field="*{confirmedPassword}"
+                                autocomplete="off" required/>
+                        <button data-testid="login-reveal-btn"
+                                type="button"
+                                id="password-toggle-2"
+                                class="w-[38px] h-[38px] absolute right-0 top-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
+                        >
+                            <img src="/cas/images/eye.svg" alt="Toggle Password" class="w-default-2x h-default-2x">
+                        </button>
+                    </div>
+                </label>
 
-                    <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-                    <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append" type="button">
-                        <i class="glyphicon glyphicon-eye-open"></i>
-                        <span class="sr-only">Toggle Password</span>
-                    </button>
-                </div>
+                <!--                <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>-->
+<!--                <button class="reveal-password mdc-button mdc-button&#45;&#45;raised mdc-input-group-append" type="button">-->
+<!--                    <i class="glyphicon glyphicon-eye-open"></i>-->
+<!--                    <span class="sr-only">Toggle Password</span>-->
+<!--                </button>-->
             </section>
 
-            <div class="cas-field my-3 d-flex flex-column hidden">
-                <div class="d-flex align-items-center">
-                    <span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;
-                    <span id="password-strength-icon" class="mdi" aria-hidden="true"></span>
-                </div>
-                <div id="strengthProgressBar" role="progressbar" class="d-none hidden">
-                    <div id="progress-strength-indicator" class="progress-bar-indicator text-center"></div>
-                    <div class="mdc-linear-progress">
-                        <div class="mdc-linear-progress__buffering-dots"></div>
-                        <div class="mdc-linear-progress__buffer"></div>
-                        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar"
-                             style="transform: scaleX(0);">
-                            <span class="mdc-linear-progress__bar-inner"></span>
-                        </div>
-                        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-                            <span class="mdc-linear-progress__bar-inner"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div th:if="false" class="cas-field my-3 text-warning" id="password-strength-msg" style="display: none;">
-                <!-- This section is disabled -->
-                <div class="suggestions banner banner-warning p-2 mb-2 d-flex align-items-center" role="alert">
-                    <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;
-                    <p class="m-0">
-                        <span id="password-strength-warning"></span>&nbsp;
-                        <span id="password-strength-suggestions"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="cas-field my-3 text-danger" id="password-strength-notes">
-                <div id="password-policy-violation-msg" class="alert alert-danger p-2" role="alert"
-                     style="display: none;" data-testid="password-policy-violation-msg-div">
-                    <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
-                    <strong th:text="#{screen.pm.password.policyViolation}">Password does not match the password policy
-                        requirement.</strong>
-                    <ul>
-                        <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}"
-                            data-testid="pwd-rule-capital-letter-li" >
-                            At least 1 capital letter must be included</li>
-                        <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}"
-                            data-testid="pwd-rule-lower-case-letter-li">At least 1 lower case letter must be included</li>
-                        <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}"
-                            data-testid="pwd-rule-digit-li"> At least 1 digit must be included</li>
-                        <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}"
-                            data-testid="pwd-rule-special-character-li" >>At least 1 special character must be included</li>
-                        <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|"
-                            data-testid="pwd-rule-min-length">Minimum length</li>
-                    </ul>
-                </div>
-                <div id="password-confirm-mismatch-msg" class="alert alert-danger p-2" role="alert"
-                     style="display: none;">
-                    <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
-                    <strong th:text="#{screen.pm.password.confirmMismatch}">Passwords do not match.</strong>
-                </div>
-            </div>
+            <script>
+                document.getElementById("password-toggle-1").onclick = () => {
+                    const pwInput = document.getElementById("password");
+                    if (pwInput.type === "password") {
+                        pwInput.type = "text";
+                    } else {
+                        pwInput.type = "password";
+                    }
+                };
+                document.getElementById("password-toggle-2").onclick = () => {
+                    const pwInput = document.getElementById("confirmedPassword");
+                    if (pwInput.type === "password") {
+                        pwInput.type = "text";
+                    } else {
+                        pwInput.type = "password";
+                    }
+                };
+            </script>
 
+            <!--            <div>-->
+            <!--                <div class="d-flex align-items-center">-->
+            <!--                    <span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;-->
+            <!--                    <span id="password-strength-icon" class="mdi" aria-hidden="true"></span>-->
+            <!--                </div>-->
+            <!--                <div id="strengthProgressBar" role="progressbar" class="d-none hidden">-->
+            <!--                    <div id="progress-strength-indicator" class="progress-bar-indicator text-center"></div>-->
+            <!--                    <div class="mdc-linear-progress">-->
+            <!--                        <div class="mdc-linear-progress__buffering-dots"></div>-->
+            <!--                        <div class="mdc-linear-progress__buffer"></div>-->
+            <!--                        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar"-->
+            <!--                             style="transform: scaleX(0);">-->
+            <!--                            <span class="mdc-linear-progress__bar-inner"></span>-->
+            <!--                        </div>-->
+            <!--                        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">-->
+            <!--                            <span class="mdc-linear-progress__bar-inner"></span>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <!--            <div th:if="false" class="cas-field my-3 text-warning" id="password-strength-msg" style="display: none;">-->
+            <!--                &lt;!&ndash; This section is disabled &ndash;&gt;-->
+            <!--                <div class="suggestions banner banner-warning p-2 mb-2 d-flex align-items-center" role="alert">-->
+            <!--                    <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;-->
+            <!--                    <p class="m-0">-->
+            <!--                        <span id="password-strength-warning"></span>&nbsp;-->
+            <!--                        <span id="password-strength-suggestions"></span>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <div id="password-strength-notes" class="text-danger">
+                <strong
+                        id="password-policy-violation-msg"
+                        class="block mb-default-2x"
+                        th:text="#{screen.pm.password.policyViolation}"
+                        style="display: none;"
+                >
+                    Password does not match the password policy requirement.
+                </strong>
+                <strong
+                        id="password-confirm-mismatch-msg"
+                        role="alert"
+                        class="block mb-default-2x"
+                        th:text="#{screen.pm.password.confirmMismatch}"
+                        style="display: none;"
+                >
+                    Passwords do not match.
+                </strong>
+            </div>
             <div class="cas-field">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
-                <button class="mdc-button mdc-button--raised mr-2"
+                <button
+                        class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
                         name="submit"
                         accesskey="s"
                         th:value="#{screen.pm.button.submit}"
                         th:attr="data-processing-text=#{screen.welcome.button.loginwip}"
                         value="SUBMIT"
                         id="submit"
-                        type="submit"
-                        disabled="true">
+                        type="submit">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.submit}">Submit</span>
                 </button>
-                <a class="mdc-button mdc-button--outlined" th:href="@{/login}">
-                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">CANCEL</span>
+                <a th:href="@{/login}"
+                   class="no-underline inline-block focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-neutral hover:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0">
+                    <span th:text="#{screen.pm.button.cancel}"
+                          class="h-full flex justify-center items-center">CANCEL</span>
                 </a>
             </div>
         </form>
