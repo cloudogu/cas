@@ -125,11 +125,22 @@
                             </div>
                         </div>
                         <button data-testid="login-reveal-btn"
-                                class="reveal-password mdc-button mdc-button--raised mdc-input-group-append "
-                                type="button">
-                            <i class="glyphicon glyphicon-eye-open "></i>
+                                type="button"
+                                id="password-toggle"
+                                class="w-"
+                        >
                             <span class="sr-only">Toggle Password</span>
                         </button>
+                        <script>
+                            document.getElementById("password-toggle").onclick = () => {
+                                const pwInput = document.getElementById("password");
+                                if (pwInput.type === "password"){
+                                    pwInput.type = "text";
+                                } else {
+                                    pwInput.type = "password";
+                                }
+                            };
+                        </script>
                     </section>
 
                     <section id="authnSourceSection" class="cas-field my-2=3"

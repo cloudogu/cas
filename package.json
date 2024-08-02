@@ -1,0 +1,23 @@
+{
+  "name": "ces-style-generator",
+  "version": "1.0.0",
+  "description": "Npm project to use ces-theme to generate styling",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "tw": "npx tailwindcss build -o app/src/main/resources/static/css/ces-theme-tailwind.css"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudogu/ces-theme-tailwind": "^0.7.1",
+    "@mertasan/tailwindcss-variables": "^2.7.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.7",
+    "tailwindcss-aria-attributes": "^2.0.1",
+    "tailwindcss-scoped-groups": "^2.0.0"
+  }
+}
