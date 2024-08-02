@@ -33,28 +33,30 @@
                         <span id="existingSsoMsg" class="mdc-button__label"
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
                     </div>
-<!--                    Removed from original template -->
-<!--                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">-->
-<!--                        <i class="mdi mdi-security fas fa-shield-alt"></i>-->
-<!--                        <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>-->
-<!--                    </h3>-->
-<!--                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"-->
-<!--                         th:if="${#fields.hasErrors('*')}">-->
-<!--                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>-->
-<!--                        &lt;!&ndash;<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>&ndash;&gt;-->
-<!--                    </div>-->
+                    <!--                    Removed from original template -->
+                    <!--                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">-->
+                    <!--                        <i class="mdi mdi-security fas fa-shield-alt"></i>-->
+                    <!--                        <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>-->
+                    <!--                    </h3>-->
+                    <!--                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"-->
+                    <!--                         th:if="${#fields.hasErrors('*')}">-->
+                    <!--                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>-->
+                    <!--                        &lt;!&ndash;<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>&ndash;&gt;-->
+                    <!--                    </div>-->
                     <section class="cas-field form-group my-3" id="usernameSection">
                         <div class="d-flex">
-                            <label for="username" class="mdc-text-field mdc-text-field--outlined control-label login-label">
+
+                            <label for="username"
+                                   class="mdc-text-field mdc-text-field--outlined control-label login-label">
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
                                         <span class="mdc-floating-label"
-                                            th:utext="#{screen.welcome.label.netid}">Username</span>
+                                              th:utext="#{screen.welcome.label.netid}">Username</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <input class="mdc-text-field__input" id="username"
+                                <input id="username"
                                        data-testid="login-username-input-field"
                                        size="25"
                                        type="text"
@@ -63,20 +65,22 @@
                                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                        autocapitalize="none"
                                        spellcheck="false"
-                                       autocomplete="username"/>
+                                       autocomplete="username"
+                                       class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                />
                             </label>
 
-<!--                        Removed from official template    -->
-<!--                        <div class="mdc-text-field-helper-line">-->
-<!--                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;validation-msg" aria-hidden="true">-->
-<!--                                <span id="usernameValidationMessage" th:utext="#{username.required}"></span>-->
-<!--                            </div>-->
-<!--                        </div>-->
+                            <!--                        Removed from official template    -->
+                            <!--                        <div class="mdc-text-field-helper-line">-->
+                            <!--                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;validation-msg" aria-hidden="true">-->
+                            <!--                                <span id="usernameValidationMessage" th:utext="#{username.required}"></span>-->
+                            <!--                            </div>-->
+                            <!--                        </div>-->
 
-                        <script type="text/javascript" th:inline="javascript">
-                            /*<![CDATA[*/
-                            var username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
-                            var disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            <script type="text/javascript" th:inline="javascript">
+                                /*<![CDATA[*/
+                                var username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
+                                var disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
                                 if (username != null && username !== '') {
                                     $('#username').val(username);
@@ -304,10 +308,10 @@
                     <hr class="my-4"/>
                 </span>
 
-                <div th:if="${loginFormViewable and loginFormEnabled}">
-                    <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
-                         th:replace="~{fragments/pmlinks :: pmlinks}"/>
-                </div>
+            <div th:if="${loginFormViewable and loginFormEnabled}">
+                <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
+                     th:replace="~{fragments/pmlinks :: pmlinks}"/>
+            </div>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/

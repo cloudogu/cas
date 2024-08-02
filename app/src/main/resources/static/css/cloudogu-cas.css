@@ -1,25 +1,13 @@
-/* Root / Reset */
-
 :root {
-    --cas-theme-primary: #153e50;
-    --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
-    --cas-theme-primary-light: #006d85;
-    --cas-theme-secondary: #74C163;
-    --cas-theme-success: var(--cas-theme-secondary);
-    --cas-theme-danger: var(--mdc-theme-error);
-    --cas-theme-warning: #e6a210;
-    --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
-    --cas-theme-twitter-color: #55acee;
-    --cas-theme-vimeo-color: #1ab7ea;
-    --cas-theme-vk-color: #587ea3;
-    --cas-theme-yahoo-color: #720e9e;
-    --cas-theme-google-color: #CC5445;
-    --cas-theme-facebook-color: #3B5998;
-    --atlassian-theme-primary: #0747a6;
-    --mdc-theme-primary: var(--cas-theme-primary, #153e50);
-
     --colors-brand-strong: #003250;
     --colors-brand: #00629E;
+    --colors-neutral: #666666;
+    --colors-neutral-weak: #CCCCCC;
+    --colors-neutral-strong: #4D4D4D;
+    --colors-default-background: #FFFFFF;
+    --colors-default-text: #0D1C26;
+    --colors-default-focus-inner: #FFFFFF;
+    --colors-default-focus-outer: #CC14CC;
     --ces-theme-logo-default: url("/cas/css/blib-blue-vec.svg");
     --ces-theme-logo-default-ratio: 1.63;
 }
@@ -57,7 +45,13 @@ body {
 #cloudogu-logo {
     background-image: var(--ces-theme-logo-default);
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 144px;
     width: 144px;
     height: calc(144px / (var(--ces-theme-logo-default-ratio)))
+}
+
+.ces-focused:focus-visible {
+    -webkit-box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+    box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+    z-index: 1;
 }
