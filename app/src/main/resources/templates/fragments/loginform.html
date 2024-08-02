@@ -47,7 +47,7 @@
                         <div class="d-flex">
 
                             <label for="username"
-                                   class="mdc-text-field mdc-text-field--outlined control-label login-label">
+                                   class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
@@ -66,7 +66,7 @@
                                        autocapitalize="none"
                                        spellcheck="false"
                                        autocomplete="username"
-                                       class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                       class="ces-focused w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                 />
                             </label>
 
@@ -98,13 +98,7 @@
                             <div class="d-flex caps-check">
 
                                 <label for="password"
-                                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-
-                                    <input class="mdc-text-field__input pwd"
-                                           data-testid="login-password-input-field"
-                                           type="password" id="password" size="25"
-                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                           th:field="*{password}" autocomplete="off"/>
+                                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
 
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
@@ -114,6 +108,12 @@
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
 
+                                    <input data-testid="login-password-input-field"
+                                           type="password" id="password" size="25"
+                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                           th:field="*{password}" autocomplete="off"
+                                           class="ces-focused w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                    />
                                 </label>
                             </div>
 
