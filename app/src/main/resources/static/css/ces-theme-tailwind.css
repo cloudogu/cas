@@ -667,19 +667,9 @@ video {
   margin: auto;
 }
 
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .my-3 {
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
-}
-
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 .mb-2 {
@@ -696,6 +686,10 @@ video {
 
 .mb-5 {
   margin-bottom: 1.25rem;
+}
+
+.mb-default-2x {
+  margin-bottom: 1rem;
 }
 
 .mr-2 {
@@ -718,6 +712,14 @@ video {
   margin-top: 1.25rem;
 }
 
+.mt-default-2x {
+  margin-top: 1rem;
+}
+
+.mt-default-3x {
+  margin-top: 1.5rem;
+}
+
 .block {
   display: block;
 }
@@ -734,16 +736,16 @@ video {
   height: 2.5rem;
 }
 
-.h-\[368px\] {
-  height: 368px;
-}
-
 .h-\[38px\] {
   height: 38px;
 }
 
 .h-default-2x {
   height: 1rem;
+}
+
+.min-h-\[368px\] {
+  min-height: 368px;
 }
 
 .w-\[38px\] {
@@ -756,6 +758,11 @@ video {
 
 .w-default-2x {
   width: 1rem;
+}
+
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .w-full {
@@ -784,6 +791,10 @@ video {
 
 .justify-center {
   justify-content: center;
+}
+
+.gap-default-2x {
+  gap: 1rem;
 }
 
 .whitespace-nowrap {
@@ -819,6 +830,10 @@ video {
   border-right-width: 2px;
 }
 
+.border-solid {
+  border-style: solid;
+}
+
 .border-brand {
   border-color: var(--colors-brand);
 }
@@ -833,6 +848,10 @@ video {
 
 .bg-neutral {
   background-color: var(--colors-neutral);
+}
+
+.bg-transparent {
+  background-color: transparent;
 }
 
 .from {
@@ -906,6 +925,10 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.text-brand {
+  color: var(--colors-brand);
+}
+
 .text-danger {
   color: var(--colors-danger);
 }
@@ -967,12 +990,20 @@ video {
   background-color: var(--colors-brand-strong);
 }
 
+.hover\:bg-brand-weak:hover {
+  background-color: var(--colors-brand-weak);
+}
+
 .hover\:bg-neutral-strong:hover {
   background-color: var(--colors-neutral-strong);
 }
 
 .hover\:p-1:hover {
   padding: 0.25rem;
+}
+
+.hover\:text-brand-strong:hover {
+  color: var(--colors-brand-strong);
 }
 
 .focus\:border-brand:focus {
@@ -995,12 +1026,20 @@ video {
   background-color: var(--colors-brand-strong);
 }
 
+.focus-visible\:bg-brand-weak:focus-visible {
+  background-color: var(--colors-brand-weak);
+}
+
 .focus-visible\:bg-neutral-strong:focus-visible {
   background-color: var(--colors-neutral-strong);
 }
 
 .focus-visible\:p-1:focus-visible {
   padding: 0.25rem;
+}
+
+.focus-visible\:text-brand-strong:focus-visible {
+  color: var(--colors-brand-strong);
 }
 
 .active\:border-3:active {
@@ -1023,12 +1062,20 @@ video {
   background-color: var(--colors-brand-stronger);
 }
 
+.active\:bg-brand-weak:active {
+  background-color: var(--colors-brand-weak);
+}
+
 .active\:bg-neutral-stronger:active {
   background-color: var(--colors-neutral-stronger);
 }
 
 .active\:p-1:active {
   padding: 0.25rem;
+}
+
+.active\:text-brand-stronger:active {
+  color: var(--colors-brand-stronger);
 }
 
 .disabled\:border:disabled {
@@ -1055,8 +1102,16 @@ video {
   background-color: var(--colors-neutral-weak);
 }
 
+.disabled\:bg-transparent:disabled {
+  background-color: transparent;
+}
+
 .disabled\:p-1\.5:disabled {
   padding: 0.375rem;
+}
+
+.disabled\:text-brand-weak:disabled {
+  color: var(--colors-brand-weak);
 }
 
 .disabled\:text-inverted-text:disabled {
@@ -1083,11 +1138,34 @@ video {
   background-color: var(--colors-neutral-weak);
 }
 
+[aria-disabled="true"].aria-disabled\:bg-transparent {
+  background-color: transparent;
+}
+
+[aria-disabled="true"].aria-disabled\:text-brand-weak {
+  color: var(--colors-brand-weak);
+}
+
 [aria-disabled="true"].aria-disabled\:text-inverted-text {
   color: var(--colors-inverted-text);
 }
 
 @media (min-width: 768px) {
+  .desktop\:my-8 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .desktop\:text-desktop-5xl {
+    font-size: 41px;
+    line-height: 1.36585;
+  }
+
+  .desktop\:text-desktop-6xl {
+    font-size: 49px;
+    line-height: 1.3061;
+  }
+
   .desktop\:text-desktop-regular {
     font-size: 16px;
     line-height: 1.5;
@@ -1095,6 +1173,26 @@ video {
 }
 
 @media (max-width: 767px) {
+  .mobile\:mx-0 {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .mobile\:my-6 {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mobile\:text-mobile-5xl {
+    font-size: 29px;
+    line-height: 1.103448;
+  }
+
+  .mobile\:text-mobile-6xl {
+    font-size: 33px;
+    line-height: 1.212121;
+  }
+
   .mobile\:text-mobile-regular {
     font-size: 16px;
     line-height: 1.5;
