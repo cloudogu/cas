@@ -5,26 +5,10 @@
                 || #messages.msgOrNull('legal.url.privacy.policy') != null
                 && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}"
         class="flex min-h-12 absolute bottom-0 w-[100vw] p-default-1/2 border-t-3 border-brand">
-    <!--    <div>-->
-    <!--        <ul class="footer-list flex flex-row gap-default separated-list">-->
-    <!--            <li th:if="${#messages.msgOrNull('legal.url.terms.of.service') != null && #messages.msgOrNull('legal.url.terms.of.service') !='legal.url.terms.of.service'}">-->
-    <!--                <a href="" th:href="#{legal.url.terms.of.service}" th:text="#{terms.of.service}" target="_blank"-->
-    <!--                   data-testid="footer-link-terms-of-service"></a>-->
-    <!--            </li>-->
-    <!--            <li th:if="${#messages.msgOrNull('legal.url.imprint') != null && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'}">-->
-    <!--                <a href="" th:href="#{legal.url.imprint}" th:text="#{imprint}" target="_blank"-->
-    <!--                   data-testid="footer-link-legal-url-imprint"></a>-->
-    <!--            </li>-->
-    <!--            <li th:if="${#messages.msgOrNull('legal.url.privacy.policy') != null && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}">-->
-    <!--                <a href="" th:href="#{legal.url.privacy.policy}" th:text="#{privacy.policy}" target="_blank"-->
-    <!--                   data-testid="footer-link-privacy-policy"></a>-->
-    <!--            </li>-->
-    <!--        </ul>-->
-    <!--    </div>-->
 
     <div class="grid grid-cols-[repeat(3,max-content)] justify-center p-default w-[100vw]">
         <a
-                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused"
+                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused outline-none"
                 th:if="${#messages.msgOrNull('legal.url.terms.of.service') != null && #messages.msgOrNull('legal.url.terms.of.service') !='legal.url.terms.of.service'}"
                 href=""
                 th:href="#{legal.url.terms.of.service}"
@@ -33,7 +17,7 @@
                 data-testid="footer-link-terms-of-service">
         </a>
         <a
-                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused"
+                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused outline-none"
                 th:if="${#messages.msgOrNull('legal.url.imprint') != null && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'}"
                 href=""
                 th:href="#{legal.url.imprint}"
@@ -42,7 +26,7 @@
                 data-testid="footer-link-legal-url-imprint">
         </a>
         <a
-                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused"
+                class="px-default decoration-default-text decoration-dotted underline underline-offset-4 ces-focused outline-none"
                 th:if="${#messages.msgOrNull('legal.url.privacy.policy') != null && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}"
                 href=""
                 th:href="#{legal.url.privacy.policy}"
