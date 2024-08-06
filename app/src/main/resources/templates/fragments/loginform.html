@@ -62,10 +62,11 @@
                         </span>
                     </h1>
 
-                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"
+                    <div id="loginErrorsPanel" class="text-danger"
                          th:if="${#fields.hasErrors('*')}" role="alert">
-                        <h2 th:utext="#{screen.authentication.error.title}">Authentication Failure</h2>
-                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
+                        <p th:each="err : ${#fields.errors('*')}">
+                            <strong th:utext="${err + ' '}"></strong>
+                        </p>
                         <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                     <section class="cas-field form-group my-3" id="usernameSection">
