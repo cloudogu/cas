@@ -28,12 +28,12 @@
 
             /*]]>*/
         </script>
-        <h1 class="text-default-text desktop:text-desktop-2xl mobile:text-mobile-2xl mb-default-2x"
+        <h1 class="text-default-text desktop:text-desktop-4xl mobile:text-mobile-4xl mb-2"
             th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
             Password Heading</h1>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
-              th:object="${password}" class="gap-default">
-            <div class="alert alert-danger mt-2 mb-5" data-testid="login-reset-pw-msg"
+              th:object="${password}" class="gap-default-2x flex flex-col">
+            <div class="alert alert-danger" data-testid="login-reset-pw-msg"
                  th:if="${#fields.hasErrors('*')}">
                 <strong th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</strong>
             </div>
@@ -88,37 +88,37 @@
                 </button>
             </section>
 
-            <div class="cas-field my-3 d-flex flex-column hidden">
-                <div class="d-flex align-items-center">
-                    <span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;
-                    <span id="password-strength-icon" class="mdi" aria-hidden="true"></span>
-                </div>
-                <div id="strengthProgressBar" role="progressbar" class="d-none hidden">
-                    <div id="progress-strength-indicator" class="progress-bar-indicator text-center"></div>
-                    <div class="mdc-linear-progress">
-                        <div class="mdc-linear-progress__buffering-dots"></div>
-                        <div class="mdc-linear-progress__buffer"></div>
-                        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar"
-                             style="transform: scaleX(0);">
-                            <span class="mdc-linear-progress__bar-inner"></span>
-                        </div>
-                        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-                            <span class="mdc-linear-progress__bar-inner"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div th:if="false" class="cas-field my-3 text-warning" id="password-strength-msg" style="display: none;">
-                <!-- This section is disabled -->
-                <div class="suggestions banner banner-warning p-2 mb-2 d-flex align-items-center" role="alert">
-                    <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;
-                    <p class="m-0">
-                        <span id="password-strength-warning"></span>&nbsp;
-                        <span id="password-strength-suggestions"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="cas-field my-3 text-danger" id="password-strength-notes">
+<!--            <div>-->
+<!--                <div class="d-flex align-items-center">-->
+<!--                    <span th:text="#{screen.pm.password.strength}">Strength:</span>&nbsp;-->
+<!--                    <span id="password-strength-icon" class="mdi" aria-hidden="true"></span>-->
+<!--                </div>-->
+<!--                <div id="strengthProgressBar" role="progressbar" class="d-none hidden">-->
+<!--                    <div id="progress-strength-indicator" class="progress-bar-indicator text-center"></div>-->
+<!--                    <div class="mdc-linear-progress">-->
+<!--                        <div class="mdc-linear-progress__buffering-dots"></div>-->
+<!--                        <div class="mdc-linear-progress__buffer"></div>-->
+<!--                        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar"-->
+<!--                             style="transform: scaleX(0);">-->
+<!--                            <span class="mdc-linear-progress__bar-inner"></span>-->
+<!--                        </div>-->
+<!--                        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">-->
+<!--                            <span class="mdc-linear-progress__bar-inner"></span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div th:if="false" class="cas-field my-3 text-warning" id="password-strength-msg" style="display: none;">-->
+<!--                &lt;!&ndash; This section is disabled &ndash;&gt;-->
+<!--                <div class="suggestions banner banner-warning p-2 mb-2 d-flex align-items-center" role="alert">-->
+<!--                    <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;-->
+<!--                    <p class="m-0">-->
+<!--                        <span id="password-strength-warning"></span>&nbsp;-->
+<!--                        <span id="password-strength-suggestions"></span>-->
+<!--                    </p>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div id="password-strength-notes">
                 <div id="password-policy-violation-msg" class="alert alert-danger p-2" role="alert"
                      style="display: none;" data-testid="password-policy-violation-msg-div">
                     <span class="mdi mdi-alert" aria-hidden="true"></span>&nbsp;
