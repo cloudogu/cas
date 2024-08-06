@@ -18,6 +18,7 @@
             <div id="cloudogu-logo" role="img" aria-label="Cloudogu Logo"></div>
         </div>
         <div id="loginForm"
+             class="grow px-6"
              th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}"
         >
             <div th:replace="~{fragments/loginform :: loginform}">
