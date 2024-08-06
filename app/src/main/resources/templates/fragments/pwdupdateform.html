@@ -32,10 +32,11 @@
             th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
             Password Heading</h1>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
-              th:object="${password}" class="gap-default-2x flex flex-col">
+              th:object="${password}" class="gap-default-2x flex flex-col text-danger">
             <div class="alert alert-danger" data-testid="login-reset-pw-msg"
                  th:if="${#fields.hasErrors('*')}">
-                <strong th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</strong>
+                <strong th:each="err : ${#fields.errors('*')}" th:if="${err == 'Could not update the account password'}" th:text="#{pwd.change.default.error}">Default error</strong>
+                <strong th:each="err : ${#fields.errors('*')}" th:if="${err != 'Could not update the account password'}" th:utext="${err}">Error text</strong>
             </div>
 
             <section>
