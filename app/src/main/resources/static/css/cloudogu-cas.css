@@ -27,9 +27,13 @@ body {
     height: calc(144px / (var(--ces-theme-logo-default-ratio)))
 }
 
-.ces-focused:focus-visible {
+.ces-focused:focus-visible, .focus-href > a:focus-visible {
     -webkit-box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
     box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
     z-index: 1;
+}
+
+.focus-href > a {
+    color: var(--colors-brand);
 }
 

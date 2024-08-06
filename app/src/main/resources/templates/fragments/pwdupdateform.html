@@ -11,12 +11,8 @@
 </head>
 
 <body class="login mdc-typography">
-<div id="pwdmain" th:fragment="pwdupdateform" style="padding: 2rem"
-     class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25 full-width">
-    <section id="logo" class="justify-content-center cloudogu-logo">
-        <!--logo-->
-    </section>
-    <section class="login-options" style="margin-left: 15px">
+<div id="pwdmain" th:fragment="pwdupdateform">
+    <section class="login-options">
         <script th:inline="javascript">
             /*<![CDATA[*/
 
@@ -32,28 +28,19 @@
 
             /*]]>*/
         </script>
-        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
-            Password Heading</h3>
+        <h1 class="text-default-text desktop:text-desktop-2xl mobile:text-mobile-2xl mb-default-2x"
+            th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change
+            Password Heading</h1>
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
-              th:object="${password}">
+              th:object="${password}" class="gap-default">
             <div class="alert alert-danger mt-2 mb-5" data-testid="login-reset-pw-msg"
                  th:if="${#fields.hasErrors('*')}">
                 <strong th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</strong>
             </div>
 
-            <section class="cas-field my-3 mdc-input-group">
-                <div class="mdc-input-group-field mdc-input-group-field-append">
-                    <div class="d-flex caps-check">
-
-                        <label for="password"
-                               class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon form-group">
-                            <input class="mdc-text-field__input pwd"
-                                   type="password"
-                                   name="password"
-                                   id="password"
-                                   data-testid="password-input" th:field="*{password}"
-                                   autocomplete="off" required/>
-
+            <section>
+                <label for="password"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                             <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <span class="mdc-notched-outline__notch">
@@ -62,26 +49,21 @@
                             </span>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
-                        </label>
+                    <input
+                            class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                            type="password"
+                            name="password"
+                            id="password"
+                            data-testid="password-input" th:field="*{password}"
+                            autocomplete="off" required/>
+                </label>
 
-                        <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-
-                    </div>
-                </div>
+                <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
             </section>
 
-            <section class="cas-field my-3">
-                <div class="d-flex caps-check">
-
-                    <label for="confirmedPassword"
-                           class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon form-group">
-                        <input class="mdc-text-field__input pwd"
-                               type="password"
-                               name="confirmedPassword"
-                               id="confirmedPassword"
-                               data-testid="confirmedPassword-input" th:field="*{confirmedPassword}"
-                               autocomplete="off" required/>
-
+            <section>
+                <label for="confirmedPassword"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                         <span class="mdc-notched-outline">
                     <span class="mdc-notched-outline__leading"></span>
                     <span class="mdc-notched-outline__notch">
@@ -90,14 +72,20 @@
                     </span>
                     <span class="mdc-notched-outline__trailing"></span>
                 </span>
-                    </label>
+                    <input
+                            class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                            type="password"
+                            name="confirmedPassword"
+                            id="confirmedPassword"
+                            data-testid="confirmedPassword-input" th:field="*{confirmedPassword}"
+                            autocomplete="off" required/>
+                </label>
 
-                    <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-                    <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append" type="button">
-                        <i class="glyphicon glyphicon-eye-open"></i>
-                        <span class="sr-only">Toggle Password</span>
-                    </button>
-                </div>
+<!--                <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>-->
+                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append" type="button">
+                    <i class="glyphicon glyphicon-eye-open"></i>
+                    <span class="sr-only">Toggle Password</span>
+                </button>
             </section>
 
             <div class="cas-field my-3 d-flex flex-column hidden">
@@ -138,16 +126,22 @@
                         requirement.</strong>
                     <ul>
                         <li th:if="#{pwdMustContainCapitalLetterActivated}" th:text="#{pwdMustContainCapitalLetter}"
-                            data-testid="pwd-rule-capital-letter-li" >
-                            At least 1 capital letter must be included</li>
+                            data-testid="pwd-rule-capital-letter-li">
+                            At least 1 capital letter must be included
+                        </li>
                         <li th:if="#{pwdMustContainLowerCaseLetterActivated}" th:text="#{pwdMustContainLowerCaseLetter}"
-                            data-testid="pwd-rule-lower-case-letter-li">At least 1 lower case letter must be included</li>
+                            data-testid="pwd-rule-lower-case-letter-li">At least 1 lower case letter must be included
+                        </li>
                         <li th:if="#{pwdMustContainDigitActivated}" th:text="#{pwdMustContainDigit}"
-                            data-testid="pwd-rule-digit-li"> At least 1 digit must be included</li>
-                        <li th:if="#{pwdMustContainSpecialCharacterActivated}" th:text="#{pwdMustContainSpecialCharacter}"
-                            data-testid="pwd-rule-special-character-li" >>At least 1 special character must be included</li>
+                            data-testid="pwd-rule-digit-li"> At least 1 digit must be included
+                        </li>
+                        <li th:if="#{pwdMustContainSpecialCharacterActivated}"
+                            th:text="#{pwdMustContainSpecialCharacter}"
+                            data-testid="pwd-rule-special-character-li">>At least 1 special character must be included
+                        </li>
                         <li th:text="|#{pwdMinLength} #{pwdMinLengthNo} #{pwdCharacters}|"
-                            data-testid="pwd-rule-min-length">Minimum length</li>
+                            data-testid="pwd-rule-min-length">Minimum length
+                        </li>
                     </ul>
                 </div>
                 <div id="password-confirm-mismatch-msg" class="alert alert-danger p-2" role="alert"
@@ -160,7 +154,8 @@
             <div class="cas-field">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
-                <button class="mdc-button mdc-button--raised mr-2"
+                <button
+                        class="inline-block ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-brand-weak focus-visible:bg-brand-weak active:bg-brand-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-brand hover:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-brand hover:text-brand-strong focus-visible:text-brand-strong active:text-brand-stronger disabled:text-brand-weak aria-disabled:text-brand-weak outline-0"
                         name="submit"
                         accesskey="s"
                         th:value="#{screen.pm.button.submit}"
@@ -171,8 +166,8 @@
                         disabled="true">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.submit}">Submit</span>
                 </button>
-                <a class="mdc-button mdc-button--outlined" th:href="@{/login}">
-                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">CANCEL</span>
+                <a th:href="@{/login}" class="inline-block ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-neutral hover:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0">
+                    <span th:text="#{screen.pm.button.cancel}" class="h-full flex justify-center items-center">CANCEL</span>
                 </a>
             </div>
         </form>

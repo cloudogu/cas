@@ -18,8 +18,8 @@
             <div id="cloudogu-logo" role="img" aria-label="Cloudogu Logo"></div>
         </div>
         <div id="loginForm"
-             class="login-section login-form p-default-2x"
-             th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
+             th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}"
+        >
             <div th:replace="~{fragments/loginform :: loginform}">
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
@@ -27,7 +27,8 @@
             <hr class="text-brand border-solid desktop:my-8 mobile:mx-0 mobile:my-6 mb-default-2x mt-default-3x">
 
             <div class="flex flex-col gap-default-2x">
-                <h2 class="desktop:text-desktop-5xl mobile:text-mobile-5xl text-default-text" th:text="#{cas.login.federated}">Federated Login</h2>
+                <h2 class="desktop:text-desktop-5xl mobile:text-mobile-5xl text-default-text"
+                    th:text="#{cas.login.federated}">Federated Login</h2>
                 <div th:replace="~{fragments/loginProviders :: loginProviders}"></div>
             </div>
 
