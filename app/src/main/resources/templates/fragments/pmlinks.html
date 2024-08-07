@@ -48,13 +48,13 @@
         }
     </script>
 
-    <div th:if="${#messages.msgOrNull('is.password.reset.via.mail.enabled') != 'true'}">
+    <div th:if="${#messages.msgOrNull('is.password.reset.via.mail.enabled') != 'true'}" class="mt-default-2x">
         <div>
             <div class="password-forgotten" th:if="${#messages.msgOrNull('forgot.password.text') != null
                     && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
-                <button type="button" id="forgotPassword" class="btn btn-link"
+                <button type="button" id="forgotPassword"
                         data-testid="login-forgot-password-button"
-
+                        class="decoration-default-text decoration-dashed underline outline-none ces-focused underline-offset-8 rounded mt-default-2x"
                         aria-controls="forgotPasswordInfo"
                         aria-expanded="false"
                         onclick="toggleForgotPasswordInfo(); return false;"
