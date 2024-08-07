@@ -38,6 +38,7 @@
                 id="powered-by-cloudogu"
                 class="px-default"
                 target="_blank"
+                style="display:none"
                 data-testid="footer-link-powered-by-cloudogu">
             Powered by Cloudogu
         </div>
@@ -45,7 +46,7 @@
             const defaultLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--cas-internal-logo-url");
             const cesLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--ces-theme-logo-default");
             const poweredByCloudogu = document.getElementById("powered-by-cloudogu");
-            if (defaultLogoUrl !== cesLogoUrl){
+            if (defaultLogoUrl !== cesLogoUrl) {
                 poweredByCloudogu.visible = true;
             }
         </script>
