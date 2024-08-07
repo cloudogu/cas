@@ -10,6 +10,7 @@ body {
     height: 100vh;
     justify-content: center;
     background-color: var(--colors-default-background);
+    color: var(--colors-default-text);
 }
 
 #cloudogu-logo {
