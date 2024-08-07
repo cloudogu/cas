@@ -866,6 +866,10 @@ video {
   border-color: var(--colors-neutral);
 }
 
+.border-transparent {
+  border-color: transparent;
+}
+
 .bg-brand {
   background-color: var(--colors-brand);
 }
@@ -1163,6 +1167,10 @@ video {
   border-color: var(--colors-neutral-weak);
 }
 
+.disabled\:border-transparent:disabled {
+  border-color: transparent;
+}
+
 .disabled\:bg-brand-weak:disabled {
   background-color: var(--colors-brand-weak);
 }
@@ -1201,6 +1209,10 @@ video {
 
 [aria-disabled="true"].aria-disabled\:border-neutral-weak {
   border-color: var(--colors-neutral-weak);
+}
+
+[aria-disabled="true"].aria-disabled\:border-transparent {
+  border-color: transparent;
 }
 
 [aria-disabled="true"].aria-disabled\:bg-brand-weak {
