@@ -1,14 +1,6 @@
 :root {
-    --colors-brand-strong: #003250;
-    --colors-brand: #00629E;
-    --colors-neutral: #666666;
-    --colors-neutral-weak: #CCCCCC;
-    --colors-neutral-strong: #4D4D4D;
-    --colors-default-background: #FFFFFF;
-    --colors-default-text: #0D1C26;
-    --colors-default-focus-inner: #FFFFFF;
-    --colors-default-focus-outer: #CC14CC;
-    --ces-theme-logo-default: url("/cas/css/blib-blue-vec.svg");
+    --cas-internal-logo-url: url("/cas/css/blib-blue-vec.svg");
+    --ces-theme-logo-default: var(--cas-internal-logo-url);
     --ces-theme-logo-default-ratio: 1.63;
 }
 
@@ -17,6 +9,7 @@ body {
     align-items: center;
     height: 100vh;
     justify-content: center;
+    background-color: var(--colors-default-background);
 }
 
 #cloudogu-logo {
