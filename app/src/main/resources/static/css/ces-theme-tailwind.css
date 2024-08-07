@@ -688,6 +688,10 @@ video {
   margin-bottom: 1rem;
 }
 
+.mb-default-1\/2 {
+  margin-bottom: 0.25rem;
+}
+
 .mb-default-2x {
   margin-bottom: 1rem;
 }
@@ -698,10 +702,6 @@ video {
 
 .mt-4 {
   margin-top: 1rem;
-}
-
-.mt-5 {
-  margin-top: 1.25rem;
 }
 
 .mt-default-2x {
