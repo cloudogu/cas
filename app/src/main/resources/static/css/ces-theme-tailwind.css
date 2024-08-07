@@ -479,6 +479,217 @@ video {
   --colors-inverted-text: #FCFCFD;
 }
 
+html {
+  font-family: Calibri, Gill Sans, Gill Sans MT, Liberation Sans, Carlito, -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+h1 {
+  margin-bottom: 1rem;
+  color: var(--colors-brand);
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 49px;
+    line-height: 1.3061;
+  }
+}
+
+@media (max-width: 767px) {
+  h1 {
+    font-size: 33px;
+    line-height: 1.212121;
+  }
+}
+
+h2 {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  h2 {
+    font-size: 41px;
+    line-height: 1.36585;
+  }
+}
+
+@media (max-width: 767px) {
+  h2 {
+    font-size: 29px;
+    line-height: 1.103448;
+  }
+}
+
+h3 {
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  h3 {
+    font-size: 34px;
+    line-height: 1.41176;
+  }
+}
+
+@media (max-width: 767px) {
+  h3 {
+    font-size: 26px;
+    line-height: 1.230769;
+  }
+}
+
+h4 {
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  h4 {
+    font-size: 28px;
+    line-height: 1.4286;
+  }
+}
+
+@media (max-width: 767px) {
+  h4 {
+    font-size: 23px;
+    line-height: 1.391304;
+  }
+}
+
+h5 {
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  h5 {
+    font-size: 23px;
+    line-height: 1.3913;
+  }
+}
+
+@media (max-width: 767px) {
+  h5 {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+}
+
+h6 {
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  h6 {
+    font-size: 19px;
+    line-height: 1.6842;
+  }
+}
+
+@media (max-width: 767px) {
+  h6 {
+    font-size: 18px;
+    line-height: 1.33333;
+  }
+}
+
+a {
+  color: var(--colors-brand);
+  text-decoration-line: underline;
+  text-decoration-color: var(--colors-brand);
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+}
+
+a:focus-visible {
+  box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+  z-index: 1;
+}
+
+a:hover {
+  text-decoration-style: solid;
+}
+
+a:focus-visible {
+  color: var(--colors-default-text);
+  text-decoration-line: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+a:active {
+  text-decoration-style: solid;
+  text-decoration-thickness: 2px;
+}
+
+hr {
+  border-style: solid;
+  color: var(--colors-brand);
+}
+
+@media (min-width: 768px) {
+  hr {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  hr {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 767px) {
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 768px) {
+  label {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 767px) {
+  label {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+legend {
+  color: var(--colors-brand);
+}
+
+@media (min-width: 768px) {
+  legend {
+    font-size: 19px;
+    line-height: 1.6842;
+  }
+}
+
+@media (max-width: 767px) {
+  legend {
+    font-size: 18px;
+    line-height: 1.33333;
+  }
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -1021,6 +1232,11 @@ video {
 
 .outline-0 {
   outline-width: 0px;
+}
+
+.focus-visible\:ces-focused:focus-visible {
+  box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+  z-index: 1;
 }
 
 .hover\:border-3:hover {

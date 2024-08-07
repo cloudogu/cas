@@ -20,7 +20,7 @@
         <button
                 id="forgotPasswordLink"
                 th:utext="#{screen.pm.button.resetPassword}"
-                class="decoration-default-text decoration-dashed underline outline-none ces-focused underline-offset-8 rounded mt-default-2x"
+                class="decoration-default-text decoration-dashed underline outline-none focus-visible:ces-focused underline-offset-8 rounded mt-default-2x"
            onclick="document.getElementById('passwordManagementForm').submit();"
            data-testid="reset-password-button"/>
     </form>
@@ -54,7 +54,7 @@
                     && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
                 <button type="button" id="forgotPassword"
                         data-testid="login-forgot-password-button"
-                        class="decoration-default-text decoration-dashed underline outline-none ces-focused underline-offset-8 rounded mt-default-2x"
+                        class="decoration-default-text decoration-dashed underline outline-none focus-visible:ces-focused underline-offset-8 rounded mt-default-2x"
                         aria-controls="forgotPasswordInfo"
                         aria-expanded="false"
                         onclick="toggleForgotPasswordInfo(); return false;"

@@ -55,7 +55,7 @@
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
 
-                            <a class="w-fit flex items-center justify-center ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-brand-weak focus-visible:bg-brand-weak active:bg-brand-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-brand hover:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-brand hover:text-brand-strong focus-visible:text-brand-strong active:text-brand-stronger disabled:text-brand-weak aria-disabled:text-brand-weak outline-0"
+                            <a class="w-fit flex items-center justify-center focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-brand-weak focus-visible:bg-brand-weak active:bg-brand-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-brand hover:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-brand hover:text-brand-strong focus-visible:text-brand-strong active:text-brand-stronger disabled:text-brand-weak aria-disabled:text-brand-weak outline-0"
                                th:id="${entry.name}"
                                th:classappend="'mdc-button-' + ${entry.type}"
                                th:href="@{${entry.redirectUrl}}"
