@@ -26,15 +26,22 @@
         <meta name="theme-color" content="#ffffff">
     </head>
 
-    <body>
+    <body class="flex cas-desktop:items-center cas-mobile:items-start cas-desktop:justify-center h-[100vh] bg-default-background text-default-text">
         <script th:replace="~{fragments/scripts}"></script>
 
         <div class="mdc-drawer-scrim"></div>
 
         <div>
             <main role="main" class="main">
-                <div layout:fragment="content" id="content">
-                    CAS content will go here
+                <div class="py-default-2x cas-desktop:border-3 cas-mobile:border-b-3 border-brand cas-desktop:rounded-lg flex cas-desktop:flex-row cas-desktop:w-[784px] cas-mobile:w-[100vw] cas-mobile:flex-col">
+                    <div class="cas-desktop:border-r-2 cas-mobile:border-b-2 border-brand flex items-center content-center justify-center p-default-2x">
+                        <div id="cloudogu-logo" role="img" aria-label="Cloudogu Logo"></div>
+                    </div>
+                    <div id="casContentView" class="p-default px-6 grow flex">
+                        <div layout:fragment="content" id="content">
+                            CAS content will go here
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

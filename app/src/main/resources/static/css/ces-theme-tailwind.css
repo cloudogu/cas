@@ -814,6 +814,12 @@ legend {
   }
 }
 
+@media (min-width: 784px) {
+  .container {
+    max-width: 784px;
+  }
+}
+
 @media (min-width: 992px) {
   .container {
     max-width: 992px;
@@ -876,10 +882,6 @@ legend {
 
 .m-0 {
   margin: 0px;
-}
-
-.m-auto {
-  margin: auto;
 }
 
 .my-3 {
@@ -947,6 +949,10 @@ legend {
   height: 2.5rem;
 }
 
+.h-\[100vh\] {
+  height: 100vh;
+}
+
 .h-\[38px\] {
   height: 38px;
 }
@@ -961,10 +967,6 @@ legend {
 
 .min-h-12 {
   min-height: 3rem;
-}
-
-.min-h-\[368px\] {
-  min-height: 368px;
 }
 
 .w-\[100vw\] {
@@ -1000,10 +1002,6 @@ legend {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.grid-cols-\[repeat\(3\2c max-content\)\] {
-  grid-template-columns: repeat(3,max-content);
-}
-
 .flex-row {
   flex-direction: row;
 }
@@ -1030,6 +1028,10 @@ legend {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+.break-words {
+  overflow-wrap: break-word;
 }
 
 .rounded {
@@ -1085,6 +1087,10 @@ legend {
   background-color: var(--colors-brand);
 }
 
+.bg-default-background {
+  background-color: var(--colors-default-background);
+}
+
 .bg-neutral {
   background-color: var(--colors-neutral);
 }
@@ -1122,10 +1128,6 @@ legend {
 
 .p-2 {
   padding: 0.5rem;
-}
-
-.p-4 {
-  padding: 1rem;
 }
 
 .p-default {
@@ -1540,5 +1542,69 @@ legend {
   .mobile\:text-mobile-regular {
     font-size: 16px;
     line-height: 1.5;
+  }
+}
+
+@media (max-width: 783px) {
+  .cas-mobile\:w-\[100vw\] {
+    width: 100vw;
+  }
+
+  .cas-mobile\:w-full {
+    width: 100%;
+  }
+
+  .cas-mobile\:grid-cols-\[repeat\(1\2c max-content\)\] {
+    grid-template-columns: repeat(1,max-content);
+  }
+
+  .cas-mobile\:flex-col {
+    flex-direction: column;
+  }
+
+  .cas-mobile\:items-start {
+    align-items: flex-start;
+  }
+
+  .cas-mobile\:border-b-2 {
+    border-bottom-width: 2px;
+  }
+
+  .cas-mobile\:border-b-3 {
+    border-bottom-width: 3px;
+  }
+}
+
+@media (min-width: 784px) {
+  .cas-desktop\:w-\[784px\] {
+    width: 784px;
+  }
+
+  .cas-desktop\:grid-cols-\[repeat\(3\2c max-content\)\] {
+    grid-template-columns: repeat(3,max-content);
+  }
+
+  .cas-desktop\:flex-row {
+    flex-direction: row;
+  }
+
+  .cas-desktop\:items-center {
+    align-items: center;
+  }
+
+  .cas-desktop\:justify-center {
+    justify-content: center;
+  }
+
+  .cas-desktop\:rounded-lg {
+    border-radius: 0.5rem;
+  }
+
+  .cas-desktop\:border-3 {
+    border-width: 3px;
+  }
+
+  .cas-desktop\:border-r-2 {
+    border-right-width: 2px;
   }
 }

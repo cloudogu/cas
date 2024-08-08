@@ -53,7 +53,7 @@
                             th:unless="${existingSingleSignOnSessionAvailable}"
                         class="text-default-text desktop:text-desktop-6xl mobile:text-mobile-6xl mb-default-2x">
                         <span>
-                            <span id="instance-name">instance name</span>
+                            <span id="instance-name" class="break-words">instance name</span>
                             &nbsp;- Login
                             <script>
                                 const instanceNameSpan = document.getElementById("instance-name");
@@ -159,7 +159,7 @@
 
                     <section id="authnSourceSection" class="cas-field form-group my-3"
                              th:if="${availableAuthenticationHandlerNames != null}">
-                        <div class="d-flex">
+                        <div>
                             <div th:if="${availableAuthenticationHandlerNames.size() > 1}"
                                  class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
                                 <div class="mdc-select__anchor"

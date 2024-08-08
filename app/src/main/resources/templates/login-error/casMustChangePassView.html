@@ -13,18 +13,10 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content">
-        <div class="py-default-2x border-3 border-brand rounded-lg flex flex-row w-[784px]">
-            <div class="border-r-2 border-brand flex items-center content-center justify-center p-default-2x">
-                <div id="cloudogu-logo" role="img" aria-label="Cloudogu Logo"></div>
-            </div>
-            <div id="successView" class="p-default px-6 grow">
-                <div th:replace="~{fragments/pwdupdateform :: pwdupdateform}">
-                    <a href="fragments/pwdupdateform.html">pwdupdateform</a>
-                </div>
-            </div>
+    <div layout:fragment="content" class="cas-mobile:w-full">
+        <div th:replace="~{fragments/pwdupdateform :: pwdupdateform}">
+            <a href="fragments/pwdupdateform.html">pwdupdateform</a>
         </div>
-
     </div>
 </main>
 </body>
