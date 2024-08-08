@@ -33,12 +33,12 @@
 
         <div>
             <main role="main" class="main">
-                <div class="py-default-2x cas-desktop:border-3 cas-mobile:border-b-3 border-brand cas-desktop:rounded-lg flex cas-desktop:flex-row cas-desktop:w-[784px] cas-mobile:w-[100vw] cas-mobile:flex-col">
+                <div class="cas-desktop:py-default-2x cas-desktop:border-3 cas-mobile:border-b-3 border-brand cas-desktop:rounded-lg flex cas-desktop:flex-row cas-desktop:w-[784px] cas-mobile:w-[100vw] cas-mobile:flex-col">
                     <div class="cas-desktop:border-r-2 cas-mobile:border-b-2 border-brand flex items-center content-center justify-center p-default-2x">
-                        <div id="cloudogu-logo" role="img" aria-label="Cloudogu Logo"></div>
+                        <div id="cloudogu-logo" aria-hidden="true" class="cas-mobile:mb-8"></div>
                     </div>
-                    <div id="casContentView" class="p-default px-6 grow flex">
-                        <div layout:fragment="content" id="content">
+                    <div id="casContentView" class="cas-desktop:p-default px-6 grow flex">
+                        <div layout:fragment="content" id="content"  class="cas-mobile:py-default-2x cas-mobile:w-full">
                             CAS content will go here
                         </div>
                     </div>

@@ -993,10 +993,6 @@ legend {
   width: 38px;
 }
 
-.w-\[784px\] {
-  width: 784px;
-}
-
 .w-default-2x {
   width: 1rem;
 }
@@ -1066,10 +1062,6 @@ legend {
   border-radius: 0.25rem;
 }
 
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
 .rounded-r-sm {
   border-top-right-radius: 0.125rem;
   border-bottom-right-radius: 0.125rem;
@@ -1083,16 +1075,8 @@ legend {
   border-width: 2px;
 }
 
-.border-3 {
-  border-width: 3px;
-}
-
 .border-l-\[3px\] {
   border-left-width: 3px;
-}
-
-.border-r-2 {
-  border-right-width: 2px;
 }
 
 .border-t-3 {
@@ -1191,11 +1175,6 @@ legend {
 .px-default {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-}
-
-.py-default-2x {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pb-default {
@@ -1598,6 +1577,10 @@ legend {
 }
 
 @media (max-width: 783px) {
+  .cas-mobile\:mb-8 {
+    margin-bottom: 2rem;
+  }
+
   .cas-mobile\:w-\[100vw\] {
     width: 100vw;
   }
@@ -1624,6 +1607,11 @@ legend {
 
   .cas-mobile\:border-b-3 {
     border-bottom-width: 3px;
+  }
+
+  .cas-mobile\:py-default-2x {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 }
 
@@ -1658,5 +1646,14 @@ legend {
 
   .cas-desktop\:border-r-2 {
     border-right-width: 2px;
+  }
+
+  .cas-desktop\:p-default {
+    padding: 0.5rem;
+  }
+
+  .cas-desktop\:py-default-2x {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 }
