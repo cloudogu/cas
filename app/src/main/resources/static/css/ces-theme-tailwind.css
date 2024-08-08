@@ -1238,20 +1238,12 @@ legend {
   text-decoration-color: var(--colors-brand);
 }
 
-.decoration-default-text {
-  text-decoration-color: var(--colors-default-text);
-}
-
 .decoration-dashed {
   text-decoration-style: dashed;
 }
 
 .decoration-1 {
   text-decoration-thickness: 1px;
-}
-
-.underline-offset-8 {
-  text-underline-offset: 8px;
 }
 
 .outline-none {
