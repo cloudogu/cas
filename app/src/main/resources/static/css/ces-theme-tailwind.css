@@ -909,6 +909,10 @@ legend {
   margin-bottom: 1rem;
 }
 
+.mr-\[8px\] {
+  margin-right: 8px;
+}
+
 .mt-3 {
   margin-top: 0.75rem;
 }
@@ -933,6 +937,10 @@ legend {
   display: inline-block;
 }
 
+.inline {
+  display: inline;
+}
+
 .flex {
   display: flex;
 }
@@ -953,6 +961,10 @@ legend {
   height: 100vh;
 }
 
+.h-\[24px\] {
+  height: 24px;
+}
+
 .h-\[38px\] {
   height: 38px;
 }
@@ -971,6 +983,10 @@ legend {
 
 .w-\[100vw\] {
   width: 100vw;
+}
+
+.w-\[24px\] {
+  width: 24px;
 }
 
 .w-\[38px\] {
@@ -1000,6 +1016,14 @@ legend {
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.list-none {
+  list-style-type: none;
 }
 
 .flex-row {
@@ -1063,6 +1087,10 @@ legend {
   border-width: 3px;
 }
 
+.border-l-\[3px\] {
+  border-left-width: 3px;
+}
+
 .border-r-2 {
   border-right-width: 2px;
 }
@@ -1118,6 +1146,10 @@ legend {
   --tw-gradient-to: #fff var(--tw-gradient-to-position);
 }
 
+.fill {
+  fill: #fff;
+}
+
 .stroke {
   stroke: #fff;
 }
@@ -1170,8 +1202,16 @@ legend {
   padding-bottom: 0.5rem;
 }
 
+.pl-\[29px\] {
+  padding-left: 29px;
+}
+
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .font-bold {
@@ -1452,6 +1492,14 @@ legend {
 
 .disabled\:text-neutral-weak:disabled {
   color: var(--colors-neutral-weak);
+}
+
+.group[open] .group-open\:inline {
+  display: inline;
+}
+
+.group[open] .group-open\:hidden {
+  display: none;
 }
 
 [aria-disabled="true"].aria-disabled\:border-brand-weak {
