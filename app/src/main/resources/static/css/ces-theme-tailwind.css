@@ -1010,6 +1010,10 @@ legend {
   flex-direction: column;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .content-center {
   align-content: center;
 }
@@ -1030,8 +1034,8 @@ legend {
   white-space: nowrap;
 }
 
-.break-words {
-  overflow-wrap: break-word;
+.break-all {
+  word-break: break-all;
 }
 
 .rounded {
