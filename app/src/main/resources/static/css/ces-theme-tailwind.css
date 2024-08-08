@@ -1205,20 +1205,24 @@ legend {
   text-decoration-line: underline;
 }
 
-.decoration-default-text {
-  text-decoration-color: var(--colors-default-text);
+.no-underline {
+  text-decoration-line: none;
 }
 
-.decoration-dotted {
-  text-decoration-style: dotted;
+.decoration-brand {
+  text-decoration-color: var(--colors-brand);
+}
+
+.decoration-default-text {
+  text-decoration-color: var(--colors-default-text);
 }
 
 .decoration-dashed {
   text-decoration-style: dashed;
 }
 
-.underline-offset-4 {
-  text-underline-offset: 4px;
+.decoration-1 {
+  text-decoration-thickness: 1px;
 }
 
 .underline-offset-8 {
@@ -1279,6 +1283,10 @@ legend {
   color: var(--colors-neutral-strong);
 }
 
+.hover\:decoration-solid:hover {
+  text-decoration-style: solid;
+}
+
 .focus\:border-brand:focus {
   border-color: var(--colors-brand);
 }
@@ -1319,8 +1327,21 @@ legend {
   color: var(--colors-brand-strong);
 }
 
+.focus-visible\:text-default-text:focus-visible {
+  color: var(--colors-default-text);
+}
+
 .focus-visible\:text-neutral-strong:focus-visible {
   color: var(--colors-neutral-strong);
+}
+
+.focus-visible\:no-underline:focus-visible {
+  text-decoration-line: none;
+}
+
+.focus-visible\:outline-none:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .active\:border-3:active {
@@ -1365,6 +1386,14 @@ legend {
 
 .active\:text-neutral-stronger:active {
   color: var(--colors-neutral-stronger);
+}
+
+.active\:decoration-solid:active {
+  text-decoration-style: solid;
+}
+
+.active\:decoration-2:active {
+  text-decoration-thickness: 2px;
 }
 
 .disabled\:border:disabled {
