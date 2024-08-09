@@ -75,7 +75,7 @@ There is now an “empty” dogu for which the CAS registers a service. This is 
 
 In order for our OAuth tests to be successful, we need to create a service account in the CAS. We can also simulate this by storing a service account in etcd under the CAS path:
 ```bash
-etcdctl set /config/cas/service_accounts/oauth/inttest “fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea”
+etcdctl set /config/cas/service_accounts/oauth/inttest/secret "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
 ```
 Here `inttest` must correspond to the name of the “empty” dogus from the first step. The value is the configured client secret from the `cypress.json` as SHA-256 hash.
 

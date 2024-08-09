@@ -1,0 +1,23 @@
+{
+  "action": "get",
+  "node": {
+    "createdIndex": 234,
+    "dir": true,
+    "key": "/config/cas/service_accounts/oauth",
+    "modifiedIndex": 234,
+    "nodes": [
+      {
+        "createdIndex": 234,
+        "key": "/config/cas/service_accounts/oauth/portainer",
+        "modifiedIndex": 234,
+        "value": "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kalYxMVhiYzkxNAo="
+      },
+      {
+        "createdIndex": 235,
+        "key": "/config/cas/service_accounts/oauth/another_oauth_dogu",
+        "modifiedIndex": 235,
+        "value": "VGFrZSBtZSBvbi4uLgo="
+      }
+    ]
+  }
+}

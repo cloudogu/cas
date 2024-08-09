@@ -111,8 +111,9 @@ parallel(
                         shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
                     }
 
-                    stage('Shell tests') {
-                        executeShellTests()
+                    stage('Bats Tests') {
+                        Bats bats = new Bats(this, docker)
+                        bats.checkAndExecuteTests()
                     }
 
                     try {
@@ -140,7 +141,9 @@ parallel(
                                     },
                                     "service_accounts": {
                                         "oauth": {
-                                            "inttest": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                            "inttest": {
+                                                "secret": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
+                                            }
                                         }
                                     },
                                     "oidc": {
@@ -266,22 +269,5 @@ void gitWithCredentials(String command) {
                 script: "git -c credential.helper=\"!f() { echo username='\$GIT_AUTH_USR'; echo password='\$GIT_AUTH_PSW'; }; f\" " + command,
                 returnStdout: true
         )
-    }
-}
-
-def executeShellTests() {
-    def bats_base_image = "bats/bats"
-    def bats_custom_image = "cloudogu/bats"
-    def bats_tag = "1.2.1"
-
-    def batsImage = docker.build("${bats_custom_image}:${bats_tag}", "--build-arg=BATS_BASE_IMAGE=${bats_base_image} --build-arg=BATS_TAG=${bats_tag} ./unitTests")
-    try {
-        sh "mkdir -p target"
-
-        batsContainer = batsImage.inside("--entrypoint='' -v ${WORKSPACE}:/workspace") {
-            sh "make unit-test-shell-ci"
-        }
-    } finally {
-        junit allowEmptyResults: true, testResults: 'target/shell_test_reports/*.xml'
     }
 }

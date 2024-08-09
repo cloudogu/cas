@@ -19,7 +19,7 @@ echo "                       'V/(/////////////////////////////V'      "
 source util.sh
 
 # check whether post-upgrade script is still running
-while [[ "$(doguctl state)" == "upgrading" ]]; do
+while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
   echo "Upgrade script is running. Waiting..."
   sleep 3
 done
@@ -50,6 +50,7 @@ echo "Creating truststore, which is used in the setenv.sh..."
 create_truststore.sh > /dev/null
 
 doguctl state ready
+doguctl config --rm "local_state"
 
 echo "Starting CAS..."
 ${CATALINA_SH} run

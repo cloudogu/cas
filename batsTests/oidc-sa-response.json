@@ -1,0 +1,23 @@
+{
+  "action": "get",
+  "node": {
+    "createdIndex": 232,
+    "dir": true,
+    "key": "/config/cas/service_accounts/oidc",
+    "modifiedIndex": 232,
+    "nodes": [
+      {
+        "createdIndex": 232,
+        "key": "/config/cas/service_accounts/oidc/teamscale",
+        "modifiedIndex": 232,
+        "value": "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQo="
+      },
+      {
+        "createdIndex": 233,
+        "key": "/config/cas/service_accounts/oidc/openproject",
+        "modifiedIndex": 233,
+        "value": "TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAuLi4K"
+      }
+    ]
+  }
+}
