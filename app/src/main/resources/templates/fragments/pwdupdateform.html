@@ -34,7 +34,7 @@
         <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post"
               th:object="${password}" class="gap-default-2x flex flex-col text-danger">
             <div class="alert alert-danger" data-testid="login-reset-pw-msg"
-                 th:if="${#fields.hasErrors('*')}">
+                 th:if="${#fields.hasErrors('*')}" aria-live="polite" role="alert">
                 <strong th:each="err : ${#fields.errors('*')}" th:if="${err == 'Could not update the account password'}"
                         th:text="#{pwd.change.default.error}">Default error</strong>
                 <strong th:each="err : ${#fields.errors('*')}" th:if="${err != 'Could not update the account password'}"
@@ -84,8 +84,10 @@
             </details>
 
             <section>
-                <label for="password"
-                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                <div class="relative" aria-live="polite">
+                    <label for="password"
+                           id="password-label"
+                           class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                             <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <span class="mdc-notched-outline__notch">
@@ -96,7 +98,6 @@
                         </span>
 
 
-                    <div class="relative">
                         <input
                                 class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                 type="password"
@@ -104,22 +105,26 @@
                                 id="password"
                                 data-testid="password-input" th:field="*{password}"
                                 autocomplete="off" required/>
-                        <button data-testid="login-reveal-btn"
-                                type="button"
-                                id="password-toggle-1"
-                                class="w-[38px] h-[38px] absolute right-0 top-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
-                        >
-                            <img src="/cas/images/eye.svg" alt="Toggle Password" class="w-default-2x h-default-2x">
-                        </button>
-                    </div>
-                </label>
+                    </label>
+                    <button data-testid="login-reveal-btn"
+                            type="button"
+                            id="password-toggle-1"
+                            class="z-10 w-[38px] h-[38px] absolute right-0 bottom-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
+                    >
+                        <span class="sr-only" th:text="#{screen.passwordfield.toggle}">Toggle password field to text field</span>
+                        <img src="/cas/images/eye.svg" aria-hidden="true" class="w-default-2x h-default-2x">
+                    </button>
+                </div>
+
 
                 <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
             </section>
 
             <section>
-                <label for="confirmedPassword"
-                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                <div class="relative" aria-live="polite">
+                    <label for="confirmedPassword"
+                           id="confirm-password"
+                           class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                         <span class="mdc-notched-outline">
                     <span class="mdc-notched-outline__leading"></span>
                     <span class="mdc-notched-outline__notch">
@@ -128,29 +133,31 @@
                     </span>
                     <span class="mdc-notched-outline__trailing"></span>
                 </span>
-                    <div class="relative">
                         <input
                                 class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                 type="password"
                                 name="confirmedPassword"
                                 id="confirmedPassword"
-                                data-testid="confirmedPassword-input" th:field="*{confirmedPassword}"
+                                data-testid="confirmedPassword-input"
+                                th:field="*{confirmedPassword}"
                                 autocomplete="off" required/>
-                        <button data-testid="login-reveal-btn"
-                                type="button"
-                                id="password-toggle-2"
-                                class="w-[38px] h-[38px] absolute right-0 top-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
-                        >
-                            <img src="/cas/images/eye.svg" alt="Toggle Password" class="w-default-2x h-default-2x">
-                        </button>
-                    </div>
-                </label>
+                    </label>
+                    <button data-testid="login-reveal-btn"
+                            type="button"
+                            id="password-toggle-2"
+                            class="z-10 w-[38px] h-[38px] absolute right-0 bottom-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
+                    >
+                        <span class="sr-only" th:text="#{screen.passwordfield.toggle}">Toggle password field to text field</span>
+                        <img src="/cas/images/eye.svg" aria-hidden="true" class="w-default-2x h-default-2x">
+                    </button>
+                </div>
+
 
                 <!--                <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>-->
-<!--                <button class="reveal-password mdc-button mdc-button&#45;&#45;raised mdc-input-group-append" type="button">-->
-<!--                    <i class="glyphicon glyphicon-eye-open"></i>-->
-<!--                    <span class="sr-only">Toggle Password</span>-->
-<!--                </button>-->
+                <!--                <button class="reveal-password mdc-button mdc-button&#45;&#45;raised mdc-input-group-append" type="button">-->
+                <!--                    <i class="glyphicon glyphicon-eye-open"></i>-->
+                <!--                    <span class="sr-only">Toggle Password</span>-->
+                <!--                </button>-->
             </section>
 
             <script>
@@ -208,6 +215,7 @@
                         class="block mb-default-2x"
                         th:text="#{screen.pm.password.policyViolation}"
                         style="display: none;"
+                        data-testid="password-policy-violation-msg"
                 >
                     Password does not match the password policy requirement.
                 </strong>
@@ -221,7 +229,7 @@
                     Passwords do not match.
                 </strong>
             </div>
-            <div class="cas-field">
+            <div class="cas-field gap-default-2x flex flex-row">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <button
@@ -236,7 +244,7 @@
                     <span class="mdc-button__label" th:text="#{screen.pm.button.submit}">Submit</span>
                 </button>
                 <a th:href="@{/login}"
-                   class="no-underline inline-block focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-neutral hover:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0">
+                   class="no-underline focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-transparent active:border-neutral-stronger disabled:border-transparent aria-disabled:border-transparent text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0">
                     <span th:text="#{screen.pm.button.cancel}"
                           class="h-full flex justify-center items-center">CANCEL</span>
                 </a>

@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.7 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.9 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -876,8 +876,8 @@ legend {
   right: 0px;
 }
 
-.top-0 {
-  top: 0px;
+.z-10 {
+  z-index: 10;
 }
 
 .m-0 {
@@ -929,12 +929,12 @@ legend {
   margin-top: 1.5rem;
 }
 
-.block {
-  display: block;
+.box-border {
+  box-sizing: border-box;
 }
 
-.inline-block {
-  display: inline-block;
+.block {
+  display: block;
 }
 
 .inline {
@@ -943,6 +943,10 @@ legend {
 
 .flex {
   display: flex;
+}
+
+.table {
+  display: table;
 }
 
 .grid {
@@ -957,8 +961,8 @@ legend {
   height: 2.5rem;
 }
 
-.h-\[100vh\] {
-  height: 100vh;
+.h-12 {
+  height: 3rem;
 }
 
 .h-\[24px\] {
@@ -975,6 +979,10 @@ legend {
 
 .h-full {
   height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
 }
 
 .min-h-12 {
@@ -1006,8 +1014,16 @@ legend {
   width: 100%;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .grow {
   flex-grow: 1;
+}
+
+.border-collapse {
+  border-collapse: collapse;
 }
 
 .transform {
@@ -1034,10 +1050,6 @@ legend {
   flex-wrap: wrap;
 }
 
-.content-center {
-  align-content: center;
-}
-
 .items-center {
   align-items: center;
 }
@@ -1046,8 +1058,16 @@ legend {
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
 .gap-default-2x {
   gap: 1rem;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
 }
 
 .whitespace-nowrap {
@@ -1062,6 +1082,10 @@ legend {
   border-radius: 0.25rem;
 }
 
+.rounded-\[4px\] {
+  border-radius: 4px;
+}
+
 .rounded-r-sm {
   border-top-right-radius: 0.125rem;
   border-bottom-right-radius: 0.125rem;
@@ -1073,6 +1097,10 @@ legend {
 
 .border-2 {
   border-width: 2px;
+}
+
+.border-b {
+  border-bottom-width: 1px;
 }
 
 .border-l-\[3px\] {
@@ -1103,8 +1131,8 @@ legend {
   background-color: var(--colors-brand);
 }
 
-.bg-default-background {
-  background-color: var(--colors-default-background);
+.bg-cas-logo-bg {
+  background-color: var(--cas-config-logo-background);
 }
 
 .bg-neutral {
@@ -1158,13 +1186,14 @@ legend {
   padding: 0.25rem;
 }
 
-.p-default-2x {
-  padding: 1rem;
-}
-
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .px-\[14px\] {
@@ -1177,12 +1206,26 @@ legend {
   padding-right: 0.5rem;
 }
 
+.px-default-2x {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .pb-default {
   padding-bottom: 0.5rem;
 }
 
 .pl-\[29px\] {
   padding-left: 29px;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-center {
@@ -1585,10 +1628,6 @@ legend {
     flex-direction: column;
   }
 
-  .cas-mobile\:items-start {
-    align-items: flex-start;
-  }
-
   .cas-mobile\:border-b-2 {
     border-bottom-width: 2px;
   }
@@ -1601,11 +1640,27 @@ legend {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
+
+  .cas-mobile\:pt-default-2x {
+    padding-top: 1rem;
+  }
 }
 
 @media (min-width: 784px) {
+  .cas-desktop\:mt-\[-2rem\] {
+    margin-top: -2rem;
+  }
+
+  .cas-desktop\:h-\[calc\(100\%\+4rem\)\] {
+    height: calc(100% + 4rem);
+  }
+
   .cas-desktop\:w-\[784px\] {
     width: 784px;
+  }
+
+  .cas-desktop\:w-\[calc\(100\%\+2px\)\] {
+    width: calc(100% + 2px);
   }
 
   .cas-desktop\:grid-cols-\[repeat\(3\2c max-content\)\] {
@@ -1614,14 +1669,6 @@ legend {
 
   .cas-desktop\:flex-row {
     flex-direction: row;
-  }
-
-  .cas-desktop\:items-center {
-    align-items: center;
-  }
-
-  .cas-desktop\:justify-center {
-    justify-content: center;
   }
 
   .cas-desktop\:rounded-lg {
@@ -1636,8 +1683,9 @@ legend {
     border-right-width: 2px;
   }
 
-  .cas-desktop\:p-default {
-    padding: 0.5rem;
+  .cas-desktop\:py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
   }
 
   .cas-desktop\:py-default-2x {

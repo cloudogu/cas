@@ -9,7 +9,7 @@ When("the user clicks on the reset password link", function () {
 })
 
 Then("the user is taken to a password reset page", function () {
-    cy.get('h3[data-testid="password-reset-header"').should('be.visible')
+    cy.get('h1[data-testid="password-reset-header"').should('be.visible')
 })
 
 When("the user enters his username on the password reset page", function () {
@@ -25,10 +25,10 @@ Then("CAS shows a confirmation page about a sent email", function () {
     cy.log("browser language is " + browserLanguage)
 
     if (browserLanguage.startsWith("en") ) {
-        cy.get("h2").contains("Password Reset Instructions Sent Successfully")
+        cy.get("h1").contains("Password Reset Instructions Sent Successfully")
     } else if (browserLanguage.startsWith("de")) {
         console.log(browserLanguage);
-        cy.get("h2").contains("Anweisungen zum Zurücksetzen des Passworts erfolgreich versandt")
+        cy.get("h1").contains("Anweisungen zum Zurücksetzen des Passworts erfolgreich versandt")
     } else {
         throw new Error("Test fails, unknown browser language")
     }

@@ -16,7 +16,7 @@ When("the test user changes his password", function () {
 });
 
 Then("CAS confirms the successful change of the password", function () {
-    cy.get(`h2[data-testid="h2-pwd-change-successful"]`)
+    cy.get(`h1[data-testid="pwd-change-successful"]`)
 });
 
 Then("the test user can login with new credentials", function () {
@@ -30,8 +30,12 @@ When("the user enters an invalid password", function () {
     cy.get('input[data-testid="confirmedPassword-input"]').type("invalid_pwd")
 });
 
+When("the user submits the password change form", function () {
+    cy.get('button[id="submit"]').click();
+})
+
 Then("CAS displays a notice of an invalid password", function () {
-    cy.get('div[data-testid=password-policy-violation-msg-div').should('be.visible')
+    cy.get('strong[data-testid=password-policy-violation-msg').should('be.visible')
 })
 
 Then("CAS displays the password policy criteria", function () {

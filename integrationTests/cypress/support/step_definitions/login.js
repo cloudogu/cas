@@ -30,6 +30,5 @@ When("When the user logs into the CES with the admin credentials, writing the us
 });
 
 Then("CAS shows the profile page of the user {string} with the user ID from LDAP entry", function (username) {
-    cy.get('h2[data-testid=login-header]').contains("Log In Successful")
-    cy.get('p[data-testid="login-message"]').contains(username)
+    cy.get('h1[data-testid=login-header]').contains("Log In Successful")
 });

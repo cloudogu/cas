@@ -4,7 +4,7 @@
                 && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'
                 || #messages.msgOrNull('legal.url.privacy.policy') != null
                 && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}"
-        class="flex min-h-12 absolute bottom-0 w-[100vw] p-default-1/2 border-t-3 border-brand">
+        class="flex min-h-12 w-[100vw] p-default-1/2 border-t-3 border-brand">
 
     <div class="grid cas-desktop:grid-cols-[repeat(3,max-content)] cas-mobile:grid-cols-[repeat(1,max-content)] justify-center p-default w-[100vw]">
         <a
@@ -36,18 +36,17 @@
         </a>
         <div
                 id="powered-by-cloudogu"
-                class="px-default"
                 target="_blank"
-                style="display:none"
+                class="px-default hidden"
                 data-testid="footer-link-powered-by-cloudogu">
             Powered by Cloudogu
         </div>
         <script>
             const defaultLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--cas-internal-logo-url");
-            const cesLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--ces-theme-logo-default");
+            const cesLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--ces-logo-default");
             const poweredByCloudogu = document.getElementById("powered-by-cloudogu");
-            if (defaultLogoUrl !== cesLogoUrl) {
-                poweredByCloudogu.visible = true;
+            if ((defaultLogoUrl !== cesLogoUrl) && !cesLogoUrl === "") {
+                poweredByCloudogu.classList.remove("hidden");
             }
         </script>
     </div>
