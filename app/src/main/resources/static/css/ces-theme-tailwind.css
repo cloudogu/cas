@@ -1577,10 +1577,6 @@ legend {
     width: 100vw;
   }
 
-  .cas-mobile\:w-full {
-    width: 100%;
-  }
-
   .cas-mobile\:grid-cols-\[repeat\(1\2c max-content\)\] {
     grid-template-columns: repeat(1,max-content);
   }

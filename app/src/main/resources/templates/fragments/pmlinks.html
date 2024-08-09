@@ -49,20 +49,26 @@
     </script>
 
     <div th:if="${#messages.msgOrNull('is.password.reset.via.mail.enabled') != 'true'}" class="mt-default-2x">
-        <div class="password-forgotten" th:if="${#messages.msgOrNull('forgot.password.text') != null
-                    && #messages.msgOrNull('forgot.password.text') !='forgot.password.text'}">
-            <button type="button" id="forgotPassword"
-                    data-testid="login-forgot-password-button"
-                    class="mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
-                    aria-controls="forgotPasswordInfo"
-                    aria-expanded="false"
-                    onclick="toggleForgotPasswordInfo(); return false;"
-                    th:text="#{passwordForgot}"
+        <details class="group desktop:text-desktop-regular mobile:text-mobile-regular mb-2 text-default-text">
+            <summary
+
+                    class="list-none cursor-pointer focus-visible:ces-focused outline-0 rounded"
             >
-            </button>
-            <p style="display:none;" id="forgotPasswordInfo" th:text="#{forgot.password.text}"
-               data-testid="login-forgot-password-text" class="well mt-3" role="region" aria-live="polite"></p>
-        </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                     viewBox="0,24,256,256"
+                     class="group-open:hidden align-middle inline mr-[8px] w-[24px] h-[24px]">
+                    <path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"></path>
+                </svg><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                     viewBox="0,24,256,256"
+                     class="hidden group-open:inline align-middle mr-[8px] w-[24px] h-[24px]">
+                    <path d="M216.49,168.49a12,12,0,0,1-17,0L128,97,56.49,168.49a12,12,0,0,1-17-17l80-80a12,12,0,0,1,17,0l80,80A12,12,0,0,1,216.49,168.49Z"></path>
+                </svg>
+                <span th:text="#{screen.pm.password.policyMustMatch}">The passwords must match the password policy</span>
+            </summary>
+            <div class="border-l-[3px] pl-[29px]">
+                <p th:text="#{forgot.password.text}" data-testid="login-forgot-password-text"></p>
+            </div>
+        </details>
     </div>
 </div>
 </body>
