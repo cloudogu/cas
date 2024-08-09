@@ -929,6 +929,10 @@ legend {
   margin-top: 1.5rem;
 }
 
+.box-border {
+  box-sizing: border-box;
+}
+
 .block {
   display: block;
 }
@@ -1103,6 +1107,10 @@ legend {
   background-color: var(--colors-brand);
 }
 
+.bg-cas-logo-bg {
+  background-color: var(--cas-config-logo-background);
+}
+
 .bg-default-background {
   background-color: var(--colors-default-background);
 }
@@ -1175,6 +1183,11 @@ legend {
 .px-default {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.py-default-2x {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .pb-default {
@@ -1601,11 +1614,27 @@ legend {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
+
+  .cas-mobile\:pt-default-2x {
+    padding-top: 1rem;
+  }
 }
 
 @media (min-width: 784px) {
+  .cas-desktop\:mt-\[-1rem\] {
+    margin-top: -1rem;
+  }
+
+  .cas-desktop\:h-\[calc\(100\%\+2rem\)\] {
+    height: calc(100% + 2rem);
+  }
+
   .cas-desktop\:w-\[784px\] {
     width: 784px;
+  }
+
+  .cas-desktop\:w-\[calc\(100\%\+2px\)\] {
+    width: calc(100% + 2px);
   }
 
   .cas-desktop\:grid-cols-\[repeat\(3\2c max-content\)\] {

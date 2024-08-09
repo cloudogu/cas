@@ -9,7 +9,10 @@ module.exports = {
             screens: {
                 'cas-mobile': {'max': '783px'},
                 'cas-desktop': '784px',
-            }
+            },
+            colors: {
+                "cas-logo-bg": "var(--cas-config-logo-background)",
+            },
         }
     },
 }
