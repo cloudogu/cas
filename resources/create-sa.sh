@@ -36,8 +36,10 @@ set -o pipefail
 
 } 1>&2
 
+# print client-id so that the service-account can be removed again
+echo "${TYPE}_client_id: ${SERVICE}"
+
 if [ "${TYPE}" == "oidc" ] || [ "${TYPE}" == "oauth" ]; then
   # print OAuth credentials for the service
-  echo "${TYPE}_client_id: ${SERVICE}"
   echo "${TYPE}_client_secret: ${CLIENT_SECRET}"
 fi
