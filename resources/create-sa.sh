@@ -34,7 +34,7 @@ set -o pipefail
       doguctl config "service_accounts/${TYPE}/${SERVICE}/logout_uri" "${LOGOUT_URI}"
   fi
 
-} 1>&2
+} >/dev/null 2>&1
 
 # print client-id so that the service-account can be removed again
 echo "${TYPE}_client_id: ${SERVICE}"
