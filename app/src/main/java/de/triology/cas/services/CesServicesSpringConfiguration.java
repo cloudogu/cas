@@ -92,8 +92,10 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
             }
             result = builder.toString();
         } catch (IOException e) {
+            LOGGER.error("failed to check if environment is multinode", e);
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
+            LOGGER.error("failed to check if environment is multinode", e);
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
