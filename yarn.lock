@@ -14,10 +14,10 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
-"@cloudogu/ces-theme-tailwind@^0.7.1":
-  version "0.7.1"
-  resolved "https://ecosystem.cloudogu.com/nexus/repository/npm-releases/@cloudogu/ces-theme-tailwind/-/ces-theme-tailwind-0.7.1.tgz#1d5c73b8df63201dccf373dcba2e56b59d7f630d"
-  integrity sha512-H9t3HRKl8mojUcpdoOv2s9R+c86LNzTikpHrFbfQXvPO7aP69hL2Q46/bvZo1E8zVQ6zW4nYlVV8A5OKS7Jn+g==
+"@cloudogu/ces-theme-tailwind@^0.8.0":
+  version "0.8.0"
+  resolved "https://ecosystem.cloudogu.com/nexus/repository/npm-releases/@cloudogu/ces-theme-tailwind/-/ces-theme-tailwind-0.8.0.tgz#b4d497edcc7825daff8990394c6b9d0113af0507"
+  integrity sha512-gbL6dk/L6HIvT8bTGr0GvgeerztHPukjws9PFY57/hSrcGu1vsszHVbb955BfWiJWQZLhWZEEwb73UunyPiNjg==
   dependencies:
     "@headlessui/react" "^1.7.17"
     "@phosphor-icons/react" "2.0.15"
