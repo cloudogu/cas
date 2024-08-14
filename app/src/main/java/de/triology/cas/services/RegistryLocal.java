@@ -266,6 +266,6 @@ public class RegistryLocal implements Registry{
     private static Object readKeyOutOfYaml(InputStream yamlStream, String key) {
         Yaml yaml = new Yaml();
         Map<String, Object> obj = yaml.load(yamlStream);
-        return obj.get(key);
+        return obj != null ? obj.get(key) : null;
     }
 }
