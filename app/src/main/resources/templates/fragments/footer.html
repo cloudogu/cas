@@ -1,10 +1,4 @@
-<footer th:if="${#messages.msgOrNull('legal.url.terms.of.service') != null
-                && #messages.msgOrNull('legal.url.terms.of.service') !='legal.url.terms.of.service'
-                || #messages.msgOrNull('legal.url.imprint') != null
-                && #messages.msgOrNull('legal.url.imprint') !='legal.url.imprint'
-                || #messages.msgOrNull('legal.url.privacy.policy') != null
-                && #messages.msgOrNull('legal.url.privacy.policy') !='legal.url.privacy.policy'}"
-        class="flex min-h-12 w-[100vw] p-default-1/2 border-t-3 border-brand">
+<footer class="flex min-h-12 w-[100vw] p-default-1/2 border-t-3 border-brand">
 
     <div class="grid cas-desktop:grid-cols-[repeat(3,max-content)] cas-mobile:grid-cols-[repeat(1,max-content)] justify-center p-default w-[100vw]">
         <a
@@ -47,6 +41,9 @@
             const poweredByCloudogu = document.getElementById("powered-by-cloudogu");
             if ((defaultLogoUrl !== cesLogoUrl) && cesLogoUrl !== "") {
                 poweredByCloudogu.classList.remove("hidden");
+            } else{
+                const footer = document.querySelector("footer");
+                footer.parentNode.removeChild(footer);
             }
         </script>
     </div>
