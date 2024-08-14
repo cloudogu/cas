@@ -85,11 +85,18 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      * in {@link #registry} to <code>registeredServices</code>.
      */
     private void synchronizeServicesWithRegistry() {
+        LOGGER.debug("Synchronize services with registry");
+
+        var casServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory);
+        var oauthServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory);
+        var oidcServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory);
+
         // use map to filter duplicates
         var newServices = persistentServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v));
-        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
-        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
-        newServices.putAll(registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory).stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(casServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(oauthServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(oidcServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+
         synchronizeServices(newServices.values().stream().toList());
         LOGGER.info("Loaded {} services:", registeredServices.size());
         registeredServices.values().forEach(e -> LOGGER.debug("[{}]", e));
