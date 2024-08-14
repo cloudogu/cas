@@ -1671,6 +1671,10 @@ legend {
     flex-direction: row;
   }
 
+  .cas-desktop\:self-start {
+    align-self: flex-start;
+  }
+
   .cas-desktop\:rounded-lg {
     border-radius: 0.5rem;
   }
