@@ -81,17 +81,13 @@ class RegistryEtcd implements Registry {
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
-                HashMap<String, String> attributes = new HashMap<>();
+                var attributes = new HashMap<String, String>();
 
-                switch (Registry.CasServiceAccountTypes.fromString(type)) {
-                    case OIDC:
-                    case OAUTH:
-                        var clientSecret = getEtcdValueForKeyIfPresent(clientPathPrefix + clientID + "/secret");
-                        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
-                        attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
-                        break;
-                    default:
-                        break;
+                var accountType = CasServiceAccountTypes.fromString(type);
+                if (accountType == CasServiceAccountTypes.OIDC || accountType == CasServiceAccountTypes.OAUTH) {
+                    var clientSecret = getEtcdValueForKeyIfPresent(String.format("%s%s/secret", clientPathPrefix, clientID));
+                    attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, clientID);
+                    attributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, clientSecret);
                 }
 
                 serviceDataList.add(new CesServiceData(clientID, factory, attributes));
