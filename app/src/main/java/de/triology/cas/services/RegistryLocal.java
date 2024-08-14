@@ -182,11 +182,10 @@ public class RegistryLocal implements Registry{
     @Override
     public String getFqdn() {
         try (var fis = getInputStreamForFile(GLOBAL_CONFIG_FILE)) {
-            return readKeyOutOfYaml(fis, "fqdn").toString();
+            Object fqdn = readKeyOutOfYaml(fis, "fqdn");
+            return fqdn != null ? fqdn.toString() : null;
         } catch (IOException e) {
             throw new RegistryException("Failed to close global config file after reading fqdn.", e);
-        } catch (NullPointerException e) {
-            return null;
         }
     }
 
