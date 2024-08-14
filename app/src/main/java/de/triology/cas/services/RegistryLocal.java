@@ -139,8 +139,7 @@ public class RegistryLocal implements Registry{
         private static List<CesServiceData> extractCasServiceData(Map<String, ServiceAccountCas> serviceAccounts, CesServiceFactory factory) {
             var serviceDataList = new ArrayList<CesServiceData>();
 
-            for (var serviceAccount : serviceAccounts.entrySet()) {
-                var clientID = serviceAccount.getKey();
+            for (var clientID : serviceAccounts.keySet()) {
                 serviceDataList.add(new CesServiceData(clientID, factory));
             }
 

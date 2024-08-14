@@ -12,7 +12,6 @@ public interface Registry {
     enum CasServiceAccountTypes {
         OAUTH("oauth"),
         OIDC("oidc"),
-
         CAS("cas"),
         UNDEFINED("");
 
