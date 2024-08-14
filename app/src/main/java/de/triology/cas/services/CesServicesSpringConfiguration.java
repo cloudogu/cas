@@ -49,14 +49,6 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
         return factory.createDefaultClient();
     }
 
-    public Registry createEtcdRegistry(EtcdClient etcdClient) {
-        return new RegistryEtcd(etcdClient);
-    }
-
-    public Registry createLocalRegistry() {
-        return new RegistryLocal();
-    }
-
     @Bean(name = ServicesManager.BEAN_NAME)
     public ChainingServicesManager servicesManager() {
         DefaultChainingServicesManager chain = new DefaultChainingServicesManager();
@@ -73,10 +65,10 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     public ServicesManager configureServicesManager() {
         Registry registry;
         if (isMultinode()) {
-            registry = createLocalRegistry();
+            registry = new RegistryLocal();
         } else {
             EtcdClient etcdClient = createEtcdClient();
-            registry = createEtcdRegistry(etcdClient);
+            registry = new RegistryEtcd(etcdClient);
         }
 
         LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
