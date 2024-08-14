@@ -73,7 +73,7 @@ Nun existiert ein "leeres" Dogu, für welches der CAS einen Service registriert.
 
 **Schritt 2:**
 
-Damit unsere OAuth-Tests erfolgreich durchgeführt werden können, müssen wir im CAS einen Service-Account anlegen. Dis können wir ebenfalls simulieren, indem wir einen Service-Account im etcd unter dem CAS Pfad hinterlegen:
+Damit unsere OAuth-Tests erfolgreich durchgeführt werden können, müssen wir im CAS einen Service-Account anlegen. Dies können wir ebenfalls simulieren, indem wir einen Service-Account im etcd unter dem CAS Pfad hinterlegen:
 ```bash
 etcdctl set /config/cas/service_accounts/oauth/inttest/secret "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
 ```
