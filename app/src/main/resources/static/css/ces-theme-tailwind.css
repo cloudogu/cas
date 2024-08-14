@@ -447,36 +447,36 @@ video {
 }
 
 :root {
-  --colors-brand-stronger: #003250;
-  --colors-brand-strong: #00426B;
-  --colors-brand: #00629E;
-  --colors-brand-weak: #9EDAFF;
-  --colors-brand-weaker: #D4EDFC;
-  --colors-success-stronger: #0A2913;
-  --colors-success-strong: #145226;
-  --colors-success: #1F7A38;
-  --colors-success-weak: #85E09E;
-  --colors-success-weaker: #EBFAEF;
-  --colors-danger-stronger: #521414;
-  --colors-danger-strong: #7A1F1F;
-  --colors-danger: #CC3333;
-  --colors-danger-weak: #EBADAD;
-  --colors-danger-weaker: #F8EDED;
-  --colors-warning-stronger: #3D3700;
-  --colors-warning-strong: #574E00;
-  --colors-warning: #706500;
-  --colors-warning-weak: #FFE500;
-  --colors-warning-weaker: #FFFACC;
-  --colors-neutral-stronger: #333333;
-  --colors-neutral-strong: #4D4D4D;
-  --colors-neutral: #666666;
-  --colors-neutral-weak: #CCCCCC;
-  --colors-neutral-weaker: #F5F5F5;
-  --colors-default-background: #FFFFFF;
-  --colors-default-focus-inner: #FFFFFF;
-  --colors-default-focus-outer: #CC14CC;
-  --colors-default-text: #0D1C26;
-  --colors-inverted-text: #FCFCFD;
+  --ces-color-brand-stronger: #003250;
+  --ces-color-brand-strong: #00426B;
+  --ces-color-brand: #00629E;
+  --ces-color-brand-weak: #9EDAFF;
+  --ces-color-brand-weaker: #D4EDFC;
+  --ces-color-success-stronger: #0A2913;
+  --ces-color-success-strong: #145226;
+  --ces-color-success: #1F7A38;
+  --ces-color-success-weak: #85E09E;
+  --ces-color-success-weaker: #EBFAEF;
+  --ces-color-danger-stronger: #521414;
+  --ces-color-danger-strong: #7A1F1F;
+  --ces-color-danger: #CC3333;
+  --ces-color-danger-weak: #EBADAD;
+  --ces-color-danger-weaker: #F8EDED;
+  --ces-color-warning-stronger: #3D3700;
+  --ces-color-warning-strong: #574E00;
+  --ces-color-warning: #706500;
+  --ces-color-warning-weak: #FFE500;
+  --ces-color-warning-weaker: #FFFACC;
+  --ces-color-neutral-stronger: #333333;
+  --ces-color-neutral-strong: #4D4D4D;
+  --ces-color-neutral: #666666;
+  --ces-color-neutral-weak: #CCCCCC;
+  --ces-color-neutral-weaker: #F5F5F5;
+  --ces-color-default-background: #FFFFFF;
+  --ces-color-default-focus-inner: #FFFFFF;
+  --ces-color-default-focus-outer: #CC14CC;
+  --ces-color-default-text: #0D1C26;
+  --ces-color-inverted-text: #FCFCFD;
 }
 
 html {
@@ -485,7 +485,7 @@ html {
 
 h1 {
   margin-bottom: 1rem;
-  color: var(--colors-brand);
+  color: var(--ces-color-brand);
 }
 
 @media (min-width: 768px) {
@@ -595,15 +595,15 @@ h6 {
 }
 
 a {
-  color: var(--colors-brand);
+  color: var(--ces-color-brand);
   text-decoration-line: underline;
-  text-decoration-color: var(--colors-brand);
+  text-decoration-color: var(--ces-color-brand);
   text-decoration-style: dashed;
   text-decoration-thickness: 1px;
 }
 
 a:focus-visible {
-  box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+  box-shadow: 0 0 0 2px var(--ces-color-default-focus-inner), 0 0 0 4px var(--ces-color-default-focus-outer);
   z-index: 1;
 }
 
@@ -612,7 +612,7 @@ a:hover {
 }
 
 a:focus-visible {
-  color: var(--colors-default-text);
+  color: var(--ces-color-default-text);
   text-decoration-line: none;
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -625,7 +625,7 @@ a:active {
 
 hr {
   border-style: solid;
-  color: var(--colors-brand);
+  color: var(--ces-color-brand);
 }
 
 @media (min-width: 768px) {
@@ -673,7 +673,7 @@ hr {
 }
 
 legend {
-  color: var(--colors-brand);
+  color: var(--ces-color-brand);
 }
 
 @media (min-width: 768px) {
@@ -1116,11 +1116,11 @@ legend {
 }
 
 .border-brand {
-  border-color: var(--colors-brand);
+  border-color: var(--ces-color-brand);
 }
 
 .border-neutral {
-  border-color: var(--colors-neutral);
+  border-color: var(--ces-color-neutral);
 }
 
 .border-transparent {
@@ -1128,7 +1128,7 @@ legend {
 }
 
 .bg-brand {
-  background-color: var(--colors-brand);
+  background-color: var(--ces-color-brand);
 }
 
 .bg-cas-logo-bg {
@@ -1136,7 +1136,7 @@ legend {
 }
 
 .bg-neutral {
-  background-color: var(--colors-neutral);
+  background-color: var(--ces-color-neutral);
 }
 
 .bg-transparent {
@@ -1246,27 +1246,27 @@ legend {
 }
 
 .text-brand {
-  color: var(--colors-brand);
+  color: var(--ces-color-brand);
 }
 
 .text-danger {
-  color: var(--colors-danger);
+  color: var(--ces-color-danger);
 }
 
 .text-default-text {
-  color: var(--colors-default-text);
+  color: var(--ces-color-default-text);
 }
 
 .text-inverted-text {
-  color: var(--colors-inverted-text);
+  color: var(--ces-color-inverted-text);
 }
 
 .text-neutral {
-  color: var(--colors-neutral);
+  color: var(--ces-color-neutral);
 }
 
 .text-warning {
-  color: var(--colors-warning);
+  color: var(--ces-color-warning);
 }
 
 .underline {
@@ -1278,7 +1278,7 @@ legend {
 }
 
 .decoration-brand {
-  text-decoration-color: var(--colors-brand);
+  text-decoration-color: var(--ces-color-brand);
 }
 
 .decoration-dashed {
@@ -1299,7 +1299,7 @@ legend {
 }
 
 .focus-visible\:ces-focused:focus-visible {
-  box-shadow: 0 0 0 2px var(--colors-default-focus-inner), 0 0 0 4px var(--colors-default-focus-outer);
+  box-shadow: 0 0 0 2px var(--ces-color-default-focus-inner), 0 0 0 4px var(--ces-color-default-focus-outer);
   z-index: 1;
 }
 
@@ -1308,27 +1308,27 @@ legend {
 }
 
 .hover\:border-brand-strong:hover {
-  border-color: var(--colors-brand-strong);
+  border-color: var(--ces-color-brand-strong);
 }
 
 .hover\:border-neutral-strong:hover {
-  border-color: var(--colors-neutral-strong);
+  border-color: var(--ces-color-neutral-strong);
 }
 
 .hover\:bg-brand-strong:hover {
-  background-color: var(--colors-brand-strong);
+  background-color: var(--ces-color-brand-strong);
 }
 
 .hover\:bg-brand-weak:hover {
-  background-color: var(--colors-brand-weak);
+  background-color: var(--ces-color-brand-weak);
 }
 
 .hover\:bg-neutral-strong:hover {
-  background-color: var(--colors-neutral-strong);
+  background-color: var(--ces-color-neutral-strong);
 }
 
 .hover\:bg-neutral-weak:hover {
-  background-color: var(--colors-neutral-weak);
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .hover\:p-1:hover {
@@ -1336,11 +1336,11 @@ legend {
 }
 
 .hover\:text-brand-strong:hover {
-  color: var(--colors-brand-strong);
+  color: var(--ces-color-brand-strong);
 }
 
 .hover\:text-neutral-strong:hover {
-  color: var(--colors-neutral-strong);
+  color: var(--ces-color-neutral-strong);
 }
 
 .hover\:decoration-solid:hover {
@@ -1348,7 +1348,7 @@ legend {
 }
 
 .focus\:border-brand:focus {
-  border-color: var(--colors-brand);
+  border-color: var(--ces-color-brand);
 }
 
 .focus-visible\:border-3:focus-visible {
@@ -1356,27 +1356,27 @@ legend {
 }
 
 .focus-visible\:border-brand-strong:focus-visible {
-  border-color: var(--colors-brand-strong);
+  border-color: var(--ces-color-brand-strong);
 }
 
 .focus-visible\:border-neutral-strong:focus-visible {
-  border-color: var(--colors-neutral-strong);
+  border-color: var(--ces-color-neutral-strong);
 }
 
 .focus-visible\:bg-brand-strong:focus-visible {
-  background-color: var(--colors-brand-strong);
+  background-color: var(--ces-color-brand-strong);
 }
 
 .focus-visible\:bg-brand-weak:focus-visible {
-  background-color: var(--colors-brand-weak);
+  background-color: var(--ces-color-brand-weak);
 }
 
 .focus-visible\:bg-neutral-strong:focus-visible {
-  background-color: var(--colors-neutral-strong);
+  background-color: var(--ces-color-neutral-strong);
 }
 
 .focus-visible\:bg-neutral-weak:focus-visible {
-  background-color: var(--colors-neutral-weak);
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .focus-visible\:p-1:focus-visible {
@@ -1384,15 +1384,15 @@ legend {
 }
 
 .focus-visible\:text-brand-strong:focus-visible {
-  color: var(--colors-brand-strong);
+  color: var(--ces-color-brand-strong);
 }
 
 .focus-visible\:text-default-text:focus-visible {
-  color: var(--colors-default-text);
+  color: var(--ces-color-default-text);
 }
 
 .focus-visible\:text-neutral-strong:focus-visible {
-  color: var(--colors-neutral-strong);
+  color: var(--ces-color-neutral-strong);
 }
 
 .focus-visible\:no-underline:focus-visible {
@@ -1409,31 +1409,31 @@ legend {
 }
 
 .active\:border-brand:active {
-  border-color: var(--colors-brand);
+  border-color: var(--ces-color-brand);
 }
 
 .active\:border-brand-stronger:active {
-  border-color: var(--colors-brand-stronger);
+  border-color: var(--ces-color-brand-stronger);
 }
 
 .active\:border-neutral-stronger:active {
-  border-color: var(--colors-neutral-stronger);
+  border-color: var(--ces-color-neutral-stronger);
 }
 
 .active\:bg-brand-stronger:active {
-  background-color: var(--colors-brand-stronger);
+  background-color: var(--ces-color-brand-stronger);
 }
 
 .active\:bg-brand-weak:active {
-  background-color: var(--colors-brand-weak);
+  background-color: var(--ces-color-brand-weak);
 }
 
 .active\:bg-neutral-stronger:active {
-  background-color: var(--colors-neutral-stronger);
+  background-color: var(--ces-color-neutral-stronger);
 }
 
 .active\:bg-neutral-weak:active {
-  background-color: var(--colors-neutral-weak);
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .active\:p-1:active {
@@ -1441,11 +1441,11 @@ legend {
 }
 
 .active\:text-brand-stronger:active {
-  color: var(--colors-brand-stronger);
+  color: var(--ces-color-brand-stronger);
 }
 
 .active\:text-neutral-stronger:active {
-  color: var(--colors-neutral-stronger);
+  color: var(--ces-color-neutral-stronger);
 }
 
 .active\:decoration-solid:active {
@@ -1461,15 +1461,15 @@ legend {
 }
 
 .disabled\:border-brand-weak:disabled {
-  border-color: var(--colors-brand-weak);
+  border-color: var(--ces-color-brand-weak);
 }
 
 .disabled\:border-neutral:disabled {
-  border-color: var(--colors-neutral);
+  border-color: var(--ces-color-neutral);
 }
 
 .disabled\:border-neutral-weak:disabled {
-  border-color: var(--colors-neutral-weak);
+  border-color: var(--ces-color-neutral-weak);
 }
 
 .disabled\:border-transparent:disabled {
@@ -1477,11 +1477,11 @@ legend {
 }
 
 .disabled\:bg-brand-weak:disabled {
-  background-color: var(--colors-brand-weak);
+  background-color: var(--ces-color-brand-weak);
 }
 
 .disabled\:bg-neutral-weak:disabled {
-  background-color: var(--colors-neutral-weak);
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .disabled\:bg-transparent:disabled {
@@ -1493,19 +1493,19 @@ legend {
 }
 
 .disabled\:text-brand-weak:disabled {
-  color: var(--colors-brand-weak);
+  color: var(--ces-color-brand-weak);
 }
 
 .disabled\:text-inverted-text:disabled {
-  color: var(--colors-inverted-text);
+  color: var(--ces-color-inverted-text);
 }
 
 .disabled\:text-neutral:disabled {
-  color: var(--colors-neutral);
+  color: var(--ces-color-neutral);
 }
 
 .disabled\:text-neutral-weak:disabled {
-  color: var(--colors-neutral-weak);
+  color: var(--ces-color-neutral-weak);
 }
 
 .group[open] .group-open\:inline {
@@ -1517,11 +1517,11 @@ legend {
 }
 
 [aria-disabled="true"].aria-disabled\:border-brand-weak {
-  border-color: var(--colors-brand-weak);
+  border-color: var(--ces-color-brand-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:border-neutral-weak {
-  border-color: var(--colors-neutral-weak);
+  border-color: var(--ces-color-neutral-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:border-transparent {
@@ -1529,11 +1529,11 @@ legend {
 }
 
 [aria-disabled="true"].aria-disabled\:bg-brand-weak {
-  background-color: var(--colors-brand-weak);
+  background-color: var(--ces-color-brand-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:bg-neutral-weak {
-  background-color: var(--colors-neutral-weak);
+  background-color: var(--ces-color-neutral-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:bg-transparent {
@@ -1541,15 +1541,15 @@ legend {
 }
 
 [aria-disabled="true"].aria-disabled\:text-brand-weak {
-  color: var(--colors-brand-weak);
+  color: var(--ces-color-brand-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:text-inverted-text {
-  color: var(--colors-inverted-text);
+  color: var(--ces-color-inverted-text);
 }
 
 [aria-disabled="true"].aria-disabled\:text-neutral-weak {
-  color: var(--colors-neutral-weak);
+  color: var(--ces-color-neutral-weak);
 }
 
 @media (min-width: 768px) {
