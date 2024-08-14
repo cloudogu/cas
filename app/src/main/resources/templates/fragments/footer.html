@@ -42,10 +42,10 @@
             Powered by Cloudogu
         </div>
         <script>
-            const defaultLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--cas-internal-logo-url");
-            const cesLogoUrl = getComputedStyle(document.querySelectorAll("[data-testid=footer-link-privacy-policy]")[0]).getPropertyValue("--ces-logo-default");
+            const defaultLogoUrl = getComputedStyle(document.documentElement).getPropertyValue("--cas-internal-logo-url");
+            const cesLogoUrl = getComputedStyle(document.documentElement).getPropertyValue("--ces-logo-default");
             const poweredByCloudogu = document.getElementById("powered-by-cloudogu");
-            if ((defaultLogoUrl !== cesLogoUrl) && !cesLogoUrl === "") {
+            if ((defaultLogoUrl !== cesLogoUrl) && cesLogoUrl !== "") {
                 poweredByCloudogu.classList.remove("hidden");
             }
         </script>
