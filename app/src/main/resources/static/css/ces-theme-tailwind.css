@@ -1628,6 +1628,10 @@ legend {
     flex-direction: column;
   }
 
+  .cas-mobile\:self-start {
+    align-self: flex-start;
+  }
+
   .cas-mobile\:border-b-2 {
     border-bottom-width: 2px;
   }
@@ -1669,10 +1673,6 @@ legend {
 
   .cas-desktop\:flex-row {
     flex-direction: row;
-  }
-
-  .cas-desktop\:self-start {
-    align-self: flex-start;
   }
 
   .cas-desktop\:rounded-lg {
