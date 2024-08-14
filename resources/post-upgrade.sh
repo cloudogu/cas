@@ -81,6 +81,8 @@ migrateServiceAccountsToFoldersByType() {
     exit "${requestExitCode}"
   fi
 
+  # Parse services that have registered a service-account and their secret hash from ETCD response.
+  # Formatted as tab-separated-values these can be iterated over in bash.
   jq -r ".node.nodes[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
     while IFS=$'\t' read -r service clientSecretHash; do
       echo "Migrating service account directory for '${service}'"
@@ -103,13 +105,17 @@ migrateLogoutUri() {
   etcdDoguUrl="http://$(getEtcdEndpoint):4001/v2/keys/dogu?recursive=true"
   etcdDoguResponse="$(wget -O- "${etcdDoguUrl}")"
 
+  # Parse dogus and their currently installed versions from recursive ETCD response.
+  # They are outputted as tab-separated-values, which we iterate over in bash.
   echo "${etcdDoguResponse}" | jq -r '.node.nodes[].nodes | .[] | select(.key | endswith("current")) | { dogu: .key | sub("\/dogu\/(?<name>.*)\/current";"\(.name)"), version: .value } | [.dogu, .version] | @tsv' |
     while IFS=$'\t' read -r dogu version; do
       local doguDescriptor logoutUri saType
+      # Read dogu descriptor of the dogu with the specified version from recursive ETCD response.
       doguDescriptor="$(echo "${etcdDoguResponse}" | jq -r ".node.nodes[].nodes | .[] | select(.key == \"/dogu/${dogu}/${version}\") | .value")"
       logoutUri="$(echo "${doguDescriptor}" | jq -r '.Properties.logoutUri')"
       if [[ "${logoutUri}" != "null" ]]; then
         echo "Migrating logout URI for dogu '${dogu}'"
+        # Get service accounts of type 'cas' and return the first param if it exists, otherwise return 'cas'.
         saType="$(echo "${doguDescriptor}" | jq -r 'try (.ServiceAccounts | map(select(.Type == "cas")) | .[].Params[0] // "cas") catch "cas"')"
         doguctl config "service_accounts/${saType}/${dogu}/logout_uri" "${logoutUri}"
       fi
