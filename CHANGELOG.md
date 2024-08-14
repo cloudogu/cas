@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use explicit service accounts for normal CAS service accounts instead of implicitly reading dependencies. (#197)
 - Receive logout URI as an additional argument in the `service-account-create` exposed command instead of reading it from the dogu descriptor. (#197)
 - Use config from mounted file when in multinode (#197)
-- Upgrade java base image to `21.0.3-4` (#193)
+- Upgrade java base image to `21.0.4-1` (#193)
 - Replace persistent state with local config (#193)
 
 ## [v7.0.5.1-1] - 2024-07-23
