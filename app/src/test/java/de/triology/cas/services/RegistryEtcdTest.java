@@ -129,7 +129,8 @@ public class RegistryEtcdTest {
         doguMetaData.put("Properties", properties);
         when(registry.getCurrentDoguNode(ArgumentMatchers.any())).thenReturn(doguMetaData);
 
-        registry.getCasLogoutUri("testDogu");
+        URI logoutURI = registry.getCasLogoutUri("testDogu");
+        assertEquals("testDogu/logout", logoutURI.toString());
     }
 
     @Test(expected = GetCasLogoutUriException.class)
@@ -146,7 +147,7 @@ public class RegistryEtcdTest {
     }
 
     @Test(expected = GetCasLogoutUriException.class)
-    public void getCasLogoutUriFromDoguDescriptorFallbackWithmalformedProperties() throws ParseException, GetCasLogoutUriException {
+    public void getCasLogoutUriFromDoguDescriptorFallbackWithMalformedProperties() throws ParseException, GetCasLogoutUriException {
         RegistryEtcd registry = mock(RegistryEtcd.class);
 
         when(registry.getEtcdValueForKey(ArgumentMatchers.any())).thenThrow(RegistryException.class);
