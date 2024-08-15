@@ -1,5 +1,6 @@
 /**
- * https://github.com/apereo/cas/blob/master/support/cas-server-support-thymeleaf/src/main/resources/static/js/cas.js
+ * Original script: https://github.com/apereo/cas/blob/v7.0.5.1/support/cas-server-support-thymeleaf/src/main/resources/static/js/cas.js
+ * See line 95 in our version for the changes
  */
 function randomWord() {
     let things = ["admiring", "adoring", "affectionate", "agitated", "amazing",
@@ -91,6 +92,9 @@ function preserveAnchorTagOnForm() {
 function preventFormResubmission() {
     $('form').submit(() => {
         $(':submit').attr('disabled', true);
+        // This part was changed. Before, the submit was disabled forever.
+        // The behaviour was changed because the live validation was removed
+        // and the form can now be submitted without a reload.
         setTimeout(() => {
             $(':submit').attr('disabled', false);
         }, 500);
