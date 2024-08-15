@@ -1632,12 +1632,12 @@ legend {
     align-self: flex-start;
   }
 
-  .cas-mobile\:border-b-2 {
-    border-bottom-width: 2px;
+  .cas-mobile\:border-b-0 {
+    border-bottom-width: 0px;
   }
 
-  .cas-mobile\:border-b-3 {
-    border-bottom-width: 3px;
+  .cas-mobile\:border-b-2 {
+    border-bottom-width: 2px;
   }
 
   .cas-mobile\:py-default-2x {
