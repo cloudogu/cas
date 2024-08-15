@@ -1,6 +1,6 @@
 {
   "name": "ces-style-generator",
-  "version": "1.0.0",
+  "version": "7.0.5.1-2",
   "description": "Npm project to use ces-theme to generate styling",
   "main": "index.js",
   "directories": {
@@ -19,7 +19,6 @@
     "tailwindcss": "^3.4.7",
     "tailwindcss-aria-attributes": "^2.0.1",
     "tailwindcss-scoped-groups": "^2.0.0",
-
     "@headlessui/react": "^1.7.17",
     "@phosphor-icons/react": "2.0.15",
     "@radix-ui/react-checkbox": "^1.0.4",
