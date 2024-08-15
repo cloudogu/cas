@@ -7,7 +7,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ## Release 7.0.5.1-2
 
 - Das Design des Dogus wurde umgebaut, sodass es unserem neuen Theme entspricht
-  - Dieses neue design ist in Kombination mit dem Whitelabeling-Dogu und der neuen Version vom Nginx (>=v1.26.1-4) komplett whitelabelbar.
+  - Dieses neue design ist in Kombination mit dem Whitelabeling-Dogu und der neuen Version vom Nginx (>=v1.26.1-5) komplett whitelabelbar.
 
 ## Release 7.0.5.1-1
 

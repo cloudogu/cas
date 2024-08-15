@@ -16,7 +16,7 @@
     {
       "Type": "dogu",
       "Name": "nginx",
-      "version": ">=1.26.1-4"
+      "version": ">=1.26.1-5"
     },
     {
       "type": "dogu",
