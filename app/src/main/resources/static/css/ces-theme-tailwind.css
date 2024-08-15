@@ -1636,8 +1636,8 @@ legend {
     border-bottom-width: 0px;
   }
 
-  .cas-mobile\:border-b-2 {
-    border-bottom-width: 2px;
+  .cas-mobile\:border-b-3 {
+    border-bottom-width: 3px;
   }
 
   .cas-mobile\:py-default-2x {
@@ -1683,8 +1683,8 @@ legend {
     border-width: 3px;
   }
 
-  .cas-desktop\:border-r-2 {
-    border-right-width: 2px;
+  .cas-desktop\:border-r-3 {
+    border-right-width: 3px;
   }
 
   .cas-desktop\:py-8 {

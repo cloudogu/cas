@@ -17,7 +17,3 @@
     width: 144px;
     height: calc(144px / (var(--ces-logo-default-ratio))); /* Variable defined in default.css provided by nginx */
 }
-
-.focus-href > a {
-    color: var(--colors-brand);
-}
