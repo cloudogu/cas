@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.0.5.1-1",
+  "Version": "7.0.5.1-2",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -15,7 +15,8 @@
   "Dependencies": [
     {
       "Type": "dogu",
-      "Name": "nginx"
+      "Name": "nginx",
+      "version": ">=1.26.1-5"
     },
     {
       "type": "dogu",

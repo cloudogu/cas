@@ -23,5 +23,6 @@ Feature: Tests for the behaviour when a user has to change his password
     When the user opens the dogu start page
     And the test user logs in with correct credentials
     And the user enters an invalid password
+    And the user submits the password change form
     Then CAS displays a notice of an invalid password
     And  CAS displays the password policy criteria

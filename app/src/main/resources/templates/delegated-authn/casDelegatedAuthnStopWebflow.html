@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.pac4j.unauthz.pagetitle}">Pac4j Stop Webflow View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content">
+        <div class="gap-default-2x flex flex-col">
+            <h1 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h1>
+            <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled,
+                or the authentication provider denied access due to permissions, etc. Review logs to find the root
+                cause of the issue.</p>
+
+            <p class="text-danger">
+                    <span th:if="${rootCauseException}"
+                          th:with="simpleName=${@casThymeleafTemplatesDirector.getExceptionClassSimpleName(rootCauseException)}"
+                          th:text="#{${'screen.pac4j.authn.' + simpleName}}">
+                      Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
+                <span th:unless="${rootCauseException}" th:text="#{screen.pac4j.authn.unknown}">
+                      Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
+            </p>
+
+            <div class="border border-neutral overflow-x-auto rounded-[4px] flex flex-col">
+                <table id="errorTable" th:if="${error != null or reason != null or code != null or description != null}"
+                       class="w-full border-collapse">
+                    <thead class="text-neutral">
+                    <tr class="border-b border-neutral">
+                        <th class="h-12 px-default-2x text-left">Error</th>
+                        <th class="h-12 px-default-2x text-left">Code</th>
+                        <th class="h-12 px-default-2x text-left">Provider</th>
+                        <th class="h-12 px-default-2x text-left">Destination</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="border-b border-neutral">
+                        <td class="h-12 px-default-2x text-left" th:text="${error}">Error</td>
+                        <td class="h-12 px-default-2x text-left" th:text="${code}">code</td>
+                        <td class="h-12 px-default-2x text-left" th:text="${client}">client</td>
+                        <td class="h-12 px-default-2x text-left">
+                            <a
+                                    th:href="${service}"
+                                    th:text="#{screen.pac4j.unauthz.gotoapp}"
+                                    class="flex items-center no-underline focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-transparent active:border-neutral-stronger disabled:border-transparent aria-disabled:border-transparent text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0">
+                                Goto Application
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <div class="flex flex-wrap flex-row">
+            <a id="loginLink" class="flex items-center no-underline focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-transparent active:border-neutral-stronger disabled:border-transparent aria-disabled:border-transparent text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0" th:href="@{/login}">
+                <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
+            </a>
+            <a id="appLink" class="flex items-center no-underline focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-transparent active:border-neutral-stronger disabled:border-transparent aria-disabled:border-transparent text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0" th:href="${service}">
+                <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
+            </a>
+            <form method="post" id="fm1">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="retry"/>
+                <button id="retryButton" class="no-underline focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-transparent hover:bg-neutral-weak focus-visible:bg-neutral-weak active:bg-neutral-weak disabled:bg-transparent aria-disabled:bg-transparent rounded border-2 border-transparent active:border-neutral-stronger disabled:border-transparent aria-disabled:border-transparent text-neutral hover:text-neutral-strong focus-visible:text-neutral-strong active:text-neutral-stronger disabled:text-neutral-weak aria-disabled:text-neutral-weak outline-0" name="retry"
+                        accesskey="r">
+                    <span class="mdc-button__label" th:text="#{screen.pac4j.button.retry}">Try Again</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>

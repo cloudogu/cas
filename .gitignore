@@ -116,3 +116,5 @@ app/overlays
 
 .env
 /.bin
+.npmrc
+node_modules

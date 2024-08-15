@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.5.1-2] - 2024-08-15
+### Changed
+- Modify the whole cas ui to match with our new theme (#201) 
+
 ## [v7.0.5.1-1] - 2024-07-23
 ### Fixed
 - Fix throttling and avoid rendering CES unusable (#198) 
