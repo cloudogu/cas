@@ -42,9 +42,9 @@ module.exports = defineConfig({
             "ClientID": "inttest",
             "ClientSecret": "integrationTestClientSecret",
             "PasswordHintText": "Contact your admin",
-            "PrivacyPolicyURL": "https://www.google.de",
-            "TermsOfServiceURL": "https://www.google.de",
-            "ImprintURL": "https://www.google.de"
+            "PrivacyPolicyURL": "https://www.triology.de/",
+            "TermsOfServiceURL": "https://www.itzbund.de/",
+            "ImprintURL": "https://cloudogu.com/"
         },
 
         specPattern: ["cypress/e2e/**/*.feature"],
