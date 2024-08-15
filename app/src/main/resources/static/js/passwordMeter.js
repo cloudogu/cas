@@ -1,5 +1,6 @@
 /**
- * https://github.com/apereo/cas/blob/master/support/cas-server-support-thymeleaf/src/main/resources/static/js/passwordMeter.js
+ * Original file: https://github.com/apereo/cas/blob/master/support/cas-server-support-thymeleaf/src/main/resources/static/js/passwordMeter.js
+ * Changes: See line 95, 127 and 177
  */
 function jqueryReady() {
     let strength = passwordStrengthI18n;
@@ -18,7 +19,7 @@ function jqueryReady() {
         $(settings.passwordInput).keyup(event => {
             UpdateProgressBar();
         });
-        
+
         return this.each(function () {
             settings.progressBar = this;
             UpdateProgressBar();
@@ -91,6 +92,8 @@ function jqueryReady() {
         }
     }
 
+    // The form submit is now prevented when the form is not valid.
+    // This is necessary as live validation has been removed.
     const form = document.getElementById("passwordManagementForm");
     if (form !== null && form !== undefined) {
         form.onsubmit = (ev) => {
@@ -121,6 +124,7 @@ function jqueryReady() {
         let result = zxcvbn(val);
         let passwordTooWeak = passwordMinimumStrength > result.score;
         let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak;
+        // The disable submit command was removed here.
 
 
         $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
@@ -171,6 +175,7 @@ function jqueryReady() {
             $('#password-policy-violation-msg').show();
         }
 
+        // Disable submit is now returned by this function
         return !disableSubmit;
     }
 }
