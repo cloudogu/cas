@@ -199,7 +199,7 @@ parallel(
                             ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
                             ecoSystem.runCypressIntegrationTests([
-                                    cypressImage     : "cypress/included:13.10.0",
+                                    cypressImage     : "cypress/included:13.13.2",
                                     enableVideo      : params.EnableVideoRecording,
                                     enableScreenshots: params.EnableScreenshotRecording])
                         }
@@ -226,7 +226,7 @@ parallel(
 
                             stage('Integration Tests - After Upgrade') {
                                 ecoSystem.runCypressIntegrationTests([
-                                        cypressImage     : "cypress/included:13.10.0",
+                                        cypressImage     : "cypress/included:13.13.2",
                                         enableVideo      : params.EnableVideoRecording,
                                         enableScreenshots: params.EnableScreenshotRecording])
                             }

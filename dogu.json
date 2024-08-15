@@ -15,7 +15,8 @@
   "Dependencies": [
     {
       "Type": "dogu",
-      "Name": "nginx"
+      "Name": "nginx",
+      "version": ">=1.26.1-5"
     },
     {
       "type": "dogu",
