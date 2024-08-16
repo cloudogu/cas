@@ -18,21 +18,44 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsMapWithSize.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.collection.IsMapWithSize.aMapWithSize;
+import static org.hamcrest.collection.IsMapWithSize.anEmptyMap;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class RegistryLocalTest {
 
     @Rule
     public ExpectedException exceptionGrabber = ExpectedException.none();
+
+    private static ByteArrayInputStream getServiceAccountYamlStream() {
+        var localConfigYaml = """
+                service_accounts:
+                    cas:
+                        usermgt:
+                            created: "true"
+                        redmine:
+                            created: "true"
+                    oidc:
+                        teamscale:
+                            secret: "teamscale_secret"
+                        openproject:
+                            secret: "openproject_secret"
+                    oauth:
+                        portainer:
+                            secret: "portainer_secret"
+                        some_oauth_dogu:
+                            secret: "some_oauth_dogu_secret"
+                """;
+        return new ByteArrayInputStream(localConfigYaml.getBytes(StandardCharsets.UTF_8));
+    }
 
     @Test
     public void getInstalledCasServiceAccountsOfTypeFailsWhenFileNotFound() {
@@ -272,28 +295,6 @@ public class RegistryLocalTest {
         )));
     }
 
-    private static ByteArrayInputStream getServiceAccountYamlStream() {
-        var localConfigYaml = """
-                service_accounts:
-                    cas:
-                        usermgt:
-                            created: "true"
-                        redmine:
-                            created: "true"
-                    oidc:
-                        teamscale:
-                            secret: "teamscale_secret"
-                        openproject:
-                            secret: "openproject_secret"
-                    oauth:
-                        portainer:
-                            secret: "portainer_secret"
-                        some_oauth_dogu:
-                            secret: "some_oauth_dogu_secret"
-                """;
-        return new ByteArrayInputStream(localConfigYaml.getBytes(StandardCharsets.UTF_8));
-    }
-
     @Test
     public void getCasLogoutUriFailsForNonExistentDogu() throws GetCasLogoutUriException {
         var registry = spy(RegistryLocal.class);
@@ -499,5 +500,127 @@ public class RegistryLocalTest {
         }
 
         assertThat(dogus, hasSize(1));
+    }
+
+    @Test
+    public void deepEquals() {
+        Map<String, RegistryLocal.ServiceAccountCas> cas = new HashMap<>();
+        cas.put("usermgt", createServiceAccountCas("true", "/logout"));
+        cas.put("scm", createServiceAccountCas("false", "/logout2"));
+        Map<String, RegistryLocal.ServiceAccountSecret> oidc = new HashMap<>();
+        oidc.put("teamscale", createServiceAccountSecret("abc", "/logout3"));
+        oidc.put("cas-oidc-dogu", createServiceAccountSecret("supersecret", ""));
+        Map<String, RegistryLocal.ServiceAccountSecret> oauth = new HashMap<>();
+        oauth.put("portainer", createServiceAccountSecret("def", "/logout4"));
+        oauth.put("scm", createServiceAccountSecret("notSecret", "/logout5"));
+
+        RegistryLocal.ServiceAccounts serviceAccountsA = new RegistryLocal.ServiceAccounts();
+        serviceAccountsA.setCas(cas);
+        serviceAccountsA.setOidc(oidc);
+        serviceAccountsA.setOauth(oauth);
+        RegistryLocal.ServiceAccounts serviceAccountsB = new RegistryLocal.ServiceAccounts();
+        serviceAccountsB.setCas(cas);
+        serviceAccountsB.setOidc(oidc);
+        serviceAccountsB.setOauth(oauth);
+
+        assertTrue(serviceAccountsA.deepEquals(serviceAccountsB));
+    }
+
+    @Test
+    public void deepEqualsFalseWhenCasDifferent() {
+        Map<String, RegistryLocal.ServiceAccountCas> cas = new HashMap<>();
+        cas.put("usermgt", createServiceAccountCas("true", "/logout"));
+        cas.put("scm", createServiceAccountCas("false", "/logout2"));
+        Map<String, RegistryLocal.ServiceAccountSecret> oidc = new HashMap<>();
+        oidc.put("teamscale", createServiceAccountSecret("abc", "/logout3"));
+        oidc.put("cas-oidc-dogu", createServiceAccountSecret("supersecret", ""));
+        Map<String, RegistryLocal.ServiceAccountSecret> oauth = new HashMap<>();
+        oauth.put("portainer", createServiceAccountSecret("def", "/logout4"));
+        oauth.put("scm", createServiceAccountSecret("notSecret", "/logout5"));
+
+        RegistryLocal.ServiceAccounts serviceAccountsA = new RegistryLocal.ServiceAccounts();
+        serviceAccountsA.setCas(cas);
+        serviceAccountsA.setOidc(oidc);
+        serviceAccountsA.setOauth(oauth);
+
+        RegistryLocal.ServiceAccounts serviceAccountsB = new RegistryLocal.ServiceAccounts();
+        Map<String, RegistryLocal.ServiceAccountCas> casDifferent = new HashMap<>();
+        casDifferent.put("usermgt", createServiceAccountCas("false", "/logout"));
+        casDifferent.put("scm", createServiceAccountCas("false", "/logout2"));
+        serviceAccountsB.setCas(casDifferent);
+        serviceAccountsB.setOidc(oidc);
+        serviceAccountsB.setOauth(oauth);
+
+        assertFalse(serviceAccountsA.deepEquals(serviceAccountsB));
+    }
+
+    @Test
+    public void deepEqualsFalseWhenOidcDifferent() {
+        Map<String, RegistryLocal.ServiceAccountCas> cas = new HashMap<>();
+        cas.put("usermgt", createServiceAccountCas("true", "/logout"));
+        cas.put("scm", createServiceAccountCas("false", "/logout2"));
+        Map<String, RegistryLocal.ServiceAccountSecret> oidc = new HashMap<>();
+        oidc.put("teamscale", createServiceAccountSecret("abc", "/logout3"));
+        oidc.put("cas-oidc-dogu", createServiceAccountSecret("supersecret", ""));
+        Map<String, RegistryLocal.ServiceAccountSecret> oauth = new HashMap<>();
+        oauth.put("portainer", createServiceAccountSecret("def", "/logout4"));
+        oauth.put("scm", createServiceAccountSecret("notSecret", "/logout5"));
+
+        RegistryLocal.ServiceAccounts serviceAccountsA = new RegistryLocal.ServiceAccounts();
+        serviceAccountsA.setCas(cas);
+        serviceAccountsA.setOidc(oidc);
+        serviceAccountsA.setOauth(oauth);
+
+        RegistryLocal.ServiceAccounts serviceAccountsB = new RegistryLocal.ServiceAccounts();
+        serviceAccountsB.setCas(cas);
+        Map<String, RegistryLocal.ServiceAccountSecret> oidcDifferent = new HashMap<>();
+        oidc.put("teamscale", createServiceAccountSecret("abc", ""));
+        oidc.put("cas-oidc-dogu", createServiceAccountSecret("supersecret", ""));
+        serviceAccountsB.setOidc(oidcDifferent);
+        serviceAccountsB.setOauth(oauth);
+
+        assertFalse(serviceAccountsA.deepEquals(serviceAccountsB));
+    }
+
+    @Test
+    public void deepEqualsFalseWhenOauthDifferent() {
+        Map<String, RegistryLocal.ServiceAccountCas> cas = new HashMap<>();
+        cas.put("usermgt", createServiceAccountCas("true", "/logout"));
+        cas.put("scm", createServiceAccountCas("false", "/logout2"));
+        Map<String, RegistryLocal.ServiceAccountSecret> oidc = new HashMap<>();
+        oidc.put("teamscale", createServiceAccountSecret("abc", "/logout3"));
+        oidc.put("cas-oidc-dogu", createServiceAccountSecret("supersecret", ""));
+        Map<String, RegistryLocal.ServiceAccountSecret> oauth = new HashMap<>();
+        oauth.put("portainer", createServiceAccountSecret("def", "/logout4"));
+        oauth.put("scm", createServiceAccountSecret("notSecret", "/logout5"));
+
+        RegistryLocal.ServiceAccounts serviceAccountsA = new RegistryLocal.ServiceAccounts();
+        serviceAccountsA.setCas(cas);
+        serviceAccountsA.setOidc(oidc);
+        serviceAccountsA.setOauth(oauth);
+
+        RegistryLocal.ServiceAccounts serviceAccountsB = new RegistryLocal.ServiceAccounts();
+        serviceAccountsB.setCas(cas);
+        serviceAccountsB.setOidc(oidc);
+        Map<String, RegistryLocal.ServiceAccountSecret> oauthDifferent = new HashMap<>();
+        oauthDifferent.put("portainerDifferent", createServiceAccountSecret("def", "/logout4"));
+        oauthDifferent.put("scm", createServiceAccountSecret("notSecret", "/logout5"));
+        serviceAccountsB.setOauth(oauthDifferent);
+
+        assertFalse(serviceAccountsA.deepEquals(serviceAccountsB));
+    }
+
+    private RegistryLocal.ServiceAccountCas createServiceAccountCas(String created, String logout_uri) {
+        RegistryLocal.ServiceAccountCas cas = new RegistryLocal.ServiceAccountCas();
+        cas.setCreated(created);
+        cas.setLogout_uri(logout_uri);
+        return cas;
+    }
+
+    private RegistryLocal.ServiceAccountSecret createServiceAccountSecret(String secret, String logout_uri) {
+        RegistryLocal.ServiceAccountSecret serviceAccount = new RegistryLocal.ServiceAccountSecret();
+        serviceAccount.setSecret(secret);
+        serviceAccount.setLogout_uri(logout_uri);
+        return serviceAccount;
     }
 }
