@@ -59,7 +59,7 @@ public class RegistryEtcdTest {
     }
 
     @Test
-    public void getDogusWithGetInstalledCasServiceAccountsOfType() {
+    public void getDogusOfTypeCas() {
         RegistryEtcd registry = createRegistry();
         var factory = new CesDoguServiceFactory();
         List<String> installedDogus = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, factory)
@@ -74,18 +74,21 @@ public class RegistryEtcdTest {
     }
 
     @Test
-    public void getDogusWithGetInstalledDogusWhichAreUsingCAS() {
+    public void getDogusOfTypeOAuth() {
         RegistryEtcd registry = createRegistry();
         var factory = new CesDoguServiceFactory();
-        List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
+        List<String> installedDogus = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, factory)
                 .stream().map(CesServiceData::getName).toList();
-        assertTrue(installedDogus.contains("redmine"));
-        assertTrue(installedDogus.contains("usermgt"));
-        assertTrue(installedDogus.contains("nexus"));
         assertTrue(installedDogus.contains("portainer"));
-        assertTrue(installedDogus.contains("scm"));
+    }
+
+    @Test
+    public void getDogusOfTypeOidc() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesDoguServiceFactory();
+        List<String> installedDogus = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, factory)
+                .stream().map(CesServiceData::getName).toList();
         assertTrue(installedDogus.contains("cas-oidc-client"));
-        assertTrue(installedDogus.contains("cockpit"));
     }
 
     @Test
@@ -94,7 +97,7 @@ public class RegistryEtcdTest {
         var serviceFactory = new CesDoguServiceFactory();
 
         when(registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory)).thenCallRealMethod();
-        when(registry.getEtcdNodesForServiceAccountType("cas")).thenThrow(EtcdException.class);
+        when(registry.getInstalledDogusWhichAreUsingCAS(serviceFactory)).thenThrow(EtcdException.class);
 
         exceptionGrabber.expect(RegistryException.class);
         exceptionGrabber.expectMessage("Failed to getInstalledCasServiceAccountsOfType: cas");
@@ -109,7 +112,7 @@ public class RegistryEtcdTest {
         var serviceFactory = new CesDoguServiceFactory();
 
         when(registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory)).thenCallRealMethod();
-        when(registry.getEtcdNodesForServiceAccountType("cas")).thenThrow(IOException.class);
+        when(registry.getInstalledDogusWhichAreUsingCAS(serviceFactory)).thenThrow(IOException.class);
 
         exceptionGrabber.expect(RegistryException.class);
         exceptionGrabber.expectMessage("Failed to getInstalledCasServiceAccountsOfType: cas");
@@ -344,7 +347,7 @@ public class RegistryEtcdTest {
     }
 
     @Test
-    public void getCurrentDoguNode_UnknownDogu() throws ParseException {
+    public void getCurrentDoguNode_UserMgtDogu() throws ParseException {
         RegistryEtcd registry = createRegistry();
         JSONObject test = registry.getCurrentDoguNode("usermgt");
         assertEquals(test.get("DisplayName"), "User Management");

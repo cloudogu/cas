@@ -49,8 +49,9 @@ class RegistryEtcd implements Registry {
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, CesServiceFactory factory) {
         LOGGER.debug("Get [{}] service accounts from registry", type);
         try {
-            List<EtcdKeysResponse.EtcdNode> nodes = getEtcdNodesForServiceAccountType(type);
-            return extractServiceAccountClientsByType(nodes, type, factory);
+            return Registry.SERVICE_ACCOUNT_TYPE_CAS.equals(type) ?
+                    getInstalledDogusWhichAreUsingCAS(factory) :
+                    getInstalledDogusWhichAreUsingSecrets(type, factory);
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 return new ArrayList<>();
@@ -62,12 +63,14 @@ class RegistryEtcd implements Registry {
         }
     }
 
-    List<EtcdKeysResponse.EtcdNode> getEtcdNodesForServiceAccountType(String type) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException {
-        if (Registry.SERVICE_ACCOUNT_TYPE_CAS.equals(type)) {
-            return etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
-        } else {
-            return etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
-        }
+    List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) throws IOException, EtcdAuthenticationException, EtcdException, TimeoutException {
+        List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
+        return extractDogusFromDoguRootDir(nodes, factory);
+    }
+
+    List<CesServiceData> getInstalledDogusWhichAreUsingSecrets(String type, CesServiceFactory factory) throws IOException, EtcdAuthenticationException, EtcdException, TimeoutException {
+        List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
+        return extractServiceAccountClientsByType(nodes, type, factory);
     }
 
     /**
@@ -83,6 +86,7 @@ class RegistryEtcd implements Registry {
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
+                System.out.println("key: " + oAuthClient.getKey() + " prefix: " + clientPathPrefix);
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 var attributes = new HashMap<String, String>();
 
@@ -101,8 +105,24 @@ class RegistryEtcd implements Registry {
         return serviceDataList;
     }
 
-    public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
-        return getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, factory);
+    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, CesServiceFactory factory) {
+        LOGGER.debug("Entered extractDogusFromDoguRootDir");
+        List<CesServiceData> doguServices = new ArrayList<>();
+        for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
+            JSONObject json;
+            try {
+                var doguName = dogu.getKey().substring(DOGU_DIR.length() + 1);
+                json = getCurrentDoguNode(doguName);
+                if (hasCasDependency(json)) {
+                    doguServices.add(new CesServiceData(doguName, factory));
+                }
+            } catch (ParseException ex) {
+                throw new RuntimeException("failed to parse EtcdNode to json: ", ex);
+            } catch (RegistryException ex) {
+                throw new RuntimeException("registry exception occurred: ", ex);
+            }
+        }
+        return doguServices;
     }
 
     @Override
