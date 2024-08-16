@@ -11,96 +11,113 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <!-- Login form template begins here -->
-    <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
+<main class="container mt-3 mb-3">
+
+    <div th:fragment="loginform"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
                 loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
 
+        <div th:if="${delegatedAuthenticationProviderPrimary == null}">
+            <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
+                <p>
+                    <img id="heroimg"
+                         th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                         th:src="@{${#themes.code('cas.hero-banner.file')}}"/>
+                </p>
+            </div>
+            <!--            <div class="service-ui" th:replace="~{fragments/serviceui :: serviceUI}">-->
+            <!--                <a href="fragments/serviceui.html">service ui fragment</a>-->
+            <!--            </div>-->
+        </div>
+
         <div class="form-wrapper">
+
             <form method="post" id="fm1" th:object="${credential}" action="login">
                 <div id="login-form-controls" th:unless="${loginFormViewable or loginFormEnabled}">
                     <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible"
-                         th:if="${#fields.hasErrors('*')}">
+                         th:if="${#fields.hasErrors('*')}"
+                         aria-live="polite"
+                         role="alert"
+                    >
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                 </div>
 
                 <div id="login-form-controls" th:if="${loginFormViewable and loginFormEnabled}">
                     <div th:if="${existingSingleSignOnSessionAvailable}">
-                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle"></i>&nbsp;
-                        <span id="existingSsoMsg" class="mdc-button__label"
-                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal.id},${registeredService.name})}"/>
+                        <i class="mdi mdi-alert-decagram fas fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
+                        <span id="existingSsoMsg" th:if="${registeredService}" class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id},${registeredService.name})}"/>
+                        <span id="existingSsoMsg" th:unless="${registeredService}" class="mdc-button__label"
+                              th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id}, 'CAS')}"/>
                     </div>
-<!--                    Removed from original template -->
-<!--                    <h3 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">-->
-<!--                        <i class="mdi mdi-security fas fa-shield-alt"></i>-->
-<!--                        <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>-->
-<!--                    </h3>-->
-<!--                    <div id="loginErrorsPanel" class="banner banner-danger alert alert-danger banner-dismissible"-->
-<!--                         th:if="${#fields.hasErrors('*')}">-->
-<!--                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>-->
-<!--                        &lt;!&ndash;<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>&ndash;&gt;-->
-<!--                    </div>-->
+                    <h1
+                            th:unless="${existingSingleSignOnSessionAvailable}"
+                            class="text-default-text desktop:text-desktop-6xl mobile:text-mobile-6xl mb-default-2x">
+                        <span class="flex flex-row flex-wrap">
+                            <span id="instance-name" class="break-all">instance name</span>
+                            <span>Login</span>
+                        </span>
+                        <script>
+                            const instanceNameSpan = document.getElementById("instance-name");
+                            instanceNameSpan.innerHTML = `${window.location.host}&nbsp;-&nbsp;`;
+                        </script>
+                    </h1>
+
+                    <div id="loginErrorsPanel" class="text-danger"
+                         th:if="${#fields.hasErrors('*')}" role="alert">
+                        <p th:each="err : ${#fields.errors('*')}">
+                            <strong th:utext="${err + ' '}"></strong>
+                        </p>
+                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
+                    </div>
                     <section class="cas-field form-group my-3" id="usernameSection">
-                        <div class="d-flex">
-                            <label for="username" class="mdc-text-field mdc-text-field--outlined control-label login-label">
+                        <label for="username"
+                               class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
                                         <span class="mdc-floating-label"
-                                            th:utext="#{screen.welcome.label.netid}">Username</span>
+                                              th:utext="#{screen.welcome.label.netid}">Username</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <input class="mdc-text-field__input" id="username"
-                                       data-testid="login-username-input-field"
-                                       size="25"
-                                       type="text"
-                                       th:readonly="!${@casThymeleafTemplatesDirector.isLoginFormUsernameInputVisible(#vars)}"
-                                       th:field="*{username}"
-                                       th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                       autocapitalize="none"
-                                       spellcheck="false"
-                                       autocomplete="username"/>
-                            </label>
-
-<!--                        Removed from official template    -->
-<!--                        <div class="mdc-text-field-helper-line">-->
-<!--                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;validation-msg" aria-hidden="true">-->
-<!--                                <span id="usernameValidationMessage" th:utext="#{username.required}"></span>-->
-<!--                            </div>-->
-<!--                        </div>-->
+                            <input id="username"
+                                   data-testid="login-username-input-field"
+                                   size="25"
+                                   type="text"
+                                   th:readonly="!${@casThymeleafTemplatesDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                   th:field="*{username}"
+                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                   autocapitalize="none"
+                                   spellcheck="false"
+                                   autocomplete="username"
+                                   class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                            />
+                        </label>
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            var username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
-                            var disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            let username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
+                            let disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
-                                if (username != null && username !== '') {
-                                    $('#username').val(username);
-                                    if (disabled) {
-                                        $('#usernameSection').hide();
-                                    }
+                            if (username != null && username !== '') {
+                                $('#username').val(username);
+                                if (disabled) {
+                                    $('#usernameSection').hide();
                                 }
-                                /*]]>*/
-                            </script>
-                        </div>
+                            }
+                            /*]]>*/
+                        </script>
                     </section>
 
-                    <section class="cas-field my-3 mdc-input-group">
+                    <section class="cas-field form-group my-3 mdc-input-group form-group" id="passwordSection">
                         <div class="mdc-input-group-field mdc-input-group-field-append">
-                            <div class="d-flex caps-check">
-
-                                <label for="password"
-                                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-
-                                    <input class="mdc-text-field__input pwd"
-                                           data-testid="login-password-input-field"
-                                           type="password" id="password" size="25"
-                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
-                                           th:field="*{password}" autocomplete="off"/>
+                            <div class="relative" aria-live="polite">
+                                <label id="password-label"
+                                       for="password"
+                                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
 
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
@@ -110,27 +127,45 @@
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
 
-                                </label>
-                            </div>
 
-                            <div class="mdc-text-field-helper-line caps-warn">
-                                <p
-                                        class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
-                                    <span th:utext="#{screen.capslock.on}"/>
-                                </p>
+                                    <input data-testid="login-password-input-field"
+                                           type="password" id="password" size="25"
+                                           th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                           th:field="*{password}" autocomplete="off"
+                                           class="mdc-text-field__input pwd w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                    />
+                                </label>
+                                <button data-testid="login-reveal-btn"
+                                        type="button" id="password-toggle"
+                                        class="z-10 w-[38px] h-[38px] absolute right-0 bottom-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
+                                >
+                                    <span class="sr-only" th:text="#{screen.passwordfield.toggle}">Toggle password field to text field</span>
+                                    <img src="/cas/images/eye.svg" aria-hidden="true"
+                                         class="w-default-2x h-default-2x">
+                                </button>
                             </div>
                         </div>
-                        <button data-testid="login-reveal-btn"
-                                class="reveal-password mdc-button mdc-button--raised mdc-input-group-append "
-                                type="button">
-                            <i class="glyphicon glyphicon-eye-open "></i>
-                            <span class="sr-only">Toggle Password</span>
-                        </button>
+                        <script>
+                            document.getElementById("password-toggle").onclick = () => {
+                                const pwInput = document.getElementById("password");
+                                if (pwInput.type === "password") {
+                                    pwInput.type = "text";
+                                } else {
+                                    pwInput.type = "password";
+                                }
+                            };
+                        </script>
+
+                        <!--                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn">-->
+                        <!--                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;persistent mdc-text-field-helper-text&#45;&#45;validation-msg text-danger">-->
+                        <!--                                <span th:utext="#{screen.capslock.on}" />-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
                     </section>
 
-                    <section id="authnSourceSection" class="cas-field my-2=3"
+                    <section id="authnSourceSection" class="cas-field form-group my-3"
                              th:if="${availableAuthenticationHandlerNames != null}">
-                        <div class="d-flex">
+                        <div>
                             <div th:if="${availableAuthenticationHandlerNames.size() > 1}"
                                  class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
                                 <div class="mdc-select__anchor"
@@ -140,42 +175,34 @@
                                      aria-expanded="false">
                                     <span class="mdc-line__ripple"></span>
                                     <span class="mdc-notched-outline">
-                                  <span class="mdc-notched-outline__leading"></span>
-                                  <span class="mdc-notched-outline__notch">
-                                    <span id="outlined-select-label" class="mdc-floating-label"
-                                          th:utext="#{screen.welcome.label.source}">Source</span>
-                                  </span>
-                                  <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span id="outlined-select-label" class="mdc-floating-label"
+                                                  th:utext="#{screen.welcome.label.source}">Source</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
                                     <span class="mdc-select__selected-text-container">
-                                  <span class="mdc-select__selected-text"/>
-                                </span>
-
+                                        <span class="mdc-select__selected-text"/>
+                                    </span>
                                     <span class="mdc-select__dropdown-icon">
-                                  <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
-                                    <polygon
-                                            class="mdc-select__dropdown-icon-inactive"
-                                            stroke="none"
-                                            fill-rule="evenodd"
-                                            points="7 10 12 15 17 10">
-                                    </polygon>
-                                    <polygon
-                                            class="mdc-select__dropdown-icon-active"
-                                            stroke="none"
-                                            fill-rule="evenodd"
-                                            points="7 15 12 10 17 15">
-                                    </polygon>
-                                  </svg>
-                                </span>
+                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                             focusable="false">
+                                            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                     fill-rule="evenodd" points="7 10 12 15 17 10">
+                                            </polygon>
+                                            <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                     fill-rule="evenodd" points="7 15 12 10 17 15">
+                                            </polygon>
+                                        </svg>
+                                    </span>
                                     <span class="mdc-line-ripple"></span>
                                 </div>
 
                                 <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
                                     <ul class="mdc-list" role="listbox">
                                         <li th:each="handler,iter : ${availableAuthenticationHandlerNames}"
-                                            class="mdc-list-item "
-                                            th:id="${handler + '-authnSource'}"
+                                            class="mdc-list-item " th:id="${handler + '-authnSource'}"
                                             th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
                                             th:data-value="${handler}" role="option">
                                             <span class="mdc-list-item__ripple"></span>
@@ -183,68 +210,67 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <input type="hidden"
-                                       id="source"
-                                       th:field="*{source}"
-                                       name="source"/>
+                                <input type="hidden" id="source" th:field="*{source}" name="source"/>
                             </div>
 
                             <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
-                           <input type="hidden"
-                                  id="source"
-                                  name="source"
-                                  th:value="${availableAuthenticationHandlerNames.get(0)}"/>
-                       </span>
+                                <input type="hidden" id="source" name="source"
+                                       th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                            </span>
                         </div>
                     </section>
 
-                    <section class="cas-field my-3">
+                    <section class="cas-field form-group my-3">
                         <div th:each="entry: ${customLoginFormFields}">
-                            <label class="mdc-text-field mdc-text-field--outlined">
-                                <input class="mdc-text-field__input"
-                                       th:id="${entry.key + '-customField'}"
-                                       th:name="${entry.key + '-customField'}"
-                                       size="25"
-                                       type="text"
-                                       th:field="*{customFields[__${entry.key}__]}"
+                            <label class="mdc-text-field mdc-text-field--outlined control-label">
+                                <input class="mdc-text-field__input form-control"
+                                       th:id="${entry.key + '-customField'}" th:name="${entry.key + '-customField'}"
+                                       size="25" type="text" th:field="*{customFields[__${entry.key}__]}"
                                        autocomplete="off"/>
-
                                 <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label"
-                                        th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label"
+                                              th:text="#{${entry.value.messageBundleKey}}">Label</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                              </span>
                             </label>
                         </div>
                     </section>
 
-                    <section class="cas-field"
-                             th:if="${passwordManagementEnabled != null && passwordManagementEnabled && param.doChangePassword != null}">
-                        <p>
-                            <input type="checkbox" name="doChangePassword" id="doChangePassword"
-                                   value="true" th:checked="${param.doChangePassword != null}"/>
-                            <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change
-                                Password</label>
-                        </p>
+                    <section class="cas-field form-check"
+                             th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
+                        <div class="mdc-form-field ">
+                            <!--                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='warn', label='screen.welcome.label.warn')}"/>-->
+                        </div>
+                        <p/>
                     </section>
 
-                    <section class="cas-field" th:if="${rememberMeAuthenticationEnabled}">
-                        <p>
-                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"/>
-                            <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
-                        </p>
+                    <section class="cas-field form-check"
+                             th:if="${'true' == #strings.defaultString(#themes.code('cas.public-workstation.enabled'), 'true')}">
+                        <div class="mdc-form-field ">
+                            <!--                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='publicWorkstation', label='screen.welcome.label.publicstation')}"/>-->
+                        </div>
+                        <p/>
+                    </section>
+
+                    <section class="cas-field form-check" th:if="${rememberMeAuthenticationEnabled}">
+                        <div class="mdc-form-field ">
+                            <!--                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='rememberMe', label='screen.rememberme.checkbox.title')}"/>-->
+                        </div>
+                        <p/>
                     </section>
 
                     <section class="cas-field">
-
-                        <div th:replace="~{fragments/recaptcha :: recaptchaToken}"/>
+                        <span th:if="${recaptchaLoginEnabled}">
+                            <div th:replace="~{fragments/recaptcha :: recaptchaToken}"/>
+                        </span>
 
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
+                        <input type="hidden" name="deviceFingerprint"/>
 
                         <p th:if="${#strings.equalsIgnoreCase(httpRequestMethod, 'POST')}">
                             <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
@@ -253,61 +279,68 @@
                                 </span>
                             </span>
                         </p>
+
+                        <!--                        <script type="text/javascript">-->
+                        <!--                            let client = new ClientJS();-->
+                        <!--                            let fingerprint = client.getFingerprint();-->
+                        <!--                            $('[name="deviceFingerprint"]').val(fingerprint);-->
+                        <!--                        </script>-->
                     </section>
-                    <div data-testid="login-form-login-button-container" class="login-form-login-button-container">
+                    <div data-testid=login-form-login-button-container>
                         <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                     </div>
                 </div>
-
-                <section class="cas-field my-3">
-                    <div data-testid="login-error-msg"
-                         id="loginErrorsPanel"
-                         class="alert alert-danger"
-                         th:if="${#fields.hasErrors('*')}">
-                        <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>-->
-                    </div>
-                </section>
-
             </form>
 
-            <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
-                <hr class="my-4"/>
-                <script th:inline="javascript">
-                    /*<![CDATA[*/
-                    function x509login() {
-                        var url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
-                        url += window.location.search;
-                        window.location.assign(url)
-                    }
+            <div id="selectIdentityProvider"
+                 th:if="${#bools.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
+                <p>
+                <form method="post" id="providerDiscoveryForm">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="discovery"/>
+                    <span class="fa fa-unlock"></span>
+                    <button th:id="selectProviderButton"
+                            class="mdc-button mdc-button--raised"
+                            onclick="$('#providerDiscoveryForm').submit();"
+                            th:value="#{screen.pac4j.button.selectprovider}">
+                        <span class="mdc-button__label" th:text="#{screen.pac4j.button.selectprovider}">Select</span>
+                    </button>
+                </form>
+            </div>
 
-                    /*]]>*/
-                </script>
-                <a class="mdc-button mdc-button--raised"
-                   onclick="javascript:x509login();"
-                   th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+            <div id="x509Login" th:if="${x509ClientAuthLoginEndpointUrl}">
+                <span th:if="${loginFormViewable and loginFormEnabled}">
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        function x509login() {
+                            let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
+                            url += window.location.search;
+                            window.location.assign(url)
+                        }
+
+                        /*]]>*/
+                    </script>
+                    <a id="x509LoginLink" class="mdc-button mdc-button--raised btn btn-primary"
+                       onclick="javascript:x509login();"
+                       th:text="#{screen.welcome.button.loginx509}">X509 Login</a>
+                </span>
             </div>
 
             <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
-                    <script type="text/javascript">
-                        $("#fm1 #username").on("input", function () {
-                            let user = $("#fm1 #username").val();
-                            if (user !== '') {
-                                $('#webauthnLoginPanel').show();
-                            } else {
-                                $('#webauthnLoginPanel').hide();
-                            }
-                        });
-                    </script>
+                <script type="text/javascript">
+                    $('#webauthnLoginPanel').show();
+                </script>
 
-                    <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin}"/>
-                    <hr class="my-4"/>
+                <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin}"/>
+            </span>
+
+
+            <div th:if="${loginFormViewable and loginFormEnabled}">
+                <span th:remove="tag"
+                      th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
+                    <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
-
-                <div th:if="${loginFormViewable and loginFormEnabled}">
-                    <div th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}"
-                         th:replace="~{fragments/pmlinks :: pmlinks}"/>
-                </div>
+            </div>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
@@ -326,10 +359,9 @@
                     });
                 });
             </script>
-
         </div>
-    </div>
     </div>
 </main>
 </body>
+
 </html>

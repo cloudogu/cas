@@ -4,6 +4,11 @@ Below you will find the release notes for CAS-Dogu.
 
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## Release 7.0.5.1-2
+
+- The design of the Dogus has been redesigned to match our new theme
+    - This new design is completely whitelabelable in combination with the whitelabeling-Dogu and the new version of Nginx (>=v1.26.1-5).
+  
 ## Release 7.0.5.1-1
 
 - The Dogu now offers the CAS version 7.0.5.1. The release notes of CAS can be found [in the CAS Github releases](https://github.com/apereo/cas/releases/tag/v7.0.5.1).

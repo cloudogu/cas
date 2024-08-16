@@ -44,7 +44,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 FROM registry.cloudogu.com/official/java:21.0.4-1
 
 LABEL NAME="official/cas" \
-      VERSION="7.0.5.1-1" \
+      VERSION="7.0.5.1-2" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
@@ -103,7 +103,7 @@ RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 # expose tomcat port
 EXPOSE 8080
 
-HEALTHCHECK CMD doguctl healthy cas || exit 1
+HEALTHCHECK --interval=5s CMD doguctl healthy cas || exit 1
 
 USER cas
 
