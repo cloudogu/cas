@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [v7.0.5.1-3] - 2024-08-16
-### Changed
-- Change design of login mask to be more flexible
+### Fixed
+- Fix design of login mask to be more flexible
 
 ## [v7.0.5.1-2] - 2024-08-15
 ### Changed
