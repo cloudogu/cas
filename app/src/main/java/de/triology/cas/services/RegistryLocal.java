@@ -217,30 +217,28 @@ public class RegistryLocal implements Registry{
 
     @Override
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
-        Thread t1 = new Thread(() -> watcher(doguChangeListener));
-        t1.start();
-    }
-
-    private void watcher(DoguChangeListener doguChangeListener) {
-        var path = Paths.get(LOCAL_CONFIG_DIR);
-        try(WatchService watchService = fileSystem.newWatchService()) {
-            path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-            var previousServiceAccounts = readServiceAccounts();
-            while (true) {
-                LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
-                watchService.take();
-                var currentServiceAccounts = readServiceAccounts();
-                if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
-                    doguChangeListener.onChange();
-                    previousServiceAccounts = currentServiceAccounts;
+        Thread t1 = new Thread(() -> {
+            var path = Paths.get(LOCAL_CONFIG_DIR);
+            try(WatchService watchService = fileSystem.newWatchService()) {
+                path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
+                var previousServiceAccounts = readServiceAccounts();
+                while (true) {
+                    LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
+                    watchService.take();
+                    var currentServiceAccounts = readServiceAccounts();
+                    if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
+                        doguChangeListener.onChange();
+                        previousServiceAccounts = currentServiceAccounts;
+                    }
                 }
+            } catch (IOException e) {
+                throw new RegistryException("Failed to addDoguChangeListener", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RegistryException("Failed to addDoguChangeListener", e);
             }
-        } catch (IOException e) {
-            throw new RegistryException("Failed to addDoguChangeListener", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RegistryException("Failed to addDoguChangeListener", e);
-        }
+        });
+        t1.start();
     }
 
     private static <T> T readYaml(Class<T> tClass, InputStream yamlStream){
