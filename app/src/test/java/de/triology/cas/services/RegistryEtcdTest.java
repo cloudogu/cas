@@ -8,23 +8,29 @@ import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.requests.EtcdKeyGetRequest;
+import mousio.etcd4j.responses.EtcdAuthenticationException;
+import mousio.etcd4j.responses.EtcdException;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.hamcrest.MatcherAssert;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatchers;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.*;
-import org.hamcrest.MatcherAssert;
+import static org.hamcrest.Matchers.isA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +41,9 @@ public class RegistryEtcdTest {
 
     private static final String OAUTH_CLIENT_PORTAINER_SECRET = "cdf022a1583367cf3fd6795be0eef0c8ce6f764143fcd9d851934750b0f4f39f";
     private static final String OIDC_CLIENT_CAS_OIDC_SECRET = "834251c84c1b88ce39351d888ee04df91e89785a28dbd86244e0e22c9d27b41f";
+
+    @Rule
+    public ExpectedException exceptionGrabber = ExpectedException.none();
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(
@@ -50,7 +59,7 @@ public class RegistryEtcdTest {
     }
 
     @Test
-    public void getDogus() {
+    public void getDogusWithGetInstalledCasServiceAccountsOfType() {
         RegistryEtcd registry = createRegistry();
         var factory = new CesDoguServiceFactory();
         List<String> installedDogus = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, factory)
@@ -62,8 +71,53 @@ public class RegistryEtcdTest {
         assertTrue(installedDogus.contains("scm"));
         assertTrue(installedDogus.contains("cas-oidc-client"));
         assertTrue(installedDogus.contains("cockpit"));
-        assertTrue(registry.getInstalledDogusWhichAreUsingCAS(factory).size() >= 7);
     }
+
+    @Test
+    public void getDogusWithGetInstalledDogusWhichAreUsingCAS() {
+        RegistryEtcd registry = createRegistry();
+        var factory = new CesDoguServiceFactory();
+        List<String> installedDogus = registry.getInstalledDogusWhichAreUsingCAS(factory)
+                .stream().map(CesServiceData::getName).toList();
+        assertTrue(installedDogus.contains("redmine"));
+        assertTrue(installedDogus.contains("usermgt"));
+        assertTrue(installedDogus.contains("nexus"));
+        assertTrue(installedDogus.contains("portainer"));
+        assertTrue(installedDogus.contains("scm"));
+        assertTrue(installedDogus.contains("cas-oidc-client"));
+        assertTrue(installedDogus.contains("cockpit"));
+    }
+
+    @Test
+    public void getInstalledCasServiceAccountsOfTypeFailsWhenEtcdError() throws EtcdAuthenticationException, IOException, EtcdException, TimeoutException {
+        var registry = mock(RegistryEtcd.class);
+        var serviceFactory = new CesDoguServiceFactory();
+
+        when(registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory)).thenCallRealMethod();
+        when(registry.getEtcdNodesForServiceAccountType("cas")).thenThrow(EtcdException.class);
+
+        exceptionGrabber.expect(RegistryException.class);
+        exceptionGrabber.expectMessage("Failed to getInstalledCasServiceAccountsOfType: cas");
+        exceptionGrabber.expectCause(isA(EtcdException.class));
+
+        registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory);
+    }
+
+    @Test
+    public void getInstalledCasServiceAccountsOfTypeFailsWhenFileNotFound() throws EtcdAuthenticationException, IOException, EtcdException, TimeoutException {
+        var registry = mock(RegistryEtcd.class);
+        var serviceFactory = new CesDoguServiceFactory();
+
+        when(registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory)).thenCallRealMethod();
+        when(registry.getEtcdNodesForServiceAccountType("cas")).thenThrow(IOException.class);
+
+        exceptionGrabber.expect(RegistryException.class);
+        exceptionGrabber.expectMessage("Failed to getInstalledCasServiceAccountsOfType: cas");
+        exceptionGrabber.expectCause(isA(IOException.class));
+
+        registry.getInstalledCasServiceAccountsOfType("cas", serviceFactory);
+    }
+
 
     private RegistryEtcd createRegistry() {
         URI uri = URI.create("http://localhost:" + wireMockRule.port());
@@ -228,7 +282,8 @@ public class RegistryEtcdTest {
                 if (dogus.contains("dogu")) {
                     try {
                         when(request.send()).thenThrow(new IOException("second call"));
-                    } catch (IOException ignore) {}
+                    } catch (IOException ignore) {
+                    }
                 }
                 dogus.add("dogu");
                 dogus.notify();
@@ -286,5 +341,13 @@ public class RegistryEtcdTest {
             assertEquals(OAUTH_CLIENT_PORTAINER_SECRET, e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH));
             assertEquals("portainer", e.getAttributes().get(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID));
         });
+    }
+
+    @Test
+    public void getCurrentDoguNode_UnknownDogu() throws ParseException {
+        RegistryEtcd registry = createRegistry();
+        JSONObject test = registry.getCurrentDoguNode("usermgt");
+        assertEquals(test.get("DisplayName"), "User Management");
+        assertEquals(test.get("Image"), "registry.cloudogu.com/official/usermgt");
     }
 }

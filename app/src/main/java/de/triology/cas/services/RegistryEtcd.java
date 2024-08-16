@@ -33,9 +33,8 @@ import java.util.concurrent.TimeoutException;
 class RegistryEtcd implements Registry {
     private static final JSONParser PARSER = new JSONParser();
     private static final String DOGU_DIR = "/dogu";
-    private final EtcdClient etcd;
-
     private static final String CAS_SERVICE_ACCOUNT_DIR = "/config/cas/service_accounts";
+    private final EtcdClient etcd;
 
     /**
      * Creates a etcd client that loads its URI from <code>/etc/ces/node_master</code>.
@@ -50,20 +49,24 @@ class RegistryEtcd implements Registry {
     public List<CesServiceData> getInstalledCasServiceAccountsOfType(String type, CesServiceFactory factory) {
         LOGGER.debug("Get [{}] service accounts from registry", type);
         try {
-            if (Registry.SERVICE_ACCOUNT_TYPE_CAS.equals(type)) {
-                return getInstalledDogusWhichAreUsingCAS(factory);
-            }
-
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
+            List<EtcdKeysResponse.EtcdNode> nodes = getEtcdNodesForServiceAccountType(type);
             return extractServiceAccountClientsByType(nodes, type, factory);
         } catch (EtcdException e) {
             if (e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
                 return new ArrayList<>();
             } else {
-                throw new RegistryException("Failed to getInstalledCasServiceAccountsOfType: ", e);
+                throw new RegistryException("Failed to getInstalledCasServiceAccountsOfType: " + type, e);
             }
         } catch (IOException | EtcdAuthenticationException | TimeoutException e) {
-            throw new RegistryException("Failed to getInstalledCasServiceAccountsOfType: ", e);
+            throw new RegistryException("Failed to getInstalledCasServiceAccountsOfType: " + type, e);
+        }
+    }
+
+    List<EtcdKeysResponse.EtcdNode> getEtcdNodesForServiceAccountType(String type) throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException {
+        if (Registry.SERVICE_ACCOUNT_TYPE_CAS.equals(type)) {
+            return etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
+        } else {
+            return etcd.getDir(String.format("%s/%s", CAS_SERVICE_ACCOUNT_DIR, type)).send().get().getNode().getNodes();
         }
     }
 
@@ -98,34 +101,8 @@ class RegistryEtcd implements Registry {
         return serviceDataList;
     }
 
-    private List<CesServiceData> extractDogusFromDoguRootDir(List<EtcdKeysResponse.EtcdNode> nodesFromEtcd, CesServiceFactory factory) {
-        LOGGER.debug("Entered extractDogusFromDoguRootDir");
-        List<CesServiceData> doguServices = new ArrayList<>();
-        for (EtcdKeysResponse.EtcdNode dogu : nodesFromEtcd) {
-            JSONObject json;
-            try {
-                var doguName = dogu.getKey().substring(DOGU_DIR.length() + 1);
-                json = getCurrentDoguNode(doguName);
-                if (hasCasDependency(json)) {
-                    doguServices.add(new CesServiceData(doguName, factory));
-                }
-            } catch (ParseException ex) {
-                throw new RuntimeException("failed to parse EtcdNode to json: ", ex);
-            } catch (RegistryException ex) {
-                throw new RuntimeException("registry exception occurred: ", ex);
-            }
-        }
-        return doguServices;
-    }
-
     public List<CesServiceData> getInstalledDogusWhichAreUsingCAS(CesServiceFactory factory) {
-        LOGGER.debug("Get Dogus from registry");
-        try {
-            List<EtcdKeysResponse.EtcdNode> nodes = etcd.getDir(DOGU_DIR).send().get().getNode().getNodes();
-            return extractDogusFromDoguRootDir(nodes, factory);
-        } catch (IOException | EtcdException | EtcdAuthenticationException | TimeoutException e) {
-            throw new RegistryException("Failed to getInstalledDogusWhichAreUsingCAS: ", e);
-        }
+        return getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, factory);
     }
 
     @Override
