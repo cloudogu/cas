@@ -1659,12 +1659,16 @@ legend {
     height: calc(100% + 4rem);
   }
 
-  .cas-desktop\:w-\[784px\] {
-    width: 784px;
-  }
-
   .cas-desktop\:w-\[calc\(100\%\+2px\)\] {
     width: calc(100% + 2px);
+  }
+
+  .cas-desktop\:min-w-\[784px\] {
+    min-width: 784px;
+  }
+
+  .cas-desktop\:max-w-\[70vw\] {
+    max-width: 70vw;
   }
 
   .cas-desktop\:grid-cols-\[repeat\(3\2c max-content\)\] {
