@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.5.1-5] - 2024-08-20
+### Fixed
+- Add missing data-testid to logout error messages [#203]
+- Add missing translations
+
 ## [v7.0.5.1-4] - 2024-08-20
 ### Changed
 - In a single-node EcoSystem (Classic-CES):
