@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.0.5.1-4] - 2024-08-20
 ### Changed
 - In a single-node EcoSystem (Classic-CES):
   - Use explicit service accounts for normal CAS service accounts _in addition to_ implicitly reading dependencies. (#197)
