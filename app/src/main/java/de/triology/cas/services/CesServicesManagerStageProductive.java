@@ -86,14 +86,18 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
      */
     private void synchronizeServicesWithRegistry() {
         LOGGER.debug("Synchronize services with registry");
-        List<CesServiceData> newServices = new ArrayList<>(persistentServices);
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory));
-        newServices.addAll(registry.getInstalledCasServiceAccountsOfType(RegistryEtcd.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory));
-        List<String> serviceAccountServices = newServices.stream().map(CesServiceData::getName).collect(Collectors.toList());
 
-        List<CesServiceData> doguServices = registry.getInstalledDogusWhichAreUsingCAS(doguServiceFactory);
-        newServices.addAll(doguServices.stream().filter(service -> !serviceAccountServices.contains(service.getName())).collect(Collectors.toList()));
-        synchronizeServices(newServices);
+        var casServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_CAS, doguServiceFactory);
+        var oauthServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OAUTH, oAuthServiceFactory);
+        var oidcServices = registry.getInstalledCasServiceAccountsOfType(Registry.SERVICE_ACCOUNT_TYPE_OIDC, oidcServiceFactory);
+
+        // use map to filter duplicates
+        var newServices = persistentServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v));
+        newServices.putAll(casServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(oauthServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+        newServices.putAll(oidcServices.stream().collect(Collectors.toMap(CesServiceData::getName, v -> v)));
+
+        synchronizeServices(newServices.values().stream().toList());
         LOGGER.info("Loaded {} services:", registeredServices.size());
         registeredServices.values().forEach(e -> LOGGER.debug("[{}]", e));
     }
@@ -104,7 +108,7 @@ class CesServicesManagerStageProductive extends CesServicesManagerStage {
     private void registerChangeListener() {
         LOGGER.debug("Entered registerChangeListener");
         registry.addDoguChangeListener(() -> {
-            LOGGER.debug("Registered change in /dogu");
+            LOGGER.debug("Registered change in dogu service accounts");
             synchronizeServicesWithRegistry();
         });
     }

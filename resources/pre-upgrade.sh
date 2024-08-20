@@ -102,7 +102,7 @@ runPreUpgrade() {
   fi
 
   echo "Set registry flag so startup script waits for post-upgrade to finish..."
-  doguctl state "upgrading"
+  doguctl config "local_state" "upgrading"
 
   echo "CAS pre-upgrade done"
 }

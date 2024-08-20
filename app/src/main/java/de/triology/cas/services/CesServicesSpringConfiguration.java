@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,10 +49,6 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
         return factory.createDefaultClient();
     }
 
-    public RegistryEtcd createDoguRegistry(EtcdClient etcdClient) {
-        return new RegistryEtcd(etcdClient);
-    }
-
     @Bean(name = ServicesManager.BEAN_NAME)
     public ChainingServicesManager servicesManager() {
         DefaultChainingServicesManager chain = new DefaultChainingServicesManager();
@@ -64,13 +63,43 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
 
     @Override
     public ServicesManager configureServicesManager() {
-        EtcdClient etcdClient = createEtcdClient();
-        RegistryEtcd doguRegistry = createDoguRegistry(etcdClient);
+        Registry registry;
+        if (isMultinode()) {
+            registry = new RegistryLocal();
+        } else {
+            EtcdClient etcdClient = createEtcdClient();
+            registry = new RegistryEtcd(etcdClient);
+        }
 
         LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
         Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
         var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
-        return new CesServicesManager(managerConfig, doguRegistry);
+        return new CesServicesManager(managerConfig, registry);
+    }
+
+    private static boolean isMultinode() {
+        ProcessBuilder pb = new ProcessBuilder("/usr/bin/doguctl", "multinode");
+        String result;
+        try {
+            Process process = pb.start();
+            process.waitFor();
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ( (line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            result = builder.toString();
+        } catch (IOException e) {
+            LOGGER.error("failed to check if environment is multinode", e);
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            LOGGER.error("failed to check if environment is multinode", e);
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+        return "true".equals(result);
     }
 
     /**
