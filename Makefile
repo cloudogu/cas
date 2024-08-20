@@ -6,7 +6,7 @@ include build/make/variables.mk
 include build/make/self-update.mk
 include build/make/release.mk
 include build/make/k8s-dogu.mk
-include bats.mk
+include build/make/bats.mk
 
 NPM_REGISTRY_RELEASE=ecosystem.cloudogu.com/nexus/repository/npm-releases/
 NPM_URL_RELEASE=https://${NPM_REGISTRY_RELEASE}

@@ -12,7 +12,7 @@ function exitOnErrorWithMessage() {
   errorMessage=${2}
   waitBeforeRestart=300
   echo -e "ERROR: ${errorMessage}. Exiting in ${waitBeforeRestart} seconds..."
-  doguctl state "${errorState}"
+  doguctl config "local_state" "${errorState}"
   sleep "${waitBeforeRestart}"
   exit 2
 }

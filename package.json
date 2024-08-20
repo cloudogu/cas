@@ -1,6 +1,6 @@
 {
   "name": "ces-style-generator",
-  "version": "7.0.5.1-3",
+  "version": "7.0.5.1-4",
   "description": "Npm project to use ces-theme to generate styling",
   "main": "index.js",
   "directories": {
