@@ -65,7 +65,7 @@
                         </script>
                     </h1>
 
-                    <div id="loginErrorsPanel" class="text-danger"
+                    <div id="loginErrorsPanel" class="text-danger" data-testid="login-error-msg"
                          th:if="${#fields.hasErrors('*')}" role="alert">
                         <p th:each="err : ${#fields.errors('*')}">
                             <strong th:utext="${err + ' '}"></strong>
