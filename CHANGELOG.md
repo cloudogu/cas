@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.5.1-6] - 2024-08-27
+### Fixed
+- The post-upgrade-script would fail in a specific edge-case situation [#207]
+  - Affected System: Cloudogu EcoSystem 'Classic' (Pre-Multinode)
+  - Affected versions: `7.0.5.1-4` and `7.0.5.1-5`
+  - When an OAuth/OIDC-Dogu was installed and then uninstalled, the post-upgrade script would fail during an upgrade from CAS versions below `7.0.5.1-4`.
+  - This means that a directory `/config/cas/service_accounts/<type>` had to exist, but be empty (where `<type>` can be `oauth` or `oidc`).
+  - Additionally prevent similar cases.
+
 ## [v7.0.5.1-5] - 2024-08-20
 ### Fixed
 - Add missing data-testid to logout error messages [#203]
