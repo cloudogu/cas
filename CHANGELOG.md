@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- When a dogu changes its CAS service account type, the old service account does not get deleted. [#209]
-  - This causes problems with e.g. Portainer which swapped from oauth to a plain cas service account.
+- When a dogu changes its CAS service account type, the old service account gets deleted now [#209]
+  - This bug caused problems with e.g. Portainer which swapped from oauth to a plain cas service account.
 
 ## [v7.0.5.1-6] - 2024-08-27
 ### Fixed
