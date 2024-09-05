@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- The pre-upgrade-script would try to access the node_master-file for all migrations [#211]
+- The pre-upgrade-script will no longer try to access the node_master-file for all migrations [#211]
   - The access to the node_master-file has been moved to the migration where it es needed and where the node_master-file was still present. 
 
 ## [v7.0.5.1-6] - 2024-08-27
