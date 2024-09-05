@@ -94,10 +94,10 @@ runPreUpgrade() {
       # This is a workaround because `doguctl -rm` cannot delete folders and the cesapp checks if the path
       # `sa-<servicename> is present. Deleting the sa-ldap/username and sa-ldap/password keys does therefore not work.
 
-      FQDN="$(cat /etc/ces/node_master)"
-      echo "FQDN: ${FQDN}"
+      ETCD_HOST="$(cat /etc/ces/node_master)"
+      echo "ETCD_HOST: ${ETCD_HOST}"
 
-      curl "http://${FQDN}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
+      curl "http://${ETCD_HOST}:4001/v2/keys/config/cas/sa-ldap?recursive=true" -XDELETE
       echo "Service account has been removed successfully."
     fi
   fi
