@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The pre-upgrade-script would try to access the node_master-file for all migrations [#211]
+  - The access to the node_master-file has been moved to the migration where it es needed and where the node_master-file was still present. 
 
 ## [v7.0.5.1-6] - 2024-08-27
 ### Fixed
