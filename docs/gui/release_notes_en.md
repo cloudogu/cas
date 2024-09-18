@@ -4,6 +4,25 @@ Below you will find the release notes for CAS-Dogu.
 
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## Release 7.0.5.1-8
+- Relicense own code to AGPL-3.0-only.
+
+## Release 7.0.5.1-7
+- A Dogu upgrade now works better in Cloudogu EcoSystem multinode instances without etcd
+
+## Release 7.0.5.1-6
+- This release fixes bugs introduced in versions 7.0.5.1-4 and 7.0.5.1-5 that occurred during the Dogu upgrade
+
+## Release 7.0.5.1-5
+- Missing translations were added in this release.
+
+## Release 7.0.5.1-4
+- This release changes the way other Dogus service accounts create against the CAS to ensure smoother operation in Cloudogu EcoSystem multinode instances.
+- Dogu states needed during startup are now held in volumes and no longer in etcd for security reasons.
+
+## Release 7.0.5.1-3
+- Fixes style issues in the login screen
+
 ## Release 7.0.5.1-2
 
 - The design of the Dogus has been redesigned to match our new theme

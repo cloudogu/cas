@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.5.1-8] - 2024-09-18
+### Changed
+- Relicense to AGPL-3.0-only
+
 ## [v7.0.5.1-7] - 2024-09-05
 ### Fixed
 - The pre-upgrade-script will no longer try to access the node_master-file for all migrations [#211]
