@@ -1,4 +1,3 @@
-![Cloudogu logo](https://cloudogu.com/images/logo.png)
 # CAS Dogu
 https://cloudogu.com
 
