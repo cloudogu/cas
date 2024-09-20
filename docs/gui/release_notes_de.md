@@ -4,6 +4,9 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## Release 7.0.5.1-9
+- Die CAS-HTML-Seiten enthalten nun ein "lang"-Attribut um die Barrierefreiheit zu erhöhen.
+
 ## Release 7.0.5.1-8
 - Die Cloudogu-eigenen Quellen werden von der MIT-Lizenz auf die AGPL-3.0-only relizensiert.
 
