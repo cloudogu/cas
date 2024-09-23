@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add "lang"-attribute to HTML-Pages [#213]
+- update CAS to 7.0.8
 
 ## [v7.0.5.1-8] - 2024-09-18
 ### Changed

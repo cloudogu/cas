@@ -4,7 +4,8 @@ Below you will find the release notes for CAS-Dogu.
 
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
-## Release 7.0.5.1-9
+## Release 7.0.8-1
+- The Dogu now offers the CAS version 7.0.8. The release notes of CAS can be found [in the CAS Github releases](https://github.com/apereo/cas/releases/tag/v7.0.8).
 - The CAS HTML pages now contain a “lang” attribute to increase accessibility.
 
 ## Release 7.0.5.1-8
