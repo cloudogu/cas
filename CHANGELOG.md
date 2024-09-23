@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-1] - 2024-09-23
+### Added
+- Add "lang"-attribute to HTML-Pages [#213]
+- update CAS to 7.0.8
+
 ## [v7.0.5.1-8] - 2024-09-18
 ### Changed
 - Relicense to AGPL-3.0-only
