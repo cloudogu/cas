@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class RegistryLocal implements Registry{
+public class RegistryLocal implements Registry {
 
     private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
     private static final String LOCAL_CONFIG_DIR = "/var/ces/config";
@@ -32,11 +32,13 @@ public class RegistryLocal implements Registry{
     protected static class GlobalConfig {
         private String fqdn;
     }
+
     @Getter
     @Setter
     protected static class LocalConfig {
         private ServiceAccounts service_accounts = new ServiceAccounts();
     }
+
     @Getter
     @Setter
     protected static class ServiceAccountSecret {
@@ -48,6 +50,7 @@ public class RegistryLocal implements Registry{
             return stringsEqual(secret, other.secret) && stringsEqual(logout_uri, other.logout_uri);
         }
     }
+
     @Getter
     @Setter
     protected static class ServiceAccountCas {
@@ -217,49 +220,62 @@ public class RegistryLocal implements Registry{
 
     @Override
     public void addDoguChangeListener(DoguChangeListener doguChangeListener) {
-        Thread t1 = new Thread(() -> {
-            var path = Paths.get(LOCAL_CONFIG_DIR);
-            WatchService watchService;
-            try {
-                watchService = fileSystem.newWatchService();
-                registerServiceRegistryWatch(path, watchService);
-                var previousServiceAccounts = readServiceAccounts();
-                WatchKey key;
-                while ((key = watchService.take()) != null) {
-                    if (!key.isValid()) {
-                        LOGGER.info("watch key was cancelled or watch service was closed");
-                        LOGGER.info("try to reregister watch");
-                        watchService = fileSystem.newWatchService();
-                        registerServiceRegistryWatch(path, watchService);
-                    } else {
-                        // We do not care about the events but have to poll here to remove all pending events.
-                        key.pollEvents();
-                        LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
-                        var currentServiceAccounts = readServiceAccounts();
-                        if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
-                            LOGGER.info("services changed. call doguChangeListener");
-                            doguChangeListener.onChange();
-                            previousServiceAccounts = currentServiceAccounts;
-                        }
-                        // Resetting the watchKey is very important. Otherwise, the key returned from take() (or poll()) will not return any more events.
-                        key.reset();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RegistryException("Failed to addDoguChangeListener", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RegistryException("Failed to addDoguChangeListener", e);
-            }
-        });
+        Thread t1 = new Thread(() -> doguChangeListenerThreadHandler(doguChangeListener));
         t1.start();
+    }
+
+    private void doguChangeListenerThreadHandler(DoguChangeListener doguChangeListener) {
+        var path = Paths.get(LOCAL_CONFIG_DIR);
+        WatchService watchService;
+        try {
+            watchService = initializeWatchService(path);
+            var previousServiceAccounts = readServiceAccounts();
+            WatchKey key;
+            LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
+            while ((key = watchService.take()) != null) { // take does not return null
+                if (!key.isValid()) {
+                    LOGGER.info("watch key was cancelled or watch service was closed");
+                    LOGGER.info("try to reregister watch");
+                    watchService = initializeWatchService(path);
+                    continue;
+                }
+
+                // We do not care about the events but have to poll here to remove all pending events.
+                key.pollEvents();
+                var currentServiceAccounts = readServiceAccounts();
+                if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
+                    LOGGER.info("services changed. call doguChangeListener");
+                    doguChangeListener.onChange();
+                    previousServiceAccounts = currentServiceAccounts;
+                }
+
+                // Resetting the watchKey is very important. Otherwise, the key returned from take() (or poll()) will not return any more events.
+                if (!key.reset()) {
+                    LOGGER.info("reset key is no longer valid");
+                    LOGGER.info("try to reregister watch");
+                    watchService = initializeWatchService(path);
+                }
+            }
+        } catch (IOException e) {
+            throw new RegistryException("Failed to addDoguChangeListener", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RegistryException("Failed to addDoguChangeListener", e);
+        }
+    }
+
+    private WatchService initializeWatchService(Path path) throws IOException {
+        WatchService watchService = fileSystem.newWatchService();
+        registerServiceRegistryWatch(path, watchService);
+
+        return watchService;
     }
 
     private void registerServiceRegistryWatch(Path path, WatchService watchService) throws IOException {
         path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
     }
 
-    private static <T> T readYaml(Class<T> tClass, InputStream yamlStream){
+    private static <T> T readYaml(Class<T> tClass, InputStream yamlStream) {
         var yaml = new Yaml(new Constructor(tClass, new LoaderOptions()));
         try {
             T result = yaml.load(yamlStream);
@@ -272,9 +288,9 @@ public class RegistryLocal implements Registry{
         } catch (YAMLException e) {
             throw new RegistryException(String.format("Failed to parse yaml stream to class %s", tClass.getName()), e);
         } catch (InstantiationException |
-                IllegalAccessException |
-                InvocationTargetException |
-                NoSuchMethodException e) {
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RegistryException(String.format("Failed to construct new instance of %s", tClass.getName()), e);
         }
     }

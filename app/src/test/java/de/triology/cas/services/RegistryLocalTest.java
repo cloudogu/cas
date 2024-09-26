@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -457,50 +458,110 @@ public class RegistryLocalTest {
         registry.getFqdn();
     }
 
-//    @Test
-//    public void     ChangeListener() throws IOException, InterruptedException {
-//        Class<? extends WatchService> wsClass;
-//        try (var ws = FileSystems.getDefault().newWatchService()) {
-//            wsClass = ws.getClass();
-//        }
-//        var watchService = mock(wsClass);
-//        when(watchService.take())
-//                .thenReturn(null)
-//                .thenReturn(null)
-//                .thenReturn(null)
-//                .thenThrow(InterruptedException.class); // finish on fourth invocation
-//        var fileSystem = mock(FileSystem.class);
-//        when(fileSystem.newWatchService()).thenReturn(watchService);
-//
-//        var registry = spy(RegistryLocal.class);
-//        registry.fileSystem = fileSystem;
-//        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
-//        var unchangedServiceAccounts1 = new RegistryLocal.ServiceAccounts();
-//        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
-//        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
-//        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
-//        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
-//        doReturn(initialServiceAccounts, // get initial state for comparison
-//                unchangedServiceAccounts1, // no change should be detected
-//                changedServiceAccounts, // detect change
-//                unchangedServiceAccounts2) // no change to previous state
-//                .when(registry).readServiceAccounts();
-//
-//        ArrayList<String> dogus = new ArrayList<>();
-//
-//        registry.addDoguChangeListener(() -> {
-//            synchronized (dogus) {
-//                dogus.add("dogu " + dogus.size());
-//                dogus.notify();
-//            }
-//        });
-//
-//        synchronized (dogus) {
-//            dogus.wait();
-//        }
-//
-//        assertThat(dogus, hasSize(1));
-//    }
+    @Test
+    public void ChangeListener() throws IOException, InterruptedException {
+        var watchKey = mock(WatchKey.class);
+        when(watchKey.isValid())
+                .thenReturn(true);
+        when(watchKey.pollEvents())
+                .thenReturn(null); // The List of events is not interesting because we handle all the same way.
+        when(watchKey.reset())
+                .thenReturn(true);
+        Class<? extends WatchService> wsClass;
+        try (var ws = FileSystems.getDefault().newWatchService()) {
+            wsClass = ws.getClass();
+        }
+        var watchService = mock(wsClass);
+        when(watchService.take())
+                .thenReturn(watchKey)
+                .thenThrow(InterruptedException.class); // finish on fourth invocation
+        var fileSystem = mock(FileSystem.class);
+        when(fileSystem.newWatchService()).thenReturn(watchService);
+
+        var registry = spy(RegistryLocal.class);
+        registry.fileSystem = fileSystem;
+        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
+        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
+        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
+        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        doReturn(initialServiceAccounts, // get initial state for comparison
+                changedServiceAccounts, // detect change
+                unchangedServiceAccounts2) // no change to previous state
+                .when(registry).readServiceAccounts();
+
+        ArrayList<String> dogus = new ArrayList<>();
+
+        registry.addDoguChangeListener(() -> {
+            synchronized (dogus) {
+                dogus.add("dogu " + dogus.size());
+                dogus.notify();
+            }
+        });
+
+        synchronized (dogus) {
+            dogus.wait();
+        }
+
+        assertThat(dogus, hasSize(1));
+    }
+
+    @Test
+    public void ChangeListenerWithReInitialization() throws IOException, InterruptedException {
+        var watchKey = mock(WatchKey.class);
+        when(watchKey.isValid())
+                .thenReturn(false)
+                .thenReturn(true)
+                .thenReturn(true);
+        when(watchKey.pollEvents())
+                .thenReturn(null); // The List of events is not interesting because we handle all the same way.
+        when(watchKey.reset())
+                .thenReturn(false)
+                .thenReturn(true);
+        Class<? extends WatchService> wsClass;
+        try (var ws = FileSystems.getDefault().newWatchService()) {
+            wsClass = ws.getClass();
+        }
+        var watchService = mock(wsClass);
+        when(watchService.take())
+                .thenReturn(watchKey)
+                .thenReturn(watchKey)
+                .thenReturn(watchKey)
+                .thenThrow(InterruptedException.class); // finish on fourth invocation
+        var fileSystem = mock(FileSystem.class);
+        when(fileSystem.newWatchService())
+                .thenReturn(watchService)
+                .thenReturn(watchService)
+                .thenReturn(watchService);
+
+        var registry = spy(RegistryLocal.class);
+        registry.fileSystem = fileSystem;
+        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
+        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
+        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
+        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        doReturn(initialServiceAccounts, // get initial state for comparison
+                initialServiceAccounts, // no change
+                changedServiceAccounts, // detect change
+                unchangedServiceAccounts2) // no change to previous state
+                .when(registry).readServiceAccounts();
+
+        ArrayList<String> dogus = new ArrayList<>();
+
+        registry.addDoguChangeListener(() -> {
+            synchronized (dogus) {
+                dogus.add("dogu " + dogus.size());
+                dogus.notify();
+            }
+        });
+
+        synchronized (dogus) {
+            dogus.wait();
+        }
+
+        assertThat(dogus, hasSize(1));
+    }
 
     @Test
     public void deepEquals() {
