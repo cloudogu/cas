@@ -14,12 +14,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -463,8 +461,10 @@ public class RegistryLocalTest {
         var watchKey = mock(WatchKey.class);
         when(watchKey.isValid())
                 .thenReturn(true);
+        List<WatchEvent<?>> watchEvents = new ArrayList<>();
+        watchEvents.add(new EventMock("local.yaml"));
         when(watchKey.pollEvents())
-                .thenReturn(null); // The List of events is not interesting because we handle all the same way.
+                .thenReturn(watchEvents);
         when(watchKey.reset())
                 .thenReturn(true);
         Class<? extends WatchService> wsClass;
@@ -513,8 +513,10 @@ public class RegistryLocalTest {
                 .thenReturn(false)
                 .thenReturn(true)
                 .thenReturn(true);
+        List<WatchEvent<?>> watchEvents = new ArrayList<>();
+        watchEvents.add(new EventMock("local.yaml"));
         when(watchKey.pollEvents())
-                .thenReturn(null); // The List of events is not interesting because we handle all the same way.
+                .thenReturn(watchEvents);
         when(watchKey.reset())
                 .thenReturn(false)
                 .thenReturn(true);
@@ -561,6 +563,18 @@ public class RegistryLocalTest {
         }
 
         assertThat(dogus, hasSize(1));
+    }
+
+    private record EventMock(String context) implements WatchEvent<String> {
+        @Override
+        public Kind<String> kind() {
+            return null;
+        }
+
+        @Override
+        public int count() {
+            return 0;
+        }
     }
 
     @Test

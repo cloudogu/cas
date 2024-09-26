@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RegistryLocal implements Registry {
 
-    private static final String LOCAL_CONFIG_FILE = "/var/ces/config/local.yaml";
     private static final String LOCAL_CONFIG_DIR = "/var/ces/config";
+    private static final String LOCAL_CONFIG_SUB_PATH = "/var/ces/config";
+    private static final String LOCAL_CONFIG_FILE_NAME = "local.yaml";
+    private static final String LOCAL_CONFIG_FILE = LOCAL_CONFIG_SUB_PATH + "/" + LOCAL_CONFIG_FILE_NAME;
     private static final String GLOBAL_CONFIG_FILE = "/etc/ces/config/global/config.yaml";
 
     FileSystem fileSystem = FileSystems.getDefault();
@@ -240,8 +242,19 @@ public class RegistryLocal implements Registry {
                     continue;
                 }
 
-                // We do not care about the events but have to poll here to remove all pending events.
-                key.pollEvents();
+                List<WatchEvent<?>> watchEvents = key.pollEvents();
+                boolean serviceAccountRegistryChanged = false;
+                for (WatchEvent<?> event : watchEvents) {
+                    if (event.context().equals(LOCAL_CONFIG_FILE_NAME)) {
+                        serviceAccountRegistryChanged = true;
+                        break;
+                    }
+                }
+
+                if (!serviceAccountRegistryChanged) {
+                    continue;
+                }
+
                 var currentServiceAccounts = readServiceAccounts();
                 if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
                     LOGGER.info("services changed. call doguChangeListener");
