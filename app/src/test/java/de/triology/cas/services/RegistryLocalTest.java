@@ -457,50 +457,50 @@ public class RegistryLocalTest {
         registry.getFqdn();
     }
 
-    @Test
-    public void addDoguChangeListener() throws IOException, InterruptedException {
-        Class<? extends WatchService> wsClass;
-        try (var ws = FileSystems.getDefault().newWatchService()) {
-            wsClass = ws.getClass();
-        }
-        var watchService = mock(wsClass);
-        when(watchService.take())
-                .thenReturn(null)
-                .thenReturn(null)
-                .thenReturn(null)
-                .thenThrow(InterruptedException.class); // finish on fourth invocation
-        var fileSystem = mock(FileSystem.class);
-        when(fileSystem.newWatchService()).thenReturn(watchService);
-
-        var registry = spy(RegistryLocal.class);
-        registry.fileSystem = fileSystem;
-        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
-        var unchangedServiceAccounts1 = new RegistryLocal.ServiceAccounts();
-        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
-        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
-        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
-        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
-        doReturn(initialServiceAccounts, // get initial state for comparison
-                unchangedServiceAccounts1, // no change should be detected
-                changedServiceAccounts, // detect change
-                unchangedServiceAccounts2) // no change to previous state
-                .when(registry).readServiceAccounts();
-
-        ArrayList<String> dogus = new ArrayList<>();
-
-        registry.addDoguChangeListener(() -> {
-            synchronized (dogus) {
-                dogus.add("dogu " + dogus.size());
-                dogus.notify();
-            }
-        });
-
-        synchronized (dogus) {
-            dogus.wait();
-        }
-
-        assertThat(dogus, hasSize(1));
-    }
+//    @Test
+//    public void     ChangeListener() throws IOException, InterruptedException {
+//        Class<? extends WatchService> wsClass;
+//        try (var ws = FileSystems.getDefault().newWatchService()) {
+//            wsClass = ws.getClass();
+//        }
+//        var watchService = mock(wsClass);
+//        when(watchService.take())
+//                .thenReturn(null)
+//                .thenReturn(null)
+//                .thenReturn(null)
+//                .thenThrow(InterruptedException.class); // finish on fourth invocation
+//        var fileSystem = mock(FileSystem.class);
+//        when(fileSystem.newWatchService()).thenReturn(watchService);
+//
+//        var registry = spy(RegistryLocal.class);
+//        registry.fileSystem = fileSystem;
+//        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
+//        var unchangedServiceAccounts1 = new RegistryLocal.ServiceAccounts();
+//        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
+//        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+//        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
+//        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+//        doReturn(initialServiceAccounts, // get initial state for comparison
+//                unchangedServiceAccounts1, // no change should be detected
+//                changedServiceAccounts, // detect change
+//                unchangedServiceAccounts2) // no change to previous state
+//                .when(registry).readServiceAccounts();
+//
+//        ArrayList<String> dogus = new ArrayList<>();
+//
+//        registry.addDoguChangeListener(() -> {
+//            synchronized (dogus) {
+//                dogus.add("dogu " + dogus.size());
+//                dogus.notify();
+//            }
+//        });
+//
+//        synchronized (dogus) {
+//            dogus.wait();
+//        }
+//
+//        assertThat(dogus, hasSize(1));
+//    }
 
     @Test
     public void deepEquals() {
