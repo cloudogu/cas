@@ -251,15 +251,13 @@ public class RegistryLocal implements Registry {
                     }
                 }
 
-                if (!serviceAccountRegistryChanged) {
-                    continue;
-                }
-
-                var currentServiceAccounts = readServiceAccounts();
-                if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
-                    LOGGER.info("services changed. call doguChangeListener");
-                    doguChangeListener.onChange();
-                    previousServiceAccounts = currentServiceAccounts;
+                if (serviceAccountRegistryChanged) {
+                    var currentServiceAccounts = readServiceAccounts();
+                    if (!previousServiceAccounts.deepEquals(currentServiceAccounts)) {
+                        LOGGER.info("services changed. call doguChangeListener");
+                        doguChangeListener.onChange();
+                        previousServiceAccounts = currentServiceAccounts;
+                    }
                 }
 
                 // Resetting the watchKey is very important. Otherwise, the key returned from take() (or poll()) will not return any more events.
