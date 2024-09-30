@@ -541,12 +541,12 @@ public class RegistryLocalTest {
         var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
         var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
         changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
-        var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
-        unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        var unchangedServiceAccounts = new RegistryLocal.ServiceAccounts();
+        unchangedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
         doReturn(initialServiceAccounts, // get initial state for comparison
                 initialServiceAccounts, // no change
                 changedServiceAccounts, // detect change
-                unchangedServiceAccounts2) // no change to previous state
+                unchangedServiceAccounts) // no change to previous state
                 .when(registry).readServiceAccounts();
 
         ArrayList<String> dogus = new ArrayList<>();
