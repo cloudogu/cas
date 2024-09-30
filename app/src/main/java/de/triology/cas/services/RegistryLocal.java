@@ -277,15 +277,10 @@ public class RegistryLocal implements Registry {
 
     private WatchService initializeWatchService(Path path) throws IOException {
         WatchService watchService = fileSystem.newWatchService();
-        registerServiceRegistryWatch(path, watchService);
+        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
 
         return watchService;
     }
-
-    private void registerServiceRegistryWatch(Path path, WatchService watchService) throws IOException {
-        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-    }
-
     private static <T> T readYaml(Class<T> tClass, InputStream yamlStream) {
         var yaml = new Yaml(new Constructor(tClass, new LoaderOptions()));
         try {
