@@ -262,7 +262,7 @@ public class RegistryLocal implements Registry {
 
                 // Resetting the watchKey is very important. Otherwise, the key returned from take() (or poll()) will not return any more events.
                 if (!key.reset()) {
-                    LOGGER.info("reset key is no longer valid");
+                    LOGGER.info("watch key is no longer valid");
                     LOGGER.info("try to reregister watch");
                     watchService = initializeWatchService(path);
                 }
