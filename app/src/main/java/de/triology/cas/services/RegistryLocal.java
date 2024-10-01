@@ -245,7 +245,7 @@ public class RegistryLocal implements Registry {
                 List<WatchEvent<?>> watchEvents = key.pollEvents();
                 boolean serviceAccountRegistryChanged = false;
                 for (WatchEvent<?> event : watchEvents) {
-                    if (event.context().equals(LOCAL_CONFIG_FILE_NAME)) {
+                    if (event.context() != null && event.context().toString().equals(LOCAL_CONFIG_FILE_NAME)) {
                         serviceAccountRegistryChanged = true;
                         break;
                     }
