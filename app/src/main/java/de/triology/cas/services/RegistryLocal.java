@@ -230,15 +230,14 @@ public class RegistryLocal implements Registry {
         var path = Paths.get(LOCAL_CONFIG_DIR);
         WatchService watchService;
         try {
-            watchService = initializeWatchService(path);
+            watchService = initializeWatchService(path, null);
             var previousServiceAccounts = readServiceAccounts();
             WatchKey key;
             LOGGER.info("wait for changes under {}", LOCAL_CONFIG_DIR);
             while ((key = watchService.take()) != null) { // take does not return null
                 if (!key.isValid()) {
                     LOGGER.info("watch key was cancelled or watch service was closed");
-                    LOGGER.info("try to reregister watch");
-                    watchService = initializeWatchService(path);
+                    watchService = initializeWatchService(path, watchService);
                     continue;
                 }
 
@@ -263,8 +262,7 @@ public class RegistryLocal implements Registry {
                 // Resetting the watchKey is very important. Otherwise, the key returned from take() (or poll()) will not return any more events.
                 if (!key.reset()) {
                     LOGGER.info("watch key is no longer valid");
-                    LOGGER.info("try to reregister watch");
-                    watchService = initializeWatchService(path);
+                    watchService = initializeWatchService(path, watchService);
                 }
             }
         } catch (IOException e) {
@@ -275,7 +273,12 @@ public class RegistryLocal implements Registry {
         }
     }
 
-    private WatchService initializeWatchService(Path path) throws IOException {
+    private WatchService initializeWatchService(Path path, WatchService oldWatchService) throws IOException {
+        if (oldWatchService != null) {
+            LOGGER.info("close old watch service");
+            oldWatchService.close();
+        }
+        LOGGER.info("initialize watch service");
         WatchService watchService = fileSystem.newWatchService();
         path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
 
