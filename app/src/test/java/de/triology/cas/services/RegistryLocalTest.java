@@ -14,11 +14,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -458,16 +457,23 @@ public class RegistryLocalTest {
     }
 
     @Test
-    public void addDoguChangeListener() throws IOException, InterruptedException {
+    public void ChangeListener() throws IOException, InterruptedException {
+        var watchKey = mock(WatchKey.class);
+        when(watchKey.isValid())
+                .thenReturn(true);
+        List<WatchEvent<?>> watchEvents = new ArrayList<>();
+        watchEvents.add(new EventMock("local.yaml"));
+        when(watchKey.pollEvents())
+                .thenReturn(watchEvents);
+        when(watchKey.reset())
+                .thenReturn(true);
         Class<? extends WatchService> wsClass;
         try (var ws = FileSystems.getDefault().newWatchService()) {
             wsClass = ws.getClass();
         }
         var watchService = mock(wsClass);
         when(watchService.take())
-                .thenReturn(null)
-                .thenReturn(null)
-                .thenReturn(null)
+                .thenReturn(watchKey)
                 .thenThrow(InterruptedException.class); // finish on fourth invocation
         var fileSystem = mock(FileSystem.class);
         when(fileSystem.newWatchService()).thenReturn(watchService);
@@ -475,13 +481,11 @@ public class RegistryLocalTest {
         var registry = spy(RegistryLocal.class);
         registry.fileSystem = fileSystem;
         var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
-        var unchangedServiceAccounts1 = new RegistryLocal.ServiceAccounts();
         var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
         changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
         var unchangedServiceAccounts2 = new RegistryLocal.ServiceAccounts();
         unchangedServiceAccounts2.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
         doReturn(initialServiceAccounts, // get initial state for comparison
-                unchangedServiceAccounts1, // no change should be detected
                 changedServiceAccounts, // detect change
                 unchangedServiceAccounts2) // no change to previous state
                 .when(registry).readServiceAccounts();
@@ -500,6 +504,77 @@ public class RegistryLocalTest {
         }
 
         assertThat(dogus, hasSize(1));
+    }
+
+    @Test
+    public void ChangeListenerWithReInitialization() throws IOException, InterruptedException {
+        var watchKey = mock(WatchKey.class);
+        when(watchKey.isValid())
+                .thenReturn(false)
+                .thenReturn(true)
+                .thenReturn(true);
+        List<WatchEvent<?>> watchEvents = new ArrayList<>();
+        watchEvents.add(new EventMock("local.yaml"));
+        when(watchKey.pollEvents())
+                .thenReturn(watchEvents);
+        when(watchKey.reset())
+                .thenReturn(false)
+                .thenReturn(true);
+        Class<? extends WatchService> wsClass;
+        try (var ws = FileSystems.getDefault().newWatchService()) {
+            wsClass = ws.getClass();
+        }
+        var watchService = mock(wsClass);
+        when(watchService.take())
+                .thenReturn(watchKey)
+                .thenReturn(watchKey)
+                .thenReturn(watchKey)
+                .thenThrow(InterruptedException.class); // finish on fourth invocation
+        var fileSystem = mock(FileSystem.class);
+        when(fileSystem.newWatchService())
+                .thenReturn(watchService)
+                .thenReturn(watchService)
+                .thenReturn(watchService);
+
+        var registry = spy(RegistryLocal.class);
+        registry.fileSystem = fileSystem;
+        var initialServiceAccounts = new RegistryLocal.ServiceAccounts();
+        var changedServiceAccounts = new RegistryLocal.ServiceAccounts();
+        changedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        var unchangedServiceAccounts = new RegistryLocal.ServiceAccounts();
+        unchangedServiceAccounts.setCas(Map.of("usermgt", new RegistryLocal.ServiceAccountCas()));
+        doReturn(initialServiceAccounts, // get initial state for comparison
+                initialServiceAccounts, // no change
+                changedServiceAccounts, // detect change
+                unchangedServiceAccounts) // no change to previous state
+                .when(registry).readServiceAccounts();
+
+        ArrayList<String> dogus = new ArrayList<>();
+
+        registry.addDoguChangeListener(() -> {
+            synchronized (dogus) {
+                dogus.add("dogu " + dogus.size());
+                dogus.notify();
+            }
+        });
+
+        synchronized (dogus) {
+            dogus.wait();
+        }
+
+        assertThat(dogus, hasSize(1));
+    }
+
+    private record EventMock(String context) implements WatchEvent<String> {
+        @Override
+        public Kind<String> kind() {
+            return null;
+        }
+
+        @Override
+        public int count() {
+            return 0;
+        }
     }
 
     @Test
