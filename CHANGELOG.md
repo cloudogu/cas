@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Include nested attributes of OAuth user profile as flat structure as well. [#219]
+- Use flat instead of nested attributes for OAuth user profile. [#219]
 ### Fixed
 - OIDC- and OAuth-Dogus which relied on a flat OAuth user profile structure were unable to parse the user profile. [#219]
 
