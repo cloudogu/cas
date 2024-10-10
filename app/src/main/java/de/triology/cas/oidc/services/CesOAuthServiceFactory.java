@@ -5,6 +5,7 @@ import de.triology.cas.services.dogu.CesDoguServiceFactory;
 import de.triology.cas.services.dogu.CesServiceCreationException;
 import de.triology.cas.services.dogu.CesServiceFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
@@ -62,6 +63,7 @@ public class CesOAuthServiceFactory<T extends OAuthRegisteredService> implements
         service.setClientId(clientID);
         service.setClientSecret(clientSecretHash);
         service.setBypassApprovalPrompt(true);
+        service.setUserProfileViewType(OAuthCoreProperties.UserProfileViewTypes.FLAT);
 
         String clientSecretObfuscated = clientSecretHash.substring(0, 5) + "****" + clientSecretHash.substring(clientSecretHash.length() - 5);
         LOGGER.debug("Created Service: N:{} - ID:{} - SecHash:{} - SID:{}", name, clientID, clientSecretObfuscated, serviceID);

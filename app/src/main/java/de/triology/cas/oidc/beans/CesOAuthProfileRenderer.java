@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,22 +26,19 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
     String modelAttributesGroup = "groups";
 
     @Override
-    public ResponseEntity render(Map<String, Object> model, OAuth20AccessToken accessToken, HttpServletResponse response) {
+    public ResponseEntity<String> render(Map<String, Object> model, OAuth20AccessToken accessToken, HttpServletResponse response) {
         LOGGER.debug("Using custom profile renderer {}", model);
-        val userProfile = getRenderedUserProfile(model, accessToken, response);
-        return renderProfileForModel(userProfile, accessToken, response);
+        val userProfile = getRenderedUserProfile(model);
+        return renderProfileForModel(userProfile);
     }
 
     /**
      * Render profile for model.
      *
      * @param userProfile the user profile
-     * @param accessToken the access token
-     * @param response    the response
      * @return the string
      */
-    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
-                                                   final OAuth20AccessToken accessToken, final HttpServletResponse response) {
+    protected ResponseEntity<String> renderProfileForModel(final Map<String, Object> userProfile) {
         val json = OAuth20Utils.toJson(userProfile);
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
@@ -51,35 +47,22 @@ public class CesOAuthProfileRenderer implements OAuth20UserProfileViewRenderer {
      * Gets rendered user profile.
      *
      * @param model       the model
-     * @param accessToken the access token
-     * @param response    the response
      * @return the rendered user profile
      */
-    protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
-                                                         final OAuth20AccessToken accessToken,
-                                                         final HttpServletResponse response) {
+    protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model) {
         LOGGER.debug("Before - Profile: {}", model);
-        val customModel = new LinkedHashMap<String, Object>();
-
-        // Add all entries other than the attributes
-        model.keySet()
-                .stream()
-                .filter(k -> !k.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
-                .forEach(k -> customModel.put(k, model.get(k)));
+        val customModel = new LinkedHashMap<>(model);
 
         if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
-            Map<String, Object> attributes = (Map<String, Object>) model.get(MODEL_ATTRIBUTE_ATTRIBUTES);
+            val attributes = (Map<String, Object>) customModel.get(MODEL_ATTRIBUTE_ATTRIBUTES);
 
-            LinkedList<String> newGroups = new LinkedList<>();
-            if (attributes.containsKey(modelAttributesGroup)) {
-                Object groupsObject = attributes.get(modelAttributesGroup);
-                LOGGER.debug("Class of object: {}", groupsObject);
-                List<String> groups = (List<String>) groupsObject;
-                groups.forEach(o -> newGroups.add(o));
+            if (!attributes.containsKey(modelAttributesGroup)) {
+                attributes.put(modelAttributesGroup, List.of());
             }
-            attributes.put(modelAttributesGroup, newGroups);
-            customModel.put(MODEL_ATTRIBUTE_ATTRIBUTES, attributes);
+
+            customModel.putAll(attributes);
         }
+
         LOGGER.debug("After - Profile: {}", customModel);
         return customModel;
     }

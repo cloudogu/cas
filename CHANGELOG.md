@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Use flat instead of nested attributes for OAuth user profile. [#219]
+### Fixed
+- OIDC- and OAuth-Dogus which relied on a flat OAuth user profile structure were unable to parse the user profile. [#219]
 
 ## [v7.0.8-2] - 2024-10-02
 ### Fixed
