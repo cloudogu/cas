@@ -4,6 +4,9 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## Release 7.0.8-3
+Es wurde eine Anpassung gemacht, welche die Kompatibilität für Dogus erweitert, welche Open ID Connect nutzen.
+
 ## Release 7.0.8-2
 Es wurde ein technischer Fehler behoben der in Multinode-Umgebungen verhindert hat, dass Dogus mit Service-Accounts `cas` erreichbar sind.
 
