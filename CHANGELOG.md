@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-3] - 2024-10-11
+### Changed
+- Use flat instead of nested attributes for OAuth user profile. [#219]
+### Fixed
+- OIDC- and OAuth-Dogus which relied on a flat OAuth user profile structure were unable to parse the user profile. [#219]
+
 ## [v7.0.8-2] - 2024-10-02
 ### Fixed
 - Fix a bug where the watch for service accounts in the config `local.yaml` stucks because the events wasn't resetted and polled [#217]
