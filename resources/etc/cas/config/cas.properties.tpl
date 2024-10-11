@@ -272,3 +272,8 @@ cas.authn.oauth.code.numberOfUses=1
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 ########################################################################################################################
+
+{{ if eq (.GlobalConfig.GetOrDefault "stage" "production") "development"}}
+cas.http-web-request.cors.enabled=true
+cas.http-web-request.cors.allow-origin-patterns=*
+{{ end }}
