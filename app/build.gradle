@@ -159,6 +159,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-throttle"
     implementation "org.apereo.cas:cas-server-support-throttle-core"
 
+    implementation "org.apereo.cas:cas-server-support-json-service-registry"
 
     implementation 'org.mousio:etcd4j:2.18.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'

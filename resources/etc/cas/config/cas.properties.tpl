@@ -272,3 +272,10 @@ cas.authn.oauth.code.numberOfUses=1
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 ########################################################################################################################
+
+
+########################################################################################################################
+# JSON Registry
+cas.service-registry.json.location={{if eq (.GlobalConfig.GetOrDefault "stage" "production") "production"}}file:/etc/cas/services/production{{else}}file:/etc/cas/services/development{{end}}
+cas.service-registry.json.watcher-enabled=true
+cas.service-registry.templates.directory.location=file:/etc/cas/services/templates
