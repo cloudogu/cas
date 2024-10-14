@@ -3,6 +3,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Defines the path to store service definitions
+SERVICE_REGISTRY="etc/cas/services/production"
+
 # This function prints an error to the console and waits 5 minutes before exiting the process.
 # Requires two arguments:
 # 1 - Error state
@@ -161,4 +164,43 @@ function configureCAS() {
 
   renderCASPropertiesTpl
   renderCustomMessagesTpl
+}
+
+# Function to find the next serviceID from JSON filenames in the service registry
+find_next_serviceID() {
+    local dir="$1"
+
+    # Initialize max_number as 0
+    local max_number=0
+
+    # Loop through all JSON files in the directory
+    for file in $dir/*.json; do
+        # Check if the folder contains any JSON files
+        if [[ -f "$file" ]]; then
+            # Extract the number from the filename using regex (ignores prefix and extracts numbers)
+            local number=$(echo "$file" | awk -F'[-.]' '{print $(NF-1)}')
+
+            # Update max_number if the extracted number is greater
+            if [[ $number -gt $max_number ]]; then
+                max_number=$number
+            fi
+        fi
+    done
+
+    # If no files were found, start with 1, otherwise increment the max_number
+    local next_number=$((max_number + 1))
+
+    # Return the next number
+    echo "$next_number"
+}
+
+# Function to double-escape dots in the FQDN to use it within a regex of the service registry
+escape_dots() {
+    local fqdn="$1"
+
+    # Use parameter substitution to replace each '.' with '\\.'
+    local escaped_fqdn="${fqdn//./\\\\\\\\.}"
+
+    # Return the double-escaped FQDN
+    echo "$escaped_fqdn"
 }
