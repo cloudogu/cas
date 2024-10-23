@@ -1,0 +1,7 @@
+{
+  "@class" : "${ServiceClass}",
+  "templateName": "DefaultOAuthService",
+  "bypassApprovalPrompt": true,
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
+}

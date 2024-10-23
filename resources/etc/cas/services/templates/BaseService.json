@@ -1,0 +1,7 @@
+{
+  "@class" : "${ServiceClass}",
+  "templateName": "BaseService",
+  "name" : "${ServiceName}",
+  "serviceId" : "^https://((?i)${Fqdn})(:443)?/${ServiceName}(/.*)?",
+  "logoutType" : "BACK_CHANNEL"
+}
