@@ -3,8 +3,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+source util.sh
+
 if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
-  echo "usage create-sa.sh account_type [logout_uri] servicename"
+  echo "usage remove-sa.sh account_type [logout_uri] servicename"
   exit 1
 fi
 
@@ -28,4 +30,18 @@ fi
 if [ -n "${LOGOUT_URI+x}" ]; then
   echo "Removing service_accounts/${TYPE}/${SERVICE}/logout_uri key..."
   doguctl config --rm "service_accounts/${TYPE}/${SERVICE}/logout_uri"
+fi
+
+echo "Removing service ${SERVICE} from JSON registry ${SERVICE_REGISTRY}"
+FILES=$(ls $SERVICE_REGISTRY/${SERVICE}-*.json 2>/dev/null || echo "")
+
+# Check if FILES is empty before counting
+if [ -z "$FILES" ]; then
+  echo "No files found matching the service ${SERVICE}."
+else
+  # Count the number of matching files
+  FILE_COUNT=$(echo "$FILES" | wc -l)
+  echo "Found $FILE_COUNT file(s) matching service ${SERVICE}."
+  rm $SERVICE_REGISTRY/${SERVICE}-*.json
+  echo "Successfully deleted service ${SERVICE}."
 fi
