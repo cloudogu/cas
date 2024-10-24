@@ -19,6 +19,6 @@
     "LogoutUrl": {
         "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
         "values": [  "java.util.LinkedHashSet", [ "{{LOGOUT_URL}}" ] ]
-    },
+    }
   }
 }
