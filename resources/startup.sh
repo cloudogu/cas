@@ -24,6 +24,10 @@ while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
   sleep 3
 done
 
+# check whether fqdn has changed and update services
+echo "check for fqdn updates"
+checkFqdnUpdate
+
 # If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
 # leads to an zero exit code which enables further error handling.
 loggingExitCode=0

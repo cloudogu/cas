@@ -4,7 +4,9 @@ set -o nounset
 set -o pipefail
 
 # Defines the path to store service definitions
-SERVICE_REGISTRY="etc/cas/services/production"
+SERVICE_REGISTRY="etc/cas/services"
+SERVICE_REGISTRY_PRODUCTION="${SERVICE_REGISTRY}"/production
+SERVICE_REGISTRY_DEVELOPMENT="${SERVICE_REGISTRY}"/development
 
 # This function prints an error to the console and waits 5 minutes before exiting the process.
 # Requires two arguments:
@@ -166,8 +168,39 @@ function configureCAS() {
   renderCustomMessagesTpl
 }
 
+function checkFqdnUpdate() {
+  # Copy fqdn from global to local config so we can detect changes to it
+  if [ "$(doguctl config "fqdn" -d "empty")" == "empty" ];  then
+    doguctl config "fqdn" "$(doguctl config -g "fqdn")"
+    return 0
+  fi
+
+  local globalFQDN=$(doguctl config -g fqdn)
+  local localFQDN=$(doguctl config fqdn)
+
+  if [ "$localFQDN" == "$globalFQDN" ];  then
+    return 0
+  fi
+
+  echo "FQDN has change, update services ..."
+
+  doguctl config "fqdn" "$globalFQDN"
+  updateFqdnInServices $globalFQDN
+}
+
+# Function to double-escape dots in the FQDN to use it within a regex of the service registry
+function escapeDots() {
+    local fqdn="$1"
+
+    # Use parameter substitution to replace each '.' with '\\.'
+    local escaped_fqdn="${fqdn//./\\\\\\\\\\\\\\\\.}"
+
+    # Return the double-escaped FQDN
+    echo "$escaped_fqdn"
+}
+
 # Function to find the next serviceID from JSON filenames in the service registry
-find_next_serviceID() {
+function findNextServiceID() {
     local dir="$1"
 
     # Initialize max_number as 0
@@ -194,13 +227,36 @@ find_next_serviceID() {
     echo "$next_number"
 }
 
-# Function to double-escape dots in the FQDN to use it within a regex of the service registry
-escape_dots() {
-    local fqdn="$1"
+# Function to update the services in the registry with the provided fqdn
+function updateFqdnInServices() {
+  echo "Updating services with new fqdn ${1}"
 
-    # Use parameter substitution to replace each '.' with '\\.'
-    local escaped_fqdn="${fqdn//./\\\\\\\\\\\\\\\\.}"
+  local nFQDN=$(escapeDots "${1}")
+  local tmpFqdnService=/tmp/new-fqdn.json
 
-    # Return the double-escaped FQDN
-    echo "$escaped_fqdn"
+  # create temporary new service with new fqdn property
+  sed -e 's|{{SERVICE}}||g' \
+      -e "s|{{SERVICE_ID}}|0|g" \
+      -e "s|{{FQDN}}|$nFQDN|g" \
+      -e 's|{{TEMPLATES}}||g' \
+      -e 's|{{LOGOUT_URL}}||g' etc/cas/config/services/cas-service-template.json.tpl > $tmpFqdnService
+
+  # Extract the Fqdn value from the source JSON
+  local fqdnObject=$(jq '.properties.Fqdn' "$tmpFqdnService")
+
+  # Loop through production service files
+  for service in "$SERVICE_REGISTRY_PRODUCTION"/*.json; do
+      # Check if the file exists
+      if [ -f "$service" ]; then
+          # Update the Fqdn property in the target service with the extracted fqdn object
+          jq --argjson fqdn "$fqdnObject" '.properties.Fqdn = $fqdn' "$service" > /tmp/updateService.json && mv /tmp/updateService.json "$service"
+          echo "Updated FQDN in service $service."
+      else
+          echo "No target files found."
+      fi
+  done
+
+  rm $tmpFqdnService
+
+  echo "Successfully finished fqdn update."
 }

@@ -19,11 +19,10 @@ source util.sh
 
   echo "Create sa for ${SERVICE} with account type: ${TYPE}..."
 
-  #FQDN="192.168.56.2"
   FQDN=$(doguctl config -g fqdn)
   # escape fqdn to use it within regex
-  EFQDN=$(escape_dots "$FQDN")
-  SERVICE_ID=$(find_next_serviceID "$SERVICE_REGISTRY")
+  EFQDN=$(escapeDots "$FQDN")
+  SERVICE_ID=$(findNextServiceID "$SERVICE_REGISTRY_PRODUCTION")
   # build logout url
   LOGOUT_URL="https://${FQDN}/${SERVICE}${LOGOUT_URI:-}"
 
@@ -44,9 +43,7 @@ source util.sh
     fi
 
     CLIENT_SECRET=$(doguctl random -l 16)
-    #CLIENT_SECRET="secret"
     CLIENT_SECRET_HASH=$(echo -n "${CLIENT_SECRET}" | sha256sum | awk '{print $1}')
-    #CLIENT_SECRET_HASH="HASH"
 
     # Using `sed` to replace placeholders
     sed -e "s|{{SERVICE}}|$SERVICE|g" \
@@ -55,7 +52,7 @@ source util.sh
         -e "s|{{TEMPLATES}}|$(IFS=, ; echo "${TEMPLATES[*]}")|g" \
         -e "s|{{CLIENT_SECRET_HASH}}|$CLIENT_SECRET_HASH|g" \
         -e "s|{{SERVICE_CLASS}}|$SERVICE_CLASS|g" \
-        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/oauth-service-template.json.tpl > $SERVICE_REGISTRY/${SERVICE}-${SERVICE_ID}.json
+        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/oauth-service-template.json.tpl > $SERVICE_REGISTRY_PRODUCTION/${SERVICE}-${SERVICE_ID}.json
 
     doguctl config "service_accounts/${TYPE}/${SERVICE}/secret" "${CLIENT_SECRET_HASH}"
   elif [ "${TYPE}" == "cas" ]; then
@@ -70,7 +67,7 @@ source util.sh
         -e "s|{{SERVICE_ID}}|$SERVICE_ID|g" \
         -e "s|{{FQDN}}|$EFQDN|g" \
         -e "s|{{TEMPLATES}}|$(IFS=, ; echo "${TEMPLATES[*]}")|g" \
-        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/cas-service-template.json.tpl > $SERVICE_REGISTRY/${SERVICE}-${SERVICE_ID}.json
+        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/cas-service-template.json.tpl > $SERVICE_REGISTRY_PRODUCTION/${SERVICE}-${SERVICE_ID}.json
 
   else
     echo "only the account_types: oidc, oauth, cas are allowed"
