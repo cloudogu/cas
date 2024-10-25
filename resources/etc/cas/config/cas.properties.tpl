@@ -216,7 +216,7 @@ cas.ticket.tgt.core.only-track-most-recent-session=false
 # Properties: https://apereo.github.io/cas/7.0.x/integration/Delegate-Authentication-Generic-OpenID-Connect.html
 # ----------------------------------------------------------------------------------------------------------------------
 {{ if ne (.Config.Get "oidc/enabled") "false"}}
-cas.authn.pac4j.oidc[0].generic.enabled={{ .Config.Get "oidc/enabled"}}
+cas.authn.pac4j.oidc[0].generic.enabled=true
 
 ### path to the discovery url of the provider
 cas.authn.pac4j.oidc[0].generic.discovery-uri={{ .Config.GetOrDefault "oidc/discovery_uri" ""}}
