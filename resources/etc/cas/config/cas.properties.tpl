@@ -249,6 +249,23 @@ cas.authn.pac4j.oidc[0].generic.response-type=code
 cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256
 
 ### the attribute that should be used as the principal id
+cas.authn.pac4j.oidc[0].generic.principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
+
+
+
+### cas.authn.pac4j.profile-selection.ldap.ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
+### cas.authn.pac4j.profile-selection.ldap.bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
+### cas.authn.pac4j.profile-selection.ldap.bind-credential={{ .Config.GetAndDecrypt "sa-ldap/password" }}
+### cas.authn.pac4j.profile-selection.ldap.base-dn={{ .Env.Get "LDAP_BASE_DN" }}
+### cas.authn.pac4j.profile-selection.ldap.search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
+###
+### cas.authn.pac4j.profile-selection.ldap.profile-id-attribute={{ .Config.Get "ldap/attribute_id"}}
+### cas.authn.pac4j.profile-selection.ldap.attributes={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ .Config.GetOrDefault "ldap/given_name" "givenName"}}:givenName,{{ .Config.GetOrDefault "ldap/surname" "sn"}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups,external
+
+
+
+
+### the attribute that should be used as the principal id
 ces.services.oidcPrincipalsAttribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
 
 ### attribute mapping
