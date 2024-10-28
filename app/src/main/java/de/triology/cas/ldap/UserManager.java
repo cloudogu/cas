@@ -8,16 +8,17 @@ public class UserManager {
     public static final String LDAP_TRUE = "TRUE";
     public static final String LDAP_FALSE = "FALSE";
 
+    public static final String ObjectClassAttributeName = "objectClass";
+
     private final String baseDN;
     private final ConnectionFactory connectionFactory;
-
 
     public UserManager(String baseDN, ConnectionFactory connectionFactory) {
         this.baseDN = baseDN;
         this.connectionFactory = connectionFactory;
     }
 
-    public CesLdapUser getUserByUid(String uid) throws CesLdapException {
+    public CesInternalLdapUser getUserByUid(String uid) throws CesLdapException {
         final SearchResponse response;
         try {
             final SearchRequest request = createGetUserRequest(uid);
@@ -39,24 +40,23 @@ public class UserManager {
             return null;
         }
 
-        return CesLdapUser.UserFromEntry(entry);
+        return CesInternalLdapUser.UserFromEntry(entry);
     }
 
 
-    public void createUser(CesLdapUser user) throws CesLdapException {
+    public void createUser(CesInternalLdapUser user) throws CesLdapException {
         try {
             final AddOperation modify = new AddOperation(this.connectionFactory);
             final AddRequest request = AddRequest.builder()
                     .dn(createDnForUser(user))
                     .attributes(
-                            //Fixme mapping for objectlasses
-                            new LdapAttribute("objectClass", "top", "person", "inetOrgPerson", "organizationalPerson", "cesperson"),
-                            new LdapAttribute(CesLdapUser.CnAttribute, user.getUid()),
-                            new LdapAttribute(CesLdapUser.SnAttribute, user.getFamilyName()),
-                            new LdapAttribute(CesLdapUser.GivenNameAttribute, user.getGivenName()),
-                            new LdapAttribute(CesLdapUser.DisplayNameAttribute, user.getDisplayName()),
-                            new LdapAttribute(CesLdapUser.MailAttribute, user.getMail()),
-                            new LdapAttribute(CesLdapUser.ExternalAttribute, user.isExternal() ? LDAP_TRUE : LDAP_FALSE)
+                            new LdapAttribute(ObjectClassAttributeName, CesInternalLdapUser.ObjectClasses),
+                            new LdapAttribute(CesInternalLdapUser.CnAttribute, user.getUid()),
+                            new LdapAttribute(CesInternalLdapUser.SnAttribute, user.getFamilyName()),
+                            new LdapAttribute(CesInternalLdapUser.GivenNameAttribute, user.getGivenName()),
+                            new LdapAttribute(CesInternalLdapUser.DisplayNameAttribute, user.getDisplayName()),
+                            new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail()),
+                            new LdapAttribute(CesInternalLdapUser.ExternalAttribute, user.isExternal() ? LDAP_TRUE : LDAP_FALSE)
                     )
                     .build();
 
@@ -70,16 +70,16 @@ public class UserManager {
         }
     }
 
-    public void updateUser(CesLdapUser user) throws LdapException {
+    public void updateUser(CesInternalLdapUser user) throws LdapException {
         final ModifyOperation modify = new ModifyOperation(this.connectionFactory);
         final ModifyRequest request = ModifyRequest.builder()
                 .dn(createDnForUser(user))
                 .modifications(
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesLdapUser.CnAttribute, user.getUid())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesLdapUser.SnAttribute, user.getFamilyName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesLdapUser.GivenNameAttribute, user.getGivenName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesLdapUser.DisplayNameAttribute, user.getDisplayName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesLdapUser.MailAttribute, user.getMail()))
+                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.CnAttribute, user.getUid())),
+                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.SnAttribute, user.getFamilyName())),
+                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.GivenNameAttribute, user.getGivenName())),
+                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.DisplayNameAttribute, user.getDisplayName())),
+                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail()))
                         )
                 .build();
         final ModifyResponse response = modify.execute(request);
@@ -89,19 +89,27 @@ public class UserManager {
         }
     }
 
-    private String createDnForUser(CesLdapUser user) {
-        return CesLdapUser.UidAttribute + "=" + user.getUid() + "," + this.baseDN;
+    private String createDnForUser(CesInternalLdapUser user) {
+        return CesInternalLdapUser.UidAttribute + "=" + user.getUid() + "," + this.baseDN;
     }
 
     private SearchRequest createGetUserRequest(String uid) {
+        String filter = String.format("(&%s%s)", uidFilter(uid), externalUsersFilter());
+
         SearchRequest request = new SearchRequest();
         request.setBaseDn(this.baseDN);
-        request.setReturnAttributes(CesLdapUser.UidAttribute, CesLdapUser.CnAttribute, CesLdapUser.SnAttribute, CesLdapUser.GivenNameAttribute, CesLdapUser.DisplayNameAttribute, CesLdapUser.MailAttribute, CesLdapUser.ExternalAttribute, CesLdapUser.MailAttribute, CesLdapUser.ExternalAttribute, CesLdapUser.MemberOfAttribute);
-        //Fixme
-        request.setFilter(String.format("(&(objectClass=person)(%s=TRUE)(%s=%s))", CesLdapUser.ExternalAttribute, CesLdapUser.UidAttribute, uid));
+        request.setReturnAttributes(CesInternalLdapUser.UidAttribute, CesInternalLdapUser.CnAttribute, CesInternalLdapUser.SnAttribute, CesInternalLdapUser.GivenNameAttribute, CesInternalLdapUser.DisplayNameAttribute, CesInternalLdapUser.MailAttribute, CesInternalLdapUser.ExternalAttribute, CesInternalLdapUser.MailAttribute, CesInternalLdapUser.ExternalAttribute, CesInternalLdapUser.MemberOfAttribute);
+        request.setFilter(filter);
         request.setSearchScope(SearchScope.SUBTREE);
         request.setSizeLimit(1);
         return request;
     }
 
+    private static String externalUsersFilter() {
+        return String.format("(%s=%s)", CesInternalLdapUser.ExternalAttribute, LDAP_TRUE);
+    }
+
+    private static String uidFilter(String uid) {
+        return String.format("(%s=%s)", CesInternalLdapUser.UidAttribute, uid);
+    }
 }

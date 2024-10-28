@@ -35,15 +35,12 @@ public class CesServicesManagerStageProductiveTest {
     private static final CesServiceData EXPECTED_OIDC_SERVICE_DATA = new CesServiceData("cas-oidc-client", oidcServiceFactory);
 
     private List<String> expectedAllowedAttributes = Arrays.asList("attribute a", "attribute b");
-    private Map<String, String> attributesMappingRules = Map.of("attribute z", "attribute a");
     private List<ExpectedService> expectedServices;
     private Registry registry = mock(Registry.class);
-    private CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, false, null, "username");
-    private CesServiceManagerConfiguration managerConfigWithOIDC = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes, attributesMappingRules, true, "my-test-name", "username");
+    private CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes);
+    private CesServiceManagerConfiguration managerConfigWithOIDC = new CesServiceManagerConfiguration("stage", expectedAllowedAttributes);
     private CesServicesManagerStageProductive stage =
             new CesServicesManagerStageProductive(managerConfig, registry);
-    private CesServicesManagerStageProductive stageWithOIDC =
-            new CesServicesManagerStageProductive(managerConfigWithOIDC, registry);
 
     @Before
     public void setUp() {
@@ -89,36 +86,6 @@ public class CesServicesManagerStageProductiveTest {
 
         for (ExpectedService expectedService : expectedServices) {
             expectedService.assertContainedIn(allServices);
-        }
-    }
-
-    /**
-     * Test for listener, when a dogu is added after initialization.
-     */
-    @Test
-    public void managerAddDelegatedAuthenticationProvider() {
-        doReturn(new LinkedList<>(Arrays.asList(EXPECTED_SERVICE_DATA_1, EXPECTED_SERVICE_DATA_2)))
-                .when(registry).getInstalledCasServiceAccountsOfType(any(), any());
-
-        // Check services of oidc stage
-        Collection<RegisteredService> allServicesOfOIDCStage = stageWithOIDC.getRegisteredServices().values();
-        for (RegisteredService expectedService : allServicesOfOIDCStage) {
-            assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
-            assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
-            assertTrue(expectedService.getUsernameAttributeProvider() instanceof PrincipalAttributeRegisteredServiceUsernameProvider);
-            assertEquals("username", ((PrincipalAttributeRegisteredServiceUsernameProvider) expectedService.getUsernameAttributeProvider()).getUsernameAttribute());
-            List<String> allowedProviders = new ArrayList<>(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
-            assertEquals(1, allowedProviders.size());
-            assertEquals(managerConfigWithOIDC.getOidcClientDisplayName(), allowedProviders.getFirst());
-        }
-
-        // Check services of default stage
-        Collection<RegisteredService> allServicesOfDefaultStage = stage.getRegisteredServices().values();
-        for (RegisteredService expectedService : allServicesOfDefaultStage) {
-            assertTrue(expectedService.getAccessStrategy() instanceof DefaultRegisteredServiceAccessStrategy);
-            assertTrue(expectedService.getUsernameAttributeProvider() instanceof DefaultRegisteredServiceUsernameProvider);
-            assertTrue(expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy() instanceof DefaultRegisteredServiceDelegatedAuthenticationPolicy);
-            assertNull(null, expectedService.getAccessStrategy().getDelegatedAuthenticationPolicy().getAllowedProviders());
         }
     }
 
