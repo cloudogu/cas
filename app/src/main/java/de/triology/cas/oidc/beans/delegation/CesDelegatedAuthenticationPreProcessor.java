@@ -13,8 +13,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The CesDelegatedAuthenticationPreProcessor handles attribute-mapping for the delegated authentication.
+ * First all attributes in the give principal are mapped according to the configured attributeMappings.
+ * Then the user for the principal will be loaded form the internal CES-LDAP using the ID of the principal.
+ * If the user exists, the groups of the user will be added as an attribute the principal.
+ */
 @RequiredArgsConstructor
 public class CesDelegatedAuthenticationPreProcessor implements DelegatedAuthenticationPreProcessor {
+
+    private final static String groupsAttributeName = "groups";
 
     private final List<AttributeMapping> attributeMappings;
 
@@ -35,7 +43,7 @@ public class CesDelegatedAuthenticationPreProcessor implements DelegatedAuthenti
         // attach groups
         CesInternalLdapUser existingLdapUser = userManager.getUserByUid(principal.getId());
         if (existingLdapUser != null) {
-            principal.getAttributes().put("groups", Arrays.asList(existingLdapUser.getGroups().toArray()));
+            principal.getAttributes().put(groupsAttributeName, Arrays.asList(existingLdapUser.getGroups().toArray()));
         }
 
         return principal;

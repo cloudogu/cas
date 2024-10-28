@@ -10,6 +10,12 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.oidc.profile.OidcProfile;
 
+/**
+ * The CesDelegatedClientUserProfileProvisioner handles th provisioning of UserProfiles from the delegated authentication.
+ * Currently only supports OIDC-UserProfiles ({@link OidcProfile}) and the internal CES-LDAP.
+ * The CesDelegatedClientUserProfileProvisioner checks if a user for the given userProfile exists in the internal CES-LDAP.
+ * If no user exists a new user will be created. If the user already exists, it will be updated with the values from the userProfile.
+ */
 @RequiredArgsConstructor
 public class CesDelegatedClientUserProfileProvisioner implements DelegatedClientUserProfileProvisioner {
 

@@ -238,9 +238,6 @@ cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
 ### perform automatic redirects to the configured provider when a user logs into the cas
 cas.authn.pac4j.oidc[0].generic.auto-redirect-type={{if eq (.Config.Get "oidc/optional") "true"}}NONE{{else}}CLIENT{{end}}
 
-### redirect back to the ces after successful logout
-cas.authn.pac4j.oidc[0].generic.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}
-
 ### information that are supposed to be contained in the responses of the OIDC provider
 cas.authn.pac4j.oidc[0].generic.scope={{ .Config.Get "oidc/scopes"}}
 cas.authn.pac4j.oidc[0].generic.response-type=code
@@ -251,8 +248,11 @@ cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256
 ### the attribute that should be used as the principal id
 cas.authn.pac4j.oidc[0].generic.principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
 
+### redirect back to the ces after successful logout
+ces.delegation.oidc.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}
+
 ### attribute mapping
-ces.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
+ces.delegation.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 {{ end }}
 ########################################################################################################################
 

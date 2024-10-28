@@ -3,6 +3,9 @@ package de.triology.cas.ldap;
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.*;
 
+/**
+ * UserManager can load, create and update {@link CesInternalLdapUser}s.
+ */
 @Slf4j
 public class UserManager {
     public static final String LDAP_TRUE = "TRUE";
@@ -13,11 +16,21 @@ public class UserManager {
     private final String baseDN;
     private final ConnectionFactory connectionFactory;
 
+    /**
+     * Creates a new Usermanager that can load, create and update {@link CesInternalLdapUser}s.
+     */
     public UserManager(String baseDN, ConnectionFactory connectionFactory) {
         this.baseDN = baseDN;
         this.connectionFactory = connectionFactory;
     }
 
+    /**
+     * Gets the {@link CesInternalLdapUser} for the given UID.
+     *
+     * @param uid the UID of the user to get
+     * @return null if the user for the given UID could not be found
+     * @throws CesLdapException for errors querying LDAP
+     */
     public CesInternalLdapUser getUserByUid(String uid) throws CesLdapException {
         final SearchResponse response;
         try {
@@ -44,6 +57,12 @@ public class UserManager {
     }
 
 
+    /**
+     * Creates a new {@link CesInternalLdapUser}
+     *
+     * @param user the user to create
+     * @throws CesLdapException for errors while creating the user in LDAP
+     */
     public void createUser(CesInternalLdapUser user) throws CesLdapException {
         try {
             final AddOperation modify = new AddOperation(this.connectionFactory);
@@ -70,6 +89,12 @@ public class UserManager {
         }
     }
 
+    /**
+     * Updates the given user in LDAP
+     *
+     * @param user the user to update
+     * @throws LdapException for errors while updating the user in LDAP
+     */
     public void updateUser(CesInternalLdapUser user) throws LdapException {
         final ModifyOperation modify = new ModifyOperation(this.connectionFactory);
         final ModifyRequest request = ModifyRequest.builder()

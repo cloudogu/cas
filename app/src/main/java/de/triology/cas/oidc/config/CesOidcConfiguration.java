@@ -37,10 +37,10 @@ public class CesOidcConfiguration {
     @Value("${cas.server.prefix:#{\"\"}}")
     private String casServerPrefix;
 
-    @Value("${cas.authn.pac4j.oidc[0].generic.redirect-uri:#{\"\"}}")
+    @Value("${ces.delegation.oidc.redirect-uri:#{\"\"}}")
     private String redirectUri;
 
-    @Value("${ces.oidc.attributeMapping:#{\"\"}}")
+    @Value("${ces.delegation.oidc.attributeMapping:#{\"\"}}")
     private String attributesMappingsString;
 
     @Bean
