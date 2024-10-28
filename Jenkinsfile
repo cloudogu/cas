@@ -206,7 +206,7 @@ parallel(
                                     enableVideo      : params.EnableVideoRecording,
                                     enableScreenshots: params.EnableScreenshotRecording])
                            // run special non-encrypted password test
-                           sh('./resources/test_password_logging.sh')
+                           sh('./resources/test-password-logging.sh')
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
