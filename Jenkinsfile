@@ -205,6 +205,8 @@ parallel(
                                     cypressImage     : "cypress/included:13.13.2",
                                     enableVideo      : params.EnableVideoRecording,
                                     enableScreenshots: params.EnableScreenshotRecording])
+                           // run special non-encrypted password test
+                           sh('./resources/test_password_logging.sh')
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
