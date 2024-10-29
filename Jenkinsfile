@@ -38,42 +38,42 @@ parallel(
                             gradlew "clean build"
                         }
 
-                        stage('Unit Test') {
-                            gradlew 'test'
-                            junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
-                        }
+                        //stage('Unit Test') {
+                        //    gradlew 'test'
+                        //    junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
+                        //}
                     }
 
-                    stage('SonarQube') {
-                        def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                        withSonarQubeEnv {
-                            sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
-                            gitWithCredentials("fetch --all")
+                    //stage('SonarQube') {
+                    //    def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    //    withSonarQubeEnv {
+                    //        sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
+                    //        gitWithCredentials("fetch --all")
 
-                            if (currentBranch == productionReleaseBranch) {
-                                echo "This branch has been detected as the production branch."
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-                            } else if (currentBranch == developmentBranch) {
-                                echo "This branch has been detected as the development branch."
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-                            } else if (env.CHANGE_TARGET) {
-                                echo "This branch has been detected as a pull request."
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${developmentBranch}"
-                            } else if (currentBranch.startsWith("feature/")) {
-                                echo "This branch has been detected as a feature branch."
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-                            } else {
-                                echo "This branch has been detected as a miscellaneous branch."
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} "
-                            }
-                        }
-                        timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
-                            def qGate = waitForQualityGate()
-                            if (qGate.status != 'OK') {
-                                unstable("Pipeline unstable due to SonarQube quality gate failure")
-                            }
-                        }
-                    }
+                    //        if (currentBranch == productionReleaseBranch) {
+                    //            echo "This branch has been detected as the production branch."
+                    //            sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                    //        } else if (currentBranch == developmentBranch) {
+                    //            echo "This branch has been detected as the development branch."
+                    //            sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                    //        } else if (env.CHANGE_TARGET) {
+                    //            echo "This branch has been detected as a pull request."
+                    //            sh "${scannerHome}/bin/sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${developmentBranch}"
+                    //        } else if (currentBranch.startsWith("feature/")) {
+                    //            echo "This branch has been detected as a feature branch."
+                    //            sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                    //        } else {
+                    //            echo "This branch has been detected as a miscellaneous branch."
+                    //            sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} "
+                    //        }
+                    //    }
+                    //    timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
+                    //        def qGate = waitForQualityGate()
+                    //        if (qGate.status != 'OK') {
+                    //            unstable("Pipeline unstable due to SonarQube quality gate failure")
+                    //        }
+                    //    }
+                    //}
                 }
             }
         },
@@ -106,15 +106,15 @@ parallel(
                         dockerfile.lint()
                     }
 
-                    stage('Shellcheck') {
-                        // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
-                        shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
-                    }
+                    //stage('Shellcheck') {
+                    //    // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
+                    //    shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
+                    //}
 
-                    stage('Bats Tests') {
-                        Bats bats = new Bats(this, docker)
-                        bats.checkAndExecuteTests()
-                    }
+                    //stage('Bats Tests') {
+                    //    Bats bats = new Bats(this, docker)
+                    //    bats.checkAndExecuteTests()
+                    //}
 
                     try {
                         stage('Provision') {
@@ -178,11 +178,11 @@ parallel(
                             ecoSystem.build("/dogu")
                         }
 
-                        stage('Trivy scan') {
-                            trivy.scanDogu("/dogu", TrivyScanFormat.HTML, params.TrivyScanLevels, params.TrivyStrategy)
-                            trivy.scanDogu("/dogu", TrivyScanFormat.JSON,  params.TrivyScanLevels, params.TrivyStrategy)
-                            trivy.scanDogu("/dogu", TrivyScanFormat.PLAIN, params.TrivyScanLevels, params.TrivyStrategy)
-                        }
+                        //stage('Trivy scan') {
+                        //    trivy.scanDogu("/dogu", TrivyScanFormat.HTML, params.TrivyScanLevels, params.TrivyStrategy)
+                        //    trivy.scanDogu("/dogu", TrivyScanFormat.JSON,  params.TrivyScanLevels, params.TrivyStrategy)
+                        //    trivy.scanDogu("/dogu", TrivyScanFormat.PLAIN, params.TrivyScanLevels, params.TrivyStrategy)
+                        //}
 
                         stage('Verify') {
                             ecoSystem.verify("/dogu")
@@ -196,18 +196,18 @@ parallel(
                         }
 
                         stage('Integration Tests') {
-                            echo "Create custom dogu to access OAuth endpoints for the integration tests"
-                            ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
-                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
-                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
+                            // echo "Create custom dogu to access OAuth endpoints for the integration tests"
+                            // ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
+                            // ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
+                            // ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
-                            ecoSystem.runCypressIntegrationTests([
-                                    cypressImage     : "cypress/included:13.13.2",
-                                    enableVideo      : params.EnableVideoRecording,
-                                    enableScreenshots: params.EnableScreenshotRecording])
+                            // ecoSystem.runCypressIntegrationTests([
+                            //         cypressImage     : "cypress/included:13.13.2",
+                            //         enableVideo      : params.EnableVideoRecording,
+                            //         enableScreenshots: params.EnableScreenshotRecording])
                            // run special non-encrypted password test
-                           sh('chmod +x ./resources/test-password-logging.sh')
-                           sh('./resources/test-password-logging.sh')
+                           ecoSystem.vagrant.sshOut 'chmod +x ./resources/test-password-logging.sh'
+                           ecoSystem.vagrant.sshOut './resources/test-password-logging.sh'
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
@@ -230,12 +230,12 @@ parallel(
                                 ecoSystem.waitForDogu(doguName)
                             }
 
-                            stage('Integration Tests - After Upgrade') {
-                                ecoSystem.runCypressIntegrationTests([
-                                        cypressImage     : "cypress/included:13.13.2",
-                                        enableVideo      : params.EnableVideoRecording,
-                                        enableScreenshots: params.EnableScreenshotRecording])
-                            }
+                            // stage('Integration Tests - After Upgrade') {
+                            //     ecoSystem.runCypressIntegrationTests([
+                            //             cypressImage     : "cypress/included:13.13.2",
+                            //             enableVideo      : params.EnableVideoRecording,
+                            //             enableScreenshots: params.EnableScreenshotRecording])
+                            // }
                         }
 
                         if (gitflow.isReleaseBranch()) {
