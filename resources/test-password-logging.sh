@@ -10,13 +10,13 @@ ADMIN_USER=ces-admin
 ADMIN_PW=Ecosystem2016!
 
 # get execution token for login
-curl 'https://192.168.56.2/cas/login' \
+curl 'http://192.168.56.2/cas/login' \
   -v -L --data-raw "username=${ADMIN_USER}&${ADMIN_PW}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure > firstRequest
 
 EXECUTION_TOKEN=$(grep 'name="execution" value=' "firstRequest" | awk '{gsub("value=\"", "", $4); gsub("\"/><input", "", $4); print $4}')
 
-curl 'https://192.168.56.2/cas/login' -X POST \
+curl 'http://192.168.56.2/cas/login' -X POST \
   -v -L --data-raw "username=${ADMIN_USER}&${ADMIN_PW}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure
 
