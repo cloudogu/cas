@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -27,23 +27,23 @@ curl "http://${CES_URL}/cas/login" -X POST \
 
 # check docker logs
 echo "touch cas logs"
-touch cas_logs
+touch /dogu/cas_logs
 echo "docker container logs"
-docker container logs cas > cas_logs
+sudo docker container logs cas > /dogu/cas_logs
 # remove me later, just for testing
 echo "${PASSWORD}"
-echo "${PASSWORD}" >> cas_logs
-cat "${cas_logs.txt}"
-if grep -q "${PASSWORD}" cas_logs; then
+echo "${PASSWORD}" >> /dogu/cas_logs
+if grep -q "${PASSWORD}" /dogu/cas_logs; then
   echo "ERROR: Found a non-encrypted password in the docker log file. "
   exit 1
 fi
 echo "docker container copy steps"
 # check internal cas logs
-docker cp cas:/logs/cas.log cas_logs
-docker cp cas:/logs/cas_audit.log cas_logs
-docker cp cas:/logs/cas_stacktrace.log cas_logs
-if grep -q -R "${PASSWORD}" cas_logs; then
+mkdir /dogu/cas_internal_logs
+sudo docker cp cas:/logs/cas.log /dogu/cas_internal_logs
+sudo docker cp cas:/logs/cas_audit.log /dogu/cas_internal_logs
+sudo docker cp cas:/logs/cas_stacktrace.log /dogu/cas_internal_logs
+if grep -q -R "${PASSWORD}" /dogu/cas_internal_logs; then
   echo "ERROR: Found a non-encrypted password in the internal cas log files. "
   exit 1
 fi
