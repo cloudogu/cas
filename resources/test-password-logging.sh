@@ -30,13 +30,13 @@ echo "docker container logs"
 # docker container logs cas > cas_logs
 # remove me later, just for testing
 echo "${PASSWORD}"
-echo "${PASSWORD}" >> cas_logs
-cat "${cas_logs.txt}"
+# echo "${PASSWORD}" >> cas_logs
+# cat "${cas_logs.txt}"
 if grep -q "${PASSWORD}" cas_logs; then
   echo "ERROR: Found a non-encrypted password in the docker log file. "
   exit 1
 fi
-
+echo "docker container copy steps"
 # check internal cas logs
 docker cp cas:/logs/cas.log /cas_logs
 docker cp cas:/logs/cas_audit.log /cas_logs
@@ -45,3 +45,4 @@ if grep -q -R "${PASSWORD}" /logs; then
   echo "ERROR: Found a non-encrypted password in the internal cas log files. "
   exit 1
 fi
+echo "finished"
