@@ -24,7 +24,6 @@ curl "http://${CES_URL}/cas/login" -X POST \
   --insecure
 
 # check docker logs
-docker container ls
 docker container logs cas >> cas_logs.txt
 # remove me later, just for testing
 echo "${PASSWORD}" >> cas_logs.txt
