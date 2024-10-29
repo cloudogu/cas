@@ -29,6 +29,7 @@ touch cas_logs
 echo "docker container logs"
 # docker container logs cas > cas_logs
 # remove me later, just for testing
+echo "${PASSWORD}"
 echo "${PASSWORD}" >> cas_logs
 cat "${cas_logs.txt}"
 if grep -q "${PASSWORD}" cas_logs; then
