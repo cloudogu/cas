@@ -1,12 +1,13 @@
-#!/bin/bash
+#!/bin/bash -xe
 set -o errexit
 set -o nounset
 set -o pipefail
 
+echo "script started"
 CES_URL=$1
 # add a new user with password 👻
 PASSWORD=👻
-EXECUTION_TOKEN=
+EXECUTION_TOKEN=""
 ADMIN_USER=ces-admin
 ADMIN_PW=Ecosystem2016!
 
