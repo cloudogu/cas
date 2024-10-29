@@ -14,14 +14,14 @@ public class UserManager {
     public static final String ObjectClassAttributeName = "objectClass";
 
     private final String baseDN;
-    private final ConnectionFactory connectionFactory;
+    private final LdapOperationFactory operationFactory;
 
     /**
      * Creates a new Usermanager that can load, create and update {@link CesInternalLdapUser}s.
      */
-    public UserManager(String baseDN, ConnectionFactory connectionFactory) {
+    public UserManager(String baseDN, LdapOperationFactory operationFactory) {
         this.baseDN = baseDN;
-        this.connectionFactory = connectionFactory;
+        this.operationFactory = operationFactory;
     }
 
     /**
@@ -35,9 +35,9 @@ public class UserManager {
         final SearchResponse response;
         try {
             final SearchRequest request = createGetUserRequest(uid);
-            response = new SearchOperation(connectionFactory).execute(request);
+            response = operationFactory.searchOperation().execute(request);
         } catch (final LdapException e) {
-            throw new CesLdapException("Failed executing LDAP query ", e);
+            throw new CesLdapException("Failed executing LDAP query", e);
         }
 
         if (!response.isSuccess()) {
@@ -65,7 +65,7 @@ public class UserManager {
      */
     public void createUser(CesInternalLdapUser user) throws CesLdapException {
         try {
-            final AddOperation modify = new AddOperation(this.connectionFactory);
+            final AddOperation modify = operationFactory.addOperation();
             final AddRequest request = AddRequest.builder()
                     .dn(createDnForUser(user))
                     .attributes(
@@ -93,24 +93,28 @@ public class UserManager {
      * Updates the given user in LDAP
      *
      * @param user the user to update
-     * @throws LdapException for errors while updating the user in LDAP
+     * @throws CesLdapException for errors while updating the user in LDAP
      */
-    public void updateUser(CesInternalLdapUser user) throws LdapException {
-        final ModifyOperation modify = new ModifyOperation(this.connectionFactory);
-        final ModifyRequest request = ModifyRequest.builder()
-                .dn(createDnForUser(user))
-                .modifications(
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.CnAttribute, user.getUid())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.SnAttribute, user.getFamilyName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.GivenNameAttribute, user.getGivenName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.DisplayNameAttribute, user.getDisplayName())),
-                        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail()))
-                        )
-                .build();
-        final ModifyResponse response = modify.execute(request);
+    public void updateUser(CesInternalLdapUser user) throws CesLdapException {
+        try {
+            final ModifyOperation modify = operationFactory.modifyOperation();
+            final ModifyRequest request = ModifyRequest.builder()
+                    .dn(createDnForUser(user))
+                    .modifications(
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.CnAttribute, user.getUid())),
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.SnAttribute, user.getFamilyName())),
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.GivenNameAttribute, user.getGivenName())),
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.DisplayNameAttribute, user.getDisplayName())),
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail()))
+                    )
+                    .build();
+            final ModifyResponse response = modify.execute(request);
 
-        if (!response.isSuccess()) {
-            throw new LdapException(response.getDiagnosticMessage());
+            if (!response.isSuccess()) {
+                throw new CesLdapException(response.getDiagnosticMessage());
+            }
+        } catch (LdapException e) {
+            throw new CesLdapException("error while updating user", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package de.triology.cas.ldap;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.ldaptive.LdapEntry;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Setter
 @Getter
+@EqualsAndHashCode
 public class CesInternalLdapUser {
     public static final String[] ObjectClasses = new String[]{"top", "person", "inetOrgPerson", "organizationalPerson", "cesperson"};
 

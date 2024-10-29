@@ -1,5 +1,6 @@
 package de.triology.cas.oidc.config;
 
+import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.AttributeMapping;
@@ -81,6 +82,6 @@ public class CesOidcConfiguration {
         LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().getFirst();
         PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
 
-        return new UserManager(ldapProperties.getBaseDn(), connectionFactory);
+        return new UserManager(ldapProperties.getBaseDn(), new LdapOperationFactory(connectionFactory));
     }
 }
