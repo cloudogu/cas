@@ -206,8 +206,8 @@ parallel(
                             //         enableVideo      : params.EnableVideoRecording,
                             //         enableScreenshots: params.EnableScreenshotRecording])
                            // run special non-encrypted password test
-                           ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
-                           ecoSystem.vagrant.sshOut '/dogu/resources/test-password-logging.sh'
+                           sh("chmod +x ./resources/test-password-logging.sh")
+                           sh("./resources/test-password-logging.sh ${$ecoSystem.externalIP}")
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
