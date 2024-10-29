@@ -24,11 +24,14 @@ curl "http://${CES_URL}/cas/login" -X POST \
   --insecure
 
 # check docker logs
-docker container logs cas >> cas_logs.txt
+echo "touch cas logs"
+touch cas_logs
+echo "docker container logs"
+docker container logs cas >> cas_logs
 # remove me later, just for testing
-echo "${PASSWORD}" >> cas_logs.txt
+echo "${PASSWORD}" >> cas_logs
 cat "${cas_logs.txt}"
-if grep -q "${PASSWORD}" cas_logs.txt; then
+if grep -q "${PASSWORD}" cas_logs; then
   echo "ERROR: Found a non-encrypted password in the docker log file. "
   exit 1
 fi
