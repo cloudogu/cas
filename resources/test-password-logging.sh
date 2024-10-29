@@ -11,6 +11,8 @@ EXECUTION_TOKEN=""
 ADMIN_USER=ces-admin
 ADMIN_PW=Ecosystem2016!
 
+
+
 # get execution token for login
 curl "http://${CES_URL}/cas/login" \
   -v -L --data-raw "username=${ADMIN_USER}&${ADMIN_PW}&_eventId=submit&geolocation=&deviceFingerprint=" \
@@ -27,21 +29,21 @@ curl "http://${CES_URL}/cas/login" -X POST \
 echo "touch cas logs"
 touch cas_logs
 echo "docker container logs"
-# docker container logs cas > cas_logs
+docker container logs cas > cas_logs
 # remove me later, just for testing
 echo "${PASSWORD}"
-# echo "${PASSWORD}" >> cas_logs
-# cat "${cas_logs.txt}"
+echo "${PASSWORD}" >> cas_logs
+cat "${cas_logs.txt}"
 if grep -q "${PASSWORD}" cas_logs; then
   echo "ERROR: Found a non-encrypted password in the docker log file. "
   exit 1
 fi
 echo "docker container copy steps"
 # check internal cas logs
-docker cp cas:/logs/cas.log /cas_logs
-docker cp cas:/logs/cas_audit.log /cas_logs
-docker cp cas:/logs/cas_stacktrace.log /cas_logs
-if grep -q -R "${PASSWORD}" /logs; then
+docker cp cas:/logs/cas.log cas_logs
+docker cp cas:/logs/cas_audit.log cas_logs
+docker cp cas:/logs/cas_stacktrace.log cas_logs
+if grep -q -R "${PASSWORD}" cas_logs; then
   echo "ERROR: Found a non-encrypted password in the internal cas log files. "
   exit 1
 fi
