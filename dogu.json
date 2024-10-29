@@ -226,7 +226,7 @@
       "Name": "logging/root",
       "Description": "Set the root log level to one of ERROR, WARN, INFO, DEBUG.",
       "Optional": true,
-      "Default": "DEBUG",
+      "Default": "WARN",
       "Validation": {
         "Type": "ONE_OF",
         "Values": [
