@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Replicate users from delegated authentication into LDAP
+- Replicate users from delegated authentication into LDAP [#224]
+  - delegated authentication currently only works when using the embedded LDAP 
 
 ### Fixed
-- Fix configuration for delegated authentication with OIDC  [#222]
+- Fix configuration for delegated authentication with OIDC [#222]
 
 ## [v7.0.8-3] - 2024-10-11
 ### Changed
