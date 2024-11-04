@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  de.triology.cas.services.CesServicesSpringConfiguration,\
   de.triology.cas.oidc.config.CesOidcConfiguration,\
   de.triology.cas.oidc.config.CesOAuthConfiguration,\
   de.triology.cas.ldap.CesAuthenticationEventExecutionPlanConfiguration,\
