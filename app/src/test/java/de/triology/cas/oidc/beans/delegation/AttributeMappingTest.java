@@ -10,9 +10,9 @@ public class AttributeMappingTest {
 
     @Test
     public void testFromPropertyString() {
-        String prpertyString = "family_name:surname,given_name:givenName,email:mail";
+        String propertyString = "family_name:surname,given_name:givenName,email:mail";
 
-        List<AttributeMapping> mappings = AttributeMapping.fromPropertyString(prpertyString);
+        List<AttributeMapping> mappings = AttributeMapping.fromPropertyString(propertyString);
 
         assertEquals(3, mappings.size());
         assertEquals("family_name", mappings.get(0).getSource());
