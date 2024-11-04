@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Replicate users from delegated authentication into LDAP [#224]
+  - delegated authentication currently only works when using the embedded LDAP 
+
+### Fixed
+- Fix configuration for delegated authentication with OIDC [#222]
 
 ## [v7.0.8-3] - 2024-10-11
 ### Changed

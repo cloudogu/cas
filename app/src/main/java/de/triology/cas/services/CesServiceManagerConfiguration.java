@@ -11,8 +11,4 @@ import java.util.Map;
 public class CesServiceManagerConfiguration {
     private final String stage;
     private final List<String> allowedAttributes;
-    private final Map<String, String> attributesMappingRules;
-    private final boolean oidcAuthenticationDelegationEnabled;
-    private final String oidcClientDisplayName;
-    private final String oidcPrincipalsAttribute;
 }

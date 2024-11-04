@@ -22,7 +22,6 @@ import java.util.TreeMap;
 public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private List<String> allowedAttributes;
-    private Map<String, String> attributesMappingRules;
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(RegisteredServiceAttributeReleasePolicyContext context,
@@ -43,12 +42,9 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
             return attributesToRelease;
         }
 
-        // map attributes
-        Map<String, List<Object>> mappedAttributes = mapAttributes(attrs);
-
         // order attributes
         TreeMap<String, List<Object>> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(mappedAttributes);
+        resolvedAttributes.putAll(attrs);
 
         // filter attributes
         getAllowedAttributes()
@@ -67,21 +63,5 @@ public class ReturnMappedAttributesPolicy extends AbstractRegisteredServiceAttri
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return getAllowedAttributes();
-    }
-
-    protected Map<String, List<Object>> mapAttributes(Map<String, List<Object>> attributes) {
-        if (attributesMappingRules == null) {
-            return attributes;
-        }
-
-        LOGGER.debug("Start mapping of attributes with the following rules [{}]", attributesMappingRules);
-
-        Map<String, List<Object>> mappedAttributes = new TreeMap<>();
-        attributes.keySet().stream().filter(attributesMappingRules::containsKey).forEach(s -> {
-            LOGGER.debug("Transform attribute [{}] -> [{}]", s, attributesMappingRules.get(s));
-            mappedAttributes.put(attributesMappingRules.get(s), attributes.get(s));
-        });
-        attributes.keySet().stream().filter(s -> !attributesMappingRules.containsKey(s)).forEach(s -> mappedAttributes.put(s, attributes.get(s)));
-        return mappedAttributes;
     }
 }

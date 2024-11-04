@@ -29,8 +29,8 @@ import static org.mockito.Mockito.*;
  */
 public class CesServicesManagerTest {
     CesServicesManagerStage servicesManagerStage = mock(CesServicesManagerStage.class);
-    CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null, null, false, null, null);
-    CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null, null, false, null, null);
+    CesServiceManagerConfiguration managerDevelopmentConfig = new CesServiceManagerConfiguration(STAGE_DEVELOPMENT, null);
+    CesServiceManagerConfiguration managerConfig = new CesServiceManagerConfiguration("don't care", null);
     CesServicesManager etcdServicesManger = new CesServiceManagerUnderTest(managerConfig, mock(Registry.class));
 
     /**

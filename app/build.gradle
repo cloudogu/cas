@@ -146,6 +146,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-oauth-webflow"
 
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow"
+    implementation "org.apereo.cas:cas-server-support-pac4j-api"
 
     implementation "org.apereo.cas:cas-server-support-pm"
     implementation "org.apereo.cas:cas-server-support-pm-core"
