@@ -12,6 +12,7 @@
   },
   "logoutType" : "BACK_CHANNEL",
   "bypassApprovalPrompt": true,
+  "userProfileViewType": "FLAT",
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
 }
