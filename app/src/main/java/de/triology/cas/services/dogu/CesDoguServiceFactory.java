@@ -46,6 +46,6 @@ public class CesDoguServiceFactory implements CesServiceFactory {
             return "";
         }
 
-        return "((?i)" + fqdn.replace(".", "\\.") + ")";
+        return "((?i)" + fqdn.replace(".", "[.]") + ")";
     }
 }
