@@ -5,8 +5,6 @@
 cas.server.name=https://{{ .GlobalConfig.Get "fqdn" }}
 cas.server.prefix=${cas.server.name}/cas
 
-ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
-
 # This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
 ces.ldap-pool-size=0
 
