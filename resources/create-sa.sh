@@ -3,6 +3,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# shellcheck disable=SC1091
 source util.sh
 
 {
@@ -52,7 +53,7 @@ source util.sh
         -e "s|{{TEMPLATES}}|$(IFS=, ; echo "${TEMPLATES[*]}")|g" \
         -e "s|{{CLIENT_SECRET_HASH}}|$CLIENT_SECRET_HASH|g" \
         -e "s|{{SERVICE_CLASS}}|$SERVICE_CLASS|g" \
-        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/oauth-service-template.json.tpl > $SERVICE_REGISTRY_PRODUCTION/${SERVICE}-${SERVICE_ID}.json
+        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/oauth-service-template.json.tpl > "$SERVICE_REGISTRY_PRODUCTION"/"${SERVICE}"-"${SERVICE_ID}".json
 
     doguctl config "service_accounts/${TYPE}/${SERVICE}/secret" "${CLIENT_SECRET_HASH}"
   elif [ "${TYPE}" == "cas" ]; then
@@ -67,7 +68,7 @@ source util.sh
         -e "s|{{SERVICE_ID}}|$SERVICE_ID|g" \
         -e "s|{{FQDN}}|$EFQDN|g" \
         -e "s|{{TEMPLATES}}|$(IFS=, ; echo "${TEMPLATES[*]}")|g" \
-        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/cas-service-template.json.tpl > $SERVICE_REGISTRY_PRODUCTION/${SERVICE}-${SERVICE_ID}.json
+        -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/cas-service-template.json.tpl > "$SERVICE_REGISTRY_PRODUCTION"/"${SERVICE}"-"${SERVICE_ID}".json
 
   else
     echo "only the account_types: oidc, oauth, cas are allowed"
