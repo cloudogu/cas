@@ -26,7 +26,7 @@ source util.sh
   # build logout url
   LOGOUT_URL="https://${FQDN}/${SERVICE}${LOGOUT_URI:-}"
 
-  # Initialize TEMPLATES as an empty array
+  # Initialize TEMPLATES with base templates
   TEMPLATES=("BaseService,DefaultAttributeReleasePolicy")
 
   if [ -n "${LOGOUT_URI+x}" ]; then
