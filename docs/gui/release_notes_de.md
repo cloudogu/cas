@@ -5,14 +5,19 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Bei der Anmeldung über eine delegierte Authentifizierung (durch einen OIDC-Provider) werden die Nutzer in den internen LDAP repliziert
+   - Die replizierten Nutzer werden als "extern" gekennzeichnet und können, bis auf die Gruppenzuordnung, nicht editiert werden.
 - Das Dogu wurde intern auf eine JSON Registry umgestellt, wodurch sich die Logik zum Anlegen und Löschen von Service-Accounts geändert hat.
 - Einheitliche Verwendung von Service-Accounts sowohl in einer Multinode- als Singlenode-Umgebung.
 
 ### Breaking Change
 - Neu zu installierende Dogus müssen explizit die Erstellung eines Serviceaccounts im CAS über die dogu.json anfordern. Weitere Informationen hierfür finden Sie in der [Entwicklerdokumentation](https://github.com/cloudogu/dogu-development-docs/blob/main/docs/important/relevant_functionalities_de.md#authentifizierung)
 
+## Release 7.0.8-3
+- Es wurde eine Anpassung gemacht, welche die Kompatibilität für Dogus erweitert, welche Open ID Connect nutzen.
+
 ## Release 7.0.8-2
-Es wurde ein technischer Fehler behoben der in Multinode-Umgebungen verhindert hat, dass Dogus mit Service-Accounts `cas` erreichbar sind.
+- Es wurde ein technischer Fehler behoben der in Multinode-Umgebungen verhindert hat, dass Dogus mit Service-Accounts `cas` erreichbar sind.
 
 ## Release 7.0.8-1
 Das Dogu bietet nun die CAS-Version 7.0.8 an. Die Release Notes von CAS finden Sie [in den CAS-Github-Releases](https://github.com/apereo/cas/releases/tag/v7.0.8).

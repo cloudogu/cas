@@ -1,6 +1,7 @@
 package de.triology.cas.ldap.resolvers;
 
 import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
+import de.triology.cas.ldap.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.ldaptive.LdapEntry;
@@ -32,7 +33,7 @@ public class MemberOfGroupResolver implements GroupResolver {
 
         if (ldapAttribute != null && !ldapAttribute.isBinary()) {
             for (String value : ldapAttribute.getStringValues()) {
-                String group = normalizeName(value);
+                String group = Util.extractGroupNameFromDn(value);
                 LOGGER.trace("added group {} to attribute map", group);
                 groups.add(group);
             }
@@ -41,25 +42,4 @@ public class MemberOfGroupResolver implements GroupResolver {
         }
         return groups;
     }
-
-    private String normalizeName(String value) {
-        return extractNameFromDn(value);
-    }
-
-    private String extractNameFromDn(String dn) {
-        String result = dn;
-        int eqindex = dn.indexOf('=');
-        int coindex = dn.indexOf(',');
-        if (eqindex > 0 && (coindex < 0 || eqindex < coindex) && dn.length() > eqindex + 1) {
-            dn = dn.substring(eqindex + 1);
-            coindex = dn.indexOf(',');
-            if (coindex > 0) {
-                result = dn.substring(0, coindex);
-            } else {
-                result = dn;
-            }
-        }
-        return result;
-    }
-
 }

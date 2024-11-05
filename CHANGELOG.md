@@ -6,15 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Replicate users from delegated authentication into LDAP [#224]
+  - delegated authentication currently only works when using the embedded LDAP 
+
 ### Changed
 - Use JSON service registry [#221]
-  - services are read from and stored in json files instead of local config
-  - native implementation from CAS is used for this, which reduces custom overlay implementation
-- Changed logic to create and remove service accounts [#221] 
+    - services are read from and stored in json files instead of local config
+    - native implementation from CAS is used for this, which reduces custom overlay implementation
+- Changed logic to create and remove service accounts [#221]
+
+### Fixed
+- Fix configuration for delegated authentication with OIDC [#222]
 
 ### Removed
-- Reading service information directly from ETCD [#221]  
-  - Removed java classes for service creation
+- Reading service information directly from ETCD [#221]
+    - Removed java classes for service creation
+
+## [v7.0.8-3] - 2024-10-11
+### Changed
+- Use flat instead of nested attributes for OAuth user profile. [#219]
+### Fixed
+- OIDC- and OAuth-Dogus which relied on a flat OAuth user profile structure were unable to parse the user profile. [#219]
 
 ## [v7.0.8-2] - 2024-10-02
 ### Fixed
