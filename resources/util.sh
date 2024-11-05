@@ -6,7 +6,6 @@ set -o pipefail
 # Defines the path to store service definitions
 SERVICE_REGISTRY="etc/cas/services"
 SERVICE_REGISTRY_PRODUCTION="${SERVICE_REGISTRY}"/production
-SERVICE_REGISTRY_DEVELOPMENT="${SERVICE_REGISTRY}"/development
 
 # This function prints an error to the console and waits 5 minutes before exiting the process.
 # Requires two arguments:
@@ -175,8 +174,11 @@ function checkFqdnUpdate() {
     return 0
   fi
 
-  local globalFQDN=$(doguctl config -g fqdn)
-  local localFQDN=$(doguctl config fqdn)
+  local globalFQDN
+  globalFQDN=$(doguctl config -g fqdn)
+
+  local localFQDN
+  localFQDN=$(doguctl config fqdn)
 
   if [ "$localFQDN" == "$globalFQDN" ];  then
     return 0
@@ -185,7 +187,7 @@ function checkFqdnUpdate() {
   echo "FQDN has change, update services ..."
 
   doguctl config "fqdn" "$globalFQDN"
-  updateFqdnInServices $globalFQDN
+  updateFqdnInServices "$globalFQDN"
 }
 
 # Function to double-escape dots in the FQDN to use it within a regex of the service registry
@@ -207,11 +209,12 @@ function findNextServiceID() {
     local max_number=0
 
     # Loop through all JSON files in the directory
-    for file in $dir/*.json; do
+    for file in "$dir"/*.json; do
         # Check if the folder contains any JSON files
         if [[ -f "$file" ]]; then
             # Extract the number from the filename using regex (ignores prefix and extracts numbers)
-            local number=$(echo "$file" | awk -F'[-.]' '{print $(NF-1)}')
+            local number
+            number=$(echo "$file" | awk -F'[-.]' '{print $(NF-1)}')
 
             # Update max_number if the extracted number is greater
             if [[ $number -gt $max_number ]]; then
@@ -231,7 +234,9 @@ function findNextServiceID() {
 function updateFqdnInServices() {
   echo "Updating services with new fqdn ${1}"
 
-  local nFQDN=$(escapeDots "${1}")
+  local nFQDN
+  nFQDN=$(escapeDots "${1}")
+
   local tmpFqdnService=/tmp/new-fqdn.json
 
   # create temporary new service with new fqdn property
@@ -242,7 +247,8 @@ function updateFqdnInServices() {
       -e 's|{{LOGOUT_URL}}||g' etc/cas/config/services/cas-service-template.json.tpl > $tmpFqdnService
 
   # Extract the Fqdn value from the source JSON
-  local fqdnObject=$(jq '.properties.Fqdn' "$tmpFqdnService")
+  local fqdnObject
+  fqdnObject=$(jq '.properties.Fqdn' "$tmpFqdnService")
 
   # Loop through production service files
   for service in "$SERVICE_REGISTRY_PRODUCTION"/*.json; do
