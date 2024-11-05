@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Replicate users from delegated authentication into LDAP [#224]
   - delegated authentication currently only works when using the embedded LDAP 
+- Disclaimer for legal_urls without protocol [#230]
 
 ### Fixed
 - Fix configuration for delegated authentication with OIDC [#222]
