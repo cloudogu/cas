@@ -198,8 +198,28 @@ parallel(
                         stage('Integration Tests') {
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"
                             ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
-                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
+                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"],\\"ServiceAccounts\\":[{\\"Type\\":\\"cas\\",\\"Params\\":[\\"oauth\\"]}]}' '''
                             ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
+
+                            ecoSystem.vagrant.sshOut '''echo '{
+                                                          "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+                                                          "serviceId" : "^https://([a-zA-Z0-9.-]+)(:443)?/inttest(/.*)?",
+                                                          "name" : "inttest",
+                                                          "id" : 1000,
+                                                          "description": "custom service for integration tests",
+                                                          "clientId": "inttest",
+                                                          "clientSecret": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea",
+                                                          "attributeReleasePolicy" : {
+                                                            "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+                                                          },
+                                                          "logoutType" : "BACK_CHANNEL",
+                                                          "bypassApprovalPrompt": true,
+                                                          "userProfileViewType": "FLAT",
+                                                          "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+                                                          "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
+                                                        }' > /etc/cas/services/production/inttest-1000.json'''
+
+                            ecoSystem.vagrant.sshOut "cat /etc/cas/services/production/inttest-1000.json"
 
                             ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
