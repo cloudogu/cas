@@ -203,7 +203,7 @@ parallel(
                             ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"],\\"ServiceAccounts\\":[{\\"Type\\":\\"cas\\",\\"Params\\":[\\"oauth\\"]}]}' '''
                             ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
-                            ecoSystem.vagrant.sshOut 'cat > inittest-1000.json <<EOF
+                            ecoSystem.vagrant.sshOut '''cat > inittest-1000.json <<EOF
                                                       {
                                                         "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
                                                         "serviceId" : "^https://([a-zA-Z0-9.-]+)(:443)?/inttest(/.*)?",
@@ -221,7 +221,7 @@ parallel(
                                                         "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
                                                         "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
                                                       }
-                                                      EOF"'
+                                                      EOF"'''
 
                             ecoSystem.vagrant.sshOut "cat inttest-1000.json"
 
