@@ -3,8 +3,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# shellcheck disable=SC1091
-source util.sh
+sourcingExitCode=0
+# shellcheck disable=SC1090,SC1091
+source "${STARTUP_DIR}"/util.sh || sourcingExitCode=$?
+if [[ ${sourcingExitCode} -ne 0 ]]; then
+  echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
+fi
 
 {
   if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then

@@ -15,8 +15,12 @@ echo "                   V///   '°°°°      (/////)      °°°°'   ////  "
 echo "                    V/////(////////\. '°°°' ./////////(///(/'   "
 echo "                       'V/(/////////////////////////////V'      "
 
-# shellcheck disable=SC1091
-source util.sh
+sourcingExitCode=0
+# shellcheck disable=SC1090,SC1091
+source "${STARTUP_DIR}"/util.sh || sourcingExitCode=$?
+if [[ ${sourcingExitCode} -ne 0 ]]; then
+  echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
+fi
 
 # check whether post-upgrade script is still running
 while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do

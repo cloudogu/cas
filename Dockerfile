@@ -67,7 +67,8 @@ ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
 	SERVICE_TAGS=webapp \
 	USER=cas \
     GROUP=cas \
-    SSL_BASE_DIRECTORY="/etc/ssl"
+    SSL_BASE_DIRECTORY="/etc/ssl" \
+    STARTUP_DIR=/
 
 # setup user
 RUN set -x \

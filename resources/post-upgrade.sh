@@ -3,7 +3,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-source util.sh
+sourcingExitCode=0
+# shellcheck disable=SC1090,SC1091
+source "${STARTUP_DIR}"/util.sh || sourcingExitCode=$?
+if [[ ${sourcingExitCode} -ne 0 ]]; then
+  echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
+fi
 
 checkSameVersion() {
   echo "Checking the CAS versions..."
