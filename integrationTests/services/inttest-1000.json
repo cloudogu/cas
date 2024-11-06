@@ -1,0 +1,17 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "serviceId" : "^https://([a-zA-Z0-9.-]+)(:443)?/inttest(/.*)?",
+  "name" : "inttest",
+  "id" : 1000,
+  "description": "custom service for integration tests",
+  "clientId": "inttest",
+  "clientSecret": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "bypassApprovalPrompt": true,
+  "userProfileViewType": "FLAT",
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
+}
