@@ -221,7 +221,7 @@ parallel(
                                                         "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
                                                         "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
                                                       }
-                                                      EOF"'''
+                                                      EOF'''
 
                             ecoSystem.vagrant.sshOut "cat inttest-1000.json"
 
