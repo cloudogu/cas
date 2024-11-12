@@ -11,18 +11,40 @@ echo "Testing CAS logs for unencrypted passwords"
 CES_URL=$1
 EXECUTION_TOKEN=""
 # admin user and password from integration tests
-ADMIN_USER=ces-admin
-ADMIN_PW=Ecosystem2016!
+ADMIN_USER=admin
+ADMIN_PW=admin
+PWD_LOGGING_USER=pwdlogging
+PWD_LOGGING_PASSWORD=👻
 
-echo "Logging in to CAS"
+# change cas warn level
+sudo docker container exec cas "doguctl config logging/root DEBUG"
+sudo docker container restart cas
+# wait for cas to be ready
+until [ "`docker inspect -f {{.State.Health.Status}} cas`"=="healthy" ]; do
+    sleep 1;
+done;
+
+echo "Creating new testuser with password 👻"
+# create new user
+POST_DATA=$(jq -n --arg name "${PWD_LOGGING_USER}" --arg pw "${PWD_LOGGING_PASSWORD}" \
+'{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: []}'
+)
+curl -v --insecure -u "${ADMIN_USER}:${ADMIN_PW}" "https://${CES_URL}/usermgt/api/users" -H "Content-Type: application/json; charset=UTF-8" \
+--data-raw "${POST_DATA}" -L
+
+echo "Logging in to CAS with new user"
 # get execution token for login
-curl "http://${CES_URL}/cas/login" \
-  -L --data-raw "username=${ADMIN_USER}&${ADMIN_PW}&_eventId=submit&geolocation=&deviceFingerprint=" \
-  --insecure > firstRequest
-EXECUTION_TOKEN=$(grep 'name="execution" value=' "firstRequest" | awk '{gsub("value=\"", "", $4); gsub("\"/><input", "", $4); print $4}')
-# login request that gets logged by cas
-curl "http://${CES_URL}/cas/login" -X POST \
-  -L --data-raw "username=${ADMIN_USER}&${ADMIN_PW}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
+curl "https://${CES_URL}/cas/login" \
+  -L --insecure -v > firstRequest
+EXECUTION_TOKEN=$(grep 'name="execution" value=' "firstRequest" -m 1 | awk '{gsub("value=\"", "", $4); gsub("\"/><input", "", $4); print $4}')
+echo "${EXECUTION_TOKEN}"
+# this request is authorized
+curl "https://${CES_URL}/cas/login" \
+  -v --data-raw "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
+  --insecure
+# this request is unauthorized, but logs will still appear in the cas
+curl "https://${CES_URL}/cas/login" \
+  -v --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure
 
 # check docker logs

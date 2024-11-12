@@ -208,7 +208,8 @@ parallel(
                            // run special non-encrypted password test
                            echo "Run unencrypted password test script"
                            ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
-                           ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+                           def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+                           echo "${testreport}"
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
