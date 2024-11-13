@@ -10,6 +10,12 @@ In der Standardkonfiguration des CAS Dogus werden auf der Login-Seite keine rech
 * **Impressum** - setzen des etcd Schlüssels `etcdctl set /config/cas/legal_urls/imprint "https://.../imprint..."`
 * **Datenschutzerklärung** - setzen des etcd Schlüssels `etcdctl set /config/cas/legal_urls/privacy_policy "https://.../privacy_policy..."`
 Das Setzten der etcd-Schlüssel aktiviert auch die entsprechenden UI Elemente in der Fußleiste der Login Maske.
+
+**Achtung**
+Wird eine URL ohne Protokoll (z.B. www.test.de) als legal_url gesetzt, dann ergänzt CAS den Link automatisch um den FQDN. Die URL wird dann wie folgt gesetzt:
+```https://{fqdn}/cas/www.test.de```.
+Wenn eine externe URL als legal_url angezeigt werden soll, dann muss das Protokoll (z.B. https://www.test.de) mit angegeben werden.
+
 ![customize legal urls](figures/legal_urls_de.png)
 
 
@@ -24,5 +30,5 @@ gesetzt werden und das CAS Dogu neu gestartet werden. Der Text kann nun in der L
 durch einen Klick auf "Passwort vergessen?" ein- und ausgeblendet werden.
 
 Beachte, dass der `Passwort vergessen`-Button nur angezeigt wird, wenn die Passwort-Zurücksetzen-Funktion deaktiviert ist 
-(s. [Deaktivierung der Passwort-Zurücksetzen-Funktion](password-management_de.md#deaktivierung-der-passwort-zurcksetzen-funktion))
+(s. [Deaktivierung der Passwort-Zurücksetzen-Funktion](password-management_de.md#deaktivierung-der-passwort-zurücksetzen-funktion))
 und dem etcd key `config/cas/forgot_password_text` ein Wert zugewiesen worden ist.

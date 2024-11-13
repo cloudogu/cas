@@ -56,35 +56,10 @@ abstract class CesServicesManagerStage {
      */
     protected void addNewService(BaseRegisteredService service) {
         service.setEvaluationOrder((int) service.getId());
-        service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes(), managerConfig.getAttributesMappingRules()));
-
-        if (managerConfig.isOidcAuthenticationDelegationEnabled()) {
-            configureOidcDelegationService(service);
-        }
+        service.setAttributeReleasePolicy(new ReturnMappedAttributesPolicy(managerConfig.getAllowedAttributes()));
 
         LOGGER.debug("Adding new service to service manager {}", service);
         registeredServices.put(service.getId(), service);
-    }
-
-    /**
-     * Applies basic configuration to all services when the OIDC delegation authentication is enabled.
-     *
-     * @param service The service that should be configured
-     */
-    private void configureOidcDelegationService(BaseRegisteredService service) {
-        if (managerConfig.getOidcPrincipalsAttribute() != null && !managerConfig.getOidcPrincipalsAttribute().isEmpty()) {
-            var principalProvider = new PrincipalAttributeRegisteredServiceUsernameProvider();
-            principalProvider.setUsernameAttribute(managerConfig.getOidcPrincipalsAttribute());
-            service.setUsernameAttributeProvider(principalProvider);
-        }
-
-        List<String> allowedProviders = new ArrayList<>();
-        allowedProviders.add(managerConfig.getOidcClientDisplayName());
-        var delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
-        delegatedAuthenticationPolicy.setAllowedProviders(allowedProviders);
-        var accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        accessStrategy.setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
-        service.setAccessStrategy(accessStrategy);
     }
 
     /**

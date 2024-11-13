@@ -32,18 +32,6 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
     @Value("${ces.services.allowedAttributes}")
     private List<String> allowedAttributes;
 
-    @Value("${ces.services.attributeMapping:#{\"\"}}")
-    private String attributesMappingRulesString;
-
-    @Value("${ces.services.oidcPrincipalsAttribute:#{\"\"}}")
-    private String oidcPrincipalsAttribute;
-
-    @Value("${cas.authn.pac4j.oidc[0].generic.enabled:#{false}}")
-    private boolean oidcAuthenticationDelegationEnabled;
-
-    @Value("${cas.authn.pac4j.oidc[0].generic.client-name:#{\"\"}}")
-    private String oidcClientName;
-
     public EtcdClient createEtcdClient() {
         EtcdClientFactory factory = new EtcdClientFactory();
         return factory.createDefaultClient();
@@ -71,9 +59,7 @@ public class CesServicesSpringConfiguration implements ServicesManagerExecutionP
             registry = new RegistryEtcd(etcdClient);
         }
 
-        LOGGER.debug("------- Found attribute mappings [{}]", attributesMappingRulesString);
-        Map<String, String> attributesMappingRules = propertyStringToMap(attributesMappingRulesString);
-        var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes, attributesMappingRules, oidcAuthenticationDelegationEnabled, oidcClientName, oidcPrincipalsAttribute);
+        var managerConfig = new CesServiceManagerConfiguration(stage, allowedAttributes);
         return new CesServicesManager(managerConfig, registry);
     }
 

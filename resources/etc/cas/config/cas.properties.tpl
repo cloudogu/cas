@@ -213,19 +213,21 @@ cas.ticket.tgt.core.only-track-most-recent-session=false
 ########################################################################################################################
 # OIDC - Provider Mode
 # Configuration guide:
-# Properties: https://apereo.github.io/cas/6.1.x/configuration/Configuration-Properties-Common.html#delegated-authentication-openid-connect-settings
+# Properties: https://apereo.github.io/cas/7.0.x/integration/Delegate-Authentication-Generic-OpenID-Connect.html
 # ----------------------------------------------------------------------------------------------------------------------
 {{ if ne (.Config.Get "oidc/enabled") "false"}}
+cas.authn.pac4j.oidc[0].generic.enabled=true
+
 ### path to the discovery url of the provider
 cas.authn.pac4j.oidc[0].generic.discovery-uri={{ .Config.GetOrDefault "oidc/discovery_uri" ""}}
-
-### required configuration
-cas.authn.pac4j.oidc[0].generic.useNonce=true
-cas.authn.pac4j.oidc[0].generic.enabled={{ .Config.Get "oidc/enabled"}}
 
 ### name and secret for the client to identify itself by the provider
 cas.authn.pac4j.oidc[0].generic.id={{ .Config.Get "oidc/client_id"}}
 cas.authn.pac4j.oidc[0].generic.secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
+
+### required configuration
+cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_basic
+cas.authn.pac4j.oidc[0].generic.use-nonce=true
 
 ### Max clock skew
 cas.authn.pac4j.oidc[0].generic.max-clock-skew=5
@@ -234,23 +236,23 @@ cas.authn.pac4j.oidc[0].generic.max-clock-skew=5
 cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
 
 ### perform automatic redirects to the configured provider when a user logs into the cas
-cas.authn.pac4j.oidc[0].generic.auto-redirect={{if eq (.Config.Get "oidc/optional") "true"}}false{{else}}true{{end}}
-
-### redirect back to the ces after successful logout
-cas.authn.pac4j.oidc[0].generic.target-url={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}
+cas.authn.pac4j.oidc[0].generic.auto-redirect-type={{if eq (.Config.Get "oidc/optional") "true"}}NONE{{else}}CLIENT{{end}}
 
 ### information that are supposed to be contained in the responses of the OIDC provider
 cas.authn.pac4j.oidc[0].generic.scope={{ .Config.Get "oidc/scopes"}}
-cas.authn.pac4j.oidc[0].generic.responseType=code
+cas.authn.pac4j.oidc[0].generic.response-type=code
 
 ### preferred algorithm to use for the open id connect jwt tokens
-cas.authn.pac4j.oidc[0].generic.preferredJwsAlgorithm=RS256
+cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256
 
 ### the attribute that should be used as the principal id
-ces.services.oidcPrincipalsAttribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
+cas.authn.pac4j.oidc[0].generic.principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
+
+### redirect back to the ces after successful logout
+ces.delegation.oidc.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}
 
 ### attribute mapping
-ces.services.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
+ces.delegation.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 {{ end }}
 ########################################################################################################################
 

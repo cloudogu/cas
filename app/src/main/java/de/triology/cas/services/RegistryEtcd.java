@@ -86,7 +86,6 @@ class RegistryEtcd implements Registry {
         List<CesServiceData> serviceDataList = new ArrayList<>();
         for (EtcdKeysResponse.EtcdNode oAuthClient : nodesFromEtcd) {
             try {
-                System.out.println("key: " + oAuthClient.getKey() + " prefix: " + clientPathPrefix);
                 var clientID = oAuthClient.getKey().substring(clientPathPrefix.length());
                 var attributes = new HashMap<String, String>();
 

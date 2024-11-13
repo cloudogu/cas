@@ -20,7 +20,7 @@ public class CesServicesManagerStageDevelopmentTest {
      */
     private static final String DEVELOPMENT_SERVICE_SERVICE_ID = "^(https?|imaps?)://.*";
 
-    CesServicesManagerStageDevelopment stage = new CesServicesManagerStageDevelopment(new CesServiceManagerConfiguration("development", null, null, false, null, null));
+    CesServicesManagerStageDevelopment stage = new CesServicesManagerStageDevelopment(new CesServiceManagerConfiguration("development", null));
 
     /**
      * Test for {@link CesServicesManagerStageDevelopment#getRegisteredServices()}
