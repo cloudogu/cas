@@ -11,8 +11,8 @@ echo "Testing CAS logs for unencrypted passwords"
 CES_URL=$1
 EXECUTION_TOKEN=""
 # admin user and password from integration tests
-ADMIN_USER=admin
-ADMIN_PW=admin
+ADMIN_USER=ces-admin
+ADMIN_PW=Ecosystem2016!
 PWD_LOGGING_USER=pwdlogging
 PWD_LOGGING_PASSWORD=👻
 
