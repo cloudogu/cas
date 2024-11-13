@@ -25,7 +25,7 @@ casStatus="999"
 until [ "${casStatus}" = "200" ]; do
     echo "waiting for CAS to be ready"
     sleep 5;
-    casStatus=$(curl -I -L "https://${CES_URL}/cas/login" 2>/dev/null --insecure | head -n 1 | cut -d$' ' -f2)
+    casStatus=$(curl -s -I -L "https://${CES_URL}/cas/login" 2>/dev/null --insecure | head -n 1 | cut -d$' ' -f2)
 done;
 
 echo "Creating new testuser ${PWD_LOGGING_USER} with password ${PWD_LOGGING_PASSWORD}"
@@ -33,36 +33,33 @@ echo "Creating new testuser ${PWD_LOGGING_USER} with password ${PWD_LOGGING_PASS
 POST_DATA=$(jq -n --arg name "${PWD_LOGGING_USER}" --arg pw "${PWD_LOGGING_PASSWORD}" \
 '{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: ["administrators"]}'
 )
-curl --insecure -u "${ADMIN_USER}:${ADMIN_PW}" "https://${CES_URL}/usermgt/api/users" -H "Content-Type: application/json; charset=UTF-8" \
+curl --insecure -s -u "${ADMIN_USER}:${ADMIN_PW}" "https://${CES_URL}/usermgt/api/users" -H "Content-Type: application/json; charset=UTF-8" \
 --data-raw "${POST_DATA}" -L
 
 echo "Logging in to CAS with new user"
 # get execution token for login
-curl "https://${CES_URL}/cas/login" \
+curl -s "https://${CES_URL}/cas/login" \
   -L --insecure  > firstRequest
 EXECUTION_TOKEN=$(grep 'name="execution" value=' "firstRequest" -m 1 | awk '{gsub("value=\"", "", $4); gsub("\"/><input", "", $4); print $4}')
 echo "${EXECUTION_TOKEN}"
 # this request is authorized
-curl "https://${CES_URL}/cas/login" \
+curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure
 # this request is unauthorized, but logs will still appear in the cas
-curl "https://${CES_URL}/cas/login" \
+curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure
 
 echo "Creating valid service ticket with new user"
 # this valid service ticket will appear in the cas logs as well
-curl  -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
+curl -s -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
- echo "1"
 ticketGrantingTicket=$(grep -Po TGT-.*cas serviceTicket)
-curl -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F192.168.56.2%2Fcas/login" --insecure \
+curl -s -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F192.168.56.2%2Fcas/login" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
- echo "2"
 validTicket=$(cat serviceTicket)
-curl -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}/cas/login&ticket=${validTicket}" --http1.0 > serviceTicket
-echo "3"
+curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}/cas/login&ticket=${validTicket}" --http1.0 > serviceTicket
 
 # check docker logs
 echo "Checking external cas docker logs for unencrypted passwords"
