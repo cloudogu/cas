@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix configuration for delegated authentication with OIDC [#222]
+- Prevent logging of invalid login credentials [#233]
 
 ## [v7.0.8-3] - 2024-10-11
 ### Changed
