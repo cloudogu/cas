@@ -97,17 +97,17 @@
     },
     {
       "Name": "legal_urls/terms_of_service",
-      "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Description": "This URL links to the Terms of Service and will be the first link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect. When the protocol part of the url (e.g. https://) is not supplied, the url will be set to fqdn/cas/{given_url}. When the protocol is supplied, the url will be shown as given.",
       "Optional": true
     },
     {
       "Name": "legal_urls/imprint",
-      "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Description": "This URL links to the Imprint and will be the second link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect. When the protocol part of the url (e.g. https://) is not supplied, the url will be set to fqdn/cas/{given_url}. When the protocol is supplied, the url will be shown as given.",
       "Optional": true
     },
     {
       "Name": "legal_urls/privacy_policy",
-      "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect.",
+      "Description": "This URL links to the Privacy Policy and will be the last link at the bottom of login or logout pages. If empty the whole link will be omitted. If changed the CAS dogu must be restarted to take effect. When the protocol part of the url (e.g. https://) is not supplied, the url will be set to fqdn/cas/{given_url}. When the protocol is supplied, the url will be shown as given.",
       "Optional": true
     },
     {
