@@ -20,7 +20,7 @@ PWD_LOGGING_PASSWORD=👻
 sudo docker container exec cas doguctl config logging/root DEBUG
 sudo docker container restart cas
 # wait for cas to be ready
-curl -L -v https://192.168.56.2/cas/login --insecure
+curl -L -v "https://${CES_URL}/cas/login" --insecure
 until [ "`docker container exec cas doguctl state`"=="ready" ]; do
     echo "waiting for CAS to be ready"
     sleep 1;
