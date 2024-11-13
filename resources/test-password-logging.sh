@@ -17,17 +17,20 @@ PWD_LOGGING_USER=pwdlogging
 PWD_LOGGING_PASSWORD=👻
 
 # change cas warn level
-sudo docker container exec cas "doguctl config logging/root DEBUG"
+sudo docker container exec cas doguctl config logging/root DEBUG
 sudo docker container restart cas
 # wait for cas to be ready
-until [ "`docker inspect -f {{.State.Health.Status}} cas`"=="healthy" ]; do
+curl -L -v https://192.168.56.2/cas/login --insecure
+until [ "`docker container exec cas doguctl state`"=="ready" ]; do
+    echo "waiting for CAS to be ready"
     sleep 1;
 done;
+sleep 200
 
-echo "Creating new testuser with password 👻"
+echo "Creating new testuser ${PWD_LOGGING_USER} with password ${PWD_LOGGING_PASSWORD}"
 # create new user
 POST_DATA=$(jq -n --arg name "${PWD_LOGGING_USER}" --arg pw "${PWD_LOGGING_PASSWORD}" \
-'{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: []}'
+'{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: ["administrators"]}'
 )
 curl -v --insecure -u "${ADMIN_USER}:${ADMIN_PW}" "https://${CES_URL}/usermgt/api/users" -H "Content-Type: application/json; charset=UTF-8" \
 --data-raw "${POST_DATA}" -L
@@ -46,6 +49,16 @@ curl "https://${CES_URL}/cas/login" \
 curl "https://${CES_URL}/cas/login" \
   -v --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure
+
+echo "Creating valid service ticket with new user"
+# this valid service ticket will appear in the cas logs as well
+curl  -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
+ -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
+ticketGrantingTicket=$(grep -Po TGT-.*cas serviceTicket)
+curl -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F192.168.56.2%2Fcas/login" --insecure \
+ -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
+validTicket=$(cat serviceTicket)
+curl -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}/cas/login&ticket=${validTicket}" --http1.0 > serviceTicket
 
 # check docker logs
 echo "Checking external cas docker logs for unencrypted passwords"
