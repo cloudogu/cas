@@ -17,8 +17,8 @@ PWD_LOGGING_USER=pwdlogging
 PWD_LOGGING_PASSWORD=👻
 
 # change cas warn level
-sudo docker container exec cas doguctl config logging/root DEBUG
-sudo docker container restart cas
+# sudo docker container exec cas doguctl config logging/root DEBUG
+# sudo docker container restart cas
 
 # wait for cas to be ready
 casStatus="999"
@@ -41,22 +41,21 @@ echo "Logging in to CAS with new user"
 curl -s "https://${CES_URL}/cas/login" \
   -L --insecure  > firstRequest
 EXECUTION_TOKEN=$(grep 'name="execution" value=' "firstRequest" -m 1 | awk '{gsub("value=\"", "", $4); gsub("\"/><input", "", $4); print $4}')
-echo "${EXECUTION_TOKEN}"
 # this request is authorized
 curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
-  --insecure
+  --insecure > /dev/null
 # this request is unauthorized, but logs will still appear in the cas
 curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
-  --insecure
+  --insecure > /dev/null
 
 echo "Creating valid service ticket with new user"
 # this valid service ticket will appear in the cas logs as well
 curl -s -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
 ticketGrantingTicket=$(grep -Po TGT-.*cas serviceTicket)
-curl -s -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F192.168.56.2%2Fcas/login" --insecure \
+curl -s -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fcas/login" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
 validTicket=$(cat serviceTicket)
 curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}/cas/login&ticket=${validTicket}" --http1.0 > serviceTicket
