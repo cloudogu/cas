@@ -31,7 +31,7 @@ done;
 echo "Creating new testuser ${PWD_LOGGING_USER} with password ${PWD_LOGGING_PASSWORD}"
 # create new user
 POST_DATA=$(jq -n --arg name "${PWD_LOGGING_USER}" --arg pw "${PWD_LOGGING_PASSWORD}" \
-'{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: ["administrators"]}'
+'{displayName: $name, givenname: $name, mail: "adminpwdlogging@admin.org", surname: $name, username: $name, password: $pw, pwdReset: false, external :false, memberOf: ["cesAdmin"]}'
 )
 curl --insecure -s -u "${ADMIN_USER}:${ADMIN_PW}" "https://${CES_URL}/usermgt/api/users" -H "Content-Type: application/json; charset=UTF-8" \
 --data-raw "${POST_DATA}" -L
