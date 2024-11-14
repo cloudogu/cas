@@ -194,8 +194,8 @@ function checkFqdnUpdate() {
 function escapeDots() {
     local fqdn="$1"
 
-    # Use parameter substitution to replace each '.' with '\\.'
-    local escaped_fqdn="${fqdn//./\\\\\\\\\\\\\\\\.}"
+    # Use parameter substitution to replace each '.' with '[.]'
+    local escaped_fqdn="${fqdn//./[.]}"
 
     # Return the double-escaped FQDN
     echo "$escaped_fqdn"

@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Use JSON service registry [#221]
+  - services are read from and stored in json files instead of local config
+  - native implementation from CAS is used for this, which reduces custom overlay implementation
+- Changed logic to create and remove service accounts [#221]
+
+### Removed
+- Reading service information directly from ETCD [#221]
+  - Removed java classes for service creation
+
+### Fixed
+- Fix ServiceIdFQDN regex by changing illegal url characters [#228]
+
 
 ## [v7.0.8-4] - 2024-11-13
 ### Added
@@ -13,18 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - delegated authentication currently only works when using the embedded LDAP 
 - Disclaimer for legal_urls without protocol [#230]
 
-### Changed
-- Use JSON service registry [#221]
-    - services are read from and stored in json files instead of local config
-    - native implementation from CAS is used for this, which reduces custom overlay implementation
-- Changed logic to create and remove service accounts [#221]
-
 ### Fixed
 - Fix configuration for delegated authentication with OIDC [#222]
-
-### Removed
-- Reading service information directly from ETCD [#221]
-    - Removed java classes for service creation
 
 ## [v7.0.8-3] - 2024-10-11
 ### Changed
