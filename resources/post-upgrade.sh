@@ -152,6 +152,11 @@ migrateServicesFromETCD() {
     return 0
   fi
 
+  if [[ "$(doguctl multinode)" = "false" ]]; then
+    echo "SingleNode environment detected, migrate legacy cas services"
+    migrateLegacyServicesFromETCD
+  fi
+
   # Declare associative arrays to hold values for each application
   declare -A types
   declare -A secrets
@@ -222,6 +227,53 @@ migrateServicesFromETCD() {
   doguctl config "service_accounts/migrated" "true"
 
   echo "Migration completed. Individual files created for each application."
+}
+
+migrateLegacyServicesFromETCD() {
+  basePath="/tmp/legacyEtcdCasMigration"
+
+  mkdir -p "${basePath}"
+
+  # Get all services listed in etcd
+  wget -O "${basePath}/ces.json" "http://$(getEtcdEndpoint):4001/v2/keys/dogu_v2?recursive=true"
+
+  # extract the keys from json etcd response
+  jq '.node.nodes' "${basePath}/ces.json" > "${basePath}/nodes.json"
+  # filter services that have a dependency on cas
+  jq -r '.[] | .nodes[] | select(.value | contains("\"name\":\"cas\"")) | .value' "${basePath}/nodes.json" | jq -s '.' > "${basePath}/filter.json"
+  # filter services that don't have defined a service account for cas within dogu.json
+  jq '[.[] | select((.ServiceAccounts == null) or (.ServiceAccounts? | map(select(.Type == "cas")) | length) == 0)]' "${basePath}/filter.json" > "${basePath}/exclude.json"
+  # extract name from dogu.json
+  jq -r '.[] | .Name ' "${basePath}/exclude.json" > "${basePath}/migration.json"
+  # delete namespace from name, sort and delete duplicates
+  sed 's#.*/##' "${basePath}/migration.json" | sort | uniq > "${basePath}/migrationCandidates.txt"
+
+  cat "${basePath}/migrationCandidates.txt"
+
+  candidateFile="${basePath}/migrationCandidates.txt"
+
+  # Check if names file exists
+  if [[ ! -f "$candidateFile" ]]; then
+      echo "candidate file not found: $candidateFile" >&2
+      exit 1
+  fi
+
+  # Read each line from the file
+  while IFS= read -r name; do
+      echo "checking ${name}..."
+      #Check whether service is installed and has not migrated already
+      status_code=$(wget --spider -S "http://$(getEtcdEndpoint):4001/v2/keys/dogu_v2/${name}/current" 2>&1 | grep "HTTP/" | awk '{print $2}')
+      echo "status code from wget is: ${status_code}"
+      if [[ "$status_code" -eq 200 ]]; then
+        # We do not need to consider the LogoutUri as it has already been migrated in a previous step.
+        doguctl config "service_accounts/cas/${name}/created" "true"
+        echo "set service account entry in etcd for service ${name}"
+      fi
+  done < "$candidateFile"
+
+  rm -r "${basePath}"
+
+  echo "Legacy service account migration done."
 }
 
 runPostUpgrade() {
