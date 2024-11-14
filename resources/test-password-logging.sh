@@ -52,8 +52,9 @@ curl -s "https://${CES_URL}/cas/login" \
 
 echo "Creating valid service ticket with new user"
 # this valid service ticket will appear in the cas logs as well
-curl -v -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
+curl -v -f -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
+cat serviceTicket
 echo "creating ticketGrantingTicket"
 ticketGrantingTicket=$(grep -o TGT-.*cas serviceTicket)
 echo "${ticketGrantingTicket}"
