@@ -14,7 +14,7 @@ EXECUTION_TOKEN=""
 ADMIN_USER=ces-admin
 ADMIN_PW=Ecosystem2016!
 PWD_LOGGING_USER=pwdlogging
-PWD_LOGGING_PASSWORD=👻
+PWD_LOGGING_PASSWORD=Ecosystem2016!👻
 
 # change cas warn level
 # sudo docker container exec cas doguctl config logging/root DEBUG
@@ -49,8 +49,6 @@ curl -s "https://${CES_URL}/cas/login" \
 curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure > /dev/null
-
-sleep 10000
 
 echo "Creating valid service ticket with new user"
 # this valid service ticket will appear in the cas logs as well
