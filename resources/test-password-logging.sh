@@ -50,6 +50,8 @@ curl -s "https://${CES_URL}/cas/login" \
   --data-raw "username=wrongUser&password=${PWD_LOGGING_PASSWORD}&execution=${EXECUTION_TOKEN}&_eventId=submit&geolocation=&deviceFingerprint=" \
   --insecure > /dev/null
 
+sleep 10000
+
 echo "Creating valid service ticket with new user"
 # this valid service ticket will appear in the cas logs as well
 curl -v -f -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
