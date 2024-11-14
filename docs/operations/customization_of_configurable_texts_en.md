@@ -13,6 +13,11 @@ In the default configuration of CAS dogu, no legal links are displayed on the lo
  
 Setting the etcd key also activates the corresponding UI elements in the footer of the login screen.
 
+**Warning**
+If a URL without a protocol (e.g. www.test.de) is set as legal_url, CAS automatically adds the FQDN to the link. The URL is then set as follows:
+```https://{fqdn}/cas/www.test.de```.
+If an external URL should be displayed as a legal_url, the protocol (e.g. https://www.test.de) has to be specified.
+
 ![customize legal urls](figures/legal_urls_en.png)
 
 
