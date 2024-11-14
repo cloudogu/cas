@@ -101,20 +101,20 @@ parallel(
                         checkout scm
                     }
 
-                    //stage('Lint') {
-                    //    Dockerfile dockerfile = new Dockerfile(this)
-                    //    dockerfile.lint()
-                    //}
+                    stage('Lint') {
+                        Dockerfile dockerfile = new Dockerfile(this)
+                        dockerfile.lint()
+                    }
 
-                    //stage('Shellcheck') {
-                    //    // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
-                    //    shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
-                    //}
+                    stage('Shellcheck') {
+                        // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
+                        shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
+                    }
 
-                    //stage('Bats Tests') {
-                    //    Bats bats = new Bats(this, docker)
-                    //    bats.checkAndExecuteTests()
-                    //}
+                    stage('Bats Tests') {
+                        Bats bats = new Bats(this, docker)
+                        bats.checkAndExecuteTests()
+                    }
 
                     try {
                         stage('Provision') {
@@ -178,15 +178,15 @@ parallel(
                             ecoSystem.build("/dogu")
                         }
 
-                        //stage('Trivy scan') {
-                        //    trivy.scanDogu("/dogu", TrivyScanFormat.HTML, params.TrivyScanLevels, params.TrivyStrategy)
-                        //    trivy.scanDogu("/dogu", TrivyScanFormat.JSON,  params.TrivyScanLevels, params.TrivyStrategy)
-                        //    trivy.scanDogu("/dogu", TrivyScanFormat.PLAIN, params.TrivyScanLevels, params.TrivyStrategy)
-                        //}
+                        stage('Trivy scan') {
+                            trivy.scanDogu("/dogu", TrivyScanFormat.HTML, params.TrivyScanLevels, params.TrivyStrategy)
+                            trivy.scanDogu("/dogu", TrivyScanFormat.JSON,  params.TrivyScanLevels, params.TrivyStrategy)
+                            trivy.scanDogu("/dogu", TrivyScanFormat.PLAIN, params.TrivyScanLevels, params.TrivyStrategy)
+                        }
 
-                        //stage('Verify') {
-                        //    ecoSystem.verify("/dogu")
-                        //}
+                        stage('Verify') {
+                            ecoSystem.verify("/dogu")
+                        }
 
                         stage('Wait for dependencies') {
                             timeout(15) {
@@ -201,10 +201,10 @@ parallel(
                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
-                           //ecoSystem.runCypressIntegrationTests([
-                           //         cypressImage     : "cypress/included:13.13.2",
-                           //         enableVideo      : params.EnableVideoRecording,
-                           //        enableScreenshots: params.EnableScreenshotRecording])
+                           ecoSystem.runCypressIntegrationTests([
+                                    cypressImage     : "cypress/included:13.13.2",
+                                    enableVideo      : params.EnableVideoRecording,
+                                   enableScreenshots: params.EnableScreenshotRecording])
                            // run special non-encrypted password test
                            echo "Run unencrypted password test script"
                            ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
