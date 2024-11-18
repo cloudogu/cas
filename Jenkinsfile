@@ -196,15 +196,20 @@ parallel(
                         }
 
                         stage('Integration Tests') {
-                            echo "Create custom dogu to access OAuth endpoints for the integration tests"
-                            ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
-                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
-                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
+                           echo "Create custom dogu to access OAuth endpoints for the integration tests"
+                           ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
+                           ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
+                           ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
 
-                            ecoSystem.runCypressIntegrationTests([
+                           ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
                                     enableVideo      : params.EnableVideoRecording,
-                                    enableScreenshots: params.EnableScreenshotRecording])
+                                   enableScreenshots: params.EnableScreenshotRecording])
+                           // run special non-encrypted password test
+                           echo "Run unencrypted password test script"
+                           ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
+                           def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+                           echo "${testreport}"
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
