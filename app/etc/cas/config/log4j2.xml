@@ -67,6 +67,10 @@
             <LoggingHandlerPasswordRewritePolicy />
             <AppenderRef ref="casConsole" />
         </Rewrite>
+        <Rewrite name="misspelledPasswordRewritePolicy" >
+            <MisspelledPasswordRewritePolicy />
+            <AppenderRef ref="casConsole" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -103,6 +107,9 @@
         </AsyncLogger>
         <AsyncLogger name="io.netty.handler.logging.LoggingHandler" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="loggingHandlerPasswordRewritePolicy"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="misspelledPasswordRewritePolicy"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
