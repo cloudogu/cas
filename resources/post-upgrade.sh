@@ -90,12 +90,16 @@ migrateServiceAccountsToFoldersByType() {
 
   # Parse services that have registered a service-account and their secret hash from ETCD response.
   # Formatted as tab-separated-values these can be iterated over in bash.
-  jq -r ".node // {} | .nodes // [] | .[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" |
-    while IFS=$'\t' read -r service clientSecretHash; do
-      echo "Migrating service account directory for '${service}'"
-      doguctl config --remove "service_accounts/${saType}/${service}"
-      doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
-    done
+  servicesFile="$(mktemp)"
+  jq -r ".node // {} | .nodes // [] | .[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" > ${servicesFile}
+  # Read all lines from the file into an array
+  mapfile -t lines < "${servicesFile}"
+  for line in "${lines[@]}"; do
+    IFS=$'\t' read -r service clientSecretHash <<< "$line"
+    echo "Migrating service account directory for '${service}' with ${clientSecretHash}"
+    doguctl config --remove "service_accounts/${saType}/${service}"
+    doguctl config "service_accounts/${saType}/${service}/secret" "${clientSecretHash}"
+  done
 
   echo "Migrating service accounts of type '${saType}'... Done!"
 }
@@ -262,7 +266,7 @@ migrateLegacyServicesFromETCD() {
   while IFS= read -r name; do
       echo "checking ${name}..."
       #Check whether service is installed and has not migrated already
-      status_code=$(wget --spider -S "http://$(getEtcdEndpoint):4001/v2/keys/dogu_v2/${name}/current" 2>&1 | grep "HTTP/" | awk '{print $2}')
+      status_code=$(wget --spider -S "http://$(getEtcdEndpoint):4001/v2/keys/dogu_v2/${name}/current" 2>&1 | grep "HTTP/" | awk '{print $2}'; exit 0)
       echo "status code from wget is: ${status_code}"
       if [[ "$status_code" -eq 200 ]]; then
         # We do not need to consider the LogoutUri as it has already been migrated in a previous step.
