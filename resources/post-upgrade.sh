@@ -252,8 +252,6 @@ migrateLegacyServicesFromETCD() {
   # delete namespace from name, sort and delete duplicates
   sed 's#.*/##' "${basePath}/migration.json" | sort | uniq > "${basePath}/migrationCandidates.txt"
 
-  cat "${basePath}/migrationCandidates.txt"
-
   candidateFile="${basePath}/migrationCandidates.txt"
 
   # Check if names file exists
@@ -267,17 +265,19 @@ migrateLegacyServicesFromETCD() {
       echo "checking ${name}..."
       #Check whether service is installed and has not migrated already
       status_code=$(wget --spider -S "http://$(getEtcdEndpoint):4001/v2/keys/dogu_v2/${name}/current" 2>&1 | grep "HTTP/" | awk '{print $2}'; exit 0)
-      echo "status code from wget is: ${status_code}"
       if [[ "$status_code" -eq 200 ]]; then
         # We do not need to consider the LogoutUri as it has already been migrated in a previous step.
         doguctl config "service_accounts/cas/${name}/created" "true"
         echo "set service account entry in etcd for service ${name}"
+      else
+        echo "dogu ${name} is currently not installed, skip migration for it..."
       fi
   done < "$candidateFile"
 
+  # Delete temporary migration relevant files
   rm -r "${basePath}"
 
-  echo "Legacy service account migration done."
+  echo "Legacy service account migration done.\n"
 }
 
 runPostUpgrade() {
