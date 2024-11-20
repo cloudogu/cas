@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add http health-check, so that the dogu will get healthy when the start of the web-application is completed 
+
 ### Changed
 - Use JSON service registry [#221]
   - services are read from and stored in json files instead of local config
