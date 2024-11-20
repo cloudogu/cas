@@ -49,7 +49,7 @@ fi
 
 # Perform health check against cas endpoint
 if [[ "$HEALTH_STATUS" -eq 0 ]]; then
-  HTTP_STATUS=$(wget --spider -S --tries=1 --timeout=10 "http://localhost:8080/cas/login" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)
+  HTTP_STATUS=$(wget --spider -S --tries=1 --timeout=10 "http://localhost:8080/cas/actuator/health" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)
 
   if [[ -z "$HTTP_STATUS" ]] || [[ "$HTTP_STATUS" -ne 200 ]]; then
     echo "cas is unhealthy"
