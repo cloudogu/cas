@@ -279,4 +279,6 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 cas.service-registry.json.location={{if eq (.GlobalConfig.GetOrDefault "stage" "production") "production"}}file:/etc/cas/services/production{{else}}file:/etc/cas/services/development{{end}}
 cas.service-registry.json.watcher-enabled=true
 cas.service-registry.templates.directory.location=file:/etc/cas/services/templates
+# Increase start-delay of scheduler to prevent startup-errors on slow starts
+cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
