@@ -168,8 +168,8 @@ parallel(
                         }
 
                         stage('Build dogu') {
-                            // force post-upgrade from cas version 7.0.8-3 to migrate existing services from defaultSetupConfig
-                            ecoSystem.vagrant.sshOut "sed 's/7.0.8-3/7.0.8-4/g' -i /dogu/dogu.json"
+                            // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
+                            ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
                             ecoSystem.build("/dogu")
                         }
 
