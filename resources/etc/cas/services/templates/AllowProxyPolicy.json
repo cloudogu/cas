@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "templateName": "AllowProxyPolicy",
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*",
+    "useServiceId": false,
+    "exactMatch": false
+  }
+}

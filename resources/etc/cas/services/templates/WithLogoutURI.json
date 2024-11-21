@@ -1,0 +1,5 @@
+{
+  "@class" : "${ServiceClass}",
+  "templateName": "WithLogoutURI",
+  "logoutUrl" : "${LogoutUrl}"
+}

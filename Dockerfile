@@ -41,10 +41,10 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:21.0.4-1
+FROM registry.cloudogu.com/official/java:21.0.4-4
 
 LABEL NAME="official/cas" \
-      VERSION="7.0.8-4" \
+      VERSION="7.0.8-5" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
@@ -67,7 +67,8 @@ ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
 	SERVICE_TAGS=webapp \
 	USER=cas \
     GROUP=cas \
-    SSL_BASE_DIRECTORY="/etc/ssl"
+    SSL_BASE_DIRECTORY="/etc/ssl" \
+    STARTUP_DIR=/
 
 # setup user
 RUN set -x \

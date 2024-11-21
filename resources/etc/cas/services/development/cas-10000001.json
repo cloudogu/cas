@@ -1,0 +1,17 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "^(https|http)://.*",
+  "name" : "CAS",
+  "id" : 10000001,
+  "description": "development service allowing any cas service https / http access to cas",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*",
+    "useServiceId": false,
+    "exactMatch": false
+  },
+  "logoutType" : "BACK_CHANNEL"
+}

@@ -4,9 +4,16 @@ Below you will find the release notes for CAS-Dogu.
 
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## [Unreleased]
+- The Dogu has been internally converted to a JSON registry, which has changed the logic for creating and deleting service accounts.
+- Consistent use of service accounts in both multinode and singlenode environments.
+
+### Breaking Change
+- Newly installed dogus must explicitly request the creation of a service account in the CAS via dogu.json. Further information on this can be found in the [developer documentation](https://github.com/cloudogu/dogu-development-docs/blob/main/docs/important/relevant_functionalities_en.md#authentifizierung)
+
 ## Release 7.0.8-4
 - When logging in via delegated authentication (using an OIDC provider), the users are replicated in the embedded LDAP
-   - The replicated users are marked as “external” and cannot be edited, except for the group assignments.
+    - The replicated users are marked as “external” and cannot be edited, except for the group assignments.
 
 ## Release 7.0.8-3
 - An adjustment has been made that extends compatibility for Dogus that use Open ID Connect.

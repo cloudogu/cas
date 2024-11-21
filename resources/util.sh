@@ -3,6 +3,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Defines the path to store service definitions
+SERVICE_REGISTRY="etc/cas/services"
+SERVICE_REGISTRY_PRODUCTION="${SERVICE_REGISTRY}"/production
+
 # This function prints an error to the console and waits 5 minutes before exiting the process.
 # Requires two arguments:
 # 1 - Error state
@@ -161,4 +165,104 @@ function configureCAS() {
 
   renderCASPropertiesTpl
   renderCustomMessagesTpl
+}
+
+function checkFqdnUpdate() {
+  # Copy fqdn from global to local config so we can detect changes to it
+  if [ "$(doguctl config "fqdn" -d "empty")" == "empty" ];  then
+    doguctl config "fqdn" "$(doguctl config -g "fqdn")"
+    return 0
+  fi
+
+  local globalFQDN
+  globalFQDN=$(doguctl config -g fqdn)
+
+  local localFQDN
+  localFQDN=$(doguctl config fqdn)
+
+  if [ "$localFQDN" == "$globalFQDN" ];  then
+    return 0
+  fi
+
+  echo "FQDN has change, update services ..."
+
+  doguctl config "fqdn" "$globalFQDN"
+  updateFqdnInServices "$globalFQDN"
+}
+
+# Function to double-escape dots in the FQDN to use it within a regex of the service registry
+function escapeDots() {
+    local fqdn="$1"
+
+    # Use parameter substitution to replace each '.' with '[.]'
+    local escaped_fqdn="${fqdn//./[.]}"
+
+    # Return the double-escaped FQDN
+    echo "$escaped_fqdn"
+}
+
+# Function to find the next serviceID from JSON filenames in the service registry
+function findNextServiceID() {
+    local dir="$1"
+
+    # Initialize max_number as 0
+    local max_number=0
+
+    # Loop through all JSON files in the directory
+    for file in "$dir"/*.json; do
+        # Check if the folder contains any JSON files
+        if [[ -f "$file" ]]; then
+            # Extract the number from the filename using regex (ignores prefix and extracts numbers)
+            local number
+            number=$(echo "$file" | awk -F'[-.]' '{print $(NF-1)}')
+
+            # Update max_number if the extracted number is greater
+            if [[ $number -gt $max_number ]]; then
+                max_number=$number
+            fi
+        fi
+    done
+
+    # If no files were found, start with 1, otherwise increment the max_number
+    local next_number=$((max_number + 1))
+
+    # Return the next number
+    echo "$next_number"
+}
+
+# Function to update the services in the registry with the provided fqdn
+function updateFqdnInServices() {
+  echo "Updating services with new fqdn ${1}"
+
+  local nFQDN
+  nFQDN=$(escapeDots "${1}")
+
+  local tmpFqdnService=/tmp/new-fqdn.json
+
+  # create temporary new service with new fqdn property
+  sed -e 's|{{SERVICE}}||g' \
+      -e "s|{{SERVICE_ID}}|0|g" \
+      -e "s|{{FQDN}}|$nFQDN|g" \
+      -e 's|{{TEMPLATES}}||g' \
+      -e 's|{{LOGOUT_URL}}||g' etc/cas/config/services/cas-service-template.json.tpl > $tmpFqdnService
+
+  # Extract the Fqdn value from the source JSON
+  local fqdnObject
+  fqdnObject=$(jq '.properties.Fqdn' "$tmpFqdnService")
+
+  # Loop through production service files
+  for service in "$SERVICE_REGISTRY_PRODUCTION"/*.json; do
+      # Check if the file exists
+      if [ -f "$service" ]; then
+          # Update the Fqdn property in the target service with the extracted fqdn object
+          jq --argjson fqdn "$fqdnObject" '.properties.Fqdn = $fqdn' "$service" > /tmp/updateService.json && mv /tmp/updateService.json "$service"
+          echo "Updated FQDN in service $service."
+      else
+          echo "No target files found."
+      fi
+  done
+
+  rm $tmpFqdnService
+
+  echo "Successfully finished fqdn update."
 }

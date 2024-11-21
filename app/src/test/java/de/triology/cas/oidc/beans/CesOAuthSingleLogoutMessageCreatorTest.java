@@ -1,19 +1,15 @@
 package de.triology.cas.oidc.beans;
 
-import de.triology.cas.oidc.services.CesOAuthServiceFactory;
-import de.triology.cas.services.CesServiceData;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.junit.Test;
 
-import java.net.URI;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -42,18 +38,17 @@ public class CesOAuthSingleLogoutMessageCreatorTest {
         CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator(ticketRegistryMock);
 
         // given - data
-        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
-        Map<String, String> serviceAttributes = new HashMap<>();
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
-        CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
-        RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
+        OidcRegisteredService service = new OidcRegisteredService();
+        service.setId(1);
+        service.setClientId("testOAuthClient");
+        service.setClientSecret("testClientSecret");
+        service.setLogoutUrl("org/custom/logout");
 
         // given - mocks
         SingleLogoutRequestContext contextMock = mock(SingleLogoutRequestContext.class);
         SingleLogoutExecutionRequest singleLogoutExecutionRequestMock = mock(SingleLogoutExecutionRequest.class);
 
-        when(contextMock.getRegisteredService()).thenReturn(expectedService);
+        when(contextMock.getRegisteredService()).thenReturn(service);
         when(contextMock.getExecutionRequest()).thenReturn(singleLogoutExecutionRequestMock);
         when(singleLogoutExecutionRequestMock.getTicketGrantingTicket()).thenReturn(tgtMock);
 
@@ -87,18 +82,17 @@ public class CesOAuthSingleLogoutMessageCreatorTest {
         CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator(ticketRegistryMock);
 
         // given - data
-        var factory = new CesOAuthServiceFactory<>(OidcRegisteredService::new);
-        Map<String, String> serviceAttributes = new HashMap<>();
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_ID, "testOAuthClient");
-        serviceAttributes.put(CesOAuthServiceFactory.ATTRIBUTE_KEY_OAUTH_CLIENT_SECRET_HASH, "clientSecret");
-        CesServiceData expectedData = new CesServiceData("testOAuthClient", factory, serviceAttributes);
-        RegisteredService expectedService = factory.createNewService(1, "localhost", URI.create("org/custom/logout"), expectedData);
+        OidcRegisteredService service = new OidcRegisteredService();
+        service.setId(1);
+        service.setClientId("testOAuthClient");
+        service.setClientSecret("testClientSecret");
+        service.setLogoutUrl("org/custom/logout");
 
         // given - mocks
         SingleLogoutRequestContext contextMock = mock(SingleLogoutRequestContext.class);
         SingleLogoutExecutionRequest singleLogoutExecutionRequestMock = mock(SingleLogoutExecutionRequest.class);
 
-        when(contextMock.getRegisteredService()).thenReturn(expectedService);
+        when(contextMock.getRegisteredService()).thenReturn(service);
         when(contextMock.getExecutionRequest()).thenReturn(singleLogoutExecutionRequestMock);
         when(singleLogoutExecutionRequestMock.getTicketGrantingTicket()).thenReturn(tgtMock);
 

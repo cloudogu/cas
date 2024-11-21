@@ -139,13 +139,6 @@ parallel(
                                         "terms_of_service": "https://docs.cloudogu.com/",
                                         "imprint": "https://cloudogu.com/"
                                     },
-                                    "service_accounts": {
-                                        "oauth": {
-                                            "inttest": {
-                                                "secret": "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
-                                            }
-                                        }
-                                    },
                                     "oidc": {
                                         "enabled": "true",
                                         "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
@@ -175,6 +168,8 @@ parallel(
                         }
 
                         stage('Build dogu') {
+                            // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
+                            ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
                             ecoSystem.build("/dogu")
                         }
 
@@ -197,9 +192,8 @@ parallel(
 
                         stage('Integration Tests') {
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"
-                            ecoSystem.vagrant.sshOut "etcdctl mkdir /dogu/inttest"
-                            ecoSystem.vagrant.sshOut '''etcdctl set /dogu/inttest/0.0.1 '{\\"Name\\":\\"official/inttest\\",\\"Dependencies\\":[\\"cas\\"]}' '''
-                            ecoSystem.vagrant.sshOut "etcdctl set /dogu/inttest/current \"0.0.1\""
+                            ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
+                            ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
 
                             ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",

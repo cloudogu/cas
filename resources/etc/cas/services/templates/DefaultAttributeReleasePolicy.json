@@ -1,0 +1,8 @@
+{
+  "@class" : "${ServiceClass}",
+  "templateName": "DefaultAttributeReleasePolicy",
+  "attributeReleasePolicy": {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "username", "cn", "mail", "givenName", "surname", "displayName", "groups" ] ]
+  }
+}
