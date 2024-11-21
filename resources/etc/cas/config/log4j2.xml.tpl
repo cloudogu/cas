@@ -71,6 +71,14 @@
             <MisspelledPasswordRewritePolicy />
             <AppenderRef ref="casConsole" />
         </Rewrite>
+        <Rewrite name="defaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy" >
+            <DefaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy />
+            <AppenderRef ref="casConsole" />
+        </Rewrite>
+        <Rewrite name="requestResponseBodyMethodProcessorRewritePolicy" >
+            <RequestResponseBodyMethodProcessorRewritePolicy />
+            <AppenderRef ref="casConsole" />
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -108,8 +116,14 @@
         <AsyncLogger name="io.netty.handler.logging.LoggingHandler" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="loggingHandlerPasswordRewritePolicy"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+        <AsyncLogger name="org.apereo.cas.web" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="misspelledPasswordRewritePolicy"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="defaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="requestResponseBodyMethodProcessorRewritePolicy"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
