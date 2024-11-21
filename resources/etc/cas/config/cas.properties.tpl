@@ -32,17 +32,6 @@ spring.mail.protocol=smtp
 ########################################################################################################################
 
 ########################################################################################################################
-# Health-Endpoint configuration
-# Configuration guide: https://apereo.github.io/cas/7.0.x/monitoring/actuators/Actuator-Endpoint-Health.html#casendppointpropshealth
-# ----------------------------------------------------------------------------------------------------------------------
-management.endpoint.health.enabled=true
-management.endpoint.health.show-details=always
-management.endpoints.web.exposure.include=health
-cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
-########################################################################################################################
-
-
-########################################################################################################################
 # LDAP
 # Configuration guide: https://apereo.github.io/cas/6.3.x/installation/LDAP-Authentication.html
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#ldap-authentication

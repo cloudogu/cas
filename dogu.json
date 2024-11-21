@@ -431,11 +431,6 @@
       "Port": 8080
     },
     {
-      "Type": "http",
-      "Port": 8080,
-      "Path": "/cas/actuator/health"
-    },
-    {
       "Type": "state"
     }
   ]
