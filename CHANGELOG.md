@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - native implementation from CAS is used for this, which reduces custom overlay implementation
 - Changed logic to create and remove service accounts [#221]
 
+### Breaking Change
+- Newly installed dogus must explicitly request the creation of a service account in the CAS via dogu.json. Further information on this can be found in the [developer documentation](https://github.com/cloudogu/dogu-development-docs/blob/main/docs/important/relevant_functionalities_en.md#authentifizierung)
+
 ### Removed
 - Reading service information directly from ETCD [#221]
   - Removed java classes for service creation
