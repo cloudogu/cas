@@ -1,0 +1,18 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "serviceId" : "^(https|http)://.*",
+  "name" : "OAuth",
+  "id" : 10000002,
+  "description": "development service allowing any oauth service https / http access to cas",
+  "clientId": "oauth",
+  /* client secret is "oauth" */
+  "clientSecret": "6e306c515177ca5a1968fe96b4d727833af2214eaf0922dfda29a1d0d063cf34",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "bypassApprovalPrompt": true,
+  "userProfileViewType": "FLAT",
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
+}

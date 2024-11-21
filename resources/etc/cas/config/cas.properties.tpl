@@ -5,8 +5,6 @@
 cas.server.name=https://{{ .GlobalConfig.Get "fqdn" }}
 cas.server.prefix=${cas.server.name}/cas
 
-ces.services.stage={{ .GlobalConfig.GetOrDefault "stage" "production" }}
-
 # This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
 ces.ldap-pool-size=0
 
@@ -68,7 +66,6 @@ cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
 cas.authn.ldap[0].principal-attribute-id={{ .Config.Get "ldap/attribute_id"}}
 cas.authn.ldap[0].principal-attribute-list={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ .Config.GetOrDefault "ldap/given_name" "givenName"}}:givenName,{{ .Config.GetOrDefault "ldap/surname" "sn"}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups
 cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
-ces.services.allowedAttributes=username,cn,mail,givenName,surname,displayName,groups
 
 #========================================
 # LDAP connection pool configuration
@@ -273,4 +270,15 @@ cas.authn.oauth.code.numberOfUses=1
 # Access Token (Session) is valid for 1 day (= 86000 seconds)
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
+########################################################################################################################
+
+########################################################################################################################
+# JSON Registry
+# Configuration guide: https://apereo.github.io/cas/7.0.x/services/JSON-Service-Management.html
+# ----------------------------------------------------------------------------------------------------------------------
+cas.service-registry.json.location={{if eq (.GlobalConfig.GetOrDefault "stage" "production") "production"}}file:/etc/cas/services/production{{else}}file:/etc/cas/services/development{{end}}
+cas.service-registry.json.watcher-enabled=true
+cas.service-registry.templates.directory.location=file:/etc/cas/services/templates
+# Increase start-delay of scheduler to prevent startup-errors on slow starts
+cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################

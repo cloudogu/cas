@@ -392,6 +392,13 @@
       "Owner": "1000",
       "Group": "1000",
       "NeedsBackup": true
+    },
+    {
+      "Name": "services",
+      "Path": "/etc/cas/services/production",
+      "Owner": "1000",
+      "Group": "1000",
+      "NeedsBackup": true
     }
   ],
   "ExposedCommands": [
