@@ -57,10 +57,10 @@ curl -f -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_US
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
 echo "creating ticketGrantingTicket"
 ticketGrantingTicket=$(grep -o TGT-.*cas serviceTicket)
-curl -s -L "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fcas/login" --insecure \
+curl -L -v "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fusermgt" --insecure \
  -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
 validTicket=$(cat serviceTicket)
-curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}/cas/login&ticket=${validTicket}" --http1.0 > serviceTicket
+curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}usermgt&ticket=${validTicket}" --http1.0 > serviceTicket
 
 # check docker logs
 echo "Checking external cas docker logs for unencrypted passwords"
