@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Prevent logging of invalid login credentials [#233]
+
+### Added
+- Integration test searching for unencrypted passwords in the cas logs
 
 ## [v7.0.8-5] - 2024-11-21
 ### Breaking Change
@@ -33,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix configuration for delegated authentication with OIDC [#222]
-- Prevent logging of invalid login credentials [#233]
 
 ## [v7.0.8-3] - 2024-10-11
 ### Changed
