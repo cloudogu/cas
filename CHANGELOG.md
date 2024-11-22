@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevent logging of invalid login credentials [#233]
 
 ### Added
-- Integration test searching for unencrypted passwords in the cas logs
+- Integration test searching for unencrypted passwords in the cas logs [#225]
 
 ## [v7.0.8-5] - 2024-11-21
 ### Breaking Change
