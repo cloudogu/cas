@@ -1,0 +1,18 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "serviceId" : "^(https|http)://.*",
+  "name" : "OIDC",
+  "id" : 10000003,
+  "description": "development service allowing any oidc service https / http access to cas",
+  "clientId": "oidc",
+  /* client secret is "oidc" */
+  "clientSecret": "4dcdefd0d389cd15882de8a808334bb06a586b7a74fd0932d0e13fdb945e223c",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "bypassApprovalPrompt": true,
+  "userProfileViewType": "FLAT",
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ]
+}
