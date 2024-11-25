@@ -195,10 +195,15 @@ parallel(
                             ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
                             ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
 
-                            ecoSystem.runCypressIntegrationTests([
+                           ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
                                     enableVideo      : params.EnableVideoRecording,
-                                    enableScreenshots: params.EnableScreenshotRecording])
+                                   enableScreenshots: params.EnableScreenshotRecording])
+                           // run special non-encrypted password test
+                           echo "Run unencrypted password test script"
+                           ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
+                           def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+                           echo "${testreport}"
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
