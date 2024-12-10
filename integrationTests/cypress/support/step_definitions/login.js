@@ -34,9 +34,7 @@ Then("CAS shows the profile page of the user {string} with the user ID from LDAP
 });
 
 When("the user enters a password {string}", function (password) {
-    let passwordString
-    passwordString = password
-    cy.get('input[data-testid=login-password-input-field').click().type(passwordString)
+    cy.get('input[data-testid=login-password-input-field').type(password)
 })
 
 When("clicks the checkbox for showing the password", function () {
