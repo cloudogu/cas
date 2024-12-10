@@ -135,32 +135,33 @@
                                            class="mdc-text-field__input pwd w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                     />
                                 </label>
-                                <button data-testid="login-reveal-btn"
-                                        type="button" id="password-toggle"
-                                        class="z-10 w-[38px] h-[38px] absolute right-0 bottom-0 rounded-r-sm focus-visible:ces-focused flex justify-center items-center whitespace-nowrap font-bold desktop:text-desktop-regular mobile:text-mobile-regular bg-neutral hover:bg-neutral-strong focus-visible:bg-neutral-strong active:bg-neutral-stronger disabled:bg-neutral-weak aria-disabled:bg-neutral-weak border-2 border-neutral hover:border-neutral-strong focus-visible:border-neutral-strong active:border-neutral-stronger disabled:border-neutral-weak aria-disabled:border-neutral-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0"
-                                >
-                                    <span class="sr-only" th:text="#{screen.passwordfield.toggle}">Toggle password field to text field</span>
-                                    <img src="/cas/images/eye.svg" aria-hidden="true"
-                                         class="w-default-2x h-default-2x">
-                                </button>
                             </div>
                         </div>
-                        <script>
-                            document.getElementById("password-toggle").onclick = () => {
-                                const pwInput = document.getElementById("password");
-                                if (pwInput.type === "password") {
-                                    pwInput.type = "text";
-                                } else {
-                                    pwInput.type = "password";
-                                }
-                            };
-                        </script>
-
                         <!--                        <div class="mdc-text-field-helper-line invalid-feedback caps-warn">-->
                         <!--                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text&#45;&#45;persistent mdc-text-field-helper-text&#45;&#45;validation-msg text-danger">-->
                         <!--                                <span th:utext="#{screen.capslock.on}" />-->
                         <!--                            </div>-->
                         <!--                        </div>-->
+                    </section>
+
+                    <section id="passwordRevealSection" class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                        <label id="password-reveal-label" for="password-reveal-checkbox">
+                            <input data-testid="password-reveal-checkbox" type="checkbox" id="password-reveal-checkbox"
+                                   th:text="#{screen.passwordfield.toggle}" class="mr-[8px]"/>
+                        </label>
+                        <script>
+                            document.getElementById("password-reveal-checkbox").onclick = () => {
+                                const checkbox = document.getElementById("password-reveal-checkbox");
+                                const pwInput = document.getElementById("password");
+                                if (pwInput.type === "password") {
+                                    pwInput.type = "text";
+                                    checkbox.setAttribute('checked', 'checked');
+                                } else {
+                                    pwInput.type = "password";
+                                    checkbox.removeAttribute('checked');
+                                }
+                            };
+                        </script>
                     </section>
 
                     <section id="authnSourceSection" class="cas-field form-group my-3"
