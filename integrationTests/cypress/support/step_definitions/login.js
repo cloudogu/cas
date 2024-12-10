@@ -24,7 +24,7 @@ When("the user logs into the CES with the admin credentials", function () {
     cy.login(env.GetAdminUsername(), env.GetAdminPassword());
 });
 
-When("When the user logs into the CES with the admin credentials, writing the username in capital letters", function () {
+When("the user logs into the CES with the admin credentials, writing the username in capital letters", function () {
     cy.clickWarpMenuCheckboxIfPossible()
     cy.login(env.GetAdminUsername().toUpperCase(), env.GetAdminPassword());
 });
