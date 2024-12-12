@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Remove hashes from validated service url [#238]
+  - Makes cockpit dogu links available again
 
 ## [v7.0.8-6] - 2024-11-25
 ### Fixed
