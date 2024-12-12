@@ -166,7 +166,13 @@ migrateServicesFromETCD() {
   declare -A secrets
   declare -A logout_uris
 
-  keys=$(doguctl ls service_accounts)
+  keys=$(doguctl ls service_accounts || true)
+
+  if [ -z "$keys" ]; then
+    echo "did not find any service_accounts, skipping service migration..."
+    doguctl config "service_accounts/migrated" "true"
+    return 0
+  fi
 
   # Loop through keys representing service values
   for key in $keys; do
