@@ -5,6 +5,12 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Fixed a problem where the Dogu does not start under high system load.
+
+## Release 7.0.8-6
+- Wrong login credentials will not be shown in the logs.
+
+## Release 7.0.8-5
 - The Dogu has been internally converted to a JSON registry, which has changed the logic for creating and deleting service accounts.
 - Consistent use of service accounts in both multinode and singlenode environments.
 
