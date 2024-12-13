@@ -166,9 +166,10 @@ migrateServicesFromETCD() {
   declare -A secrets
   declare -A logout_uris
 
-  keys=$(doguctl ls service_accounts || true)
+  keys=$(doguctl ls service_accounts) || exit_code=$?
+  exit_code=${exit_code:-0}
 
-  if [ -z "$keys" ]; then
+  if [[ $exit_code -ne 0 ]]; then
     echo "did not find any service_accounts, skipping service migration..."
     doguctl config "service_accounts/migrated" "true"
     return 0
