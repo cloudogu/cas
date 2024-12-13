@@ -7,6 +7,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ## [Unreleased]
 - The Dogu has been internally converted to a JSON registry, which has changed the logic for creating and deleting service accounts.
 - Consistent use of service accounts in both multinode and singlenode environments.
+- Fixed the bug that cancels an upgrade if no service accounts are available.
 
 ### Breaking Change
 - Newly installed dogus must explicitly request the creation of a service account in the CAS via dogu.json. Further information on this can be found in the [developer documentation](https://github.com/cloudogu/dogu-development-docs/blob/main/docs/important/relevant_functionalities_en.md#authentifizierung)
