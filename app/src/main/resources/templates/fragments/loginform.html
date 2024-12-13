@@ -147,7 +147,7 @@
                     <section id="passwordRevealSection" class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                         <label id="password-reveal-label" for="password-reveal-checkbox">
                             <input data-testid="password-reveal-checkbox" type="checkbox" id="password-reveal-checkbox"
-                                   th:text="#{screen.passwordfield.toggle}" class="mr-[8px]"/>
+                                   th:text="#{screen.passwordfield.toggle}" class="mr-[8px]" aria-controls="password"/>
                         </label>
                         <script>
                             document.getElementById("password-reveal-checkbox").onclick = () => {

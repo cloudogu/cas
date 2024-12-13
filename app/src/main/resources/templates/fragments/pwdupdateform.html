@@ -116,7 +116,7 @@
                 <div class="relative" aria-live="polite">
                     <label id="password-reveal-label" for="password-reveal-checkbox">
                         <input data-testid="password-reveal-checkbox" type="checkbox" id="password-reveal-checkbox"
-                               th:text="#{screen.passwordfield.toggle}" class="mr-[8px]"/>
+                               th:text="#{screen.passwordfield.toggle}" class="mr-[8px]" aria-controls="password"/>
                     </label>
                 </div>
             </section>
@@ -159,7 +159,7 @@
                     <label id="confirm-password-reveal-label" for="password-reveal-checkbox">
                         <input data-testid="password-reveal-checkbox" type="checkbox"
                                id="confirm-password-reveal-checkbox"
-                               th:text="#{screen.passwordfield.toggle}" class="mr-[8px]"/>
+                               th:text="#{screen.passwordfield.toggle}" class="mr-[8px]" aria-controls="confirmedPassword"/>
                     </label>
                 </div>
             </section>
