@@ -4,9 +4,17 @@ Below you will find the release notes for CAS-Dogu.
 
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
-## [Unreleased]
+## Release 7.0.8-7
+- Fixed a technical bug where the upgrade process was interrupted
+- Fixed a technical bug where the cockpit dogu could not be called under certain conditions
+
+## Release 7.0.8-6
+- Invalid login data are no longer logged
+
+## Release 7.0.8-5
 - The Dogu has been internally converted to a JSON registry, which has changed the logic for creating and deleting service accounts.
 - Consistent use of service accounts in both multinode and singlenode environments.
+- Fixed the bug that cancels an upgrade if no service accounts are available.
 
 ### Breaking Change
 - Newly installed dogus must explicitly request the creation of a service account in the CAS via dogu.json. Further information on this can be found in the [developer documentation](https://github.com/cloudogu/dogu-development-docs/blob/main/docs/important/relevant_functionalities_en.md#authentifizierung)
