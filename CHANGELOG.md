@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Fix post upgrade script when no service account is defined [#242]
 - Remove hashes from validated service url [#238]
   - Makes cockpit dogu links available again
 
