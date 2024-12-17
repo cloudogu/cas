@@ -144,21 +144,50 @@
                         <!--                        </div>-->
                     </section>
 
-                    <section id="passwordRevealSection" class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
-                        <label id="password-reveal-label" for="password-reveal-checkbox">
-                            <input data-testid="password-reveal-checkbox" type="checkbox" id="password-reveal-checkbox"
-                                   th:text="#{screen.passwordfield.toggle}" class="mr-[8px]" aria-controls="password"/>
+                    <section id="passwordRevealSection">
+                        <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2">
+                            <button type="button" role="checkbox" data-state="unchecked"
+                                    value="on"
+                                    data-testid="password-reveal-checkbox"
+                                    id="password-reveal-checkbox" aria-controls="password"
+                                    class="border rounded-sm outline-none focus-visible:ces-focused data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:hover:bg-brand-strong data-[state=checked]:hover:border-brand-strong data-[state=checked]:focus-visible:bg-brand-strong data-[state=checked]:focus-visible:border-brand-strong data-[state=checked]:disabled:bg-neutral-weak data-[state=checked]:disabled:border-neutral data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:hover:bg-brand-strong data-[state=indeterminate]:hover:border-brand-strong data-[state=indeterminate]:focus-visible:bg-brand-strong data-[state=indeterminate]:focus-visible:border-brand-strong data-[state=indeterminate]:disabled:bg-neutral-weak data-[state=indeterminate]:disabled:border-neutral data-[state=unchecked]:border-neutral data-[state=unchecked]:bg-default-background data-[state=unchecked]:hover:border-2 data-[state=unchecked]:hover:border-neutral-strong data-[state=unchecked]:focus-visible:border-2 data-[state=unchecked]:focus-visible:border-neutral-strong data-[state=unchecked]:disabled:bg-neutral-weak data-[state=unchecked]:disabled:border-neutral data-[state=unchecked]:disabled:border min-w-[24px] w-[24px] min-h-[24px] h-[24px] flex items-center justify-center">
+                                <span data-state="checked" style="pointer-events: none;" id="reveal-checkbox">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                         viewBox="0 0 256 256" class="text-inverted-text">
+                                        <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </button>
+                            <span th:text="#{screen.passwordfield.toggle}"></span>
                         </label>
+
                         <script>
                             document.getElementById("password-reveal-checkbox").onclick = () => {
                                 const checkbox = document.getElementById("password-reveal-checkbox");
+                                const span = document.getElementById("reveal-checkbox");
                                 const pwInput = document.getElementById("password");
                                 if (pwInput.type === "password") {
                                     pwInput.type = "text";
-                                    checkbox.setAttribute('checked', 'checked');
+                                    checkbox.setAttribute('data-state', 'checked');
+                                    if (!span) {
+                                        const newSpan = document.createElement('span');
+                                        newSpan.id = "reveal-checkbox";
+                                        newSpan.style.pointerEvents = 'none';
+                                        newSpan.setAttribute('data-state', 'checked');
+                                        newSpan.innerHTML = `
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="text-inverted-text">
+                                                <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                                </path>
+                                            </svg>`;
+                                        checkbox.appendChild(newSpan);
+                                    }
                                 } else {
                                     pwInput.type = "password";
-                                    checkbox.removeAttribute('checked');
+                                    checkbox.setAttribute('data-state', 'unchecked');
+                                    if (span) {
+                                        span.parentNode.removeChild(span);
+                                    }
                                 }
                             };
                         </script>
