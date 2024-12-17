@@ -21,7 +21,7 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {
         try {
-            val thisUrl = removePortFromUrl(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8));
+            val thisUrl = removeHashRoutingFromUrl(removePortFromUrl(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8)));
             val serviceUrl = removePortFromUrl(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
 
             LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
@@ -34,5 +34,9 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
 
     private String removePortFromUrl(String service) {
         return service.replaceFirst(":\\d+", "");
+    }
+
+    private String removeHashRoutingFromUrl(String service) {
+        return service.split("#")[0];
     }
 }

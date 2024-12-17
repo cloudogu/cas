@@ -7,8 +7,12 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ## [Unreleased]
 - Fixed a problem where the Dogu does not start under high system load.
 
+## Release 7.0.8-7
+- Fixed a technical bug where the upgrade process was interrupted
+- Fixed a technical bug where the cockpit dogu could not be called under certain conditions
+
 ## Release 7.0.8-6
-- Wrong login credentials will not be shown in the logs.
+- Invalid login data are no longer logged
 
 ## Release 7.0.8-5
 - The Dogu has been internally converted to a JSON registry, which has changed the logic for creating and deleting service accounts.

@@ -7,8 +7,12 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ## [Unreleased]
 - Es wurde ein Problem behoben, bei dem das Dogu unter hoher Systemlast nicht mehr startet.
 
+## Release 7.0.8-7
+- Es wurde ein technischer Fehler behoben, bei dem der Upgrade-Prozess unterbrochen wurde
+- Es wurde ein technischer Fehler behoben, bei dem das Cockpit-Dopu unter bestimmten Bedinungen nicht augerufen werden konnte
+
 ## Release 7.0.8-6
-- Falsche Anmeldeinformationen werden nicht mehr im Log angezeigt.
+- Invalide Anmeldedaten werden nicht mehr geloggt
 
 ## Release 7.0.8-5
 - Das Dogu wurde intern auf eine JSON Registry umgestellt, wodurch sich die Logik zum Anlegen und Löschen von Service-Accounts geändert hat.
