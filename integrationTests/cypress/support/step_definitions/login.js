@@ -38,10 +38,10 @@ When("the user enters a password {string}", function (password) {
 })
 
 When("clicks the checkbox for showing the password", function () {
-    cy.get('input[data-testid=password-reveal-checkbox').click()
+    cy.get('button[data-testid=password-reveal-checkbox').click()
 })
 
 Then("the password field shows {string}", function () {
-    cy.get('input[data-testid=password-reveal-checkbox').should('have.attr', 'checked')
+    cy.get('button[data-testid=password-reveal-checkbox').should('have.attr', 'data-state', 'checked')
     cy.get('input[data-testid=login-password-input-field').should('have.attr', 'type', 'text')
 })
