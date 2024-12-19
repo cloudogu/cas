@@ -104,7 +104,7 @@ RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 # expose tomcat port
 EXPOSE 8080
 
-HEALTHCHECK --interval=5s CMD /healthcheck.sh 300
+HEALTHCHECK --interval=20s CMD /healthcheck.sh 300
 
 USER cas
 
