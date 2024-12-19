@@ -1,4 +1,7 @@
 #!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
 
 # Script to perform a health check and manage container restarts based on failures.
 #
@@ -35,11 +38,37 @@ STATUS_FILE=${2:-$DEFAULT_STATUS_FILE}
 
 HEALTH_STATUS=0
 
-function clearStatusFile() {
-  if [[ -f "$STATUS_FILE" ]]; then
-    rm ${STATUS_FILE}
-  fi
+# Writes the health status to a specified status file. The status is represented as a combination of
+# failure count and a timestamp, separated by a colon.
+#
+# Arguments:
+#   $1 - The failure count (e.g., number of consecutive health check failures).
+#   $2 - The timestamp (e.g., time of the last failure or reset).
+#
+# Example:
+#   writeHealthStatus 3 1690000000
+#   # This writes "3:1690000000" to the file defined in STATUS_FILE.
+function writeHealthStatus() {
+  local failure_count=$1   # First argument: failure count
+  local timestamp=$2       # Second argument: timestamp
+
+  echo "${failure_count}:${timestamp}" > "$STATUS_FILE" # Update the file with new values
 }
+
+# Terminates the running Apache Tomcat process forcefully.
+function killApacheTomcat() {
+  local tomcatPID=$(pgrep -f apache-tomcat)
+  kill -9 $tomcatPID
+}
+
+# Initialize the health status file if it doesn't exist
+if [[ ! -f "$STATUS_FILE" ]]; then
+  echo "health status file does not exist, create it"
+  writeHealthStatus "0" "$(date +%s)"
+fi
+
+# Read the failure count and timestamp
+IFS=":" read -r FAILURE_COUNT LAST_FAILURE_TS < "$STATUS_FILE"
 
 # Perform health check using doguctl
 if ! doguctl healthy -t 10 cas; then
@@ -49,18 +78,30 @@ fi
 
 # Perform health check against cas endpoint
 if [[ "$HEALTH_STATUS" -eq 0 ]]; then
-  HTTP_STATUS=$(wget --spider -S --tries=1 --timeout=10 "http://localhost:8080/cas/actuator/health" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)
+  HTTP_STATUS=$(wget --spider -S --tries=1 --timeout=10 "http://localhost:8080/cas/actuator/health" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1) || HTTP_STATUS=0
 
-  if [[ -z "$HTTP_STATUS" ]] || [[ "$HTTP_STATUS" -ne 200 ]]; then
-    echo "cas is unhealthy"
+  if [[ "$HTTP_STATUS" -ne 200 ]]; then
+    echo "cas health endpoint is unhealthy"
     HEALTH_STATUS=1
   fi
 fi
 
+CURRENT_TS=$(date +%s)
+
 # Check general health status
 if [[ "$HEALTH_STATUS" -eq 0 ]]; then
-  clearStatusFile
+  writeHealthStatus "0" "$CURRENT_TS"
   exit 0
+fi
+
+# Increase failure count
+FAILURE_COUNT=$((FAILURE_COUNT + 1))
+
+if [[ "$FAILURE_COUNT" -eq "1" ]]; then
+  writeHealthStatus "$FAILURE_COUNT" "$CURRENT_TS"
+  exit 1
+else
+  writeHealthStatus "$FAILURE_COUNT" "$LAST_FAILURE_TS"
 fi
 
 # Exit in case restart is disabled
@@ -68,38 +109,18 @@ if [[ "$TIMEOUT" -eq 0 ]]; then
   exit 1
 fi
 
+
 echo "begin check for restart"
 
-# Begin check for restart container
-LAST_FAILURE_TS=$(date +%s)
-
-# Initialize the file if it doesn't exist
-if [[ ! -f "$STATUS_FILE" ]]; then
-  echo "status file does not exists, create it"
-  echo "1:$LAST_FAILURE_TS" > "$STATUS_FILE" # Format: failure_count:timestamp
-  exit 1
-fi
-
-# Read the failure count and timestamp
-IFS=":" read -r FAILURE_COUNT LAST_FAILURE_TS < "$STATUS_FILE"
-
-echo "read status file with ${FAILURE_COUNT} and ${LAST_FAILURE_TS}"
-
 # Calculate the time elapsed since the first failure
-CURRENT_TS=$(date +%s)
 TIME_ELAPSED=$((CURRENT_TS - LAST_FAILURE_TS))
 
-echo "time elapsed: ${TIME_ELAPSED}"
+echo "Time elapsed after first failure: ${TIME_ELAPSED}s with timeout of ${TIMEOUT}s"
 
 # Check if the timeout has been exceeded
 if [[ "$TIME_ELAPSED" -ge "$TIMEOUT" ]]; then
-  clearStatusFile
-  kill -s 9 -1
+  writeHealthStatus "0" "$CURRENT_TS" # Reset Counter
+  killApacheTomcat
 fi
 
-# Increase failure count
-FAILURE_COUNT=$((FAILURE_COUNT + 1))
-
-# Save the updated failure count and timestamp
-echo "$FAILURE_COUNT:$LAST_FAILURE_TS" > "$STATUS_FILE"
 exit 1
