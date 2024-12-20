@@ -9,5 +9,12 @@ Feature: Simple test to check the login functionality of CAS
   Scenario: after a successful login, the ID from the LDAP entry is used as the user ID and not the user name entered by the user.
     Given the user is currently not logged in the CES
     Given the browser shows the CAS login page
-    When  When the user logs into the CES with the admin credentials, writing the username in capital letters
+    When the user logs into the CES with the admin credentials, writing the username in capital letters
     Then CAS shows the profile page of the user "admin" with the user ID from LDAP entry
+
+  Scenario: the user can show the password in plain text during login
+    Given the user is currently not logged in the CES
+    Given the browser shows the CAS login page
+    When the user enters a password 'testpassword_new1ABC$'
+    And clicks the checkbox for showing the password
+    Then the password field shows 'testpassword_new1ABC$'

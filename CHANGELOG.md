@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-8] - 2024-12-20
+### Changed
+- Password reveal button to checkbox for better readability [#236]
+### Added
+- Integrationtest for password reveal
+
 ## [v7.0.8-7] - 2024-12-16
 ### Fixed
 - Fix post upgrade script when no service account is defined [#242]
