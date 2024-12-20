@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-9] - 2024-12-20
+### Added
+- Add http health-check, so that the dogu will get healthy when the start of the web-application is completed
+
+### Fixed
+- Fix start under high system load [#240]
+
 ## [v7.0.8-8] - 2024-12-20
 ### Changed
 - Password reveal button to checkbox for better readability [#236]
