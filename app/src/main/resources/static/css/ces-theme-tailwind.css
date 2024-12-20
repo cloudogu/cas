@@ -860,24 +860,8 @@ legend {
   visibility: visible;
 }
 
-.absolute {
-  position: absolute;
-}
-
 .relative {
   position: relative;
-}
-
-.bottom-0 {
-  bottom: 0px;
-}
-
-.right-0 {
-  right: 0px;
-}
-
-.z-10 {
-  z-index: 10;
 }
 
 .m-0 {
@@ -969,14 +953,6 @@ legend {
   height: 24px;
 }
 
-.h-\[38px\] {
-  height: 38px;
-}
-
-.h-default-2x {
-  height: 1rem;
-}
-
 .h-full {
   height: 100%;
 }
@@ -989,20 +965,16 @@ legend {
   min-height: 3rem;
 }
 
+.min-h-\[24px\] {
+  min-height: 24px;
+}
+
 .w-\[100vw\] {
   width: 100vw;
 }
 
 .w-\[24px\] {
   width: 24px;
-}
-
-.w-\[38px\] {
-  width: 38px;
-}
-
-.w-default-2x {
-  width: 1rem;
 }
 
 .w-fit {
@@ -1012,6 +984,10 @@ legend {
 
 .w-full {
   width: 100%;
+}
+
+.min-w-\[24px\] {
+  min-width: 24px;
 }
 
 .flex-grow {
@@ -1062,6 +1038,10 @@ legend {
   justify-content: space-between;
 }
 
+.gap-2 {
+  gap: 0.5rem;
+}
+
 .gap-default-2x {
   gap: 1rem;
 }
@@ -1086,9 +1066,8 @@ legend {
   border-radius: 4px;
 }
 
-.rounded-r-sm {
-  border-top-right-radius: 0.125rem;
-  border-bottom-right-radius: 0.125rem;
+.rounded-sm {
+  border-radius: 0.125rem;
 }
 
 .border {
@@ -1133,10 +1112,6 @@ legend {
 
 .bg-cas-logo-bg {
   background-color: var(--cas-config-logo-background);
-}
-
-.bg-neutral {
-  background-color: var(--ces-color-neutral);
 }
 
 .bg-transparent {
@@ -1323,10 +1298,6 @@ legend {
   background-color: var(--ces-color-brand-weak);
 }
 
-.hover\:bg-neutral-strong:hover {
-  background-color: var(--ces-color-neutral-strong);
-}
-
 .hover\:bg-neutral-weak:hover {
   background-color: var(--ces-color-neutral-weak);
 }
@@ -1359,20 +1330,12 @@ legend {
   border-color: var(--ces-color-brand-strong);
 }
 
-.focus-visible\:border-neutral-strong:focus-visible {
-  border-color: var(--ces-color-neutral-strong);
-}
-
 .focus-visible\:bg-brand-strong:focus-visible {
   background-color: var(--ces-color-brand-strong);
 }
 
 .focus-visible\:bg-brand-weak:focus-visible {
   background-color: var(--ces-color-brand-weak);
-}
-
-.focus-visible\:bg-neutral-strong:focus-visible {
-  background-color: var(--ces-color-neutral-strong);
 }
 
 .focus-visible\:bg-neutral-weak:focus-visible {
@@ -1428,10 +1391,6 @@ legend {
   background-color: var(--ces-color-brand-weak);
 }
 
-.active\:bg-neutral-stronger:active {
-  background-color: var(--ces-color-neutral-stronger);
-}
-
 .active\:bg-neutral-weak:active {
   background-color: var(--ces-color-neutral-weak);
 }
@@ -1466,10 +1425,6 @@ legend {
 
 .disabled\:border-neutral:disabled {
   border-color: var(--ces-color-neutral);
-}
-
-.disabled\:border-neutral-weak:disabled {
-  border-color: var(--ces-color-neutral-weak);
 }
 
 .disabled\:border-transparent:disabled {
@@ -1516,12 +1471,108 @@ legend {
   display: none;
 }
 
-[aria-disabled="true"].aria-disabled\:border-brand-weak {
-  border-color: var(--ces-color-brand-weak);
+.data-\[state\=checked\]\:border-brand[data-state="checked"] {
+  border-color: var(--ces-color-brand);
 }
 
-[aria-disabled="true"].aria-disabled\:border-neutral-weak {
-  border-color: var(--ces-color-neutral-weak);
+.data-\[state\=indeterminate\]\:border-brand[data-state="indeterminate"] {
+  border-color: var(--ces-color-brand);
+}
+
+.data-\[state\=unchecked\]\:border-neutral[data-state="unchecked"] {
+  border-color: var(--ces-color-neutral);
+}
+
+.data-\[state\=checked\]\:bg-brand[data-state="checked"] {
+  background-color: var(--ces-color-brand);
+}
+
+.data-\[state\=indeterminate\]\:bg-brand[data-state="indeterminate"] {
+  background-color: var(--ces-color-brand);
+}
+
+.data-\[state\=unchecked\]\:bg-default-background[data-state="unchecked"] {
+  background-color: var(--ces-color-default-background);
+}
+
+.data-\[state\=unchecked\]\:hover\:border-2:hover[data-state="unchecked"] {
+  border-width: 2px;
+}
+
+.data-\[state\=checked\]\:hover\:border-brand-strong:hover[data-state="checked"] {
+  border-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=indeterminate\]\:hover\:border-brand-strong:hover[data-state="indeterminate"] {
+  border-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=unchecked\]\:hover\:border-neutral-strong:hover[data-state="unchecked"] {
+  border-color: var(--ces-color-neutral-strong);
+}
+
+.data-\[state\=checked\]\:hover\:bg-brand-strong:hover[data-state="checked"] {
+  background-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=indeterminate\]\:hover\:bg-brand-strong:hover[data-state="indeterminate"] {
+  background-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=unchecked\]\:focus-visible\:border-2:focus-visible[data-state="unchecked"] {
+  border-width: 2px;
+}
+
+.data-\[state\=checked\]\:focus-visible\:border-brand-strong:focus-visible[data-state="checked"] {
+  border-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=indeterminate\]\:focus-visible\:border-brand-strong:focus-visible[data-state="indeterminate"] {
+  border-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=unchecked\]\:focus-visible\:border-neutral-strong:focus-visible[data-state="unchecked"] {
+  border-color: var(--ces-color-neutral-strong);
+}
+
+.data-\[state\=checked\]\:focus-visible\:bg-brand-strong:focus-visible[data-state="checked"] {
+  background-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=indeterminate\]\:focus-visible\:bg-brand-strong:focus-visible[data-state="indeterminate"] {
+  background-color: var(--ces-color-brand-strong);
+}
+
+.data-\[state\=unchecked\]\:disabled\:border:disabled[data-state="unchecked"] {
+  border-width: 1px;
+}
+
+.data-\[state\=checked\]\:disabled\:border-neutral:disabled[data-state="checked"] {
+  border-color: var(--ces-color-neutral);
+}
+
+.data-\[state\=indeterminate\]\:disabled\:border-neutral:disabled[data-state="indeterminate"] {
+  border-color: var(--ces-color-neutral);
+}
+
+.data-\[state\=unchecked\]\:disabled\:border-neutral:disabled[data-state="unchecked"] {
+  border-color: var(--ces-color-neutral);
+}
+
+.data-\[state\=checked\]\:disabled\:bg-neutral-weak:disabled[data-state="checked"] {
+  background-color: var(--ces-color-neutral-weak);
+}
+
+.data-\[state\=indeterminate\]\:disabled\:bg-neutral-weak:disabled[data-state="indeterminate"] {
+  background-color: var(--ces-color-neutral-weak);
+}
+
+.data-\[state\=unchecked\]\:disabled\:bg-neutral-weak:disabled[data-state="unchecked"] {
+  background-color: var(--ces-color-neutral-weak);
+}
+
+[aria-disabled="true"].aria-disabled\:border-brand-weak {
+  border-color: var(--ces-color-brand-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:border-transparent {
@@ -1530,10 +1581,6 @@ legend {
 
 [aria-disabled="true"].aria-disabled\:bg-brand-weak {
   background-color: var(--ces-color-brand-weak);
-}
-
-[aria-disabled="true"].aria-disabled\:bg-neutral-weak {
-  background-color: var(--ces-color-neutral-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:bg-transparent {
