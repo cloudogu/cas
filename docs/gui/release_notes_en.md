@@ -5,7 +5,12 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## Release 7.0.8-9
 - Fixed a problem where the Dogu does not start under high system load.
+
+## Release 7.0.8-8
+- The button for revealing the password has been converted into a checkbox for better operation.
 
 ## Release 7.0.8-7
 - Fixed a technical bug where the upgrade process was interrupted
