@@ -8,6 +8,7 @@ import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationCli
 import de.triology.cas.oidc.beans.delegation.CesDelegatedAuthenticationPreProcessor;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedClientUserProfileProvisioner;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.config.OidcConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration("CesOidcConfiguration")
@@ -43,6 +45,12 @@ public class CesOidcConfiguration {
 
     @Value("${ces.delegation.oidc.attributeMapping:#{\"\"}}")
     private String attributesMappingsString;
+
+    @Value("${ces.delegation.oidc.allowedGroups:#{\"\"}}")
+    private String allowedGroupsConfigString;
+
+    @Value("${ces.delegation.oidc.adminUsernames:#{\"\"}}")
+    private String adminUsernamesConfigString;
 
     @Bean
     @RefreshScope
@@ -74,8 +82,10 @@ public class CesOidcConfiguration {
     public DelegatedAuthenticationPreProcessor delegatedAuthenticationPreProcessor(final CasConfigurationProperties casProperties) {
         UserManager userManager = getUserManager(casProperties);
         List<AttributeMapping> attributeMappings = AttributeMapping.fromPropertyString(attributesMappingsString);
+        String[] allowedGroups = splitAndTrim(allowedGroupsConfigString);
+        String[] adminUsernames = splitAndTrim(adminUsernamesConfigString);
 
-        return new CesDelegatedAuthenticationPreProcessor(attributeMappings, userManager);
+        return new CesDelegatedAuthenticationPreProcessor(userManager, attributeMappings, allowedGroups, adminUsernames);
     }
 
     private static UserManager getUserManager(CasConfigurationProperties casProperties) {
@@ -83,5 +93,15 @@ public class CesOidcConfiguration {
         PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
 
         return new UserManager(ldapProperties.getBaseDn(), new LdapOperationFactory(connectionFactory));
+    }
+
+    private static String[] splitAndTrim(String input) {
+        if (StringUtils.isBlank(input)) {
+            return new String[0];
+        }
+
+        String[] result = StringUtils.split(input, ",");
+
+        return Arrays.stream(result).map(String::trim).toArray(String[]::new);
     }
 }
