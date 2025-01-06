@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add configuration for `allowed_groups` and `initial_admin_user` in delegated authentication 
 
+### Changed
+- Update java base image to 21.0.5-1
+- Update Tomcat to 10.1.34
 
 ## [v7.0.8-9] - 2024-12-20
 ### Added
