@@ -63,3 +63,13 @@ Such registration basically consists of a client ID and a client secret.
 * Configuration key path: `<cas_path>/oidc/principal_attribute`
 * Contents: Specifies an attribute that should be used as principal id inside the CES. CAS uses the ID provided by the OIDC provider when this property is empty.
 * Data type: Name of OIDC attribute
+
+#### oidc/allowed_groups
+* Configuration key path: `<cas_path>/oidc/allowed_groups`
+* Inhalt: Specifies a list of OIDC groups that are allowed to log in using delegated authentication. The groups are seperated by comma. An empty list allows access for everyone.
+* Datentyp: String according to format: `Group1, Group2`.
+
+#### oidc/initial_admin_usernames
+* Configuration key path: `<cas_path>/oidc/initial_admin_usernames`
+* Inhalt: Specifies a list of usernames that will be assigned to the CES admin-group, when they first log in.
+* Datentyp: String according to format: `User1, User2`.

@@ -383,8 +383,8 @@
       "Optional": true
     },
     {
-      "Name": "oidc/admin_usernames",
-      "Description": "Specifies a list of usernames that will be assigned to the CES admin-group",
+      "Name": "oidc/initial_admin_usernames",
+      "Description": "Specifies a list of usernames that will be assigned to the CES admin-group, when they first login.",
       "Optional": true
     }
   ],

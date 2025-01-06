@@ -25,7 +25,6 @@ import java.util.Map;
 public class CesDelegatedAuthenticationPreProcessor implements DelegatedAuthenticationPreProcessor {
 
     private final static String alreadyMappedAttributeName = "cesAttributesAlreadyMapped";
-    private final static String groupsAttributeName = "groups";
     private final static String externalGroupsAttributeName = "externalGroups";
 
     private final UserManager userManager;
@@ -33,9 +32,6 @@ public class CesDelegatedAuthenticationPreProcessor implements DelegatedAuthenti
     private final List<AttributeMapping> attributeMappings;
 
     private final String[] allowedGroups;
-
-    private final String[] adminUsernames;
-
 
     @Override
     public Principal process(Principal principal, BaseClient client, Credential credential, Service service) throws Throwable {
@@ -48,7 +44,7 @@ public class CesDelegatedAuthenticationPreProcessor implements DelegatedAuthenti
         // attach internal groups
         CesInternalLdapUser existingLdapUser = userManager.getUserByUid(principal.getId());
         if (existingLdapUser != null) {
-            principal.getAttributes().put(groupsAttributeName, Arrays.asList(existingLdapUser.getGroups().toArray()));
+            PrincipalGroups.setGroupsInPrincipal(principal, Arrays.asList(existingLdapUser.getGroups().toArray()));
         }
 
         return principal;

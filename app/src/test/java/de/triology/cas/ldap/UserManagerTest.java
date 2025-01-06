@@ -272,4 +272,74 @@ public class UserManagerTest {
         assertEquals("error while updating user", e.getMessage());
         assertEquals("test error", e.getCause().getMessage());
     }
+
+    @Test
+    public void testAddUserToGroup() throws Throwable {
+        LdapOperationFactory ofMock = mock(LdapOperationFactory.class);
+        ModifyOperation modifyOperation = mock(ModifyOperation.class);
+        when(ofMock.modifyOperation()).thenReturn(modifyOperation);
+
+        when(modifyOperation.execute(any(ModifyRequest.class))).then(invocation -> {
+            ModifyRequest modRequest = invocation.getArgument(0, ModifyRequest.class);
+            assertEquals("cn=group1,ou=Groups,o=test,dc=cloudogu,dc=com", modRequest.getDn());
+
+            assertEquals(AttributeModification.Type.ADD, modRequest.getModifications()[0].getOperation());
+            assertEquals("member", modRequest.getModifications()[0].getAttribute().getName());
+            assertEquals("uid=test_user,ou=People,o=test,dc=cloudogu,dc=com", modRequest.getModifications()[0].getAttribute().getStringValue());
+
+            ModifyResponse responseMock = mock(ModifyResponse.class);
+            when(responseMock.isSuccess()).thenReturn(true);
+            return responseMock;
+        });
+
+        CesInternalLdapUser testUser = new CesInternalLdapUser("test_user", "Test", "User", "Test User", "test@user.de", true);
+
+        UserManager userManager = new UserManager("ou=People,o=test,dc=cloudogu,dc=com", ofMock);
+        userManager.addUserToGroup(testUser, "group1");
+    }
+
+    @Test
+    public void testAddUserToGroup_notSuccessful() throws Throwable {
+        LdapOperationFactory ofMock = mock(LdapOperationFactory.class);
+        ModifyOperation modifyOperation = mock(ModifyOperation.class);
+        when(ofMock.modifyOperation()).thenReturn(modifyOperation);
+
+        when(modifyOperation.execute(any(ModifyRequest.class))).then(invocation -> {
+            ModifyRequest modRequest = invocation.getArgument(0, ModifyRequest.class);
+            assertEquals("cn=group1,baseDN", modRequest.getDn());
+
+            assertEquals(AttributeModification.Type.ADD, modRequest.getModifications()[0].getOperation());
+            assertEquals("member", modRequest.getModifications()[0].getAttribute().getName());
+            assertEquals("uid=test_user,baseDN", modRequest.getModifications()[0].getAttribute().getStringValue());
+
+            ModifyResponse responseMock = mock(ModifyResponse.class);
+            when(responseMock.isSuccess()).thenReturn(false);
+            when(responseMock.getDiagnosticMessage()).thenReturn("test error create");
+            return responseMock;
+        });
+
+        CesInternalLdapUser testUser = new CesInternalLdapUser("test_user", "Test", "User", "Test User", "test@user.de", true);
+
+        UserManager userManager = new UserManager("baseDN", ofMock);
+        CesLdapException e = assertThrows(CesLdapException.class, () -> userManager.addUserToGroup(testUser, "group1"));
+
+        assertEquals("test error create", e.getMessage());
+    }
+
+    @Test
+    public void testAddUserToGroup_ldapError() throws Throwable {
+        LdapOperationFactory ofMock = mock(LdapOperationFactory.class);
+        ModifyOperation modifyOperation = mock(ModifyOperation.class);
+        when(ofMock.modifyOperation()).thenReturn(modifyOperation);
+
+        when(modifyOperation.execute(any(ModifyRequest.class))).thenThrow(new LdapException("test error"));
+
+        CesInternalLdapUser testUser = new CesInternalLdapUser("test_user", "Test", "User", "Test User", "test@user.de", true);
+
+        UserManager userManager = new UserManager("baseDN", ofMock);
+        CesLdapException e = assertThrows(CesLdapException.class, () -> userManager.addUserToGroup(testUser, "group1"));
+
+        assertEquals("error while adding user to group", e.getMessage());
+        assertEquals("test error", e.getCause().getMessage());
+    }
 }

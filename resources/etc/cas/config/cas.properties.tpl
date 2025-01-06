@@ -266,7 +266,8 @@ ces.delegation.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
 ces.delegation.oidc.allowedGroups={{ .Config.GetOrDefault "oidc/allowed_groups" ""}}
 
 ### admin usernames - usernames that will be assigned the admin-group
-ces.delegation.oidc.adminUsernames={{ .Config.GetOrDefault "oidc/admin_usernames" ""}}
+ces.delegation.oidc.initialAdminUsernames={{ .Config.GetOrDefault "oidc/initial_admin_usernames" ""}}
+ces.delegation.oidc.adminGroups={{ .GlobalConfig.GetOrDefault "admin_group" "cesAdmin"}},{{ .GlobalConfig.GetOrDefault "manager_group" "cesManager"}}
 
 {{ end }}
 ########################################################################################################################

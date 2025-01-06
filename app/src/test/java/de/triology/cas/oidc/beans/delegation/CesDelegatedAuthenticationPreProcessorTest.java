@@ -32,7 +32,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null);
         Principal resultPrincipal = preProcessor.process(principal, null, null, null);
 
         assertNotNull(resultPrincipal);
@@ -64,7 +64,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         UserManager userManagerMock = mock(UserManager.class);
         when(userManagerMock.getUserByUid("test_user")).thenReturn(null);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null);
         Principal resultPrincipal = preProcessor.process(principal, null, null, null);
 
         assertNotNull(resultPrincipal);
@@ -98,7 +98,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, null);
         Principal resultPrincipal = preProcessor.process(principal, null, null, null);
 
         assertNotNull(resultPrincipal);
@@ -133,7 +133,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups);
         Principal resultPrincipal = preProcessor.process(principal, null, null, null);
 
         assertNotNull(resultPrincipal);
@@ -166,7 +166,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups);
         Principal resultPrincipal = preProcessor.process(principal, null, null, null);
 
         assertNotNull(resultPrincipal);
@@ -196,7 +196,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups);
 
         UnauthorizedAuthenticationException exception = assertThrows(UnauthorizedAuthenticationException.class, () -> preProcessor.process(principal, null, null, null));
 
@@ -225,7 +225,7 @@ public class CesDelegatedAuthenticationPreProcessorTest {
         testUser.setGroups(Set.of("group1", "group2"));
         when(userManagerMock.getUserByUid("test_user")).thenReturn(testUser);
 
-        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups, null);
+        CesDelegatedAuthenticationPreProcessor preProcessor = new CesDelegatedAuthenticationPreProcessor(userManagerMock, mappings, allowedGroups);
 
         UnauthorizedAuthenticationException exception = assertThrows(UnauthorizedAuthenticationException.class, () -> preProcessor.process(principal, null, null, null));
 

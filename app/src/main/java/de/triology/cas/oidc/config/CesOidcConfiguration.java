@@ -49,8 +49,11 @@ public class CesOidcConfiguration {
     @Value("${ces.delegation.oidc.allowedGroups:#{\"\"}}")
     private String allowedGroupsConfigString;
 
-    @Value("${ces.delegation.oidc.adminUsernames:#{\"\"}}")
-    private String adminUsernamesConfigString;
+    @Value("${ces.delegation.oidc.initialAdminUsernames:#{\"\"}}")
+    private String initialAadminUsernamesConfigString;
+
+    @Value("${ces.delegation.oidc.adminGroups:#{\"\"}}")
+    private String adminGroupsConfigString;
 
     @Bean
     @RefreshScope
@@ -73,8 +76,10 @@ public class CesOidcConfiguration {
     @RefreshScope
     public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(final CasConfigurationProperties casProperties) {
         UserManager userManager = getUserManager(casProperties);
+        String[] initialAdminUsernames = splitAndTrim(initialAadminUsernamesConfigString);
+        String[] adminGroups = splitAndTrim(adminGroupsConfigString);
 
-        return new CesDelegatedClientUserProfileProvisioner(userManager);
+        return new CesDelegatedClientUserProfileProvisioner(userManager, initialAdminUsernames, adminGroups);
     }
 
     @Bean
@@ -83,9 +88,8 @@ public class CesOidcConfiguration {
         UserManager userManager = getUserManager(casProperties);
         List<AttributeMapping> attributeMappings = AttributeMapping.fromPropertyString(attributesMappingsString);
         String[] allowedGroups = splitAndTrim(allowedGroupsConfigString);
-        String[] adminUsernames = splitAndTrim(adminUsernamesConfigString);
 
-        return new CesDelegatedAuthenticationPreProcessor(userManager, attributeMappings, allowedGroups, adminUsernames);
+        return new CesDelegatedAuthenticationPreProcessor(userManager, attributeMappings, allowedGroups);
     }
 
     private static UserManager getUserManager(CasConfigurationProperties casProperties) {
