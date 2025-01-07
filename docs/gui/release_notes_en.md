@@ -5,6 +5,7 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Makes the CAS start-up more robust against unset configuration keys.
 
 ## Release 7.0.8-9
 - Fixed a problem where the Dogu does not start under high system load.
