@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Fix a restart loop if the config key `oidc/enabled` was not set.
+- [#246] Fix a restart loop if the config key `oidc/enabled` was not set.
 
 ## [v7.0.8-9] - 2024-12-20
 ### Added
