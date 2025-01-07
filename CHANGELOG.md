@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix a restart loop if the config key `oidc/enabled` was not set.
 
 ## [v7.0.8-9] - 2024-12-20
 ### Added
@@ -13,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix start under high system load [#240]
-- Fix a restart loop if the config key `oidc/enabled` was not set.
 
 ## [v7.0.8-8] - 2024-12-20
 ### Changed
