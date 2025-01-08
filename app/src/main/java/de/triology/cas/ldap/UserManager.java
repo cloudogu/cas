@@ -157,7 +157,7 @@ public class UserManager {
     }
 
     private String createDnForGroup(String groupName) {
-        return CesInternalLdapUser.CnAttribute + "=" + groupName + "," + this.groupBaseDN;
+        return GroupCnAttribute + "=" + groupName + "," + this.groupBaseDN;
     }
 
     private SearchRequest createGetUserRequest(String uid) {
