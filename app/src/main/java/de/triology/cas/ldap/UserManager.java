@@ -132,7 +132,7 @@ public class UserManager {
      * Adds the given user to the given group in LDAP
      *
      * @param user      the user to add
-     * @param groupName the name of the group to add the use to
+     * @param groupName the name of the group to add the user to
      * @throws CesLdapException for errors in LDAP
      */
     public void addUserToGroup(CesInternalLdapUser user, String groupName) throws CesLdapException {

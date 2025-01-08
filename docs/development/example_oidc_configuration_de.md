@@ -17,7 +17,7 @@ oidc:
   principal_attribute: "preferred_username"
   attribute_mapping: "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
   allowed_groups: "Gruppe2, Gruppe3"
-  admin_usernames: "user1, testAdmin"                      
+  initial_admin_usernames: "user1, testAdmin"                      
 ```
 
 > **Achtung:** Im Produktions-Betrieb sollte der Config-Wert für `client_secret` im Kubernetes-Secret der CAS-Config eingetragen werden. 
