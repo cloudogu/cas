@@ -8,7 +8,6 @@ String doguName = "cas"
 String branch = "${env.BRANCH_NAME}"
 
 EcoSystem ecoSystem = new EcoSystem(this, "gcloud-ces-operations-internal-packer", "jenkins-gcloud-ces-operations-internal")
-Trivy trivy = new Trivy(this)
 
 Git git = new Git(this, "cesmarvin")
 git.committerName = 'cesmarvin'
@@ -39,8 +38,8 @@ parallel(
                         }
 
                         stage('Unit Test') {
-                            gradlew 'test'
-                            junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
+                             gradlew 'test'
+                             junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
                         }
                     }
 
@@ -92,7 +91,7 @@ parallel(
                                     string(defaultValue: '', description: 'Old Dogu version for the upgrade test (optional; e.g. 3.23.0-1)', name: 'OldDoguVersionForUpgradeTest'),
                                     booleanParam(defaultValue: true, description: 'Enables cypress to record video of the integration tests.', name: 'EnableVideoRecording'),
                                     booleanParam(defaultValue: true, description: 'Enables cypress to take screenshots of failing integration tests.', name: 'EnableScreenshotRecording'),
-                                    choice(name: 'TrivyScanLevels', choices: [TrivySeverityLevel.CRITICAL, TrivySeverityLevel.HIGH_AND_ABOVE, TrivySeverityLevel.MEDIUM_AND_ABOVE, TrivySeverityLevel.ALL], description: 'The levels to scan with trivy'),
+                                    choice(name: 'TrivySeverityLevels', choices: [TrivySeverityLevel.CRITICAL, TrivySeverityLevel.HIGH_AND_ABOVE, TrivySeverityLevel.MEDIUM_AND_ABOVE, TrivySeverityLevel.ALL], description: 'The levels to scan with trivy'),
                                     choice(name: 'TrivyStrategy', choices: [TrivyScanStrategy.UNSTABLE, TrivyScanStrategy.FAIL, TrivyScanStrategy.IGNORE], description: 'Define whether the build should be unstable, fail or whether the error should be ignored if any vulnerability was found.')
                             ])
                     ])
@@ -174,9 +173,12 @@ parallel(
                         }
 
                         stage('Trivy scan') {
-                            trivy.scanDogu("/dogu", TrivyScanFormat.HTML, params.TrivyScanLevels, params.TrivyStrategy)
-                            trivy.scanDogu("/dogu", TrivyScanFormat.JSON,  params.TrivyScanLevels, params.TrivyStrategy)
-                            trivy.scanDogu("/dogu", TrivyScanFormat.PLAIN, params.TrivyScanLevels, params.TrivyStrategy)
+                            ecoSystem.copyDoguImageToJenkinsWorker("/dogu")
+                            Trivy trivy = new Trivy(this)
+                            trivy.scanDogu(".", params.TrivySeverityLevels, params.TrivyStrategy)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.TABLE)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.JSON)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.HTML)
                         }
 
                         stage('Verify') {
@@ -195,15 +197,15 @@ parallel(
                             ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
                             ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
 
-                           ecoSystem.runCypressIntegrationTests([
+                            ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
                                     enableVideo      : params.EnableVideoRecording,
-                                   enableScreenshots: params.EnableScreenshotRecording])
-                           // run special non-encrypted password test
-                           echo "Run unencrypted password test script"
-                           ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
-                           def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
-                           echo "${testreport}"
+                                    enableScreenshots: params.EnableScreenshotRecording])
+                            // run special non-encrypted password test
+                            echo "Run unencrypted password test script"
+                            ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
+                            def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+                            echo "${testreport}"
                         }
 
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
