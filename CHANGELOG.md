@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Add configuration for `allowed_groups` and `initial_admin_user` in delegated authentication 
+- Add configuration for `allowed_groups` and `initial_admin_user` in delegated authentication
 
 ### Changed
-- Update java base image to 21.0.5-1
+- [#246] Update base image to Alpine 3.21.0 and Java to 21.0.5-p11
 - Update Tomcat to 10.1.34
+
+### Fixed
+- [#246] Fix a restart loop if the config key `oidc/enabled` was not set.
 
 ## [v7.0.8-9] - 2024-12-20
 ### Added
