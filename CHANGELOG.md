@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#246] Update base image to Alpine 3.21.0 and Java to 21.0.5-p11
+
+### Fixed
+- [#246] Fix a restart loop if the config key `oidc/enabled` was not set.
 
 ## [v7.0.8-9] - 2024-12-20
 ### Added
