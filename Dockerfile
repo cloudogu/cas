@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=10
-ARG TOMCAT_VERSION=10.1.26
-ARG TOMCAT_TARGZ_SHA256=f73f76760137833b3305dfb18ed174f87feac3ab78f65289a0835a851d7cfeb2
+ARG TOMCAT_VERSION=10.1.34
+ARG TOMCAT_TARGZ_SHA256=f799541380bfff2b674cefd86c5376d2d7d566b3a2e7c4579d2b491de8ec6c36
 
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
@@ -41,10 +41,10 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:21.0.4-4
+FROM registry.cloudogu.com/official/java:21.0.5-1
 
 LABEL NAME="official/cas" \
-      VERSION="7.0.8-9" \
+      VERSION="7.0.8-10" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION

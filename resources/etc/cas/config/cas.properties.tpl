@@ -223,7 +223,7 @@ cas.ticket.tgt.core.only-track-most-recent-session=false
 # Configuration guide:
 # Properties: https://apereo.github.io/cas/7.0.x/integration/Delegate-Authentication-Generic-OpenID-Connect.html
 # ----------------------------------------------------------------------------------------------------------------------
-{{ if ne (.Config.Get "oidc/enabled") "false"}}
+{{ if eq (.Config.Get "oidc/enabled") "true"}}
 cas.authn.pac4j.oidc[0].generic.enabled=true
 
 ### path to the discovery url of the provider
@@ -261,6 +261,14 @@ ces.delegation.oidc.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" 
 
 ### attribute mapping
 ces.delegation.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
+
+### allowed groups - group-names that are allowed to login
+ces.delegation.oidc.allowedGroups={{ .Config.GetOrDefault "oidc/allowed_groups" ""}}
+
+### admin usernames - usernames that will be assigned the admin-group
+ces.delegation.oidc.initialAdminUsernames={{ .Config.GetOrDefault "oidc/initial_admin_usernames" ""}}
+ces.delegation.oidc.adminGroups={{ .GlobalConfig.GetOrDefault "admin_group" "cesAdmin"}},{{ .GlobalConfig.GetOrDefault "manager_group" "cesManager"}}
+
 {{ end }}
 ########################################################################################################################
 

@@ -11,17 +11,27 @@ public class UserManager {
     public static final String LDAP_TRUE = "TRUE";
     public static final String LDAP_FALSE = "FALSE";
 
+    public static final String GroupOu = "Groups";
+    public static final String GroupCnAttribute = "cn";
+    public static final String GroupMemberAttribute = "member";
+
     public static final String ObjectClassAttributeName = "objectClass";
 
-    private final String baseDN;
+    private final String userBaseDN;
+    private final String groupBaseDN;
     private final LdapOperationFactory operationFactory;
 
     /**
      * Creates a new Usermanager that can load, create and update {@link CesInternalLdapUser}s.
      */
-    public UserManager(String baseDN, LdapOperationFactory operationFactory) {
-        this.baseDN = baseDN;
+    public UserManager(String userBaseDN, LdapOperationFactory operationFactory) {
+        this.userBaseDN = userBaseDN;
+        this.groupBaseDN = createGroupBaseDNFromBaseDN(userBaseDN);
         this.operationFactory = operationFactory;
+    }
+
+    private static String createGroupBaseDNFromBaseDN(String userBaseDN) {
+        return userBaseDN.replaceFirst("(?<=ou=)[^,]+(?=,)", GroupOu);
     }
 
     /**
@@ -118,15 +128,43 @@ public class UserManager {
         }
     }
 
+    /**
+     * Adds the given user to the given group in LDAP
+     *
+     * @param user      the user to add
+     * @param groupName the name of the group to add the user to
+     * @throws CesLdapException for errors in LDAP
+     */
+    public void addUserToGroup(CesInternalLdapUser user, String groupName) throws CesLdapException {
+        try {
+            final ModifyOperation modify = operationFactory.modifyOperation();
+            ModifyRequest request = new ModifyRequest(
+                    createDnForGroup(groupName),
+                    new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute(GroupMemberAttribute, createDnForUser(user)))
+            );
+            final ModifyResponse response = modify.execute(request);
+
+            if (!response.isSuccess()) {
+                throw new CesLdapException(response.getDiagnosticMessage());
+            }
+        } catch (LdapException e) {
+            throw new CesLdapException("error while adding user to group", e);
+        }
+    }
+
     private String createDnForUser(CesInternalLdapUser user) {
-        return CesInternalLdapUser.UidAttribute + "=" + user.getUid() + "," + this.baseDN;
+        return CesInternalLdapUser.UidAttribute + "=" + user.getUid() + "," + this.userBaseDN;
+    }
+
+    private String createDnForGroup(String groupName) {
+        return GroupCnAttribute + "=" + groupName + "," + this.groupBaseDN;
     }
 
     private SearchRequest createGetUserRequest(String uid) {
         String filter = String.format("(&%s%s)", uidFilter(uid), externalUsersFilter());
 
         SearchRequest request = new SearchRequest();
-        request.setBaseDn(this.baseDN);
+        request.setBaseDn(this.userBaseDN);
         request.setReturnAttributes(CesInternalLdapUser.UidAttribute, CesInternalLdapUser.CnAttribute, CesInternalLdapUser.SnAttribute, CesInternalLdapUser.GivenNameAttribute, CesInternalLdapUser.DisplayNameAttribute, CesInternalLdapUser.MailAttribute, CesInternalLdapUser.ExternalAttribute, CesInternalLdapUser.MailAttribute, CesInternalLdapUser.ExternalAttribute, CesInternalLdapUser.MemberOfAttribute);
         request.setFilter(filter);
         request.setSearchScope(SearchScope.SUBTREE);
