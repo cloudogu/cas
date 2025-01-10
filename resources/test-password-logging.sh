@@ -54,11 +54,11 @@ echo "Testing service ticket creation with new user"
 # A service ticket is a type of authentication that is password based
 # this valid service ticket will appear in the cas logs as well
 curl -f -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
- -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
+ -H 'Content-type: application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
 echo "creating ticketGrantingTicket"
 ticketGrantingTicket=$(grep -o TGT-.*cas serviceTicket)
-curl -L -v "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fusermgt" --insecure \
- -H 'Content-type: Application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
+curl -f -L -v "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fusermgt" --insecure \
+ -H 'Content-type: application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
 validTicket=$(cat serviceTicket)
 curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=https://${CES_URL}usermgt&ticket=${validTicket}" --http1.0 > serviceTicket
 

@@ -261,6 +261,14 @@ ces.delegation.oidc.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" 
 
 ### attribute mapping
 ces.delegation.oidc.attributeMapping={{ .Config.Get "oidc/attribute_mapping"}}
+
+### allowed groups - group-names that are allowed to login
+ces.delegation.oidc.allowedGroups={{ .Config.GetOrDefault "oidc/allowed_groups" ""}}
+
+### admin usernames - usernames that will be assigned the admin-group
+ces.delegation.oidc.initialAdminUsernames={{ .Config.GetOrDefault "oidc/initial_admin_usernames" ""}}
+ces.delegation.oidc.adminGroups={{ .GlobalConfig.GetOrDefault "admin_group" "cesAdmin"}},{{ .GlobalConfig.GetOrDefault "manager_group" "cesManager"}}
+
 {{ end }}
 ########################################################################################################################
 

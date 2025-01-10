@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 - Makes the CAS start-up more robust against unset configuration keys.
+- When logging in via delegated authentication, `allowed_groups` and `initial_admin_usernames` can now be configured.
+  - `allowed_groups`: Specifies a list of OIDC groups that are allowed to log on with delegated authentication. The groups are separated by commas. An empty list allows access for all.
+  - `initial_admin_usernames`: Specifies a list of usernames that are assigned to the CES admin group at the first login.
 
 ## Release 7.0.8-9
 - Fixed a problem where the Dogu does not start under high system load.

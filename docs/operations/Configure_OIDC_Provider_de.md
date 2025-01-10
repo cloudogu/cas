@@ -63,3 +63,13 @@ Eine solche Registrierung besteht grundsätzlich aus einer Client-ID und einem C
 * Konfiguration-Schlüssel-Pfad: `<cas_path>/oidc/principal_attribute`
 * Inhalt: Gibt ein Attribut an, das als Haupt-ID innerhalb des CES verwendet werden soll. CAS verwendet die vom OIDC-Anbieter bereitgestellte ID, wenn diese Eigenschaft leer ist.
 * Datentyp: Name eines OIDC attribute
+
+#### oidc/allowed_groups
+* Pfad des Konfigurationsschlüssels: `<cas_path>/oidc/allowed_groups`
+* Inhalt: Gibt eine Liste von OIDC-Gruppen an, die sich mit delegierter Authentifizierung anmelden dürfen. Die Gruppen werden durch Komma getrennt. Eine leere Liste erlaubt den Zugang für alle.
+* Datentyp: String nach Format: `Gruppe1, Gruppe2`.
+
+#### oidc/initial_admin_usernames
+* Pfad des Konfigurationsschlüssels: `<cas_path>/oidc/initial_admin_usernames`
+* Inhalt: Gibt eine Liste von Benutzernamen an, die der CES-Admin-Gruppe bei der ersten Anmeldung zugewiesen werden.
+* Datentyp: String nach dem Format: `Benutzer1, Benutzer2`.
