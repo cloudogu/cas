@@ -3,6 +3,21 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+migratePortainerServiceAccount() {
+  echo "Migrating portainer service account..."
+  VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
+  if [[ "${VALUE}" != "default" ]]; then
+      {
+        CLIENT_SECRET="$(doguctl config service_accounts/portainer)"
+        doguctl config --remove service_accounts/portainer
+        doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
+        echo "Migrating portainer service account... Done!"
+      }
+  else
+    echo "Migrating portainer service account... Nothing to do!"
+  fi
+}
+
 echo "                                     ./////,                    "
 echo "                                 ./////==//////*                "
 echo "                                ////.  ___   ////.              "
@@ -27,6 +42,8 @@ while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
   echo "Upgrade script is running. Waiting..."
   sleep 3
 done
+
+migratePortainerServiceAccount
 
 # check whether fqdn has changed and update services
 echo "check for fqdn updates"
