@@ -123,8 +123,6 @@ migrateLogoutUri() {
 migrateServiceAccounts() {
   echo "Migrating service accounts..."
 
-  migratePortainerServiceAccount
-
   if [[ -z "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
     migrateServiceAccountsToFolders
     migrateLogoutUri

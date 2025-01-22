@@ -5,12 +5,12 @@ set -o pipefail
 
 migratePortainerServiceAccount() {
   echo "Migrating portainer service account..."
-  VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
+  VALUE=$(doguctl config service_accounts/oauth/portainer --default "default" || true)
   if [[ "${VALUE}" != "default" ]]; then
       {
-        CLIENT_SECRET="$(doguctl config service_accounts/portainer)"
-        doguctl config --remove service_accounts/portainer
-        doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
+        CLIENT_SECRET="$(doguctl config service_accounts/oauth/portainer)"
+        doguctl config --remove service_accounts/oauth/portainer
+        doguctl config service_accounts/portainer "${CLIENT_SECRET}"
         echo "Migrating portainer service account... Done!"
       }
   else
