@@ -11,7 +11,7 @@ migratePortainerServiceAccount() {
       {
         CLIENT_SECRET="$(doguctl config service_accounts/oauth/portainer/secret)"
         doguctl config --remove service_accounts/oauth/portainer/secret
-        doguctl config service_accounts/portainer "${CLIENT_SECRET}"
+        doguctl config service_accounts/portainer/secret "${CLIENT_SECRET}"
         echo "$(doguctl config service_accounts/portainer)"
         echo "Migrating portainer service account... Done!"
       }
@@ -45,7 +45,8 @@ while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
   sleep 3
 done
 
-migratePortainerServiceAccount
+/bin/bash ./remove-sa.sh oauth portainer
+/bin/bash ./create-sa.sh cas portainer
 
 # check whether fqdn has changed and update services
 echo "check for fqdn updates"
