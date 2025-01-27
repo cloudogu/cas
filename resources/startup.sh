@@ -29,11 +29,12 @@ while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
 done
 
 # recreate portainer sa if it is outdated
-VALUE=$(doguctl config service_accounts/oauth/portainer/secret --default "default" || true)
-if [[ "${VALUE}" != "default" ]] ; then
-  /bin/bash ./remove-sa.sh oauth portainer
-  /bin/bash ./create-sa.sh cas portainer
-fi
+# get portainer version
+PORTAINER_VERSION=curl --unix-socket /var/run/docker.sock http://localhost/v1.47/containers/json?filters=%7B%22name%22%3A%20%5B%22portainer%22%5D%7D | jq -r '.[] .Labels .VERSION'
+# if [[ $(printf '%s\n' "2.21.2-2" "${PORTAINER_VERSION}" | sort -C -V ) ]] ; then
+#   /bin/bash ./remove-sa.sh oauth portainer
+#   /bin/bash ./create-sa.sh cas portainer
+# fi
 
 # check whether fqdn has changed and update services
 echo "check for fqdn updates"
