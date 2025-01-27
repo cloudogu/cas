@@ -3,23 +3,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-migratePortainerServiceAccount() {
-  echo "Migrating portainer service account..."
-  VALUE=$(doguctl config service_accounts/oauth/portainer/secret --default "default" || true)
-  echo "${VALUE}"
-  if [[ "${VALUE}" != "default" ]] ; then
-      {
-        CLIENT_SECRET="$(doguctl config service_accounts/oauth/portainer/secret)"
-        doguctl config --remove service_accounts/oauth/portainer/secret
-        doguctl config service_accounts/portainer/secret "${CLIENT_SECRET}"
-        echo "$(doguctl config service_accounts/portainer)"
-        echo "Migrating portainer service account... Done!"
-      }
-  else
-    echo "Migrating portainer service account... Nothing to do!"
-  fi
-}
-
 echo "                                     ./////,                    "
 echo "                                 ./////==//////*                "
 echo "                                ////.  ___   ////.              "
@@ -45,8 +28,12 @@ while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
   sleep 3
 done
 
-/bin/bash ./remove-sa.sh oauth portainer
-/bin/bash ./create-sa.sh cas portainer
+# recreate portainer sa if it is outdated
+VALUE=$(doguctl config service_accounts/oauth/portainer/secret --default "default" || true)
+if [[ "${VALUE}" != "default" ]] ; then
+  /bin/bash ./remove-sa.sh oauth portainer
+  /bin/bash ./create-sa.sh cas portainer
+fi
 
 # check whether fqdn has changed and update services
 echo "check for fqdn updates"
