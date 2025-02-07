@@ -37,8 +37,10 @@ spring.mail.protocol=smtp
 # ----------------------------------------------------------------------------------------------------------------------
 management.endpoint.health.enabled=true
 management.endpoint.health.show-details=always
-management.endpoints.web.exposure.include=health
+management.endpoints.web.exposure.include=health,authenticationHandlers
+management.endpoint.authenticationHandlers.enabled=true
 cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
+cas.monitor.endpoints.endpoint.authenticationHandlers.access=ANONYMOUS
 ########################################################################################################################
 
 
@@ -207,7 +209,6 @@ cas.authn.throttle.schedule.repeat-interval=PT{{ .Config.GetOrDefault "limit/sta
 cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
 cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
 ########################################################################################################################
-
 ########################################################################################################################
 # Ticket Expiration Policies
 # Configuration guide: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#ticket-granting-ticket-policies

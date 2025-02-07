@@ -30,6 +30,7 @@ buildscript {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
         classpath "org.apereo.cas:cas-server-core-configuration-metadata-repository:${project.'cas.version'}"
+
     }
 }
 
@@ -131,6 +132,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-web-api"
     implementation "org.apereo.cas:cas-server-core-webflow"
     implementation "org.apereo.cas:cas-server-core-webflow-api"
+    implementation "org.apereo.cas:cas-server-support-reports" // TODO remove this afterwards, only for actuator endpoint
 
     implementation "org.apereo.cas:cas-server-support-ldap"
     implementation "org.apereo.cas:cas-server-support-ldap-core"
