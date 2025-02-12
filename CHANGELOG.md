@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Use correct configuration keys `ldap/attribute_given_name` and `ldap/attribute_surname` in for cas properties.
+- Use correct configuration keys `ldap/attribute_given_name` and `ldap/attribute_surname` in cas properties.
 
 ## [v7.0.8-10] - 2025-01-10
 ### Added
