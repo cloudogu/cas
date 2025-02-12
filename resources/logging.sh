@@ -55,9 +55,8 @@ function validateDoguLogLevel() {
   doguctl validate "${DEFAULT_LOGGING_KEY}" || validateExitCode=$?
 
   if [[ ${validateExitCode} -ne 0 ]]; then
-      echo "${SCRIPT_LOG_PREFIX} WARNING: The loglevel configured in ${DEFAULT_LOGGING_KEY} is invalid."
-      echo "${SCRIPT_LOG_PREFIX} WARNING: Removing misconfigured value."
-      doguctl config --rm "${DEFAULT_LOGGING_KEY}"
+      echo "${SCRIPT_LOG_PREFIX} ERROR: The loglevel configured in ${DEFAULT_LOGGING_KEY} is invalid."
+      exit 1
   fi
 
   return
