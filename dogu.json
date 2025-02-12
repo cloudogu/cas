@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.0.8-10",
+  "Version": "7.0.8-11",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -143,7 +143,8 @@
     {
       "Name": "ldap/password",
       "Description": "The password for connection to ldap in encrypted form. This value is only used when using an external LDAP.",
-      "Optional": true
+      "Optional": true,
+      "Encrypted": true
     },
     {
       "Name": "ldap/search_filter",

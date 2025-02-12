@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-11] - 2025-02-12
+### Fixed
+- Use correct configuration keys `ldap/attribute_given_name` and `ldap/attribute_surname` in cas properties.
+
 ## [v7.0.8-10] - 2025-01-10
 ### Added
 - Add configuration for `allowed_groups` and `initial_admin_user` in delegated authentication
