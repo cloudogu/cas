@@ -2,7 +2,16 @@
   "@class" : "${ServiceClass}",
   "templateName": "DefaultAttributeReleasePolicy",
   "attributeReleasePolicy": {
-    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "username", "cn", "mail", "givenName", "surname", "displayName", "groups" ] ]
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "REPLACE",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "username", "cn", "mail", "givenName", "surname", "displayName", "groups" ] ],
+          "order": 0
+        }
+      ]
+    ]
   }
 }

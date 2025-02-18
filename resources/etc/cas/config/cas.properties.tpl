@@ -37,8 +37,10 @@ spring.mail.protocol=smtp
 # ----------------------------------------------------------------------------------------------------------------------
 management.endpoint.health.enabled=true
 management.endpoint.health.show-details=always
-management.endpoints.web.exposure.include=health
+management.endpoints.web.exposure.include=health,authenticationHandlers
+management.endpoint.authenticationHandlers.enabled=true
 cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
+cas.monitor.endpoints.endpoint.authenticationHandlers.access=ANONYMOUS
 ########################################################################################################################
 
 
@@ -301,3 +303,22 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 # Increase start-delay of scheduler to prevent startup-errors on slow starts
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
+
+
+cas.authn.groovy.location=file:/patAuthHandler.groovy
+cas.authn.groovy.name=PATHandler
+cas.authn.groovy.order=0
+cas.authn.groovy.state=ACTIVE
+
+CasFeatureModule.AccountManagement.enabled=true
+
+cas.authn.attribute-repository.ldap[0].base-dn={{ .Env.Get "LDAP_BASE_DN" }}
+cas.authn.attribute-repository.ldap[0].bind-credential={{ .Config.GetAndDecrypt "sa-ldap/password" }}
+cas.authn.attribute-repository.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
+cas.authn.attribute-repository.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
+cas.authn.attribute-repository.ldap[0].search-filter={{ .Env.Get "LDAP_SEARCH_FILTER" }}
+cas.authn.attribute-repository.ldap[0].attributes.displayName=displayName
+cas.authn.attribute-repository.ldap[0].attributes.givenName=givenName
+cas.authn.attribute-repository.ldap[0].attributes.mail=mail
+cas.authn.attribute-repository.ldap[0].attributes.cn=cn
+cas.authn.attribute-repository.ldap[0].attributes.{{ .Config.Get "ldap/attribute_group"}}=groups
