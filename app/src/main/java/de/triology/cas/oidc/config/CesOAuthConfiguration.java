@@ -3,7 +3,7 @@ package de.triology.cas.oidc.config;
 import de.triology.cas.oidc.beans.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.config.OidcConfiguration;
+import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration("CesOAuthConfiguration")
-@AutoConfigureAfter(OidcConfiguration.class)
+@AutoConfigureAfter(CasOidcAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CesOAuthConfiguration {

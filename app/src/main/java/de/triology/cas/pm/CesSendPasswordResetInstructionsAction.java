@@ -78,7 +78,11 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
             // a user exists in the system or not
             return success();
         }
-
-        return super.doExecuteInternal(requestContext);
+        try {
+            return super.doExecuteInternal(requestContext);
+        } catch (Throwable e) {
+            // return getErrorEvent("An Exception occured while sending the email: {}", e);
+            return getErrorEvent("contact.failed", "An Exception occured while sending the email", requestContext);
+        }
     }
 }
