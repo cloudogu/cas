@@ -47,21 +47,6 @@ getEtcdEndpoint() {
   tr -d '[:space:]' < "${NODE_MASTER_FILE}"
 }
 
-migratePortainerServiceAccount() {
-  echo "Migrating portainer service account..."
-  VALUE=$(doguctl config service_accounts/portainer --default "default" || true)
-  if [[ "${VALUE}" != "default" ]]; then
-      {
-        CLIENT_SECRET="$(doguctl config service_accounts/portainer)"
-        doguctl config --remove service_accounts/portainer
-        doguctl config service_accounts/oauth/portainer "${CLIENT_SECRET}"
-        echo "Migrating portainer service account... Done!"
-      }
-  else
-    echo "Migrating portainer service account... Nothing to do!"
-  fi
-}
-
 migrateServiceAccountsToFoldersByType() {
   local saType etcdSaUrl errFile outFile requestExitCode
   saType="${1}"
@@ -137,8 +122,6 @@ migrateLogoutUri() {
 
 migrateServiceAccounts() {
   echo "Migrating service accounts..."
-
-  migratePortainerServiceAccount
 
   if [[ -z "${ECOSYSTEM_MULTINODE+x}" || "${ECOSYSTEM_MULTINODE}" == "false" ]]; then
     migrateServiceAccountsToFolders

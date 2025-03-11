@@ -119,12 +119,9 @@ teardown_file() {
 
   assert_line "Migrating service accounts of type 'oauth'..."
   assert_equal "$(mock_get_call_args "${wget}" '2')" '-O- http://192.168.56.2:4001/v2/keys/config/cas/service_accounts/oauth?recursive=false'
-  assert_line "Migrating service account directory for 'portainer'"
-  assert_equal "$(mock_get_call_args "${doguctl}" '5')" 'config --remove service_accounts/oauth/portainer'
-  assert_equal "$(mock_get_call_args "${doguctl}" '6')" 'config service_accounts/oauth/portainer/secret aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kalYxMVhiYzkxNAo='
   assert_line "Migrating service account directory for 'another_oauth_dogu'"
-  assert_equal "$(mock_get_call_args "${doguctl}" '7')" 'config --remove service_accounts/oauth/another_oauth_dogu'
-  assert_equal "$(mock_get_call_args "${doguctl}" '8')" 'config service_accounts/oauth/another_oauth_dogu/secret VGFrZSBtZSBvbi4uLgo='
+  assert_equal "$(mock_get_call_args "${doguctl}" '4')" 'config --remove service_accounts/oauth/another_oauth_dogu'
+  assert_equal "$(mock_get_call_args "${doguctl}" '5')" 'config service_accounts/oauth/another_oauth_dogu/secret VGFrZSBtZSBvbi4uLgo='
   assert_line "Migrating service accounts of type 'oauth'... Done!"
 }
 
