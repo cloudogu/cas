@@ -5,7 +5,14 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.0.8-12] - 2025-03-12
+- Cleanup old service-accounts from JSON-registry before creating a new service-account
+
+## Release 7.0.8-11
 - Makes the CAS start-up more robust against unset configuration keys.
+
+## Release 7.0.8-10
 - When logging in via delegated authentication, `allowed_groups` and `initial_admin_usernames` can now be configured.
   - `allowed_groups`: Specifies a list of OIDC groups that are allowed to log on with delegated authentication. The groups are separated by commas. An empty list allows access for all.
   - `initial_admin_usernames`: Specifies a list of usernames that are assigned to the CES admin group at the first login.

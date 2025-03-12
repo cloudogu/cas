@@ -5,7 +5,14 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.0.8-12] - 2025-03-12
+- Bereinigung alter Service-Accounts aus der JSON-Registry vor der Erstellung eines neuen Service-Accounts
+
+## Release 7.0.8-11
 - Es wurde der CAS-Start robuster bei ungesetzten Konfigurationsschlüssel gestaltet.
+
+## Release 7.0.8-10
 - Bei der Anmeldung über eine delegierte Authentifizierung können jetzt `allowed_groups` und `initial_admin_usernames` konfiguriert werden.
   - `allowed_groups`: Gibt eine Liste von OIDC-Gruppen an, die sich mit delegierter Authentifizierung anmelden dürfen. Die Gruppen werden durch Komma getrennt. Eine leere Liste erlaubt den Zugang für alle.
   - `initial_admin_usernames`: Gibt eine Liste von Benutzernamen an, die der CES-Admin-Gruppe bei der ersten Anmeldung zugewiesen werden.

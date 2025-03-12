@@ -22,7 +22,20 @@ fi
     LOGOUT_URI="${2}"
   fi
 
-  echo "Create sa for ${SERVICE} with account type: ${TYPE}..."
+  echo "Removing previously created service ${SERVICE} from JSON registry ${SERVICE_REGISTRY}"
+  FILES=$(ls "$SERVICE_REGISTRY_PRODUCTION"/"${SERVICE}"-*.json 2>/dev/null || echo "")
+  # Check if FILES is empty before counting
+  if [ -z "$FILES" ]; then
+    echo "No files found matching the service ${SERVICE}."
+  else
+    # Count the number of matching files
+    FILE_COUNT=$(echo "$FILES" | wc -l)
+    echo "Found $FILE_COUNT file(s) matching service ${SERVICE}."
+    rm "$SERVICE_REGISTRY_PRODUCTION"/"${SERVICE}"-*.json
+    echo "Successfully deleted service ${SERVICE}."
+  fi
+
+  echo "Create new sa for ${SERVICE} with account type: ${TYPE}..."
 
   FQDN=$(doguctl config -g fqdn)
   # escape fqdn to use it within regex
