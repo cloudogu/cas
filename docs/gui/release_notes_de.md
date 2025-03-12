@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.0.8-12] - 2025-03-12
 - Bereinigung alter Service-Accounts aus der JSON-Registry vor der Erstellung eines neuen Service-Accounts
 
 ## Release 7.0.8-11
