@@ -42,9 +42,9 @@ module.exports = defineConfig({
             "ClientID": "inttest",
             "ClientSecret": "integrationTestClientSecret",
             "PasswordHintText": "Contact your admin",
-            "PrivacyPolicyURL": "https://www.triology.de/",
-            "TermsOfServiceURL": "https://www.itzbund.de/",
-            "ImprintURL": "https://cloudogu.com/"
+            "PrivacyPolicyURL": "https://platform.cloudogu.com/de/legal/privacy/",
+            "TermsOfServiceURL": "https://platform.cloudogu.com/de/legal/terms/",
+            "ImprintURL": "https://platform.cloudogu.com/de/legal/imprint/"
         },
 
         specPattern: ["cypress/e2e/**/*.feature"],
