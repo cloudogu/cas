@@ -16,9 +16,9 @@ file the following values can be defined:
 
 A sample `custom_messages.properties` looks like this:
 ```
-legal.url.terms.of.service=https://www.itzbund.de/
-legal.url.imprint=https://cloudogu.com/
-legal.url.privacy.policy=https://www.triology.de/
+legal.url.terms.of.service=https://platform.cloudogu.com/de/legal/terms/
+legal.url.imprint=https://platform.cloudogu.com/de/legal/imprint/
+legal.url.privacy.policy=https://platform.cloudogu.com/de/legal/privacy/
 forgot.password.text=Contact your admin
 ```
 
