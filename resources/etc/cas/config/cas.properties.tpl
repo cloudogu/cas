@@ -81,7 +81,7 @@ cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
 {{ end }}
 {{ $attributeSurname := .Config.GetOrDefault "ldap/attribute_surname" "sn" }}
 {{ if eq $attributeSurname "" }}
-  {{ $attributeSurname = "givenName" }}
+  {{ $attributeSurname = "sn" }}
 {{ end }}
 
 cas.authn.ldap[0].principal-attribute-id={{ .Config.Get "ldap/attribute_id"}}
