@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.0.8-13] - 2025-04-07
 - Der CAS-Start ist jetzt robuster bei ungesetzten oder leeren Konfigurationsschlüsseln.
 
 ## [v7.0.8-12] - 2025-03-12
