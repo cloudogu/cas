@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.8-13] - 2025-04-07
+### Fixed
+- Use default values for keys `ldap/attribute_given_name` and `ldap/attribute_surname` if they are configured as empty strings.
+
 ## [v7.0.8-12] - 2025-03-12
 ### Changed 
 - [#248] Cleanup old service-accounts from JSON-registry before creating a new service-account

@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.0.8-13] - 2025-04-07
+- Der CAS-Start ist jetzt robuster bei ungesetzten oder leeren Konfigurationsschlüsseln.
+
 ## [v7.0.8-12] - 2025-03-12
 - Bereinigung alter Service-Accounts aus der JSON-Registry vor der Erstellung eines neuen Service-Accounts
 
