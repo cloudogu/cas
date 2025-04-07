@@ -74,8 +74,18 @@ cas.authn.ldap[0].connect-timeout=3000
 # Whether to use StartTLS
 cas.authn.ldap[0].use-start-tls={{ .Env.Get "LDAP_STARTTLS" }}
 
+# Check givenName & surname for empty strings. Older ces-setup versions did write empty strings for these attributes in the cas-config.
+{{ $attributeGivenName := .Config.GetOrDefault "ldap/attribute_given_name" "givenName" }}
+{{ if eq $attributeGivenName "" }}
+  {{ $attributeGivenName = "givenName" }}
+{{ end }}
+{{ $attributeSurname := .Config.GetOrDefault "ldap/attribute_surname" "sn" }}
+{{ if eq $attributeSurname "" }}
+  {{ $attributeSurname = "sn" }}
+{{ end }}
+
 cas.authn.ldap[0].principal-attribute-id={{ .Config.Get "ldap/attribute_id"}}
-cas.authn.ldap[0].principal-attribute-list={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ .Config.GetOrDefault "ldap/attribute_given_name" "givenName"}}:givenName,{{ .Config.GetOrDefault "ldap/attribute_surname" "sn"}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups
+cas.authn.ldap[0].principal-attribute-list={{ .Config.Get "ldap/attribute_id"}}:username,cn,{{ .Config.Get "ldap/attribute_mail"}}:mail,{{ $attributeGivenName}}:givenName,{{ $attributeSurname}}:surname,displayName,{{ .Config.Get "ldap/attribute_group"}}:groups
 cas.authn.attributeRepository.ldap[0].attributes.groups={{ .Config.Get "ldap/attribute_group"}}
 
 #========================================
