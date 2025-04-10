@@ -262,16 +262,18 @@ parallel(
                             stage('Push Prerelease Dogu to registry') {
                                 ecoSystem.pushPreRelease("/dogu")
                             }
-                        } finally {
-                            stage('Clean') {
-                                ecoSystem.destroy()
+                        } 
+                    }
+                    finally {
+                        stage('Clean') {
+                            ecoSystem.destroy()
                         }
                     }
                     mailIfStatusChanged(findEmailRecipients(defaultEmailRecipients))
                 }
             }
         }
-    }
+    
 )
 
 void gitWithCredentials(String command) {
