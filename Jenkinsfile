@@ -22,7 +22,7 @@ String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
         "source code": {
-            node('sos') {
+            node('docker') {
                 timestamps {
                     project = "github.com/${repositoryOwner}/${doguName}"
                     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
