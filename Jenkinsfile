@@ -117,6 +117,10 @@ parallel(
 
                     try {
                         stage('Provision') {
+                        // change namespace to prerelease_namespace if in develop-branch
+                        if (gitflow.isPreReleaseBranch()) {
+                            sh "make prerelease_namespace"
+                        }
                             ecoSystem.provision("/dogu", machineType = "n1-standard-4", 15)
                         }
 
@@ -169,6 +173,9 @@ parallel(
                         stage('Build dogu') {
                             // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
                             ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
+                            if (gitflow.isPreReleaseBranch()) {
+                                ecoSystem.purgeDogu("cas", "--keep-config")
+                            }
                             ecoSystem.build("/dogu")
                         }
 
@@ -251,7 +258,13 @@ parallel(
                                 github.createReleaseWithChangelog(releaseVersion, changelog, productionReleaseBranch)
                             }
                         }
-                    } finally {
+                    } else if (gitflow.isPreReleaseBranch()) {
+                        // push to registry in prerelease_namespace
+                        stage('Push Prerelease Dogu to registry') {
+                        ecoSystem.pushPreRelease("/dogu")
+                    } 
+                    
+                    finally {
                         stage('Clean') {
                             ecoSystem.destroy()
                         }
