@@ -22,7 +22,7 @@ String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
         "source code": {
-            node('docker') {
+            node('sos') {
                 timestamps {
                     project = "github.com/${repositoryOwner}/${doguName}"
                     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
@@ -117,7 +117,7 @@ parallel(
 
                     try {
                         stage('Provision') {
-                            ecoSystem.provision("/dogu")
+                            ecoSystem.provision("/dogu", 15)
                         }
 
                         stage('Start OIDC-Provider') {
