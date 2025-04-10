@@ -117,7 +117,7 @@ parallel(
 
                     try {
                         stage('Provision') {
-                            ecoSystem.provision("/dogu", 15)
+                            ecoSystem.provision("/dogu", machineType = "n1-standard-4", 15)
                         }
 
                         stage('Start OIDC-Provider') {
