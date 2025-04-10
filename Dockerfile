@@ -18,7 +18,7 @@ RUN ./gradlew --no-daemon dependencies
 
 # Copy source code and build overlay
 COPY ./app/src /cas-overlay/src/
-RUN ./gradlew clean build --parallel --no-daemon -x test
+RUN ./gradlew clean build --parallel --no-daemon
 
 FROM registry.cloudogu.com/official/base:3.21.0-1 AS tomcat
 

@@ -65,6 +65,7 @@ public class CesServiceMatchingStrategyTest {
 class TestService implements Service {
 
     private final String id;
+    private String tenant;
 
     public TestService(String id) {
         this.id = id;
@@ -83,5 +84,15 @@ class TestService implements Service {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
+
+    @Override
+    public String getTenant() {
+        return this.tenant;
     }
 }

@@ -1,5 +1,6 @@
 package de.triology.cas.pm;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.pm.ResetPasswordManagementProperties;
@@ -41,10 +42,14 @@ public class CesLdapPasswordManagementServiceTest {
         /**
          * Constructor.
          */
-        public CesLdapPasswordManagementServiceForUnitTest(CipherExecutor<Serializable, String> cipherExecutor, String issuer, PasswordManagementProperties passwordManagementProperties, PasswordHistoryService passwordHistoryService, Map<String, ConnectionFactory> connectionFactoryMap) {
-            super(cipherExecutor, issuer, passwordManagementProperties, passwordHistoryService, connectionFactoryMap);
-
-        }
+        public CesLdapPasswordManagementServiceForUnitTest(
+            CipherExecutor<Serializable, String> cipherExecutor,
+            CasConfigurationProperties casProperties,
+            PasswordManagementProperties passwordManagementProperties,
+            PasswordHistoryService passwordHistoryService,
+            Map<String, ConnectionFactory> connectionFactoryMap) {
+            super(cipherExecutor, casProperties, passwordManagementProperties, passwordHistoryService, connectionFactoryMap);
+        }        
 
         /**
          * Sets the email address to be returned by the findAttribute method.
@@ -65,14 +70,16 @@ public class CesLdapPasswordManagementServiceTest {
     }
 
     @Mock
+    private CasConfigurationProperties casConfigurationProperties;
+
+
+    @Mock
     private PasswordManagementQuery passwordManagementQuery;
 
     @Mock
     private CipherExecutor<Serializable, String> cipherExecutor;
 
-    private final String issuer = "Dustin";
-    @Mock
-    private PasswordManagementProperties passwordManagementProperties;
+    private PasswordManagementProperties passwordManagementProperties = new PasswordManagementProperties();
 
     @Mock
     private ResetPasswordManagementProperties resetPasswordManagementProperties;
@@ -87,7 +94,7 @@ public class CesLdapPasswordManagementServiceTest {
 
     @Before
     public void setup() {
-        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, issuer, passwordManagementProperties, passwordHistoryService, null);
+        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, casConfigurationProperties, passwordManagementProperties, passwordHistoryService, null);
 
         when(passwordManagementProperties.getReset()).thenReturn(resetPasswordManagementProperties);
         when(resetPasswordManagementProperties.getMail()).thenReturn(emailProperties);
