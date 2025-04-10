@@ -20,6 +20,9 @@ buildscript {
             url "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
+        maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
@@ -67,9 +70,11 @@ apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "io.freefair.lombok"
 apply plugin: "idea"
+apply plugin: "io.spring.dependency-management"
 
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/tasks.gradle")
+
 
 configurations.configureEach {
     resolutionStrategy {
@@ -108,6 +113,7 @@ java {
         languageVersion = JavaLanguageVersion.of(project.targetCompatibility as String)
     }
 }
+
 
 dependencies {
     implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
@@ -173,4 +179,18 @@ dependencies {
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
     developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
+
+    implementation "org.pac4j:pac4j-cas"
+    implementation "org.pac4j:pac4j-oidc"
+    implementation "org.pac4j:pac4j-config"
+}
+
+dependencyManagement {
+    dependencies {
+        dependencySet(group: 'org.springframework.security', version: '6.3.4') {
+            entry 'spring-security-web'
+            entry 'spring-security-config'
+            entry 'spring-security-core'
+        }
+    }
 }

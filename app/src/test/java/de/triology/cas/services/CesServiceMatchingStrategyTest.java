@@ -71,7 +71,7 @@ class TestService implements Service {
     }
 
     @Override
-    public void setAttributes(Map<String, List<Object>> attributes) {
+    public void setAttributes(Map<String,Object> attributes) {
 
     }
 

@@ -13,8 +13,8 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
+import org.springframework.context.ApplicationContext;
 
 @Configuration(value = "PmConfiguration")
 @ComponentScan("de.triology.cas.pm")
@@ -42,8 +42,15 @@ public class PmConfiguration {
             @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
             final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             final ApplicationContext applicationContext) {
-
-        return new CesSendPasswordResetInstructionsAction(casProperties, communicationsManager,
-                passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+        return new CesSendPasswordResetInstructionsAction(  casProperties,
+                                                            communicationsManager, 
+                                                            passwordManagementService, 
+                                                            ticketRegistry, 
+                                                            ticketFactory, 
+                                                            defaultPrincipalResolver, 
+                                                            passwordResetUrlBuilder, 
+                                                            multifactorAuthenticationProviderSelector, 
+                                                            authenticationSystemSupport, 
+                                                            applicationContext);
     }
 }

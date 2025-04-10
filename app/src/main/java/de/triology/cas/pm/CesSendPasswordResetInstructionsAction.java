@@ -37,7 +37,7 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
 
     public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver,
                                                   PasswordResetUrlBuilder passwordResetUrlBuilder, MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector, AuthenticationSystemSupport authenticationSystemSupport, ApplicationContext applicationContext) {
-        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport);
     }
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
@@ -79,6 +79,11 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
             return success();
         }
 
-        return super.doExecuteInternal(requestContext);
+        try {
+            return super.doExecuteInternal(requestContext);
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+        
     }
 }

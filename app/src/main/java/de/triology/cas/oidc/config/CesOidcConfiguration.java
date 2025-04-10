@@ -10,7 +10,6 @@ import de.triology.cas.oidc.beans.delegation.CesDelegatedClientUserProfileProvis
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
-import org.apereo.cas.config.OidcConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -27,12 +26,12 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
-
+import org.apereo.cas.config.CasOidcAutoConfiguration;
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration("CesOidcConfiguration")
-@AutoConfigureAfter(OidcConfiguration.class)
+@AutoConfigureAfter(CasOidcAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CesOidcConfiguration {
