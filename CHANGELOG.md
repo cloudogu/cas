@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- [#257] Set sensible resource requests and limits
+
 ## [v7.0.8-13] - 2025-04-07
 ### Fixed
 - Use default values for keys `ldap/attribute_given_name` and `ldap/attribute_surname` if they are configured as empty strings.
