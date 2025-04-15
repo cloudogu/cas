@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@4.1.1', 'github.com/cloudogu/dogu-build-lib@v3.1.0'])
+@Library(['github.com/cloudogu/ces-build-lib@4.2.0', 'github.com/cloudogu/dogu-build-lib@v3.2.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -22,7 +22,7 @@ String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
         "source code": {
-            node('docker') {
+            node('sos') {
                 timestamps {
                     project = "github.com/${repositoryOwner}/${doguName}"
                     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
@@ -77,14 +77,14 @@ parallel(
             }
         },
         "dogu-integration": {
-            node('vagrant') {
+            node('sos') {
                 sh 'echo testing dogu integration with ces'
                 timestamps {
                     properties([
                             // Keep only the last x builds to preserve space
                             buildDiscarder(logRotator(numToKeepStr: '10')),
                             // Don't run concurrent builds for a branch, because they use the same workspace directory
-                            disableConcurrentBuilds(),
+                            // disableConcurrentBuilds(),
                             // Parameter to activate dogu upgrade test on demand
                             parameters([
                                     booleanParam(defaultValue: false, description: 'Test dogu upgrade from latest release or optionally from defined version below', name: 'TestDoguUpgrade'),
