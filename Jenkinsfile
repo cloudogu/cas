@@ -117,11 +117,11 @@ parallel(
 
                     try {
                         stage('Provision') {
-                        // change namespace to prerelease_namespace if in develop-branch
-                        if (gitflow.isPreReleaseBranch()) {
-                            sh "make prerelease_namespace"
-                        }
-                            ecoSystem.provision("/dogu")
+                            // change namespace to prerelease_namespace if in develop-branch
+                            if (gitflow.isPreReleaseBranch()) {
+                                sh "make prerelease_namespace"
+                            }
+                            ecoSystem.provision("/dogu", "n1-standard-4", 15)
                         }
 
                         stage('Start OIDC-Provider') {
