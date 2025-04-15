@@ -84,7 +84,7 @@ parallel(
                             // Keep only the last x builds to preserve space
                             buildDiscarder(logRotator(numToKeepStr: '10')),
                             // Don't run concurrent builds for a branch, because they use the same workspace directory
-                            // disableConcurrentBuilds(),
+                            disableConcurrentBuilds(),
                             // Parameter to activate dogu upgrade test on demand
                             parameters([
                                     booleanParam(defaultValue: false, description: 'Test dogu upgrade from latest release or optionally from defined version below', name: 'TestDoguUpgrade'),
