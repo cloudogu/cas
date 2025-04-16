@@ -173,7 +173,7 @@ parallel(
                         stage('Build dogu') {
                             // purge cas from official namespace to prevent conflicts while building prerelease_official/cas
                             if (gitflow.isPreReleaseBranch()) {
-                                ecoSystem.purgeDogu("cas", "--keep-config")
+                                ecoSystem.purgeDogu("cas", "--keep-config --keep-volumes --keep-service-accounts --keep-logs")
                             }
                             // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
                             ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
