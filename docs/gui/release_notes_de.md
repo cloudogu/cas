@@ -6,6 +6,12 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.0.8-14] - 2025-04-16
+### Sicherheit
+- [Fix CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) – Behebt eine unzureichende Absicherung von statischen Ressourcen bei WebFlux-Anwendungen
+- [Fix CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) – Behebt eine Schwachstelle bei gleichzeitigen HTTP/2-Verbindungen
+- [Fix OIDC WebAuthn Vulnerability](https://apereo.github.io/2025/04/11/oidc-webauthn-vuln/) – Behebt ein Problem, bei dem Benutzeraktionen im WebAuthn-Kontext nicht korrekt verifiziert wurden
+
 ## [v7.0.8-13] - 2025-04-07
 - Der CAS-Start ist jetzt robuster bei ungesetzten oder leeren Konfigurationsschlüsseln.
 
