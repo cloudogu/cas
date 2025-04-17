@@ -149,7 +149,7 @@ cas.authn.accept.enabled=false
 # Disable LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
 # We use and register our own LDAP authentication handler by extending the LDAP authentication handler from the CAS.
 # https://apereo.github.io/cas/6.3.x/configuration/Configuration-Management-Extensions.html#exclusions
-spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration,org.apereo.cas.config.LdapPasswordManagementConfiguration
+# spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration,org.apereo.cas.config.LdapPasswordManagementConfiguration
 
 {{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
 #========================================
