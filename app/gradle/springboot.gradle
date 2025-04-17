@@ -134,6 +134,8 @@ bootWar {
                     "WEB-INF/lib/spring-security-oauth2-jose-6.2.3.jar",
                     "WEB-INF/lib/spring-security-oauth2-resource-server-6.2.3.jar",
 
+                    "WEB-INF/lib/spring-web-6.2.3.jar",
+                    "WEB-INF/lib/spring-web-6.2.5.jar",
             ]
         }
     }
