@@ -2,6 +2,10 @@
   "@class" : "org.apereo.cas.services.CasRegisteredService",
   "id" : {{SERVICE_ID}},
   "templateName": "{{TEMPLATES}}",
+  "accessStrategy": {
+  "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+  "ssoEnabled": true
+},
   "properties" : {
     "@class" : "java.util.HashMap",
     "ServiceClass": {
