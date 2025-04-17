@@ -137,6 +137,7 @@ bootWar {
 
                     "WEB-INF/lib/spring-web-6.2.3.jar",
                     "WEB-INF/lib/spring-web-6.2.5.jar",
+                    "WEB-INF/lib/spring-web-6.1.12.jar",
             ]
         }
     }
