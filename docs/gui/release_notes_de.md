@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Changed
+- [#261] Upgrade CAS zu Version 7.0.10.1
 
 ## [v7.0.8-14] - 2025-04-16
 ### Sicherheit
