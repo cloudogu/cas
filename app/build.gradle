@@ -195,12 +195,16 @@ dependencies {
     implementation "org.pac4j:pac4j-config"
 }
 
-dependencyManagement {
-    dependencies {
-        dependencySet(group: 'org.springframework.security', version: '6.3.4') {
-            entry 'spring-security-web'
-            entry 'spring-security-config'
-            entry 'spring-security-core'
-        }
+configurations.all {
+    resolutionStrategy {
+        force 'org.springframework.security:spring-security-core:6.2.7'
+        force 'org.springframework.security:spring-security-web:6.2.7'
+        force 'org.springframework.security:spring-security-config:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-core:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-client:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-jose:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-resource-server:6.2.7'
+        force 'org.springframework.security:spring-security-crypto:6.2.7'
+        force 'org.springframework.security:spring-security-rsa:1.1.1' 
     }
 }
