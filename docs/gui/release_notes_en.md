@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.0.10-1] - 2025-04-17
+### Changed
+- [#261] Upgrade CAS to version 7.0.10.1
+
 ## [v7.0.8-14] - 2025-04-16
 ### Security
 - [Fix CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) – Spring Security Authorization Bypass in WebFlux

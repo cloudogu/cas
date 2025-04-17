@@ -112,7 +112,7 @@ bootWar {
             provided = false
             excludes = [
                     "WEB-INF/lib/servlet-api-6*.jar",
-                    "WEB-INF/lib/tomcat-*-10.1.29.jar", // as we use an external tomcat server we can remove the embedded on
+                    "WEB-INF/lib/tomcat-*-10.1.31.jar", // as we use an external tomcat server we can remove the embedded on
 
                     // Exclude outdated security libs if they exist in overlay WAR
                     "WEB-INF/lib/spring-security-web-6.2.1.jar",

@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.0.10-1] - 2025-04-17
+### Changed
+- [#261] Upgrade CAS zu Version 7.0.10.1
+
 ## [v7.0.8-14] - 2025-04-16
 ### Sicherheit
 - [Fix CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) – Behebt eine unzureichende Absicherung von statischen Ressourcen bei WebFlux-Anwendungen

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.10-1] - 2025-04-17
+- [#261] Upgrade CAS to 7.0.10.1
+
 ## [v7.0.8-14] - 2025-04-16
 ### Changed
 - Spring Security `spring-security-web` from `6.2.1` → `6.2.7`
