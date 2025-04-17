@@ -4,6 +4,13 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
+## Release 7.0.5.1-9
+### Sicherheit
+- Behebung von [CVE-2024-52316](https://nvd.nist.gov/vuln/detail/CVE-2024-52316) durch Upgrade von `tomcat-catalina` auf Version **10.1.39**
+- Behebung von [CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) durch Upgrade von `tomcat-catalina` auf Version **10.1.39**
+- Behebung von [CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) durch Upgrade von `spring-security-web` auf Version **6.2.7**
+- Behebung von [CVE-2024-45337](https://nvd.nist.gov/vuln/detail/CVE-2024-45337) durch Upgrade des Base-Images auf **3.21.0-1**
+
 ## Release 7.0.5.1-8
 - Die Cloudogu-eigenen Quellen werden von der MIT-Lizenz auf die AGPL-3.0-only relizensiert.
 

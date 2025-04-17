@@ -174,3 +174,17 @@ dependencies {
     developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 }
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.springframework.security:spring-security-core:6.2.7'
+        force 'org.springframework.security:spring-security-web:6.2.7'
+        force 'org.springframework.security:spring-security-config:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-core:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-client:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-jose:6.2.7'
+        force 'org.springframework.security:spring-security-oauth2-resource-server:6.2.7'
+        force 'org.springframework.security:spring-security-crypto:6.2.7'
+        force 'org.springframework.security:spring-security-rsa:1.1.1' 
+    }
+}

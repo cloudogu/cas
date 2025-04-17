@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v7.0.5.1-9] - 2025-04-17
+### Security
+- Fix [CVE-2024-52316](https://nvd.nist.gov/vuln/detail/CVE-2024-52316) by upgrading `tomcat-catalina` to version **10.1.39**
+- Fix [CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) by upgrading `tomcat-catalina` to version **10.1.39**
+- Fix [CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) by upgrading `spring-security-web` to version **6.2.7**
+- Fix [CVE-2024-45337](https://nvd.nist.gov/vuln/detail/CVE-2024-45337) by upgrading Base Image to **3.21.0-1**
+
 
 ## [v7.0.5.1-8] - 2024-09-18
 ### Changed
