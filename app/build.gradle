@@ -195,25 +195,25 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        force 'org.springframework.security:spring-security-core:6.2.7'
-        force 'org.springframework.security:spring-security-web:6.2.7'
-        force 'org.springframework.security:spring-security-config:6.2.7'
-        force 'org.springframework.security:spring-security-oauth2-core:6.2.7'
-        force 'org.springframework.security:spring-security-oauth2-client:6.2.7'
-        force 'org.springframework.security:spring-security-oauth2-jose:6.2.7'
-        force 'org.springframework.security:spring-security-oauth2-resource-server:6.2.7'
-        force 'org.springframework.security:spring-security-crypto:6.2.7'
-        force 'org.springframework.security:spring-security-rsa:1.1.1' 
-
-        force 'org.springframework:spring-core:6.1.4'
-        force 'org.springframework:spring-beans:6.1.4'
-        force 'org.springframework:spring-context:6.1.4'
-        force 'org.springframework:spring-web:6.1.4'
-        force 'org.springframework:spring-webmvc:6.1.4'
-        force 'org.springframework:spring-aop:6.1.4'
-        force 'org.springframework:spring-expression:6.1.4'
+        // force 'org.springframework:spring-core:6.1.4'
+        // force 'org.springframework:spring-beans:6.1.4'
+        // force 'org.springframework:spring-context:6.1.4'
+        // force 'org.springframework:spring-web:6.1.4'
+        // force 'org.springframework:spring-webmvc:6.1.4'
+        // force 'org.springframework:spring-aop:6.1.4'
+        // force 'org.springframework:spring-expression:6.1.4'
 
         force 'org.apache.logging.log4j:log4j-core:2.23.1'
         force 'org.apache.logging.log4j:log4j-api:2.23.1'
+
+        force 'org.springframework.security:spring-security-core:6.3.4'
+        force 'org.springframework.security:spring-security-web:6.3.4'
+        force 'org.springframework.security:spring-security-config:6.3.4'
+        force 'org.springframework.security:spring-security-oauth2-core:6.3.4'
+        force 'org.springframework.security:spring-security-oauth2-client:6.3.4'
+        force 'org.springframework.security:spring-security-oauth2-jose:6.3.4'
+        force 'org.springframework.security:spring-security-oauth2-resource-server:6.3.4'
+        force 'org.springframework.security:spring-security-crypto:6.3.4'
+        force 'org.springframework.security:spring-security-rsa:1.1.1' 
     }
 }

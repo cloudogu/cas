@@ -39,7 +39,12 @@ public class CesLdapPasswordManagementService extends LdapPasswordManagementServ
             final PasswordManagementProperties passwordManagementProperties,
             final PasswordHistoryService passwordHistoryService,
             final Map<String, ConnectionFactory> connectionFactoryMap) {
-        super(cipherExecutor, casProperties, passwordHistoryService, connectionFactoryMap);
+        super(cipherExecutor,
+        casProperties.getServer().getPrefix(), // this is the String it expects
+        casProperties.getAuthn().getPm(),      // this is the PasswordManagementProperties it expects
+        passwordHistoryService,
+        connectionFactoryMap);
+          
         this.casProperties = casProperties;
         this.passwordManagementProperties = passwordManagementProperties;
     }

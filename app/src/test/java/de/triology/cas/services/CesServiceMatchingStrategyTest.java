@@ -85,14 +85,4 @@ class TestService implements Service {
     public String getId() {
         return this.id;
     }
-
-    @Override
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
-
-    @Override
-    public String getTenant() {
-        return this.tenant;
-    }
 }

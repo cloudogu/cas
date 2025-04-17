@@ -1,7 +1,6 @@
 package de.triology.cas.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.LdapUtils;
@@ -17,8 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.io.Serializable;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,25 +28,16 @@ public class LdapPasswordManagementConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public PasswordManagementService passwordManagementService(
-            @Qualifier("passwordManagementCipherExecutor")
-            final CipherExecutor<Serializable, String> passwordManagementCipherExecutor,
+    public PasswordManagementService passwordChangeService(
             final CasConfigurationProperties casProperties,
+            @Qualifier("passwordManagementCipherExecutor")
+            final CipherExecutor passwordManagementCipherExecutor,
             @Qualifier("passwordHistoryService")
             final PasswordHistoryService passwordHistoryService) {
-        
-        val passwordManagerProperties = casProperties.getAuthn().getPm();
         val connectionFactoryMap = new ConcurrentHashMap<String, ConnectionFactory>();
-        passwordManagerProperties.getLdap().forEach(ldap -> 
-            connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap))
-        );
-
-        return new CesLdapPasswordManagementService(
-            passwordManagementCipherExecutor,
-            casProperties,
-            passwordManagerProperties,
-            passwordHistoryService,
-            connectionFactoryMap
-        );
+        val passwordManagerProperties = casProperties.getAuthn().getPm();
+        passwordManagerProperties.getLdap().forEach(ldap -> connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap)));
+        return new CesLdapPasswordManagementService(passwordManagementCipherExecutor, casProperties, passwordManagerProperties, passwordHistoryService,
+                connectionFactoryMap);
     }
 }

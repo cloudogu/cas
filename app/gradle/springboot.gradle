@@ -117,6 +117,7 @@ bootWar {
 
                     // Exclude outdated security libs if they exist in overlay WAR
                     "WEB-INF/lib/spring-security-web-6.2.4.jar",
+                    "WEB-INF/lib/spring-security-web-6.2.4.jar",
                     "WEB-INF/lib/spring-security-core-6.2.4.jar",
                     "WEB-INF/lib/spring-security-config-6.2.4.jar",
                     "WEB-INF/lib/spring-security-crypto-6.2.4.jar",
@@ -124,6 +125,15 @@ bootWar {
                     "WEB-INF/lib/spring-security-oauth2-client-6.2.4.jar",
                     "WEB-INF/lib/spring-security-oauth2-jose-6.2.4.jar",
                     "WEB-INF/lib/spring-security-oauth2-resource-server-6.2.4.jar",
+
+                    "WEB-INF/lib/spring-security-web-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-core-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-config-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-crypto-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-oauth2-core-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-oauth2-client-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-oauth2-jose-6.3.3.jar",
+                    "WEB-INF/lib/spring-security-oauth2-resource-server-6.3.3.jar",
 
                     "WEB-INF/lib/spring-web-6.2.3.jar",
                     "WEB-INF/lib/spring-web-6.2.5.jar",
