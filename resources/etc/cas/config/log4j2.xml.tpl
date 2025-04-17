@@ -17,13 +17,13 @@
                 <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy />
             </Policies>
+            <DefaultRolloverStrategy max="7">
+                <Delete basePath="${baseDir}" maxDepth="1">
+                    <IfFileName glob="cas-*.log" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
-        <DefaultRolloverStrategy max="7">
-            <Delete basePath="${baseDir}" maxDepth="1">
-                <IfFileName glob="cas-*.log" />
-                <IfLastModified age="7d" />
-            </Delete>
-        </DefaultRolloverStrategy>
         <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
                      filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
