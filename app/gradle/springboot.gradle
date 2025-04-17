@@ -112,7 +112,7 @@ bootWar {
             provided = false
             excludes = [
                     "WEB-INF/lib/servlet-api-6*.jar",
-                    "WEB-INF/lib/tomcat-*-10.1.24.jar", // as we use an external tomcat server we can remove the embedded on
+                    // "WEB-INF/lib/tomcat-*-10.1.24.jar", // as we use an external tomcat server we can remove the embedded on
             ]
         }
     }

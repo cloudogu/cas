@@ -195,12 +195,12 @@ dependencies {
     implementation "org.pac4j:pac4j-config"
 }
 
-dependencyManagement {
-    dependencies {
-        dependencySet(group: 'org.springframework.security', version: '6.3.4') {
-            entry 'spring-security-web'
-            entry 'spring-security-config'
-            entry 'spring-security-core'
-        }
-    }
-}
+// dependencyManagement {
+//     dependencies {
+//         dependencySet(group: 'org.springframework.security', version: '6.3.4') {
+//             entry 'spring-security-web'
+//             entry 'spring-security-config'
+//             entry 'spring-security-core'
+//         }
+//     }
+// }
