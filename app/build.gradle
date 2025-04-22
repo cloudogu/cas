@@ -191,8 +191,7 @@ dependencies {
     implementation "org.pac4j:pac4j-cas"
     implementation "org.pac4j:pac4j-oidc"
     implementation "org.pac4j:pac4j-config"
-    implementation "org.apereo.cas:cas-server-support-script-engines"
-
+    implementation "org.apereo.cas:cas-server-core-scripting:${project.'cas.version'}"
 }
 
 configurations.all {
