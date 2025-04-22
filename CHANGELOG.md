@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Changed
+- [#257] Set sensible resource requests and limits
+
 ## [v7.0.10-1] - 2025-04-17
 - [#261] Upgrade CAS to 7.0.10.1
 
@@ -25,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Fix CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) – Spring Security Authorization Bypass in WebFlux
 - [Fix CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) – Apache Tomcat: HTTP/2 stream handling vulnerability
 - [Fix OIDC WebAuthn Vulnerability](https://apereo.github.io/2025/04/11/oidc-webauthn-vuln/) –   OIDC-Backchannel Authentication with WebAuthn could allow privilege escalation under specific circumstances  
+
 
 ## [v7.0.8-13] - 2025-04-07
 ### Fixed
