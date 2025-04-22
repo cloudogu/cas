@@ -1,5 +1,5 @@
 #!groovy
-@Library(['github.com/cloudogu/ces-build-lib@4.1.1', 'github.com/cloudogu/dogu-build-lib@v3.1.0'])
+@Library(['github.com/cloudogu/ces-build-lib@4.2.0', 'github.com/cloudogu/dogu-build-lib@v3.2.0'])
 import com.cloudogu.ces.cesbuildlib.*
 import com.cloudogu.ces.dogubuildlib.*
 
@@ -117,7 +117,11 @@ parallel(
 
                     try {
                         stage('Provision') {
-                            ecoSystem.provision("/dogu")
+                            // change namespace to prerelease_namespace if in develop-branch
+                            if (gitflow.isPreReleaseBranch()) {
+                                sh "make prerelease_namespace"
+                            }
+                            ecoSystem.provision("/dogu", "n1-standard-4", 15)
                         }
 
                         stage('Start OIDC-Provider') {
@@ -167,6 +171,10 @@ parallel(
                         }
 
                         stage('Build dogu') {
+                            // purge cas from official namespace to prevent conflicts while building prerelease_official/cas
+                            if (gitflow.isPreReleaseBranch()) {
+                                ecoSystem.purgeDogu("cas", "--keep-config --keep-volumes --keep-service-accounts --keep-logs")
+                            }
                             // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
                             ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
                             ecoSystem.build("/dogu")
@@ -249,6 +257,11 @@ parallel(
 
                             stage('Add Github-Release') {
                                 github.createReleaseWithChangelog(releaseVersion, changelog, productionReleaseBranch)
+                            }
+                        } else if (gitflow.isPreReleaseBranch()) {
+                            // push to registry in prerelease_namespace
+                            stage('Push Prerelease Dogu to registry') {
+                                ecoSystem.pushPreRelease("/dogu")
                             }
                         }
                     } finally {

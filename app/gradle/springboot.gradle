@@ -112,7 +112,17 @@ bootWar {
             provided = false
             excludes = [
                     "WEB-INF/lib/servlet-api-6*.jar",
-                    "WEB-INF/lib/tomcat-*-10.1.24.jar", // as we use an external tomcat server we can remove the embedded on
+                    "WEB-INF/lib/tomcat-*-10.1.31.jar", // as we use an external tomcat server we can remove the embedded on
+
+                    // Exclude outdated security libs if they exist in overlay WAR
+                    "WEB-INF/lib/spring-security-web-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-core-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-config-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-crypto-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-oauth2-core-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-oauth2-client-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-oauth2-jose-6.2.1.jar",
+                    "WEB-INF/lib/spring-security-oauth2-resource-server-6.2.1.jar"
             ]
         }
     }

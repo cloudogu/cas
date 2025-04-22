@@ -7,8 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
 ### Changed
 - [#257] Set sensible resource requests and limits
+
+## [v7.0.10-1] - 2025-04-17
+- [#261] Upgrade CAS to 7.0.10.1
+
+## [v7.0.8-14] - 2025-04-16
+### Changed
+- Spring Security `spring-security-web` from `6.2.1` → `6.2.7`
+- Spring Boot Version: `3.2.1` → `3.2.5`
+- Tomcat `tomcat-catalina` from `10.1.34` → `10.1.39`
+- Removed `tomcat-embed-core` Version `10.1.29` reference 
+- CAS Overlay: `7.0.8` → `7.0.10.1`
+- Makefiles updated to Version `v9.9.1`
+- `ces-build-lib` updated to Version `4.2.0`
+- `dogu-build-lib` updated to Version `3.2.0`
+
+### Security
+- [Fix CVE-2024-38821](https://nvd.nist.gov/vuln/detail/CVE-2024-38821) – Spring Security Authorization Bypass in WebFlux
+- [Fix CVE-2025-24813](https://nvd.nist.gov/vuln/detail/CVE-2025-24813) – Apache Tomcat: HTTP/2 stream handling vulnerability
+- [Fix OIDC WebAuthn Vulnerability](https://apereo.github.io/2025/04/11/oidc-webauthn-vuln/) –   OIDC-Backchannel Authentication with WebAuthn could allow privilege escalation under specific circumstances  
+
 
 ## [v7.0.8-13] - 2025-04-07
 ### Fixed
