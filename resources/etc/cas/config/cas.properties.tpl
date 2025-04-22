@@ -57,6 +57,9 @@ cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
 #========================================
 # General properties
 #========================================
+cas.service-registry.core.init-from-json=true
+cas.service-registry.json.location=file:/etc/cas/services/production
+
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 
 # Manager DN for authenticated searches

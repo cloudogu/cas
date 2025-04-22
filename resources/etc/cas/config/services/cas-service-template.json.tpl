@@ -1,13 +1,13 @@
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",
-  "id" : {{SERVICE_ID}},
-  "serviceId": "^https://{{FQDN}}/{{SERVICE}}/.*$",
-  "name": {{SERVICE}},
+  "id" : "{{SERVICE_ID}}",
+  "serviceId": "{{PATTERN}}",
+  "name": "{{NAME}}",
   "templateName": "{{TEMPLATES}}",
   "evaluationOrder": 1,
   "proxyPolicy": {
     "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-    "pattern": "^https://{{FQDN}}/{{SERVICE}}/.*$",
+    "pattern": "{{PATTERN}}",
   }
   "properties" : {
     "@class" : "java.util.HashMap",
