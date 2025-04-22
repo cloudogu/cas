@@ -3,11 +3,13 @@
   "id" : "{{SERVICE_ID}}",
   "serviceId": "{{PATTERN}}",
   "name": "{{NAME}}",
-  "templateName": "{{TEMPLATES}}",
   "evaluationOrder": 1,
   "proxyPolicy": {
     "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
     "pattern": "{{PATTERN}}",
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   },
   "accessStrategy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
