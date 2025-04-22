@@ -59,13 +59,6 @@ cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
 #========================================
 cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap/host"}}:{{ .Config.Get "ldap/port"}}
 
-# OAuth keys
-cas.authn.oauth.crypto.encryption.key=8VZlZV8NkZjWxVLmujOYbGqE4p0dk74gYwVQZDRdHQ4QqX6rDNUxl7M2mO9szZDYzYg7hzs8yz60gGxqEMRqlA
-cas.authn.oauth.crypto.signing.key=YYgZMkfdC9VdHUJcZfWheM17MHiMyhToM45o4I1sUNBh42lh6x3Chg8VC9YVqBDGpJzXYTtA2VKtaQav78R4XA
-
-
-
-
 # Manager DN for authenticated searches
 cas.authn.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
 

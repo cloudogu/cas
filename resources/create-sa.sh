@@ -80,11 +80,16 @@ fi
     # Allow Service to use PGTs as default behavior - could be changed in the future as it is not recommended
     TEMPLATES+=("AllowProxyPolicy")
 
+    NAME="${SERVICE}"  # oder was auch immer du willst
+    PATTERN="^https://${EFQDN}/${SERVICE}/.*$"
+
     # Using `sed` to replace placeholders
     sed -e "s|{{SERVICE}}|$SERVICE|g" \
         -e "s|{{SERVICE_ID}}|$SERVICE_ID|g" \
         -e "s|{{FQDN}}|$EFQDN|g" \
         -e "s|{{TEMPLATES}}|$(IFS=, ; echo "${TEMPLATES[*]}")|g" \
+        -e "s|{{NAME}}|$NAME|g" \
+        -e "s|{{PATTERN}}|$PATTERN|g" \
         -e "s|{{LOGOUT_URL}}|$LOGOUT_URL|g" etc/cas/config/services/cas-service-template.json.tpl > "$SERVICE_REGISTRY_PRODUCTION"/"${SERVICE}"-"${SERVICE_ID}".json
 
   else
