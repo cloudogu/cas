@@ -8,7 +8,12 @@
   "proxyPolicy": {
     "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
     "pattern": "{{PATTERN}}",
-  }
+  },
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled": true,
+    "ssoEnabled": true
+  },
   "properties" : {
     "@class" : "java.util.HashMap",
     "ServiceClass": {
