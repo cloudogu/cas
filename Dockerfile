@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=10
-ARG TOMCAT_VERSION=10.1.26
-ARG TOMCAT_TARGZ_SHA256=f73f76760137833b3305dfb18ed174f87feac3ab78f65289a0835a851d7cfeb2
+ARG TOMCAT_VERSION=10.1.39
+ARG TOMCAT_TARGZ_SHA512=55998c7e906a37340f4b56ca66d4a1ef7c0f7a061a9b868e7ed90cce8188f469495ee590d9971eb8d9870dc34ed89b63d6b870a281cb7e84de14a7555fc100e1
 
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
@@ -20,19 +20,19 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.19.1-1 AS tomcat
+FROM registry.cloudogu.com/official/base:3.21.0-1 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
-ARG TOMCAT_TARGZ_SHA256
+ARG TOMCAT_TARGZ_SHA512
 
 ENV TOMCAT_MAJOR_VERSION=${TOMCAT_MAJOR_VERSION} \
     TOMCAT_VERSION=${TOMCAT_VERSION} \
-    TOMCAT_TARGZ_SHA256=${TOMCAT_TARGZ_SHA256}
+    TOMCAT_TARGZ_SHA512=${TOMCAT_TARGZ_SHA512}
 
 RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
   "http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
-  && echo "${TOMCAT_TARGZ_SHA256} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha256sum -c - \
+  && echo "${TOMCAT_TARGZ_SHA512} *apache-tomcat-${TOMCAT_VERSION}.tar.gz" | sha512sum -c - \
   && gunzip "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
   && tar xf "apache-tomcat-${TOMCAT_VERSION}.tar" -C /opt \
   && rm "apache-tomcat-${TOMCAT_VERSION}.tar"
@@ -41,10 +41,10 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:21.0.3-1
+FROM registry.cloudogu.com/official/java:21.0.5-1
 
 LABEL NAME="official/cas" \
-      VERSION="7.0.5.1-1" \
+      VERSION="7.0.10.1-1" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
