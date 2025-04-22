@@ -3,18 +3,10 @@
   "id" : "{{SERVICE_ID}}",
   "serviceId": "{{PATTERN}}",
   "name": "{{NAME}}",
-  "evaluationOrder": 1,
+  "templateName": "{{TEMPLATES}}",
   "proxyPolicy": {
     "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
     "pattern": "{{PATTERN}}",
-  },
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
-  },
-  "accessStrategy": {
-    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled": true,
-    "ssoEnabled": true
   },
   "properties" : {
     "@class" : "java.util.HashMap",
