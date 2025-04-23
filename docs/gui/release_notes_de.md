@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.0.10-2] - 2025-04-23
+### Changed
+- Die Verwendung von Speicher und CPU wurden für die Kubernetes-Multinode-Umgebung optimiert. 
+
 ## [v7.0.10-1] - 2025-04-17
 ### Changed
 - [#261] Upgrade CAS zu Version 7.0.10.1
