@@ -65,13 +65,14 @@ public class CesServiceMatchingStrategyTest {
 class TestService implements Service {
 
     private final String id;
+    private String tenant;
 
     public TestService(String id) {
         this.id = id;
     }
 
     @Override
-    public void setAttributes(Map<String, List<Object>> attributes) {
+    public void setAttributes(Map<String,Object> attributes) {
 
     }
 

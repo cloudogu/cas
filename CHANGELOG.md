@@ -6,14 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#263] Upgrade CAS to 7.1.6
+- [#263] Spring Security `spring-security-web` from `6.2.7` → `6.3.4`
+- [#263] Spring Boot Version: `3.2.5` → `3.3.9`
+- [#263] Anpassung Delegated Authentication: OIDC Clients müssen jetzt explizit über eigene Factory und Provider registriert werden ([DelegatedClientOidcBuilder](https://github.com/apereo/cas/blob/7.1.x/support/cas-server-support-pac4j-oidc/src/main/java/org/apereo/cas/pac4j/web/DelegatedClientOidcBuilder.java))
+- [#263] Service Registry behavior adapted to support incomplete JSON service definitions (templateName-only)
+  - Implemented `CesAbstractResourceBasedServiceRegistry` to override strict name/serviceId filtering introduced in CAS 7.1.x ([AbstractResourceBasedServiceRegistry.java#L316](https://github.com/apereo/cas/blob/ad11196459b072e3242be77dcd95251bc2f64499/core/cas-server-core-services-registry/src/main/java/org/apereo/cas/services/resource/AbstractResourceBasedServiceRegistry.java#L316))
+  - Introduced `CesLegacyCompatibleTemplatesManager` to correctly apply templates for partial service definitions
+  - Configured Spring Boot beans for custom Service Registry and Template Manager
 
 ## [v7.0.10-2] - 2025-04-23
-
 ### Changed
 - [#257] Set sensible resource requests and limits
 
 ## [v7.0.10-1] - 2025-04-17
+### Changed
 - [#261] Upgrade CAS to 7.0.10.1
+### Security
+- [Fix OIDC WebAuthn Vulnerability](https://apereo.github.io/2025/04/11/oidc-webauthn-vuln/) –   OIDC-Backchannel Authentication with WebAuthn could allow privilege escalation under specific circumstances  
 
 ## [v7.0.8-14] - 2025-04-16
 ### Changed
@@ -21,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Spring Boot Version: `3.2.1` → `3.2.5`
 - Tomcat `tomcat-catalina` from `10.1.34` → `10.1.39`
 - Removed `tomcat-embed-core` Version `10.1.29` reference 
-- CAS Overlay: `7.0.8` → `7.0.10.1`
 - Makefiles updated to Version `v9.9.1`
 - `ces-build-lib` updated to Version `4.2.0`
 - `dogu-build-lib` updated to Version `3.2.0`

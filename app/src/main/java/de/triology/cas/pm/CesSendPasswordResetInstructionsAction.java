@@ -79,6 +79,11 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
             return success();
         }
 
-        return super.doExecuteInternal(requestContext);
+        try {
+            return super.doExecuteInternal(requestContext);
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+        
     }
 }

@@ -15,6 +15,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
+
 /**
  * Extends the class {@link LdapPasswordManagementService}.
  * <p>
@@ -27,24 +30,36 @@ import java.util.Map;
 @Slf4j
 public class CesLdapPasswordManagementService extends LdapPasswordManagementService {
 
-    public CesLdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                            final String issuer,
-                                            final PasswordManagementProperties passwordManagementProperties,
-                                            final PasswordHistoryService passwordHistoryService,
-                                            final Map<String, ConnectionFactory> connectionFactoryMap) {
-        super(cipherExecutor, issuer, passwordManagementProperties, passwordHistoryService, connectionFactoryMap);
+    private final CasConfigurationProperties casProperties;
+    private final PasswordManagementProperties passwordManagementProperties;
+    
+    public CesLdapPasswordManagementService(
+            final CipherExecutor<Serializable, String> cipherExecutor,
+            final CasConfigurationProperties casProperties,
+            final PasswordManagementProperties passwordManagementProperties,
+            final PasswordHistoryService passwordHistoryService,
+            final Map<String, ConnectionFactory> connectionFactoryMap) {
+        super(cipherExecutor,
+        casProperties.getServer().getPrefix(), // this is the String it expects
+        casProperties.getAuthn().getPm(),      // this is the PasswordManagementProperties it expects
+        passwordHistoryService,
+        connectionFactoryMap);
+          
+        this.casProperties = casProperties;
+        this.passwordManagementProperties = passwordManagementProperties;
     }
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
+        val email = findAttribute(query,
+                passwordManagementProperties.getReset().getMail().getAttributeName(),
                 CollectionUtils.wrap(query.getUsername()));
 
         if (StringUtils.isEmpty(email)) {
             LOGGER.warn("Email address [{}] for [{}] is empty", email, query.getUsername());
             return null;
         }
-
         return email;
     }
 }
+

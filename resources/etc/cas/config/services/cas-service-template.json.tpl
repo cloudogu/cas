@@ -1,6 +1,6 @@
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",
-  "id" : {{SERVICE_ID}},
+  "id" : "{{SERVICE_ID}}",
   "templateName": "{{TEMPLATES}}",
   "properties" : {
     "@class" : "java.util.HashMap",

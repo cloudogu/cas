@@ -10,33 +10,54 @@ import org.apereo.cas.util.LoggingUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
- * Matching strategy for comparing services. It generally behaves like the {@link DefaultServiceMatchingStrategy}
- * but omits service ports
+ * Matching strategy for comparing services. It generally behaves like the {@link DefaultServiceMatchingStrategy},
+ * but omits service ports and hash fragments from the URL.
  */
 @Getter
 @Slf4j
 public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
+
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {
+        LOGGER.debug("service {} matchservice {}", service.getId(), serviceToMatch.getId());
         try {
-            val thisUrl = removeHashRoutingFromUrl(removePortFromUrl(URLDecoder.decode(service.getId(), StandardCharsets.UTF_8)));
-            val serviceUrl = removePortFromUrl(URLDecoder.decode(serviceToMatch.getId(), StandardCharsets.UTF_8));
+            if (Objects.isNull(service) || Objects.isNull(serviceToMatch)) {
+                LOGGER.warn("One of the services is null: [{}], [{}]", service, serviceToMatch);
+                return false;
+            }
 
-            LOGGER.debug("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
-            return thisUrl.equalsIgnoreCase(serviceUrl);
+            val original = decodeUrl(service.getId());
+            val candidate = decodeUrl(serviceToMatch.getId());
+
+            val normalizedOriginal = normalizeServiceUrl(original);
+            val normalizedCandidate = normalizeServiceUrl(candidate);
+
+            LOGGER.debug("Comparing normalized URLs: [{}] vs [{}]", normalizedOriginal, normalizedCandidate);
+            return normalizedOriginal.equalsIgnoreCase(normalizedCandidate);
+
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+            return false;
         }
-        return false;
     }
 
-    private String removePortFromUrl(String service) {
-        return service.replaceFirst(":\\d+", "");
+    private String decodeUrl(final String url) {
+        return URLDecoder.decode(url, StandardCharsets.UTF_8);
     }
 
-    private String removeHashRoutingFromUrl(String service) {
-        return service.split("#")[0];
+    private String normalizeServiceUrl(final String url) {
+        return removeHashFragment(removePortFromUrl(url));
+    }
+
+    private String removePortFromUrl(final String url) {
+        return url.replaceFirst(":\\d+", "");
+    }
+
+    private String removeHashFragment(final String url) {
+        val idx = url.indexOf('#');
+        return idx >= 0 ? url.substring(0, idx) : url;
     }
 }
