@@ -14,7 +14,9 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
  */
 public final class MisspelledPasswordRewritePolicy extends AbstractCASPasswordRewritePolicy {
     private static final String PARAMETER_PASSWORD_TEXT = "password=";
-
+    private static final String PARAMETER_PASSWORD_REGEX = "password=\\[.*\\],\\s*exec";
+    private static final String PARAMETER_PASSWORD_REPLACEMENT = "password=[******], exec";
+    
     @PluginFactory
     public static MisspelledPasswordRewritePolicy createPolicy() {
         return new MisspelledPasswordRewritePolicy();
@@ -34,7 +36,7 @@ public final class MisspelledPasswordRewritePolicy extends AbstractCASPasswordRe
         String truncatedMessage = null;
 
         if (originMessage != null) {
-            truncatedMessage = originMessage.replaceAll("password=\\[.*\\],\\s*exec", "password=[******], exec");
+            truncatedMessage = originMessage.replaceAll(PARAMETER_PASSWORD_REGEX, PARAMETER_PASSWORD_REPLACEMENT);
         }
 
         return truncatedMessage;

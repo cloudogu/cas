@@ -55,10 +55,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CesOidcConfiguration {
 
     @Value("${cas.server.prefix:#{\"\"}}")
-    private String casServerPrefix;
+    protected String casServerPrefix;
 
     @Value("${ces.delegation.oidc.redirect-uri:#{\"\"}}")
-    private String redirectUri;
+    protected String redirectUri;
 
     @Value("${ces.delegation.oidc.attributeMapping:#{\"\"}}")
     private String attributesMappingsString;

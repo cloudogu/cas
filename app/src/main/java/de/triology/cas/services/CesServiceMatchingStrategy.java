@@ -22,21 +22,25 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
 
     @Override
     public boolean matches(final Service service, final Service serviceToMatch) {
-        LOGGER.debug("service {} matchservice {}", service.getId(), serviceToMatch.getId());
         try {
-            if (Objects.isNull(service) || Objects.isNull(serviceToMatch)) {
-                LOGGER.warn("One of the services is null: [{}], [{}]", service, serviceToMatch);
+            if (service == null || serviceToMatch == null) {
                 return false;
             }
+            LOGGER.debug("service {} matchservice {}", service.getId(), serviceToMatch.getId());
 
-            val original = decodeUrl(service.getId());
-            val candidate = decodeUrl(serviceToMatch.getId());
+                if (Objects.isNull(service) || Objects.isNull(serviceToMatch)) {
+                    LOGGER.warn("One of the services is null: [{}], [{}]", service, serviceToMatch);
+                    return false;
+                }
 
-            val normalizedOriginal = normalizeServiceUrl(original);
-            val normalizedCandidate = normalizeServiceUrl(candidate);
+                val original = decodeUrl(service.getId());
+                val candidate = decodeUrl(serviceToMatch.getId());
 
-            LOGGER.debug("Comparing normalized URLs: [{}] vs [{}]", normalizedOriginal, normalizedCandidate);
-            return normalizedOriginal.equalsIgnoreCase(normalizedCandidate);
+                val normalizedOriginal = normalizeServiceUrl(original);
+                val normalizedCandidate = normalizeServiceUrl(candidate);
+
+                LOGGER.debug("Comparing normalized URLs: [{}] vs [{}]", normalizedOriginal, normalizedCandidate);
+                return normalizedOriginal.equalsIgnoreCase(normalizedCandidate);
 
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
