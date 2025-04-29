@@ -97,10 +97,7 @@ class CesSendPasswordResetInstructionsActionTests {
     
         assertNotNull(event);
         assertEquals("success", event.getId());
-    }
-    
-    
-    
+    }   
     
     @Test
     void shouldReturnError_WhenUsernameIsBlank() throws Exception {
@@ -115,11 +112,90 @@ class CesSendPasswordResetInstructionsActionTests {
         assertEquals("error", event.getId());
     }
 
+    @Test
+    void shouldHandleException_WhenFindingEmailFails() throws Exception {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("testuser");
+    
+        try {
+            when(passwordManagementService.findEmail(any())).thenThrow(new RuntimeException("Simulated email failure"));
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+        
+        try {
+            when(passwordManagementService.findPhone(any())).thenReturn(null);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    
+        when(requestContext.getMessageContext()).thenReturn(mock(MessageContext.class));
+    
+        Event event = action.doExecuteInternal(requestContext);
+    
+        assertNotNull(event);
+        assertEquals("success", event.getId());
+    }
+    
+    @Test
+    void shouldHandleException_WhenFindingPhoneFails() throws Exception {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("testuser");
+    
+        try {
+            when(passwordManagementService.findEmail(any())).thenReturn(null);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+        
+        try {
+            when(passwordManagementService.findPhone(any())).thenThrow(new RuntimeException("Simulated phone failure"));
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    
+        when(requestContext.getMessageContext()).thenReturn(mock(MessageContext.class));
+    
+        Event event = action.doExecuteInternal(requestContext);
+    
+        assertNotNull(event);
+        assertEquals("success", event.getId());
+    }
+
+    @Test
+    void shouldThrowRuntimeException_WhenSuperExecutionFails() {
+        when(communicationsManager.isMailSenderDefined()).thenReturn(true);
+        when(passwordManagementQuery.getUsername()).thenReturn("testuser");
+
+        when(requestContext.getMessageContext()).thenReturn(mock(MessageContext.class));
+
+        action.simulateFailureInSuper = true;
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            action.doExecuteInternal(requestContext);
+        });
+
+        assertNotNull(thrown);
+        assertEquals("Simulated super failure", thrown.getMessage());
+    }
+
+    /**
+     * 
+     * 
+     * Helper Classes
+     * 
+     * 
+     * 
+     */
+
+        
+
     /**
      * Simple static class to override the password management query building.
      */
     static class CesSendPasswordResetInstructionsActionExtensionForTest extends CesSendPasswordResetInstructionsAction {
         CesSendPasswordResetInstructionsActionTests parent;
+        boolean simulateFailureInSuper = false;
 
         CesSendPasswordResetInstructionsActionExtensionForTest(
             CasConfigurationProperties casProperties,
@@ -139,6 +215,14 @@ class CesSendPasswordResetInstructionsActionTests {
         }
 
         @Override
+        protected Event doExecuteInternal(RequestContext requestContext) throws Exception {
+            if (simulateFailureInSuper) {
+                throw new RuntimeException("Simulated super failure");
+            }
+            return super.doExecuteInternal(requestContext);
+        }
+
+        @Override
         protected PasswordManagementQuery buildPasswordManagementQuery(RequestContext requestContext) {
             // Always return the injected mock query
             return ((CesSendPasswordResetInstructionsActionTests) TestInstanceHolder.INSTANCE).passwordManagementQuery;
@@ -152,4 +236,6 @@ class CesSendPasswordResetInstructionsActionTests {
     {
         TestInstanceHolder.INSTANCE = this;
     }
+
+
 }

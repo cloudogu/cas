@@ -55,10 +55,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CesOidcConfiguration {
 
     @Value("${cas.server.prefix:#{\"\"}}")
-    protected String casServerPrefix;
+    private String casServerPrefix;
 
     @Value("${ces.delegation.oidc.redirect-uri:#{\"\"}}")
-    protected String redirectUri;
+    private String redirectUri;
 
     @Value("${ces.delegation.oidc.attributeMapping:#{\"\"}}")
     private String attributesMappingsString;
@@ -245,12 +245,15 @@ public class CesOidcConfiguration {
 
         return new CesDelegatedAuthenticationPreProcessor(userManager, attributeMappings, allowedGroups);
     }
-
+    
     private static UserManager getUserManager(CasConfigurationProperties casProperties) {
-
-        LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().getFirst();
+        var ldapList = casProperties.getAuthn().getLdap();
+        if (ldapList == null || ldapList.isEmpty()) {
+            throw new IllegalStateException("No LDAP configuration found");
+        }
+        LdapAuthenticationProperties ldapProperties = ldapList.get(0);
         PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties);
-
+    
         return new UserManager(ldapProperties.getBaseDn(), new LdapOperationFactory(connectionFactory));
     }
 
