@@ -14,6 +14,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
  */
 public final class RequestResponseBodyMethodProcessorRewritePolicy extends AbstractCASPasswordRewritePolicy {
     private static final String PARAMETER_PASSWORD_TEXT = "password=";
+    private static final String PARAMETER_PASSWORD_REGEX = "password=.*\\]\\}\\]";
+    private static final String PARAMETER_PASSWORD_REPLACEMENT = "password=******]}]";
 
     @PluginFactory
     public static RequestResponseBodyMethodProcessorRewritePolicy createPolicy() {
@@ -34,7 +36,7 @@ public final class RequestResponseBodyMethodProcessorRewritePolicy extends Abstr
         String truncatedMessage = null;
 
         if (originMessage != null) {
-            truncatedMessage = originMessage.replaceAll("password=.*\\]\\}\\]", "password=******]}]");
+            truncatedMessage = originMessage.replaceAll(PARAMETER_PASSWORD_REGEX, PARAMETER_PASSWORD_REPLACEMENT);
         }
 
         return truncatedMessage;

@@ -1,34 +1,52 @@
 package de.triology.cas.logging;
 
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.impl.Log4jLogEvent.Builder;
-import org.apache.logging.log4j.message.SimpleMessageFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.logging.log4j.core.impl.Log4jLogEvent;
+import org.apache.logging.log4j.message.SimpleMessage;
+import org.junit.jupiter.api.Test;
 
-public class AbstractMvcViewPasswordRewritePolicyTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class AbstractMvcViewPasswordRewritePolicyTest {
 
     @Test
-    public void rewriteMessage() {
-        String message = "flowExecutionUrl=/cas/login?service=https%3A%2F%2F192.168.56.2%2Fcockpit%2F&username=admin&password=adminpww&execution";
+    void rewriteMessage_ShouldMaskPassword() {
+        String originalMessage = "flowExecutionUrl=/cas/login?service=https%3A%2F%2F192.168.56.2%2Fcockpit%2F&username=admin&password=adminpww&execution";
 
-        Builder builder = new Builder();
-        builder.setMessage(SimpleMessageFactory.INSTANCE.newMessage(message));
+        Log4jLogEvent event = Log4jLogEvent.newBuilder()
+            .setMessage(new SimpleMessage(originalMessage))
+            .build();
 
-        LogEvent rewrittenLogEvent = AbstractMvcViewPasswordRewritePolicy.createPolicy().rewrite(builder.build());
+        AbstractMvcViewPasswordRewritePolicy policy = AbstractMvcViewPasswordRewritePolicy.createPolicy();
+        LogEvent rewrittenEvent = policy.rewrite(event);
 
-        Assert.assertEquals("flowExecutionUrl=/cas/login?service=https%3A%2F%2F192.168.56.2%2Fcockpit%2F&username=admin&password=****&execution",
-                rewrittenLogEvent.getMessage().getFormattedMessage());
+        String expectedMessage = "flowExecutionUrl=/cas/login?service=https%3A%2F%2F192.168.56.2%2Fcockpit%2F&username=admin&password=****&execution";
+        assertEquals(expectedMessage, rewrittenEvent.getMessage().getFormattedMessage());
     }
 
     @Test
-    public void rewriteMessageWhenMessageIsNull() {
-        Builder builder = new Builder();
-        builder.setMessage(null);
+    void rewriteMessage_ShouldReturnSameEvent_WhenMessageIsNull() {
+        Log4jLogEvent event = Log4jLogEvent.newBuilder()
+            .setMessage(null)
+            .build();
 
-        LogEvent logEvent = builder.build();
-        LogEvent rewrittenLogEvent = AbstractMvcViewPasswordRewritePolicy.createPolicy().rewrite(logEvent);
+        AbstractMvcViewPasswordRewritePolicy policy = AbstractMvcViewPasswordRewritePolicy.createPolicy();
+        LogEvent rewrittenEvent = policy.rewrite(event);
 
-        Assert.assertSame(logEvent, rewrittenLogEvent);
+        assertSame(event, rewrittenEvent);
+    }
+
+    @Test
+    void rewriteMessage_ShouldReturnUnchanged_WhenNoPasswordInMessage() {
+        String messageWithoutPassword = "flowExecutionUrl=/cas/login?service=https%3A%2F%2F192.168.56.2%2Fcockpit%2F&username=admin&execution";
+
+        Log4jLogEvent event = Log4jLogEvent.newBuilder()
+            .setMessage(new SimpleMessage(messageWithoutPassword))
+            .build();
+
+        AbstractMvcViewPasswordRewritePolicy policy = AbstractMvcViewPasswordRewritePolicy.createPolicy();
+        LogEvent rewrittenEvent = policy.rewrite(event);
+
+        assertEquals(messageWithoutPassword, rewrittenEvent.getMessage().getFormattedMessage());
     }
 }

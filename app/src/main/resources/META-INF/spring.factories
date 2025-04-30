@@ -5,4 +5,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   de.triology.cas.ldap.CesAuthenticationEventExecutionPlanConfiguration,\
   de.triology.cas.ldap.LdapConfiguration,\
   de.triology.cas.pm.PmConfiguration,\
-  de.triology.cas.pm.LdapPasswordManagementConfiguration
+  de.triology.cas.pm.LdapPasswordManagementConfiguration,\
+  de.triology.cas.services.CasCustomTemplateManagerConfiguration

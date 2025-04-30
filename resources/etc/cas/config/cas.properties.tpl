@@ -149,7 +149,7 @@ cas.authn.accept.enabled=false
 # Disable LdapAuthenticationConfiguration-Bean to suppress registration of the LDAP Authentication handler of the cas.
 # We use and register our own LDAP authentication handler by extending the LDAP authentication handler from the CAS.
 # https://apereo.github.io/cas/6.3.x/configuration/Configuration-Management-Extensions.html#exclusions
-spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration,org.apereo.cas.config.LdapPasswordManagementConfiguration
+# spring.autoconfigure.exclude=org.apereo.cas.config.LdapAuthenticationConfiguration,org.apereo.cas.config.LdapPasswordManagementConfiguration
 
 {{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
 #========================================
@@ -237,11 +237,11 @@ cas.ticket.tgt.core.only-track-most-recent-session=false
 cas.authn.pac4j.oidc[0].generic.enabled=true
 
 ### path to the discovery url of the provider
-cas.authn.pac4j.oidc[0].generic.discovery-uri={{ .Config.GetOrDefault "oidc/discovery_uri" ""}}
+ces.delegation.oidc.clients[0].discovery-uri={{ .Config.GetOrDefault "oidc/discovery_uri" ""}}
 
 ### name and secret for the client to identify itself by the provider
-cas.authn.pac4j.oidc[0].generic.id={{ .Config.Get "oidc/client_id"}}
-cas.authn.pac4j.oidc[0].generic.secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
+ces.delegation.oidc.clients[0].client-id={{ .Config.Get "oidc/client_id"}}
+ces.delegation.oidc.clients[0].client-secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
 
 ### required configuration
 cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_basic
@@ -251,7 +251,7 @@ cas.authn.pac4j.oidc[0].generic.use-nonce=true
 cas.authn.pac4j.oidc[0].generic.max-clock-skew=5
 
 ### the client name used to identify the client in the cas application
-cas.authn.pac4j.oidc[0].generic.client-name={{ .Config.Get "oidc/display_name"}}
+ces.delegation.oidc.clients[0].client-name={{ .Config.Get "oidc/display_name"}}
 
 ### perform automatic redirects to the configured provider when a user logs into the cas
 cas.authn.pac4j.oidc[0].generic.auto-redirect-type={{if eq (.Config.Get "oidc/optional") "true"}}NONE{{else}}CLIENT{{end}}
@@ -278,8 +278,17 @@ ces.delegation.oidc.allowedGroups={{ .Config.GetOrDefault "oidc/allowed_groups" 
 ### admin usernames - usernames that will be assigned the admin-group
 ces.delegation.oidc.initialAdminUsernames={{ .Config.GetOrDefault "oidc/initial_admin_usernames" ""}}
 ces.delegation.oidc.adminGroups={{ .GlobalConfig.GetOrDefault "admin_group" "cesAdmin"}},{{ .GlobalConfig.GetOrDefault "manager_group" "cesManager"}}
-
 {{ end }}
+
+
+#logging.level.org.apereo.cas.web.flow=DEBUG
+#logging.level.org.apereo.cas.support.pac4j=DEBUG
+#logging.level.org.pac4j=DEBUG
+#logging.level.org.apereo.cas.support.pac4j.web=TRACE
+#ces.delegation.oidc.clients[0].discovery-uri=https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
+#ces.delegation.oidc.clients[0].client-id=YOUR-MICROSOFT-CLIENT-ID
+#ces.delegation.oidc.clients[0].client-secret=YOUR-MICROSOFT-CLIENT-SECRET
+#ces.delegation.oidc.clients[0].client-name=microsoft
 ########################################################################################################################
 
 ########################################################################################################################

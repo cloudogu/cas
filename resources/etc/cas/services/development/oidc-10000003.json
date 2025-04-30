@@ -7,6 +7,11 @@
   "clientId": "oidc",
   /* client secret is "oidc" */
   "clientSecret": "4dcdefd0d389cd15882de8a808334bb06a586b7a74fd0932d0e13fdb945e223c",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled": true,
+    "ssoEnabled": true
+  },
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   },

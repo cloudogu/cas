@@ -14,6 +14,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
  */
 public final class AbstractMvcViewPasswordRewritePolicy extends AbstractCASPasswordRewritePolicy {
     private static final String PARAMETER_PASSWORD_TEXT = "password=";
+    private static final String PARAMETER_PASSWORD_REGEX = "password=\\S+&";
+    private static final String PARAMETER_PASSWORD_REPLACEMENT = "password=****&";
 
     @PluginFactory
     public static AbstractMvcViewPasswordRewritePolicy createPolicy() {
@@ -33,7 +35,7 @@ public final class AbstractMvcViewPasswordRewritePolicy extends AbstractCASPassw
     protected String replacePasswordValue(String originMessage) {
         String modifiedMessage = null;
         if (originMessage != null) {
-            modifiedMessage = originMessage.replaceAll("password=\\S+&", "password=****&");
+            modifiedMessage = originMessage.replaceAll(PARAMETER_PASSWORD_REGEX, PARAMETER_PASSWORD_REPLACEMENT);
         }
 
         return modifiedMessage;
