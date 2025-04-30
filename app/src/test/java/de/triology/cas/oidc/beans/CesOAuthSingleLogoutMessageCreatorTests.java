@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests for {@link CesOAuthSingleLogoutMessageCreator}.
  */
-public class CesOAuthSingleLogoutMessageCreatorTest {
+public class CesOAuthSingleLogoutMessageCreatorTests {
 
     @Test
     public void testCreate_Successful() throws Exception {

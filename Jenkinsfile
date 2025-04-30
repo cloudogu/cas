@@ -22,7 +22,7 @@ String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
         "source code": {
-            node('docker') {
+            node('sos-stable') {
                 timestamps {
                     project = "github.com/${repositoryOwner}/${doguName}"
                     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
@@ -77,7 +77,7 @@ parallel(
             }
         },
         "dogu-integration": {
-            node('vagrant') {
+            node('sos-stable') {
                 sh 'echo testing dogu integration with ces'
                 timestamps {
                     properties([

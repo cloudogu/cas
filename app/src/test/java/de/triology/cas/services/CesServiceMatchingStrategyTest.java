@@ -1,87 +1,80 @@
 package de.triology.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class CesServiceMatchingStrategyTest {
+/**
+ * Unit tests for {@link CesServiceMatchingStrategy}.
+ */
+class CesServiceMatchingStrategyTests {
 
-    @Test
-    public void matchesOnePort() throws UnsupportedEncodingException{
-        // given
-        String serviceUrl = URLEncoder.encode("https://192.168.56.2/scm/api/v2/cas/auth/", StandardCharsets.UTF_8.name());
-        Service service = new TestService(serviceUrl);
-        String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.2:443/scm/api/v2/cas/auth/", StandardCharsets.UTF_8.name());
-        Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
+    private CesServiceMatchingStrategy strategy;
 
-        // when
-        boolean result = strategy.matches(service, serviceToMatch);
-
-        // then
-        assertTrue(result);
+    @BeforeEach
+    void setUp() {
+        strategy = new CesServiceMatchingStrategy();
     }
 
     @Test
-    public void matchesBothPorts() throws UnsupportedEncodingException{
-        // given
-        String serviceUrl = URLEncoder.encode("https://192.168.56.1:80/scm/auth", StandardCharsets.UTF_8.name());
-        Service service = new TestService(serviceUrl);
-        String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.1:443/scm/auth", StandardCharsets.UTF_8.name());
-        Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
+    void shouldMatchSameServiceIgnoringPortAndFragment() {
+        Service service = mock(Service.class);
+        Service serviceToMatch = mock(Service.class);
 
-        // when
+        when(service.getId()).thenReturn("https://example.org:8443/app#section");
+        when(serviceToMatch.getId()).thenReturn("https://example.org/app");
+
         boolean result = strategy.matches(service, serviceToMatch);
-
-        // then
-        assertTrue(result);
+        assertTrue(result, "Services should match ignoring port and hash fragment");
     }
 
     @Test
-    public void matchesNoPorts() throws UnsupportedEncodingException{
-        // given
-        String serviceUrl = URLEncoder.encode("https://192.168.56.1/scm/auth", StandardCharsets.UTF_8.name());
-        Service service = new TestService(serviceUrl);
-        String serviceToMatchUrl = URLEncoder.encode("https://192.168.56.1/scm/auth", StandardCharsets.UTF_8.name());
-        Service serviceToMatch = new TestService(serviceToMatchUrl);
-        CesServiceMatchingStrategy strategy = new CesServiceMatchingStrategy();
+    void shouldNotMatchDifferentServices() {
+        Service service = mock(Service.class);
+        Service serviceToMatch = mock(Service.class);
 
-        // when
+        when(service.getId()).thenReturn("https://example.org/app");
+        when(serviceToMatch.getId()).thenReturn("https://different.org/app");
+
         boolean result = strategy.matches(service, serviceToMatch);
-
-        // then
-        assertTrue(result);
-    }
-}
-
-class TestService implements Service {
-
-    private final String id;
-
-    public TestService(String id) {
-        this.id = id;
+        assertFalse(result, "Different services should not match");
     }
 
-    @Override
-    public void setAttributes(Map<String, List<Object>> attributes) {
+    @Test
+    void shouldReturnFalseIfEitherServiceIsNull() {
+        Service service = mock(Service.class);
 
+        boolean result1 = strategy.matches(service, null);
+        boolean result2 = strategy.matches(null, service);
+
+        assertFalse(result1, "Should return false if serviceToMatch is null");
+        assertFalse(result2, "Should return false if service is null");
     }
 
-    @Override
-    public String getOriginalUrl() {
-        return "";
+    @Test
+    void shouldDecodeUrlsBeforeComparing() {
+        Service service = mock(Service.class);
+        Service serviceToMatch = mock(Service.class);
+
+        when(service.getId()).thenReturn("https://example.org/app%20with%20space");
+        when(serviceToMatch.getId()).thenReturn("https://example.org/app with space");
+
+        boolean result = strategy.matches(service, serviceToMatch);
+        assertTrue(result, "Should decode URLs and match them");
     }
 
-    @Override
-    public String getId() {
-        return this.id;
+    @Test
+    void shouldHandleMalformedUrlGracefully() {
+        Service service = mock(Service.class);
+        Service serviceToMatch = mock(Service.class);
+
+        when(service.getId()).thenThrow(new RuntimeException("Simulated error"));
+        when(serviceToMatch.getId()).thenReturn("https://example.org/app");
+
+        boolean result = strategy.matches(service, serviceToMatch);
+        assertFalse(result, "Should return false if decoding fails");
     }
 }

@@ -5,3 +5,4 @@
   de.triology.cas.ldap.LdapConfiguration
   de.triology.cas.pm.PmConfiguration
   de.triology.cas.pm.LdapPasswordManagementConfiguration
+  de.triology.cas.services.CasCustomTemplateManagerConfiguration

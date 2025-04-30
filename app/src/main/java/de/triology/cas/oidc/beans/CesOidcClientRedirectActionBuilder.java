@@ -24,6 +24,8 @@ public class CesOidcClientRedirectActionBuilder implements OAuth20CasClientRedir
 
     @Override
     public Optional<RedirectionAction> build(final CasClient casClient, final WebContext context) {
+        LOGGER.warn("Create OIDC-OAuth client redirect action builder...7");
+
         var renew = casClient.getConfiguration().isRenew();
         var gateway = casClient.getConfiguration().isGateway();
 
