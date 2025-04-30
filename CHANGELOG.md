@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.1.6-1] - 2025-04-30
 ### Changed
 - [#263] Upgrade CAS to 7.1.6
 - [#263] Spring Security `spring-security-web` from `6.2.7` → `6.3.4`
