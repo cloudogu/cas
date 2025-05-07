@@ -137,10 +137,13 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-services-authentication"
     implementation "org.apereo.cas:cas-server-core-services-registry"
     implementation "org.apereo.cas:cas-server-core-util"
+    implementation "org.apereo.cas:cas-server-core-web"
     implementation "org.apereo.cas:cas-server-core-web-api"
     implementation "org.apereo.cas:cas-server-core-webflow"
     implementation "org.apereo.cas:cas-server-core-webflow-api"
-
+    implementation "org.apereo.cas:cas-server-support-validation-core"
+    implementation "org.apereo.cas:cas-server-core-validation-api"
+    
     implementation "org.apereo.cas:cas-server-support-ldap"
     implementation "org.apereo.cas:cas-server-support-ldap-core"
 
