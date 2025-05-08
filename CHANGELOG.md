@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.1.6-2] - 2025-05-08
+### Changed
+- Fix: Injects the missing `pgtUrl` attribute into the model in `cas3ServiceSuccessView` to properly render the `<cas:proxy>` element in the CAS 3.0 service ticket response.
+
 ## [v7.1.6-1] - 2025-04-30
 ### Changed
 - [#263] Upgrade CAS to 7.1.6

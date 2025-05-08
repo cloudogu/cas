@@ -12,7 +12,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.ldaptive.ConnectionFactory;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
