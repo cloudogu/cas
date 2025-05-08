@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v7.0.10-2] - 2025-04-23
+## [v7.0.10-3] - 2025-05-09
+### Fixed
+- [#266] Fix destroying the oidc-session on logout
+   - The "oauthLogoutExecutionPlanConfigurer"-bean was overwritten by the "CesOAuthConfiguration" which did not destroy the OIDC-session on logout.
+   - Now there is "cesOAuthLogoutExecutionPlanConfigurer" which does not overwrite the default behaviour.
 
+## [v7.0.10-2] - 2025-04-23
 ### Changed
 - [#257] Set sensible resource requests and limits
 
