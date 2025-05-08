@@ -6,16 +6,20 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.1.6-2] - 2025-05-08
+### Behoben
+- Unterstützung für Proxy-Ticket-Authentifizierung wiederhergestellt – Dogus wie SCM können sich nun wieder über Smeagol mittels CAS authentifizieren.
+
 ## [v7.1.6-1] - 2025-04-30
-### Changed
+### Anpassungen
 - [#263] Upgrade CAS zu Version 7.1.6
 
 ## [v7.0.10-2] - 2025-04-23
-### Changed
+### Anpassungen
 - Die Verwendung von Speicher und CPU wurden für die Kubernetes-Multinode-Umgebung optimiert. 
 
 ## [v7.0.10-1] - 2025-04-17
-### Changed
+### Anpassungen
 - [#261] Upgrade CAS zu Version 7.0.10.1
 
 ## [v7.0.8-14] - 2025-04-16
