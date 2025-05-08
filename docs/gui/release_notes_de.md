@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.1.6-2] - 2025-05-08
 ### Behoben
 - Unterstützung für Proxy-Ticket-Authentifizierung wiederhergestellt – Dogus wie SCM können sich nun wieder über Smeagol mittels CAS authentifizieren.
 
