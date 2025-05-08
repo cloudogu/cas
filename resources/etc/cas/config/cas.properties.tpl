@@ -308,6 +308,9 @@ cas.authn.oauth.code.numberOfUses=1
 # Access Token (Session) is valid for 1 day (= 86000 seconds)
 cas.authn.oauth.accessToken.timeToKillInSeconds=86000
 cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
+
+# https://apereo.github.io/cas/7.0.x/authentication/OIDC-Authentication-TokenExpirationPolicy.html#id-tokens
+cas.authn.oidc.id-token.include-id-token-claims=false
 ########################################################################################################################
 
 ########################################################################################################################
