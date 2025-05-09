@@ -5,11 +5,7 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
-- Fix destroying the oidc-session on logout
-    - When the session was not destroyed on logout the user-profile was cached and the user was not updated in the OIDC-session.
-    - This caused that possible changes of the user (like username or group assignments) were not updated
-
-## [v7.0.10-3] - 2025-05-09
+- Fix CAS 3 success view for Redmine missing formattedAttributes due to overwritten view and incomplete model
 - Fix destroying the oidc-session on logout
     - When the session was not destroyed on logout the user-profile was cached and the user was not updated in the OIDC-session.
     - This caused that possible changes of the user (like username or group assignments) were not updated

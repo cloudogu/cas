@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -20,12 +21,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.authentication.principal.Principal;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import java.io.File;
-
 import org.apereo.cas.services.*;
 import java.nio.file.Path;
 import java.util.*;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -64,9 +69,6 @@ public class CasCustomTemplateManagerConfiguration {
                         LOGGER.info("Assertion found: {}", assertion.getClass().getSimpleName());
                         LOGGER.info("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
 
-                        // Add `principal` for mustache template
-                        m.put("principal", assertion.getPrimaryAuthentication().getPrincipal());
-
                         List<String> proxies = new ArrayList<>();
                         for (val auth : assertion.getChainedAuthentications().stream().skip(1).toList()) {
                             LOGGER.info("Checking proxy authentication: {}", auth);
@@ -84,13 +86,97 @@ public class CasCustomTemplateManagerConfiguration {
                                 proxies.add(proxyId);
                             }
                         }
-                        
+
+                        Object serviceObj = model.get("service");
+                        if (serviceObj instanceof WebApplicationService service) {
+                            val registeredService = servicesManager.findServiceBy(service);
+                            val principal = assertion.getPrimaryAuthentication().getPrincipal();
+
+                            if (principal instanceof Principal p) {
+                                Map<String, Object> principalAttributes = p.getAttributes()
+                                .entrySet()
+                                .stream()
+                                .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    e -> e.getValue().size() == 1 ? e.getValue().get(0) : e.getValue()
+                                ));
+                            
+                                Map<String, Object> authnAttributes = assertion.getPrimaryAuthentication()
+                                    .getAttributes()
+                                    .entrySet()
+                                    .stream()
+                                    .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        e -> e.getValue().size() == 1 ? e.getValue().get(0) : e.getValue()
+                                    ));
+
+                                val attributes = protocolAttributeEncoder.encodeAttributes(
+                                    authnAttributes,
+                                    principalAttributes,
+                                    registeredService,
+                                    service
+                                );
+
+                                Map<String, Object> mappedAttributes = new HashMap<>();
+                                mappedAttributes.put("login", attributes.get("username"));
+                                mappedAttributes.put("mail", attributes.get("mail"));
+                                mappedAttributes.put("firstname", attributes.get("givenName"));
+                                mappedAttributes.put("lastname", attributes.get("surname"));
+
+                                LOGGER.info("principal: {}", p);
+                                LOGGER.info("principalId: {}", p.getId());
+                                LOGGER.info("principalAttributes: {}", p.getAttributes());                                
+                                LOGGER.info("attributes: {}", attributes);
+                                LOGGER.info("authnAttributes: {}", authnAttributes);
+                                LOGGER.info("mappedAttributes: {}", mappedAttributes);
+
+
+                                Map<String, Object> mergedAttributes = new LinkedHashMap<>();
+
+                                mergedAttributes.putAll(attributes);         // encoded & filtered attributes
+                                mergedAttributes.putAll(p.getAttributes());  // raw principal attributes
+                                mergedAttributes.putAll(mappedAttributes);   // explicitly mapped
+
+
+                                CasProtocolAttributesRenderer attributeRenderer = attributesMap ->
+                                attributesMap.entrySet().stream()
+                                    .flatMap(entry -> {
+                                        String name = CasProtocolAttributesRenderer.sanitizeAttributeName(entry.getKey());
+                                        Object value = entry.getValue();
+                                        if (value instanceof Collection<?> coll) {
+                                            return coll.stream().map(val -> "<cas:" + name + ">" + val + "</cas:" + name + ">");
+                                        }
+                                        return Stream.of("<cas:" + name + ">" + value + "</cas:" + name + ">");
+                                    })
+                                    .collect(Collectors.toList());
+                            
+                            Collection<String> renderedAttributes = attributeRenderer.render(attributes);
+                            List<String> formatted = new ArrayList<>(renderedAttributes);
+                            LOGGER.info("#### formatted: {}", formatted);     
+
+                            m.put("user", attributes.get("username"));
+                            m.put("principal", p);
+                            m.put("attributes", mergedAttributes);                     
+                            m.put("formattedAttributes", formatted);
+                                                            
+                            } else { 
+                                LOGGER.info("principal is not instanceof Principal");
+                            }
+                        }
+                        else {
+                            LOGGER.info("serviceObj is not instanceof WebApplicationService");
+                        }
+             
                         LOGGER.info("Injecting proxies into model: {}", proxies);
+
                         m.put("proxies", proxies);
                         m.put("_proxiesInjected", true);
                     }
+                    else {
+                        LOGGER.info("assertionObj not instance of Assertion");
+                    }
                 }
-
+                LOGGER.info("Rendering CAS 3 success view with model: {}", model);
                 LOGGER.info("render(): Received model with keys: {}", model.keySet());
                 LOGGER.info("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
 
