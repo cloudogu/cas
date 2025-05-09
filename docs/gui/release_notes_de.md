@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.1.6-3] - 2025-05-09
 - Behebt das Problem bei der die CAS-3-SuccessView für Redmine unvollständig war und somit der Authtentifizierungsprozess fehl schlug.
 - Beenden der OIDC-Session beim Abmelden
     - Wenn die Session beim Abmelden nicht beendet wurde, konnte das Benutzerprofil in der OIDC-Sitzung nicht aktualisiert werden, da eine "alte" Session mit dem "alten" Profil vorhanden war.
