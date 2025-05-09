@@ -5,6 +5,14 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Beenden der OIDC-Session beim Abmelden
+    - Wenn die Session beim Abmelden nicht beendet wurde, konnte das Benutzerprofil in der OIDC-Sitzung nicht aktualisiert werden, da eine "alte" Session mit dem "alten" Profil vorhanden war.
+    - Dies führte dazu, dass eventuelle Änderungen des Benutzers (z.B. Benutzername oder Gruppenzuordnungen) nicht aktualisiert wurden.
+
+## [v7.0.10-3] - 2025-05-09
+- Beenden der OIDC-Session beim Abmelden
+    - Wenn die Session beim Abmelden nicht beendet wurde, konnte das Benutzerprofil in der OIDC-Sitzung nicht aktualisiert werden, da eine "alte" Session mit dem "alten" Profil vorhanden war.
+    - Dies führte dazu, dass eventuelle Änderungen des Benutzers (z.B. Benutzername oder Gruppenzuordnungen) nicht aktualisiert wurden.
 
 ## [v7.1.6-2] - 2025-05-08
 ### Behoben
