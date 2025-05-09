@@ -78,7 +78,8 @@ public class CesOAuthConfiguration {
 
     @Bean
     @RefreshScope
-    public LogoutExecutionPlanConfigurer oauthLogoutExecutionPlanConfigurer(SingleLogoutServiceMessageHandler oauthSingleLogoutServiceMessageHandler) {
+    public LogoutExecutionPlanConfigurer cesOAuthLogoutExecutionPlanConfigurer(
+            SingleLogoutServiceMessageHandler oauthSingleLogoutServiceMessageHandler) {
         return plan -> plan.registerSingleLogoutServiceMessageHandler(oauthSingleLogoutServiceMessageHandler);
     }
 
