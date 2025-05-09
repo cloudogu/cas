@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.1.6-3] - 2025-05-09
+### Fixed
+- [#269] Fix CAS 3 success view for Redmine missing formattedAttributes due to incomplete model
+- [#266] Fix destroying the oidc-session on logout
+    - The "oauthLogoutExecutionPlanConfigurer"-bean was overwritten by the "CesOAuthConfiguration" which did not destroy the OIDC-session on logout.
+    - Now there is "cesOAuthLogoutExecutionPlanConfigurer" which does not overwrite the default behaviour.
+
 ## [v7.1.6-2] - 2025-05-08
 ### Changed
 - Fix: Injects the missing `pgtUrl` attribute into the model in `cas3ServiceSuccessView` to properly render the `<cas:proxy>` element in the CAS 3.0 service ticket response.
