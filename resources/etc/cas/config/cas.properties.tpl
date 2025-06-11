@@ -323,3 +323,18 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 # Increase start-delay of scheduler to prevent startup-errors on slow starts
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
+
+
+#### multi factor authentication ####
+cas.authn.mfa.triggers.global.global-provider-id=mfa-simple
+
+### mail ###
+cas.authn.mfa.simple.mail.attribute-name=mail
+cas.authn.mfa.simple.mail.from=casdevelop@local.local
+cas.authn.mfa.simple.mail.subject=Two Factor Subject
+cas.authn.mfa.simple.mail.text=Hello! Your requested CAS token is ${token}
+cas.authn.mfa.simple.timeToKillInSeconds=30
+
+
+logging.level.org.apereo.cas.authentication=DEBUG
+logging.level.org.apereo.cas.web.flow=DEBUG
