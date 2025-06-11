@@ -326,7 +326,8 @@ cas.service-registry.schedule.start-delay=PT1M
 
 
 #### multi factor authentication ####
-cas.authn.mfa.triggers.global.global-provider-id=mfa-simple
+cas.authn.mfa.triggers.global.global-provider-id=mfa-simple,mfa-gauth
+cas.authn.mfa.provider-selection-enabled=true
 
 ### mail ###
 cas.authn.mfa.simple.mail.attribute-name=mail
@@ -335,6 +336,11 @@ cas.authn.mfa.simple.mail.subject=Two Factor Subject
 cas.authn.mfa.simple.mail.text=Hello! Your requested CAS token is ${token}
 cas.authn.mfa.simple.timeToKillInSeconds=30
 
+### gauth ###
+cas.authn.mfa.gauth.issuer=CASIssuer
+cas.authn.mfa.gauth.label=CASLabel
+cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
+cas.authn.mfa.gauth.multiple-device-registration-enabled=true
 
 logging.level.org.apereo.cas.authentication=DEBUG
 logging.level.org.apereo.cas.web.flow=DEBUG
