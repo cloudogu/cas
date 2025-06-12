@@ -326,7 +326,7 @@ cas.service-registry.schedule.start-delay=PT1M
 
 
 #### multi factor authentication ####
-cas.authn.mfa.triggers.global.global-provider-id=mfa-simple,mfa-gauth
+cas.authn.mfa.triggers.global.global-provider-id=mfa-simple,mfa-gauth,mfa-webauthn
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
@@ -336,6 +336,13 @@ cas.authn.mfa.simple.mail.from=casdevelop@local.local
 cas.authn.mfa.simple.mail.subject=Two Factor Subject
 cas.authn.mfa.simple.mail.text=Hello! Your requested CAS token is ${token}
 cas.authn.mfa.simple.timeToKillInSeconds=30
+
+### yubikey ###
+cas.authn.mfa.web-authn.core.application-id=https://k3ces.local
+cas.authn.mfa.web-authn.core.relying-party-id=k3ces.local
+cas.authn.mfa.web-authn.core.relying-party-name=Mein CAS Server
+cas.authn.mfa.web-authn.crypto.encryption.key=RspXt_ueb1MbswLfixESU0V6ksiElz9TKrWk826ZC3dWVl7RbhCimVDSOfl4Lh8jYLKY_qjzvznszzpS7Ze8Rg
+cas.authn.mfa.web-authn.crypto.signing.key=pBjCLbdvRsJZWiONDTSVa0egR68SHkuosATtMakwhh4Kow88nWKITW7YwQwO-XBlwAP1whs65eJYMNe2yXpWgw
 
 ### gauth ###
 cas.authn.mfa.gauth.issuer=CASIssuer
