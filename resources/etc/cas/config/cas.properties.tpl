@@ -327,7 +327,8 @@ cas.service-registry.schedule.start-delay=PT1M
 
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-simple,mfa-gauth
-cas.authn.mfa.provider-selection-enabled=true
+cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
+cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
 ### mail ###
 cas.authn.mfa.simple.mail.attribute-name=mail
