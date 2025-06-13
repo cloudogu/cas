@@ -338,11 +338,10 @@ cas.authn.mfa.simple.mail.text=Hello! Your requested CAS token is ${token}
 cas.authn.mfa.simple.timeToKillInSeconds=30
 
 ### yubikey ###
-cas.authn.mfa.web-authn.core.application-id=https://k3ces.local
+cas.authn.mfa.web-authn.core.application-id=https://k3ces.local/cas
 cas.authn.mfa.web-authn.core.relying-party-id=k3ces.local
 cas.authn.mfa.web-authn.core.relying-party-name=Mein CAS Server
-cas.authn.mfa.web-authn.crypto.encryption.key=RspXt_ueb1MbswLfixESU0V6ksiElz9TKrWk826ZC3dWVl7RbhCimVDSOfl4Lh8jYLKY_qjzvznszzpS7Ze8Rg
-cas.authn.mfa.web-authn.crypto.signing.key=pBjCLbdvRsJZWiONDTSVa0egR68SHkuosATtMakwhh4Kow88nWKITW7YwQwO-XBlwAP1whs65eJYMNe2yXpWgw
+cas.authn.mfa.web-authn.json.location=file:/etc/cas/webauthn/webauthn-store.json
 
 ### gauth ###
 cas.authn.mfa.gauth.issuer=CASIssuer

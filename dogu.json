@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.1.6-4",
+  "Version": "7.1.6-5",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -415,6 +415,13 @@
     {
       "Name": "gauth",
       "Path": "/etc/cas/gauth",
+      "Owner": "1000",
+      "Group": "1000",
+      "NeedsBackup": true
+    },
+    {
+      "Name": "gauth",
+      "Path": "/etc/cas/webauthn",
       "Owner": "1000",
       "Group": "1000",
       "NeedsBackup": true
