@@ -420,7 +420,7 @@
       "NeedsBackup": true
     },
     {
-      "Name": "gauth",
+      "Name": "webauthn",
       "Path": "/etc/cas/webauthn",
       "Owner": "1000",
       "Group": "1000",
