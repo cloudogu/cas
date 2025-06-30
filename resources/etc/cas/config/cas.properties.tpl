@@ -329,6 +329,8 @@ cas.service-registry.schedule.start-delay=PT1M
 cas.authn.mfa.triggers.global.global-provider-id=mfa-simple,mfa-gauth,mfa-webauthn
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
+cas.authn.mfa.global-force-execution=true
+cas.authn.mfa.global-bypass-enabled=false
 
 ### mail ###
 cas.authn.mfa.simple.mail.attribute-name=mail
