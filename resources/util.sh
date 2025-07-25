@@ -167,29 +167,6 @@ function configureCAS() {
   renderCustomMessagesTpl
 }
 
-function checkFqdnUpdate() {
-  # Copy fqdn from global to local config so we can detect changes to it
-  if [ "$(doguctl config "fqdn" -d "empty")" == "empty" ];  then
-    doguctl config "fqdn" "$(doguctl config -g "fqdn")"
-    return 0
-  fi
-
-  local globalFQDN
-  globalFQDN=$(doguctl config -g fqdn)
-
-  local localFQDN
-  localFQDN=$(doguctl config fqdn)
-
-  if [ "$localFQDN" == "$globalFQDN" ];  then
-    return 0
-  fi
-
-  echo "FQDN has change, update services ..."
-
-  doguctl config "fqdn" "$globalFQDN"
-  updateFqdnInServices "$globalFQDN"
-}
-
 # Function to double-escape dots in the FQDN to use it within a regex of the service registry
 function escapeDots() {
     local fqdn="$1"
