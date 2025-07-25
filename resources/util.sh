@@ -254,8 +254,10 @@ function updateFqdnInServices() {
   for service in "$SERVICE_REGISTRY_PRODUCTION"/*.json; do
       # Check if the file exists
       if [ -f "$service" ]; then
+          tmp=$(mktemp)
           # Update the Fqdn property in the target service with the extracted fqdn object
-          jq --argjson fqdn "$fqdnObject" '.properties.Fqdn = $fqdn' "$service" > /tmp/updateService.json && mv /tmp/updateService.json "$service"
+          jq --argjson fqdnObj "$fqdnObject" '.properties.Fqdn = $fqdnObj' "$service" |
+          jq --arg fqdn "${1}" '.properties.LogoutUrl.values[1][0] |= sub("^https://[^/]+"; "https://\($fqdn)")' > "$tmp" && mv "$tmp" "$service"
           echo "Updated FQDN in service $service."
       else
           echo "No target files found."
