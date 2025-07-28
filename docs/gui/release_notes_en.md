@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.1.6-4] - 2025-07-28
+### Fixed
+- The LogoutURL contains the correct FQDN if it is changed via the global configuration.
+
 ## [v7.1.6-3] - 2025-05-09
 - Fix CAS 3 success view for Redmine missing formattedAttributes due to overwritten view and incomplete model
 - Fix destroying the oidc-session on logout

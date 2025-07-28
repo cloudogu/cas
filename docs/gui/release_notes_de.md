@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.1.6-4] - 2025-07-28
+### Behoben
+- Die LogoutURL enthält die richtige FQDN, wenn diese über die globale Konfiguration geändert wird.
+
 ## [v7.1.6-3] - 2025-05-09
 - Behebt das Problem bei der die CAS-3-SuccessView für Redmine unvollständig war und somit der Authtentifizierungsprozess fehl schlug.
 - Beenden der OIDC-Session beim Abmelden

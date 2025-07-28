@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.1.6-4] - 2025-07-28
+### Fixed
+- [#271] Fix the wrong LogoutURL after changing the global FQDN
+
 ## [v7.1.6-3] - 2025-05-09
 ### Fixed
 - [#269] Fix CAS 3 success view for Redmine missing formattedAttributes due to incomplete model

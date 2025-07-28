@@ -30,7 +30,7 @@ done
 
 # check whether fqdn has changed and update services
 echo "check for fqdn updates"
-checkFqdnUpdate
+updateFqdnInServices "$(doguctl config -g fqdn)"
 
 # If an error occurs in logging.sh the whole scripting quits because of -o errexit. Catching the sourced exit code
 # leads to an zero exit code which enables further error handling.
