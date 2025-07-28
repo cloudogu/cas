@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.1.6-4] - 2025-07-28
 ### Behoben
 - Die LogoutURL enthält die richtige FQDN, wenn diese über die globale Konfiguration geändert wird.
 
