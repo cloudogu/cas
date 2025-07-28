@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Behoben
+- Die LogoutURL enthält die richtige FQDN, wenn diese über die globale Konfiguration geändert wird.
 
 ## [v7.1.6-3] - 2025-05-09
 - Behebt das Problem bei der die CAS-3-SuccessView für Redmine unvollständig war und somit der Authtentifizierungsprozess fehl schlug.

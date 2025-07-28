@@ -167,29 +167,6 @@ function configureCAS() {
   renderCustomMessagesTpl
 }
 
-function checkFqdnUpdate() {
-  # Copy fqdn from global to local config so we can detect changes to it
-  if [ "$(doguctl config "fqdn" -d "empty")" == "empty" ];  then
-    doguctl config "fqdn" "$(doguctl config -g "fqdn")"
-    return 0
-  fi
-
-  local globalFQDN
-  globalFQDN=$(doguctl config -g fqdn)
-
-  local localFQDN
-  localFQDN=$(doguctl config fqdn)
-
-  if [ "$localFQDN" == "$globalFQDN" ];  then
-    return 0
-  fi
-
-  echo "FQDN has change, update services ..."
-
-  doguctl config "fqdn" "$globalFQDN"
-  updateFqdnInServices "$globalFQDN"
-}
-
 # Function to double-escape dots in the FQDN to use it within a regex of the service registry
 function escapeDots() {
     local fqdn="$1"
@@ -254,8 +231,10 @@ function updateFqdnInServices() {
   for service in "$SERVICE_REGISTRY_PRODUCTION"/*.json; do
       # Check if the file exists
       if [ -f "$service" ]; then
+          tmp=$(mktemp)
           # Update the Fqdn property in the target service with the extracted fqdn object
-          jq --argjson fqdn "$fqdnObject" '.properties.Fqdn = $fqdn' "$service" > /tmp/updateService.json && mv /tmp/updateService.json "$service"
+          jq --argjson fqdnObj "$fqdnObject" '.properties.Fqdn = $fqdnObj' "$service" |
+          jq --arg fqdn "${1}" '.properties.LogoutUrl.values[1][0] |= sub("^https://[^/]+"; "https://\($fqdn)")' > "$tmp" && mv "$tmp" "$service"
           echo "Updated FQDN in service $service."
       else
           echo "No target files found."
