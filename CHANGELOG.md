@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [#273] Remove expired sessions that stay active by configuring an interval-based registry cleaner
-- 
+
 ## [v7.0.10-4] - 2025-08-13
 ### Fixed
 - [#273] Remove expired sessions that stay active by configuring an interval-based registry cleaner
