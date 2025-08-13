@@ -210,6 +210,19 @@ cas.authn.throttle.schedule.repeat-interval=PT{{ .Config.GetOrDefault "limit/sta
 ########################################################################################################################
 
 ########################################################################################################################
+# Ticket Registry Cleaner
+# A background cleaner process is automatically scheduled to scan the chosen registry implementation periodically and
+# remove expired records based on configured threshold parameters.
+# Configuration guide: https://apereo.github.io/cas/7.0.x/ticketing/Ticket-Registry-Cleaner.html
+# ----------------------------------------------------------------------------------------------------------------------
+cas.ticket.registry.cleaner.schedule.enabled=true
+# define an interval of x seconds after which the registry should be cleaned
+cas.ticket.registry.cleaner.schedule.repeat-interval_in_seconds=PT{{ .Config.GetOrDefault "registry_cleaner/repeat-interval" "2"}}S
+# wait x seconds to start with cleaning the registry
+cas.ticket.registry.cleaner.schedule.start-delay=PT0S
+########################################################################################################################
+
+########################################################################################################################
 # Timeouts
 # Configuration guide: https://apereo.github.io/cas/6.3.x/ticketing/Configuring-Ticket-Expiration-Policy.html#timeout
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#default
