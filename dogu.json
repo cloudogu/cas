@@ -124,7 +124,7 @@
       "Name": "registry_cleaner/repeat-interval",
       "Description": "Time in seconds between background runs which cleans the registry to remove expired tickets (must be a positive number; defaults to 2 seconds)",
       "Optional": true,
-      "Default": 2
+      "Default": "2"
     },
     {
       "Name": "ldap/host",
