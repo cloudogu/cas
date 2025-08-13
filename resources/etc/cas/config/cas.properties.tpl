@@ -227,8 +227,8 @@ cas.ticket.registry.cleaner.schedule.start-delay=PT0S
 # Configuration guide: https://apereo.github.io/cas/6.3.x/ticketing/Configuring-Ticket-Expiration-Policy.html#timeout
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#default
 # ----------------------------------------------------------------------------------------------------------------------
-cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
-cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
+cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "50400"}}
+cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "18000"}}
 ########################################################################################################################
 
 ########################################################################################################################
