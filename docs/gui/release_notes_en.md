@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.1.6-5] - 2025-08-13
 ### Fixed
 - Remove expired sessions that stay active by configuring an interval-based registry cleaner
   -  The interval can be configured with the `registry_cleaner/repeat-interval`-Key in seconds (default-value: 2)
