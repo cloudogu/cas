@@ -121,6 +121,12 @@
       "Optional": true
     },
     {
+      "Name": "registry_cleaner/repeat-interval",
+      "Description": "Time in seconds between background runs which cleans the registry to remove expired tickets (must be a positive number; defaults to 2 seconds)",
+      "Optional": true,
+      "Default": 2
+    },
+    {
       "Name": "ldap/host",
       "Description": "The host of the LDAP (without protocol and without port), e.g. ldap if LDAP dogu is used.",
       "Optional": false
