@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.1.6-5] - 2025-08-13
 ### Behoben
 - Abgelaufene Sitzungen, die aktiv bleiben werden entfernt, indem ein intervallbasierter Registry Cleaner konfiguriert wurde
     - Das Intervall kann mit dem Schlüssel `registry_cleaner/repeat-interval` in Sekunden konfiguriert werden (Standardwert: 2)
