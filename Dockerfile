@@ -41,7 +41,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 FROM registry.cloudogu.com/official/java:21.0.5-1 AS cas
 
 LABEL NAME="official/cas" \
-      VERSION="7.1.6-5" \
+      VERSION="7.1.6-6" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
