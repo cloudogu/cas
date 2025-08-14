@@ -5,6 +5,12 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Fixed
+- Fixed an issue where the Dogu could not apply a specific configuration.
+
+## [v7.0.10-5] - 2025-08-14
+### Fixed
+- Fixed an issue where the Dogu could not apply a specific configuration.
 
 ## [v7.1.6-5] - 2025-08-13
 ### Fixed
