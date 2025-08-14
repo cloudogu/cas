@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.1.6-6] - 2025-08-14
+### Fixed
+- [#276] Fix typo in cas configuration
+
+## [v7.0.10-5] - 2025-08-14
+### Fixed
+- [#276] Fix typo in cas configuration
+
 ## [v7.1.6-5] - 2025-08-13
 ### Fixed
 - [#273] Remove expired sessions that stay active by configuring an interval-based registry cleaner
