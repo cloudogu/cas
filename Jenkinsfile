@@ -200,7 +200,10 @@ parallel(
 
                                 waitForCondition(20, 10) {
                                     def status = sh(
-                                        script: "wget --spider -S --tries=1 --timeout=10 http://${ecoSystem.externalIP}/cas/actuator/health 2>&1 | awk '/^  HTTP/{print $2}' | tail -1",
+                                        script: """
+                                        wget --spider -S --tries=1 --timeout=10 http://${ecoSystem.externalIP}/cas/actuator/health 2>&1 \
+                                        | awk '/^  HTTP/' | tail -n1 | cut -d' ' -f2
+                                        """,
                                         returnStdout: true
                                     ).trim()
 
