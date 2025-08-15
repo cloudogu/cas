@@ -21,61 +21,61 @@ currentBranch = "${env.BRANCH_NAME}"
 String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
 parallel(
-//         "source code": {
-//             node('sos-stable') {
-//                 timestamps {
-//                     project = "github.com/${repositoryOwner}/${doguName}"
-//                     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
-//                     Gradle gradlew = new GradleWrapperInDocker(this, gradleDockerImage)
-//
-//                     stage('Checkout') {
-//                         checkout scm
-//                     }
-//
-//                     dir('app') {
-//                         stage('Build') {
-//                             gradlew "clean build"
-//                         }
-//
-//                         stage('Unit Test') {
-//                             gradlew 'test'
-//                             junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
-//                         }
-//                     }
-//
-//                     stage('SonarQube') {
-//                         def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-//                         withSonarQubeEnv {
-//                             sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
-//                             gitWithCredentials("fetch --all")
-//
-//                             if (currentBranch == productionReleaseBranch) {
-//                                 echo "This branch has been detected as the production branch."
-//                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-//                             } else if (currentBranch == developmentBranch) {
-//                                 echo "This branch has been detected as the development branch."
-//                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-//                             } else if (env.CHANGE_TARGET) {
-//                                 echo "This branch has been detected as a pull request."
-//                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${developmentBranch}"
-//                             } else if (currentBranch.startsWith("feature/")) {
-//                                 echo "This branch has been detected as a feature branch."
-//                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
-//                             } else {
-//                                 echo "This branch has been detected as a miscellaneous branch."
-//                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} "
-//                             }
-//                         }
-//                         timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
-//                             def qGate = waitForQualityGate()
-//                             if (qGate.status != 'OK') {
-//                                 unstable("Pipeline unstable due to SonarQube quality gate failure")
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         },
+        "source code": {
+            node('sos-stable') {
+                timestamps {
+                    project = "github.com/${repositoryOwner}/${doguName}"
+                    String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
+                    Gradle gradlew = new GradleWrapperInDocker(this, gradleDockerImage)
+
+                    stage('Checkout') {
+                        checkout scm
+                    }
+
+                    dir('app') {
+                        stage('Build') {
+                            gradlew "clean build"
+                        }
+
+                        stage('Unit Test') {
+                            gradlew 'test'
+                            junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
+                        }
+                    }
+
+                    stage('SonarQube') {
+                        def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                        withSonarQubeEnv {
+                            sh "git config 'remote.origin.fetch' '+refs/heads/*:refs/remotes/origin/*'"
+                            gitWithCredentials("fetch --all")
+
+                            if (currentBranch == productionReleaseBranch) {
+                                echo "This branch has been detected as the production branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else if (currentBranch == developmentBranch) {
+                                echo "This branch has been detected as the development branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else if (env.CHANGE_TARGET) {
+                                echo "This branch has been detected as a pull request."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${developmentBranch}"
+                            } else if (currentBranch.startsWith("feature/")) {
+                                echo "This branch has been detected as a feature branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME}"
+                            } else {
+                                echo "This branch has been detected as a miscellaneous branch."
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.branch.name=${env.BRANCH_NAME} "
+                            }
+                        }
+                        timeout(time: 2, unit: 'MINUTES') { // Needed when there is no webhook for example
+                            def qGate = waitForQualityGate()
+                            if (qGate.status != 'OK') {
+                                unstable("Pipeline unstable due to SonarQube quality gate failure")
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "dogu-integration": {
             node('sos-stable') {
                 sh 'echo testing dogu integration with ces'
@@ -100,20 +100,20 @@ parallel(
                         checkout scm
                     }
 
-//                     stage('Lint') {
-//                         Dockerfile dockerfile = new Dockerfile(this)
-//                         dockerfile.lint()
-//                     }
-//
-//                     stage('Shellcheck') {
-//                         // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
-//                         shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
-//                     }
-//
-//                     stage('Bats Tests') {
-//                         Bats bats = new Bats(this, docker)
-//                         bats.checkAndExecuteTests()
-//                     }
+                    stage('Lint') {
+                        Dockerfile dockerfile = new Dockerfile(this)
+                        dockerfile.lint()
+                    }
+
+                    stage('Shellcheck') {
+                        // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
+                        shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
+                    }
+
+                    stage('Bats Tests') {
+                        Bats bats = new Bats(this, docker)
+                        bats.checkAndExecuteTests()
+                    }
 
                     try {
                         stage('Provision') {
@@ -180,14 +180,14 @@ parallel(
                             ecoSystem.build("/dogu")
                         }
 
-//                         stage('Trivy scan') {
-//                             ecoSystem.copyDoguImageToJenkinsWorker("/dogu")
-//                             Trivy trivy = new Trivy(this)
-//                             trivy.scanDogu(".", params.TrivySeverityLevels, params.TrivyStrategy)
-//                             trivy.saveFormattedTrivyReport(TrivyScanFormat.TABLE)
-//                             trivy.saveFormattedTrivyReport(TrivyScanFormat.JSON)
-//                             trivy.saveFormattedTrivyReport(TrivyScanFormat.HTML)
-//                         }
+                        stage('Trivy scan') {
+                            ecoSystem.copyDoguImageToJenkinsWorker("/dogu")
+                            Trivy trivy = new Trivy(this)
+                            trivy.scanDogu(".", params.TrivySeverityLevels, params.TrivyStrategy)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.TABLE)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.JSON)
+                            trivy.saveFormattedTrivyReport(TrivyScanFormat.HTML)
+                        }
 
                         stage('Verify') {
                             ecoSystem.verify("/dogu")
