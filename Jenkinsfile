@@ -198,6 +198,7 @@ parallel(
                                 ecoSystem.waitForDogu("nginx")
                                 ecoSystem.waitForDogu("cas")
 
+                                // The http health check is not yet implemented, so this is the manual workaround.
                                 waitForCondition(20, 10) {
                                     def status = sh(
                                         script: """
