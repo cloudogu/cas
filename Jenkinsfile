@@ -218,6 +218,8 @@ parallel(
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"
                             ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
                             ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
+                            // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
+                            sleep time: 30, unit: 'SECONDS'
 
                            ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
