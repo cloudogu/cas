@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#279] Changed Jenkins-Build to be able to start the integration tests more reliably
 
 ## [v7.1.6-6] - 2025-08-14
 ### Fixed

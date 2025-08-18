@@ -197,6 +197,20 @@ parallel(
                             timeout(15) {
                                 ecoSystem.waitForDogu("nginx")
                                 ecoSystem.waitForDogu("cas")
+
+                                // The http health check is not yet implemented, so this is the manual workaround.
+                                waitForCondition(20, 10) {
+                                    def status = sh(
+                                        script: """
+                                        wget --spider -S --tries=1 --timeout=10 --no-check-certificate http://${ecoSystem.externalIP}/cas/actuator/health 2>&1 \
+                                        | awk '/^  HTTP/{print \$2}' | tail -1
+                                        """,
+                                        returnStdout: true
+                                    ).trim()
+
+                                    echo "HTTP status: ${status}"
+                                    return status == "200"
+                                }
                             }
                         }
 
@@ -204,6 +218,8 @@ parallel(
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"
                             ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
                             ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
+                            // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
+                            sleep time: 30, unit: 'SECONDS'
 
                            ecoSystem.runCypressIntegrationTests([
                                     cypressImage     : "cypress/included:13.13.2",
@@ -284,4 +300,18 @@ void gitWithCredentials(String command) {
                 returnStdout: true
         )
     }
+}
+
+def waitForCondition(maxRetries = 10, sleepSeconds = 5, checkClosure) {
+    def retries = 0
+    while (retries < maxRetries) {
+        if (checkClosure()) {
+            echo "Condition met after ${retries} attempt(s)"
+            return true
+        }
+        echo "Condition not met, retrying... (${retries + 1}/${maxRetries})"
+        sleep time: sleepSeconds, unit: 'SECONDS'
+        retries++
+    }
+    error "Condition not met after ${maxRetries} attempts"
 }
