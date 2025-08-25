@@ -16,9 +16,7 @@ import org.springframework.context.annotation.Primary;
 
 import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
 import java.util.List;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 @Configuration("CesServicesSpringConfiguration")
 @ComponentScan("de.triology.cas.services")
@@ -46,18 +44,5 @@ public class CesServicesSpringConfiguration {
             catch (Exception ex) { LOGGER.error("Configurer {} failed", c.getClass().getName(), ex); }
         }
         return plan;
-    }
-
-    @Bean
-    public AuthenticationEventExecutionPlanConfigurer cesAuthPlanConfigurer(
-        @Qualifier("cesGroupAwareLdapAuthenticationHandler")
-        AuthenticationHandler ldapHandler,
-        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        PrincipalResolver principalResolver
-    ) {
-        return plan -> {
-            plan.registerAuthenticationHandlerWithPrincipalResolver(ldapHandler, principalResolver);
-            // add more handlers here if you want, but qualify them explicitly
-        };
     }
 }
