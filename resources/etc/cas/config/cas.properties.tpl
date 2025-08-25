@@ -35,10 +35,14 @@ spring.mail.protocol=smtp
 # Health-Endpoint configuration
 # Configuration guide: https://apereo.github.io/cas/7.0.x/monitoring/actuators/Actuator-Endpoint-Health.html#casendppointpropshealth
 # ----------------------------------------------------------------------------------------------------------------------
-management.endpoint.health.enabled=true
 management.endpoint.health.show-details=always
 management.endpoints.web.exposure.include=health
 cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
+
+
+# Logging 
+logging.level.org.springframework.security=DEBUG
+logging.level.org.apereo.cas.monitor=DEBUG
 ########################################################################################################################
 
 
@@ -103,14 +107,14 @@ cas.authn.ldap[0].block-wait-time=3000
 
 # Frequency of connection validation in seconds
 # Only applies if validatePeriodically=true
-cas.authn.ldap[0].validate-period=300
+cas.authn.ldap[0].validate-period=60
 
 # Attempt to prune connections every N seconds
-cas.authn.ldap[0].prune-period=300
+cas.authn.ldap[0].prune-period=60
 
 # Maximum amount of time an idle connection is allowed to be in
 # pool before it is liable to be removed/destroyed
-cas.authn.ldap[0].idle-time=600
+cas.authn.ldap[0].idle-time=60
 
 #========================================
 # Authentication
@@ -214,8 +218,8 @@ cas.authn.throttle.schedule.repeat-interval=PT{{ .Config.GetOrDefault "limit/sta
 # Configuration guide: https://apereo.github.io/cas/6.3.x/ticketing/Configuring-Ticket-Expiration-Policy.html#timeout
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#default
 # ----------------------------------------------------------------------------------------------------------------------
-cas.ticket.tgt.primary.max-time-to-live-in-seconds={{ .Config.GetOrDefault "session_tgt/max_time_to_live_in_seconds" "86400"}}
-cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_tgt/time_to_kill_in_seconds" "36000"}}
+cas.ticket.tgt.primary.max-time-to-live-in-seconds=60
+cas.ticket.tgt.primary.time-to-kill-in-seconds=60
 ########################################################################################################################
 
 ########################################################################################################################
@@ -306,8 +310,8 @@ cas.authn.oidc.core.issuer=${cas.server.prefix}/oidc
 cas.authn.oauth.code.timeToKillInSeconds=30
 cas.authn.oauth.code.numberOfUses=1
 # Access Token (Session) is valid for 1 day (= 86000 seconds)
-cas.authn.oauth.accessToken.timeToKillInSeconds=86000
-cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
+cas.authn.oauth.accessToken.timeToKillInSeconds=60
+cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=60
 
 # https://apereo.github.io/cas/7.0.x/authentication/OIDC-Authentication-TokenExpirationPolicy.html#id-tokens
 cas.authn.oidc.id-token.include-id-token-claims=false

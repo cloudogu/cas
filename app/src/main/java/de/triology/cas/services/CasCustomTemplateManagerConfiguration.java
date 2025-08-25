@@ -218,7 +218,7 @@ public class CasCustomTemplateManagerConfiguration {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
             serviceTemplateResources = files != null ? Arrays.asList(files) : Collections.emptyList();
         } catch (Exception e) {
-            LOGGER.debug("Could not load template directory: {}", e.getMessage(), e);
+            LOGGER.info("Could not load template directory: {}", e.getMessage(), e);
             serviceTemplateResources = Collections.emptyList();
         }
 
@@ -235,7 +235,7 @@ public class CasCustomTemplateManagerConfiguration {
     ) {
         try {
             Path location = casProperties.getServiceRegistry().getJson().getLocation().getFile().toPath();
-            LOGGER.debug("Using CesDebugServiceRegistry from path: {}", location);
+            LOGGER.info("Using CesDebugServiceRegistry from path: {}", location);
             return new CesAbstractResourceBasedServiceRegistry(
                     location,
                     serializer,
@@ -253,7 +253,7 @@ public class CasCustomTemplateManagerConfiguration {
             final ServiceRegistry cesDebugServiceRegistry
     ) {
         return plan -> {
-            LOGGER.debug("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
+            LOGGER.info("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
             plan.registerServiceRegistry(cesDebugServiceRegistry);
         };
     }

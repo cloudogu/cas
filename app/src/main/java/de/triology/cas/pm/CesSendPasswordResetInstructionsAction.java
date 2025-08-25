@@ -15,6 +15,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -35,10 +36,29 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class CesSendPasswordResetInstructionsAction extends SendPasswordResetInstructionsAction {
 
-    public CesSendPasswordResetInstructionsAction(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver,
-                                                  PasswordResetUrlBuilder passwordResetUrlBuilder, MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector, AuthenticationSystemSupport authenticationSystemSupport, ApplicationContext applicationContext) {
-        super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+    public CesSendPasswordResetInstructionsAction(
+            CasConfigurationProperties casProperties,
+            CommunicationsManager communicationsManager,
+            PasswordManagementService passwordManagementService,
+            TicketRegistry ticketRegistry,
+            TicketFactory ticketFactory,
+            PrincipalResolver principalResolver,
+            PasswordResetUrlBuilder passwordResetUrlBuilder,
+            MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+            AuthenticationSystemSupport authenticationSystemSupport,
+            ServicesManager servicesManager) {
+        super(casProperties,
+            communicationsManager,
+            passwordManagementService,
+            ticketRegistry,
+            ticketFactory,
+            principalResolver,
+            passwordResetUrlBuilder,
+            multifactorAuthenticationProviderSelector,
+            authenticationSystemSupport,
+            servicesManager);                 
     }
+
 
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
             principalResolverName = "REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER",
