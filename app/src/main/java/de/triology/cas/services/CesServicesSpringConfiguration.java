@@ -34,6 +34,7 @@ public class CesServicesSpringConfiguration {
     @Bean
     @Primary
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+        @Qualifier("defaultAuthenticationHandlerResolver")
         AuthenticationHandlerResolver defaultResolver,
         TenantExtractor tenantExtractor,
         List<AuthenticationEventExecutionPlanConfigurer> configurers
