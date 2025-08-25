@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
-import org.springframework.context.ApplicationContext;
 
 @Configuration(value = "PmConfiguration")
 @ComponentScan("de.triology.cas.pm")

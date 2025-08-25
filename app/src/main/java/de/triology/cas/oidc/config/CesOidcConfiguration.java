@@ -1,10 +1,7 @@
 package de.triology.cas.oidc.config;
 
-// import de.triology.cas.authentication.CesDefaultAuthenticationEventExecutionPlan;
 import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
-
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
 import de.triology.cas.oidc.beans.CesOAuthProfileRenderer;
@@ -111,16 +108,6 @@ public class CesOidcConfiguration {
         return new CesOAuthProfileRenderer();
     }
     
-    // @Bean
-    // @Primary
-    // @RefreshScope
-    // public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
-    //     @Qualifier("defaultAuthenticationHandlerResolver")
-    //     AuthenticationHandlerResolver authenticationHandlerResolver, 
-    //     TenantExtractor tenantExtractor) {
-    //     return new CesDefaultAuthenticationEventExecutionPlan(authenticationHandlerResolver, tenantExtractor);
-    // }
-
     @Bean
     @Primary
     @RefreshScope
@@ -128,7 +115,7 @@ public class CesOidcConfiguration {
         @Qualifier("defaultAuthenticationHandlerResolver")
         AuthenticationHandlerResolver authenticationHandlerResolver, 
         TenantExtractor tenantExtractor) {
-        return new LegacyDefaultAuthenticationEventExecutionPlan();
+        return new LegacyDefaultAuthenticationEventExecutionPlan(authenticationHandlerResolver, tenantExtractor);
     }
 
 

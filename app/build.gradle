@@ -197,8 +197,6 @@ dependencies {
     implementation "org.pac4j:pac4j-oidc"
     implementation "org.pac4j:pac4j-config"
     implementation "org.apereo.cas:cas-server-core-multitenancy"
-    implementation "org.springframework.security:spring-security-config:6.2.5"
-    implementation "org.springframework.security:spring-security-web:6.2.5"
 }
 
 configurations.all {
