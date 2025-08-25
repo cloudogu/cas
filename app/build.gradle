@@ -201,17 +201,5 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        // force 'org.apache.logging.log4j:log4j-core:2.23.1'
-        // force 'org.apache.logging.log4j:log4j-api:2.23.1'
-
-        // force 'org.springframework.security:spring-security-core:6.3.4'
-        // force 'org.springframework.security:spring-security-web:6.3.4'
-        // force 'org.springframework.security:spring-security-config:6.3.4'
-        // force 'org.springframework.security:spring-security-oauth2-core:6.3.4'
-        // force 'org.springframework.security:spring-security-oauth2-client:6.3.4'
-        // force 'org.springframework.security:spring-security-oauth2-jose:6.3.4'
-        // force 'org.springframework.security:spring-security-oauth2-resource-server:6.3.4'
-        // force 'org.springframework.security:spring-security-crypto:6.3.4'
-        // force 'org.springframework.security:spring-security-rsa:1.1.1' 
     }
 }
