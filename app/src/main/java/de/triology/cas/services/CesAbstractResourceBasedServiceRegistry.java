@@ -45,10 +45,10 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
     @Override
     public Collection<RegisteredService> load(final File file) {
         final String fileName = file.getName();
-        LOGGER.info("Trying to load: {}", fileName);
+        LOGGER.debug("Trying to load: {}", fileName);
 
         if (!file.exists() || !file.canRead() || file.length() == 0 || fileName.startsWith(".")) {
-            LOGGER.info("Skipping unreadable/empty/hidden file: {} (exists={}, canRead={}, length={})",
+            LOGGER.debug("Skipping unreadable/empty/hidden file: {} (exists={}, canRead={}, length={})",
                     fileName, file.exists(), file.canRead(), file.length());
             return List.of();
         }
@@ -57,15 +57,15 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
         try {
             long size = Files.size(file.toPath());
             FileTime lm = Files.getLastModifiedTime(file.toPath());
-            LOGGER.info("File [{}]: size={} bytes, lastModified={}", fileName, size, lm);
+            LOGGER.debug("File [{}]: size={} bytes, lastModified={}", fileName, size, lm);
 
             // Dump first N characters to help see what's actually in there (avoid huge spam)
             final int MAX_CHARS = 2000;      // tune as needed
             String raw = Files.readString(file.toPath());
             String head = raw.length() > MAX_CHARS ? raw.substring(0, MAX_CHARS) + "\n...[truncated]..." : raw;
-            LOGGER.info("RAW HEAD [{}]:\n{}", fileName, head);
+            LOGGER.debug("RAW HEAD [{}]:\n{}", fileName, head);
         } catch (Exception metaEx) {
-            LOGGER.info("Could not read metadata/raw head for [{}]: {}", fileName, metaEx.getMessage());
+            LOGGER.debug("Could not read metadata/raw head for [{}]: {}", fileName, metaEx.getMessage());
         }
 
         // --- Stream over serializers ---
@@ -76,7 +76,7 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
             // log every serializer we check (INFO so it shows up)
             .peek(s -> {
                 int n = checked.incrementAndGet();
-                LOGGER.info("#{} Checking serializer [{}] for file [{}]",
+                LOGGER.debug("#{} Checking serializer [{}] for file [{}]",
                         n, s.getClass().getSimpleName(), fileName);
             })
 
@@ -90,10 +90,10 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
                 }
                 if (ok) {
                     int n = supported.incrementAndGet();
-                    LOGGER.info("#{} Serializer [{}] SUPPORTS [{}]",
+                    LOGGER.debug("#{} Serializer [{}] SUPPORTS [{}]",
                             n, serializer.getClass().getSimpleName(), fileName);
                 } else {
-                    LOGGER.info("Serializer [{}] does NOT support [{}]",
+                    LOGGER.debug("Serializer [{}] does NOT support [{}]",
                             serializer.getClass().getSimpleName(), fileName);
                 }
                 return ok;
@@ -102,14 +102,14 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
             // attempt to load; give each serializer its own fresh reader
             .map(serializer -> {
                 try (var in = Files.newBufferedReader(file.toPath())) {
-                    LOGGER.info("Deserializing [{}] using [{}]",
+                    LOGGER.debug("Deserializing [{}] using [{}]",
                             fileName, serializer.getClass().getSimpleName());
                     Collection<RegisteredService> services = serializer.load(in);
                     if (services == null || services.isEmpty()) {
-                        LOGGER.info("Serializer [{}] returned NO services for [{}]",
+                        LOGGER.debug("Serializer [{}] returned NO services for [{}]",
                                 serializer.getClass().getSimpleName(), fileName);
                     } else {
-                        LOGGER.info("Serializer [{}] returned {} service(s) for [{}]",
+                        LOGGER.debug("Serializer [{}] returned {} service(s) for [{}]",
                                 serializer.getClass().getSimpleName(), services.size(), fileName);
                     }
                     return services;
@@ -124,16 +124,16 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
             .flatMap(Collection::stream)
 
             // log each loaded service at WARN so it’s visible
-            .peek(svc -> LOGGER.info("Loaded service [{}] id=[{}] name=[{}]",
+            .peek(svc -> LOGGER.debug("Loaded service [{}] id=[{}] name=[{}]",
                     svc.getClass().getSimpleName(), svc.getId(), svc.getName()))
 
             .collect(Collectors.toList());
 
-        LOGGER.info("Summary for [{}]: serializers checked={}, supported={}, services loaded={}",
+        LOGGER.debug("Summary for [{}]: serializers checked={}, supported={}, services loaded={}",
                 fileName, checked.get(), supported.get(), result.size());
 
         if (result.isEmpty()) {
-            LOGGER.info("No services loaded from [{}]. Either no serializer supported it or all failed.", fileName);
+            LOGGER.debug("No services loaded from [{}]. Either no serializer supported it or all failed.", fileName);
         }
 
         return result;
@@ -142,11 +142,11 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
 
     @Override
     public Collection<RegisteredService> load() {
-        LOGGER.info("CesDebugServiceRegistry.load() called");
+        LOGGER.debug("CesDebugServiceRegistry.load() called");
 
         final File dir = serviceRegistryDirectory.toFile();
         if (!dir.exists() || !dir.isDirectory()) {
-            LOGGER.info("[load()] Directory [{}] does not exist or is not a directory", dir.getAbsolutePath());
+            LOGGER.debug("[load()] Directory [{}] does not exist or is not a directory", dir.getAbsolutePath());
             return Collections.emptyList();
         }
 
@@ -158,13 +158,13 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
             return Collections.emptyList();
         }
 
-        LOGGER.info("[load()] Scanning [{}], found [{}] service file(s)", dir.getAbsolutePath(), files.size());
+        LOGGER.debug("[load()] Scanning [{}], found [{}] service file(s)", dir.getAbsolutePath(), files.size());
         if (files.isEmpty()) {
             return Collections.emptyList();
         }
 
         files.forEach(f -> 
-            LOGGER.info("[load] Candidate service file: [{}] (size={} bytes, lastModified={})",
+            LOGGER.debug("[load] Candidate service file: [{}] (size={} bytes, lastModified={})",
                 f.getAbsolutePath(), f.length(), f.lastModified())
         );
 
@@ -172,16 +172,16 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
         final Map<Long, RegisteredService> map = new LinkedHashMap<>();
 
         for (File file : files) {
-            LOGGER.info("[load()] Attempting to load file [{}]", file.getAbsolutePath());
+            LOGGER.debug("[load()] Attempting to load file [{}]", file.getAbsolutePath());
             Collection<RegisteredService> col = Collections.emptyList();
             try {
                 Collection<RegisteredService> tmp = this.load(file); // your file-level loader
                 if (tmp == null) {
-                    LOGGER.info("[load()] File [{}] produced NULL services (treating as empty)", file.getAbsolutePath());
+                    LOGGER.debug("[load()] File [{}] produced NULL services (treating as empty)", file.getAbsolutePath());
                 } else if (tmp.isEmpty()) {
-                    LOGGER.info("[load()] File [{}] produced NO services", file.getAbsolutePath());
+                    LOGGER.debug("[load()] File [{}] produced NO services", file.getAbsolutePath());
                 } else {
-                    LOGGER.info("[load()] File [{}] produced [{}] service(s)", file.getAbsolutePath(), tmp.size());
+                    LOGGER.debug("[load()] File [{}] produced [{}] service(s)", file.getAbsolutePath(), tmp.size());
                     col = tmp;
                 }
             } catch (Exception ex) {
@@ -190,15 +190,15 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
 
             for (RegisteredService svc : col) {
                 if (svc == null) {
-                    LOGGER.info("[load()] Skipping NULL service from file [{}]", file.getAbsolutePath());
+                    LOGGER.debug("[load()] Skipping NULL service from file [{}]", file.getAbsolutePath());
                     continue;
                 }
-                LOGGER.info("[load()] Deserialized: name='{}', id='{}', class={}",
+                LOGGER.debug("[load()] Deserialized: name='{}', id='{}', class={}",
                     svc.getName(), svc.getId(), svc.getClass().getSimpleName());
 
                 final long id = svc.getId();
                 if (map.containsKey(id)) {
-                    LOGGER.info("[load()] Duplicate ID [{}], keeping first: old='{}', new='{}'",
+                    LOGGER.debug("[load()] Duplicate ID [{}], keeping first: old='{}', new='{}'",
                         id, map.get(id).getName(), svc.getName());
                     continue;
                 }
@@ -209,7 +209,7 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
         // Atomically replace internal state; never leave it null.
         this.services = map;
 
-        LOGGER.info("Finished registry load: [{}] total unique service(s) loaded", map.size());
+        LOGGER.debug("Finished registry load: [{}] total unique service(s) loaded", map.size());
         // Always return a non-null collection
         return new ArrayList<>(map.values());
     }

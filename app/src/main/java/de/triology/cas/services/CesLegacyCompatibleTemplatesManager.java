@@ -21,7 +21,7 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
     
     @Override
     public RegisteredService apply(final RegisteredService registeredService) {
-        LOGGER.info("[apply()] Called with service: id={}, name={}, serviceId={}, template={}",
+        LOGGER.debug("[apply()] Called with service: id={}, name={}, serviceId={}, template={}",
                 registeredService.getId(),
                 registeredService.getName(),
                 registeredService.getServiceId(),
@@ -30,14 +30,14 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
         val merged = super.apply(registeredService);
 
         if (!(merged instanceof CasRegisteredService)) {
-            LOGGER.info("[apply()] Merged service [{}] is NOT of type CasRegisteredService", merged.getClass().getSimpleName());
+            LOGGER.debug("[apply()] Merged service [{}] is NOT of type CasRegisteredService", merged.getClass().getSimpleName());
             return merged;
         }
 
         val concreteService = (CasRegisteredService) merged;
         val props = concreteService.getProperties();
 
-        LOGGER.info("[apply()] After merge: id={}, name={}, serviceId={}, template={}, MatchingStrategy={}",
+        LOGGER.debug("[apply()] After merge: id={}, name={}, serviceId={}, template={}, MatchingStrategy={}",
                 concreteService.getId(),
                 concreteService.getName(),
                 concreteService.getServiceId(),
@@ -46,19 +46,19 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
 
         // Dump all properties for debugging
         if (props == null || props.isEmpty()) {
-            LOGGER.info("[apply()] No properties present for service id={}", concreteService.getId());
+            LOGGER.debug("[apply()] No properties present for service id={}", concreteService.getId());
         } else {
-            props.forEach((k, v) -> LOGGER.info("[apply()] Property {} -> {}", k, v));
+            props.forEach((k, v) -> LOGGER.debug("[apply()] Property {} -> {}", k, v));
         }
 
         // --- Fallback for 'name' ---
         if ((concreteService.getName() == null || concreteService.getName().isBlank())
                 && props.containsKey("ServiceName")) {
             val fallbackName = getFirstProperty(props.get("ServiceName"));
-            LOGGER.info("[apply()] Applying fallback for 'name': {}", fallbackName);
+            LOGGER.debug("[apply()] Applying fallback for 'name': {}", fallbackName);
             concreteService.setName(fallbackName);
         } else {
-            LOGGER.info("[apply()] No fallback applied for 'name' (current value={})", concreteService.getName());
+            LOGGER.debug("[apply()] No fallback applied for 'name' (current value={})", concreteService.getName());
         }
 
         // --- Fallback for 'serviceId' ---
@@ -67,13 +67,13 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
             val fqdn = getFirstProperty(props.get("Fqdn"));
             val serviceName = getFirstProperty(props.get("ServiceName"));
             val newId = "^https://" + fqdn + "/" + serviceName + "(/.*)?$";
-            LOGGER.info("[apply()] Applying fallback for 'serviceId': {}", newId);
+            LOGGER.debug("[apply()] Applying fallback for 'serviceId': {}", newId);
             concreteService.setServiceId(newId);
         } else {
-            LOGGER.info("[apply()] No fallback applied for 'serviceId' (current value={})", concreteService.getServiceId());
+            LOGGER.debug("[apply()] No fallback applied for 'serviceId' (current value={})", concreteService.getServiceId());
         }
 
-        LOGGER.info("[apply()] Final service state: id={}, name={}, serviceId={}, template={}, MatchingStrategy={}",
+        LOGGER.debug("[apply()] Final service state: id={}, name={}, serviceId={}, template={}, MatchingStrategy={}",
                 concreteService.getId(),
                 concreteService.getName(),
                 concreteService.getServiceId(),

@@ -84,7 +84,6 @@ if [[ "$HEALTH_STATUS" -eq 0 ]]; then
     echo "cas health endpoint is unhealthy"
     HEALTH_STATUS=1
   fi
-  HEALTH_STATUS=0
 fi
 
 CURRENT_TS=$(date +%s)

@@ -74,8 +74,8 @@ public class CasCustomTemplateManagerConfiguration {
                 if (model instanceof Map m && !m.containsKey("_proxiesInjected")) {
                     Object assertionObj = m.get("assertion");
                     if (assertionObj instanceof Assertion assertion) {
-                        LOGGER.info("Assertion found: {}", assertion.getClass().getSimpleName());
-                        LOGGER.info("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
+                        LOGGER.debug("Assertion found: {}", assertion.getClass().getSimpleName());
+                        LOGGER.debug("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
 
                         List<String> proxies = assertion.getChainedAuthentications().stream()
                             .skip(1)
@@ -124,12 +124,12 @@ public class CasCustomTemplateManagerConfiguration {
                                 mappedAttributes.put("firstname", attributes.get("givenName"));
                                 mappedAttributes.put("lastname", attributes.get("surname"));
 
-                                LOGGER.info("principal: {}", p);
-                                LOGGER.info("principalId: {}", p.getId());
-                                LOGGER.info("principalAttributes: {}", p.getAttributes());                                
-                                LOGGER.info("attributes: {}", attributes);
-                                LOGGER.info("authnAttributes: {}", authnAttributes);
-                                LOGGER.info("mappedAttributes: {}", mappedAttributes);
+                                LOGGER.debug("principal: {}", p);
+                                LOGGER.debug("principalId: {}", p.getId());
+                                LOGGER.debug("principalAttributes: {}", p.getAttributes());                                
+                                LOGGER.debug("attributes: {}", attributes);
+                                LOGGER.debug("authnAttributes: {}", authnAttributes);
+                                LOGGER.debug("mappedAttributes: {}", mappedAttributes);
 
 
                                 Map<String, Object> mergedAttributes = new LinkedHashMap<>();
@@ -153,7 +153,7 @@ public class CasCustomTemplateManagerConfiguration {
                             
                             Collection<String> renderedAttributes = attributeRenderer.render(attributes);
                             List<String> formatted = new ArrayList<>(renderedAttributes);
-                            LOGGER.info("#### formatted: {}", formatted);     
+                            LOGGER.debug("#### formatted: {}", formatted);     
 
                             m.put("user", attributes.get("username"));
                             m.put("principal", p);
@@ -161,25 +161,25 @@ public class CasCustomTemplateManagerConfiguration {
                             m.put("formattedAttributes", formatted);
                                                             
                             } else { 
-                                LOGGER.info("principal is not instanceof Principal");
+                                LOGGER.debug("principal is not instanceof Principal");
                             }
                         }
                         else {
-                            LOGGER.info("serviceObj is not instanceof WebApplicationService");
+                            LOGGER.debug("serviceObj is not instanceof WebApplicationService");
                         }
              
-                        LOGGER.info("Injecting proxies into model: {}", proxies);
+                        LOGGER.debug("Injecting proxies into model: {}", proxies);
 
                         m.put("proxies", proxies);
                         m.put("_proxiesInjected", true);
                     }
                     else {
-                        LOGGER.info("assertionObj not instance of Assertion");
+                        LOGGER.debug("assertionObj not instance of Assertion");
                     }
                 }
-                LOGGER.info("Rendering CAS 3 success view with model: {}", model);
-                LOGGER.info("render(): Received model with keys: {}", model.keySet());
-                LOGGER.info("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
+                LOGGER.debug("Rendering CAS 3 success view with model: {}", model);
+                LOGGER.debug("render(): Received model with keys: {}", model.keySet());
+                LOGGER.debug("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
 
                 mustacheView.render(model, request, response);
             }
@@ -209,7 +209,7 @@ public class CasCustomTemplateManagerConfiguration {
             final CasConfigurationProperties casProperties,
             final RegisteredServiceJsonSerializer registeredServiceJsonSerializer
     ) {
-        LOGGER.info("Overriding default RegisteredServicesTemplatesManager with CesLegacyCompatibleTemplatesManager");
+        LOGGER.debug("Overriding default RegisteredServicesTemplatesManager with CesLegacyCompatibleTemplatesManager");
 
         ServiceRegistryProperties serviceRegistryProperties = casProperties.getServiceRegistry();
 
@@ -219,7 +219,7 @@ public class CasCustomTemplateManagerConfiguration {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
             serviceTemplateResources = files != null ? Arrays.asList(files) : Collections.emptyList();
         } catch (Exception e) {
-            LOGGER.info("Could not load template directory: {}", e.getMessage(), e);
+            LOGGER.debug("Could not load template directory: {}", e.getMessage(), e);
             serviceTemplateResources = Collections.emptyList();
         }
 
@@ -236,7 +236,7 @@ public class CasCustomTemplateManagerConfiguration {
     ) {
         try {
             Path location = casProperties.getServiceRegistry().getJson().getLocation().getFile().toPath();
-            LOGGER.info("Using CesDebugServiceRegistry from path: {}", location);
+            LOGGER.debug("Using CesDebugServiceRegistry from path: {}", location);
             return new CesAbstractResourceBasedServiceRegistry(
                     location,
                     serializer,
@@ -254,7 +254,7 @@ public class CasCustomTemplateManagerConfiguration {
             final ServiceRegistry cesDebugServiceRegistry
     ) {
         return plan -> {
-            LOGGER.info("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
+            LOGGER.debug("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
             plan.registerServiceRegistry(cesDebugServiceRegistry);
         };
     }
