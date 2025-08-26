@@ -78,6 +78,9 @@ public class CasCustomTemplateManagerConfiguration {
                         LOGGER.debug("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
 
                         List<String> proxies = assertion.getChainedAuthentications().stream()
+                            // Skip the first element: it's the PRIMARY user authentication at CAS.
+                            // Only the subsequent authentications (index >= 1) represent proxy hops
+                            // and should appear in <cas:proxies>.
                             .skip(1)
                             .map(a -> proxyUrlFrom(a.getAttributes().get("pgtUrl")))
                             .filter(Objects::nonNull)
