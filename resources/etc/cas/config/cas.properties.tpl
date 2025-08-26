@@ -35,11 +35,14 @@ spring.mail.protocol=smtp
 # Health-Endpoint configuration
 # Configuration guide: https://apereo.github.io/cas/7.0.x/monitoring/actuators/Actuator-Endpoint-Health.html#casendppointpropshealth
 # ----------------------------------------------------------------------------------------------------------------------
-cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS
-cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
 management.endpoints.web.exposure.include=health
-management.endpoint.health.show-details=ALWAYS
 management.endpoint.health.probes.enabled=true
+management.endpoint.health.show-details=ALWAYS
+management.endpoint.health.access=unrestricted
+cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
+cas.monitor.endpoints.form-login-enabled=false
+
+
 ########################################################################################################################
 
 
