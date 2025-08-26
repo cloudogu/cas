@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
+import org.apereo.cas.services.ServicesManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,7 +38,7 @@ class PmConfigurationTests {
         var passwordResetUrlBuilder = mock(PasswordResetUrlBuilder.class);
         var authenticationSystemSupport = mock(AuthenticationSystemSupport.class);
         var multifactorAuthenticationProviderSelector = mock(MultifactorAuthenticationProviderSelector.class);
-        var applicationContext = mock(ApplicationContext.class);
+        var servicesManager = mock(ServicesManager.class);
 
         // Call the method
         var action = configuration.sendPasswordResetInstructionsAction(
@@ -50,7 +51,7 @@ class PmConfigurationTests {
                 passwordResetUrlBuilder,
                 authenticationSystemSupport,
                 multifactorAuthenticationProviderSelector,
-                applicationContext
+                servicesManager
         );
 
         // Assertions

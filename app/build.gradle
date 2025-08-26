@@ -32,7 +32,7 @@ buildscript {
 
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
-        classpath "org.apereo.cas:cas-server-core-configuration-metadata-repository:${project.'cas.version'}"
+        classpath "org.apereo.cas:cas-server-support-configuration-metadata-repository:${project.'cas.version'}"
     }
 }
 
@@ -120,7 +120,6 @@ test {
 
 dependencies {
     implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
-    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
 
     // Other CAS dependencies/modules may be listed here...
     implementation "org.apereo.cas:cas-server-core-api-protocol"
@@ -192,26 +191,15 @@ dependencies {
     developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
 
+    implementation "org.apereo.cas:cas-server-core-scripting:${project.'cas.version'}"
+
     implementation "org.pac4j:pac4j-cas"
     implementation "org.pac4j:pac4j-oidc"
     implementation "org.pac4j:pac4j-config"
-
-    implementation "org.apereo.cas:cas-server-core-scripting:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-core-multitenancy"
 }
 
 configurations.all {
     resolutionStrategy {
-        force 'org.apache.logging.log4j:log4j-core:2.23.1'
-        force 'org.apache.logging.log4j:log4j-api:2.23.1'
-
-        force 'org.springframework.security:spring-security-core:6.3.4'
-        force 'org.springframework.security:spring-security-web:6.3.4'
-        force 'org.springframework.security:spring-security-config:6.3.4'
-        force 'org.springframework.security:spring-security-oauth2-core:6.3.4'
-        force 'org.springframework.security:spring-security-oauth2-client:6.3.4'
-        force 'org.springframework.security:spring-security-oauth2-jose:6.3.4'
-        force 'org.springframework.security:spring-security-oauth2-resource-server:6.3.4'
-        force 'org.springframework.security:spring-security-crypto:6.3.4'
-        force 'org.springframework.security:spring-security-rsa:1.1.1' 
     }
 }

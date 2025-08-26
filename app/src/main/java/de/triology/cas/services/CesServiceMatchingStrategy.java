@@ -29,7 +29,7 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
             LOGGER.debug("service {} matchservice {}", service.getId(), serviceToMatch.getId());
 
                 if (Objects.isNull(service) || Objects.isNull(serviceToMatch)) {
-                    LOGGER.warn("One of the services is null: [{}], [{}]", service, serviceToMatch);
+                    LOGGER.debug("One of the services is null: [{}], [{}]", service, serviceToMatch);
                     return false;
                 }
 
