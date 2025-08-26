@@ -6,7 +6,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 ### Anpassungen
-- [#280] Upgrade CAS zu Version 7.2.6
+- [#281] Upgrade CAS zu Version 7.2.6
 
 ## [v7.1.6-6] - 2025-08-14
 ### Behoben

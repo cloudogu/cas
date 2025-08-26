@@ -6,7 +6,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 ### Changed
-- [#280] Upgrade CAS to version 7.2.6
+- [#281] Upgrade CAS to version 7.2.6
 
 ## [v7.1.6-6] - 2025-08-14
 ### Fixed

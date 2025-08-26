@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [#279] Changed Jenkins-Build to be able to start the integration tests more reliably
-- [#280] Upgraded CAS to 7.2.6
-- [#280] Upgraded Sprint Boot to 3.4.4
+- [#281] Upgraded CAS to 7.2.6
+- [#281] Upgraded Sprint Boot to 3.4.4
 
 ## [v7.1.6-6] - 2025-08-14
 ### Fixed
