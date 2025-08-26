@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -19,6 +20,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CesSendPasswordResetInstructionsActionTests {
@@ -34,8 +36,8 @@ class CesSendPasswordResetInstructionsActionTests {
     private PasswordResetUrlBuilder passwordResetUrlBuilder;
     private MultifactorAuthenticationProviderSelector mfaProviderSelector;
     private AuthenticationSystemSupport authenticationSystemSupport;
-    private ApplicationContext applicationContext;
     private PasswordManagementQuery passwordManagementQuery;
+    private ServicesManager servicesManager;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -48,10 +50,9 @@ class CesSendPasswordResetInstructionsActionTests {
         passwordResetUrlBuilder = mock(PasswordResetUrlBuilder.class);
         mfaProviderSelector = mock(MultifactorAuthenticationProviderSelector.class);
         authenticationSystemSupport = mock(AuthenticationSystemSupport.class);
-        applicationContext = mock(ApplicationContext.class);
+        servicesManager = mock(ServicesManager.class);
         passwordManagementQuery = mock(PasswordManagementQuery.class);
         requestContext = mock(RequestContext.class);
-
         action = new CesSendPasswordResetInstructionsActionExtensionForTest(
                 casProperties,
                 communicationsManager,
@@ -62,7 +63,7 @@ class CesSendPasswordResetInstructionsActionTests {
                 passwordResetUrlBuilder,
                 mfaProviderSelector,
                 authenticationSystemSupport,
-                applicationContext
+                servicesManager
         );
     }
 
@@ -207,11 +208,11 @@ class CesSendPasswordResetInstructionsActionTests {
             PasswordResetUrlBuilder passwordResetUrlBuilder,
             MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             AuthenticationSystemSupport authenticationSystemSupport,
-            ApplicationContext applicationContext
+            ServicesManager servicesManager
         ) {
             super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory,
                     principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector,
-                    authenticationSystemSupport, applicationContext);
+                    authenticationSystemSupport, servicesManager);
         }
 
         @Override

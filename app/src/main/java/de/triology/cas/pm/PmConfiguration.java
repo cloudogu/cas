@@ -8,12 +8,12 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
-import org.springframework.context.ApplicationContext;
 
 @Configuration(value = "PmConfiguration")
 @ComponentScan("de.triology.cas.pm")
@@ -40,7 +40,7 @@ public class PmConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
             final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
-            final ApplicationContext applicationContext) {
+            final ServicesManager servicesManager) {
         return new CesSendPasswordResetInstructionsAction(  casProperties,
                                                             communicationsManager, 
                                                             passwordManagementService, 
@@ -50,6 +50,6 @@ public class PmConfiguration {
                                                             passwordResetUrlBuilder, 
                                                             multifactorAuthenticationProviderSelector, 
                                                             authenticationSystemSupport, 
-                                                            applicationContext);
+                                                            servicesManager);
     }
 }

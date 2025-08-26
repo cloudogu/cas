@@ -44,6 +44,14 @@ import org.springframework.web.servlet.View;
 @Slf4j
 public class CasCustomTemplateManagerConfiguration {
 
+
+    private static String proxyUrlFrom(Object v) {
+        if (v instanceof String s) return s;
+        if (v instanceof List<?> l && !l.isEmpty()) return String.valueOf(l.get(0));
+        if (v instanceof String[] arr && arr.length > 0) return arr[0];
+        return null;
+    }
+
     @Bean(name = "cas3ServiceSuccessView")
     @RefreshScope
     public View cas3ServiceSuccessView(
@@ -66,25 +74,21 @@ public class CasCustomTemplateManagerConfiguration {
                 if (model instanceof Map m && !m.containsKey("_proxiesInjected")) {
                     Object assertionObj = m.get("assertion");
                     if (assertionObj instanceof Assertion assertion) {
-                        LOGGER.info("Assertion found: {}", assertion.getClass().getSimpleName());
-                        LOGGER.info("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
+                        LOGGER.debug("Assertion found: {}", assertion.getClass().getSimpleName());
+                        LOGGER.debug("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
 
-                        List<String> proxies = new ArrayList<>();
-                        for (val auth : assertion.getChainedAuthentications().stream().skip(1).toList()) {
-                            LOGGER.info("Checking proxy authentication: {}", auth);
+                        List<String> proxies = assertion.getChainedAuthentications().stream()
+                            // Skip the first element: it's the PRIMARY user authentication at CAS.
+                            // Only the subsequent authentications (index >= 1) represent proxy hops
+                            // and should appear in <cas:proxies>.
+                            .skip(1)
+                            .map(a -> proxyUrlFrom(a.getAttributes().get("pgtUrl")))
+                            .filter(Objects::nonNull)
+                            .filter(u -> u.startsWith("http://") || u.startsWith("https://"))
+                            .toList();
 
-                            Object attr = auth.getAttributes().get("pgtUrl");
-                            if (attr instanceof String s) {
-                                LOGGER.info("Found proxyCallbackUrl (String): {}", s);
-                                proxies.add(s);
-                            } else if (attr instanceof List<?> list && !list.isEmpty()) {
-                                LOGGER.info("Found proxyCallbackUrl (List): {}", list.get(0));
-                                proxies.add(String.valueOf(list.get(0)));
-                            } else {
-                                String proxyId = auth.getPrincipal().getId();
-                                LOGGER.info("No proxyCallbackUrl found, using principal instead: {}", proxyId);
-                                proxies.add(proxyId);
-                            }
+                        if (!proxies.isEmpty()) {
+                            m.put("proxies", proxies);
                         }
 
                         Object serviceObj = model.get("service");
@@ -123,12 +127,12 @@ public class CasCustomTemplateManagerConfiguration {
                                 mappedAttributes.put("firstname", attributes.get("givenName"));
                                 mappedAttributes.put("lastname", attributes.get("surname"));
 
-                                LOGGER.info("principal: {}", p);
-                                LOGGER.info("principalId: {}", p.getId());
-                                LOGGER.info("principalAttributes: {}", p.getAttributes());                                
-                                LOGGER.info("attributes: {}", attributes);
-                                LOGGER.info("authnAttributes: {}", authnAttributes);
-                                LOGGER.info("mappedAttributes: {}", mappedAttributes);
+                                LOGGER.debug("principal: {}", p);
+                                LOGGER.debug("principalId: {}", p.getId());
+                                LOGGER.debug("principalAttributes: {}", p.getAttributes());                                
+                                LOGGER.debug("attributes: {}", attributes);
+                                LOGGER.debug("authnAttributes: {}", authnAttributes);
+                                LOGGER.debug("mappedAttributes: {}", mappedAttributes);
 
 
                                 Map<String, Object> mergedAttributes = new LinkedHashMap<>();
@@ -152,7 +156,7 @@ public class CasCustomTemplateManagerConfiguration {
                             
                             Collection<String> renderedAttributes = attributeRenderer.render(attributes);
                             List<String> formatted = new ArrayList<>(renderedAttributes);
-                            LOGGER.info("#### formatted: {}", formatted);     
+                            LOGGER.debug("#### formatted: {}", formatted);     
 
                             m.put("user", attributes.get("username"));
                             m.put("principal", p);
@@ -160,25 +164,25 @@ public class CasCustomTemplateManagerConfiguration {
                             m.put("formattedAttributes", formatted);
                                                             
                             } else { 
-                                LOGGER.info("principal is not instanceof Principal");
+                                LOGGER.debug("principal is not instanceof Principal");
                             }
                         }
                         else {
-                            LOGGER.info("serviceObj is not instanceof WebApplicationService");
+                            LOGGER.debug("serviceObj is not instanceof WebApplicationService");
                         }
              
-                        LOGGER.info("Injecting proxies into model: {}", proxies);
+                        LOGGER.debug("Injecting proxies into model: {}", proxies);
 
                         m.put("proxies", proxies);
                         m.put("_proxiesInjected", true);
                     }
                     else {
-                        LOGGER.info("assertionObj not instance of Assertion");
+                        LOGGER.debug("assertionObj not instance of Assertion");
                     }
                 }
-                LOGGER.info("Rendering CAS 3 success view with model: {}", model);
-                LOGGER.info("render(): Received model with keys: {}", model.keySet());
-                LOGGER.info("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
+                LOGGER.debug("Rendering CAS 3 success view with model: {}", model);
+                LOGGER.debug("render(): Received model with keys: {}", model.keySet());
+                LOGGER.debug("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
 
                 mustacheView.render(model, request, response);
             }
@@ -208,7 +212,7 @@ public class CasCustomTemplateManagerConfiguration {
             final CasConfigurationProperties casProperties,
             final RegisteredServiceJsonSerializer registeredServiceJsonSerializer
     ) {
-        LOGGER.info("Overriding default RegisteredServicesTemplatesManager with CesLegacyCompatibleTemplatesManager");
+        LOGGER.debug("Overriding default RegisteredServicesTemplatesManager with CesLegacyCompatibleTemplatesManager");
 
         ServiceRegistryProperties serviceRegistryProperties = casProperties.getServiceRegistry();
 

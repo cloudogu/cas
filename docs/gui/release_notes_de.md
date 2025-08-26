@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.6-1] - 2025-08-26
+### Anpassungen
+- [#281] Upgrade CAS zu Version 7.2.6
+
 ## [v7.1.6-6] - 2025-08-14
 ### Behoben
 - Es wurde ein Problem behoben, bei dem das Dogu eine spezifische Konfiguration nicht anwenden konnte.

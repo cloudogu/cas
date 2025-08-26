@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.6-1] - 2025-08-26
+### Changed
+- [#281] Upgrade CAS to version 7.2.6
+
 ## [v7.1.6-6] - 2025-08-14
 ### Fixed
 - Fixed an issue where the Dogu could not apply a specific configuration.
@@ -23,7 +27,6 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ### Fixed
 - Remove expired sessions that stay active by configuring an interval-based registry cleaner
   - The interval can be configured with the `registry_cleaner/repeat-interval`-Key in seconds (default-value: 2)
-
 
 ## [v7.1.6-4] - 2025-07-28
 ### Fixed
