@@ -25,10 +25,6 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ### Fixed
 - Remove expired sessions that stay active by configuring an interval-based registry cleaner
   - The interval can be configured with the `registry_cleaner/repeat-interval`-Key in seconds (default-value: 2)
-<<<<<<< HEAD
-=======
-
->>>>>>> ee455a0382bc56f7672adf5b836028117915c5f4
 
 ## [v7.1.6-4] - 2025-07-28
 ### Fixed
