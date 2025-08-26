@@ -1,7 +1,10 @@
 package de.triology.cas.oidc.config;
 
+import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
+import de.triology.cas.oidc.beans.CesOAuthProfileRenderer;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.AttributeMapping;
 import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationClientLogoutAction;
@@ -14,12 +17,14 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcess
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
@@ -34,6 +39,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.webflow.execution.Action;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,6 +101,23 @@ public class CesOidcConfiguration {
     public CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties() {
         return new CesDelegatedOidcClientsProperties();
     }
+
+    @Bean
+    @RefreshScope
+    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
+        return new CesOAuthProfileRenderer();
+    }
+    
+    @Bean
+    @Primary
+    @RefreshScope
+    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+        @Qualifier("defaultAuthenticationHandlerResolver")
+        AuthenticationHandlerResolver authenticationHandlerResolver, 
+        TenantExtractor tenantExtractor) {
+        return new LegacyDefaultAuthenticationEventExecutionPlan(authenticationHandlerResolver, tenantExtractor);
+    }
+
 
     /**
      * Creates OIDC client objects dynamically from the loaded properties.
@@ -186,6 +212,11 @@ public class CesOidcConfiguration {
                     LOGGER.info("No delegated OIDC clients available! Check your cas.properties configuration.");
                 }
                 return new ArrayList<>(baseClients);
+            }
+
+            @Override
+            public List<Client> findAllClients(Service service, WebContext context) {
+                return findAllClients();
             }
     
             @Override

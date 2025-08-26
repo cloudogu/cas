@@ -44,6 +44,14 @@ import org.springframework.web.servlet.View;
 @Slf4j
 public class CasCustomTemplateManagerConfiguration {
 
+
+    private static String proxyUrlFrom(Object v) {
+        if (v instanceof String s) return s;
+        if (v instanceof List<?> l && !l.isEmpty()) return String.valueOf(l.get(0));
+        if (v instanceof String[] arr && arr.length > 0) return arr[0];
+        return null;
+    }
+
     @Bean(name = "cas3ServiceSuccessView")
     @RefreshScope
     public View cas3ServiceSuccessView(
@@ -69,22 +77,15 @@ public class CasCustomTemplateManagerConfiguration {
                         LOGGER.info("Assertion found: {}", assertion.getClass().getSimpleName());
                         LOGGER.info("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
 
-                        List<String> proxies = new ArrayList<>();
-                        for (val auth : assertion.getChainedAuthentications().stream().skip(1).toList()) {
-                            LOGGER.info("Checking proxy authentication: {}", auth);
+                        List<String> proxies = assertion.getChainedAuthentications().stream()
+                            .skip(1)
+                            .map(a -> proxyUrlFrom(a.getAttributes().get("pgtUrl")))
+                            .filter(Objects::nonNull)
+                            .filter(u -> u.startsWith("http://") || u.startsWith("https://"))
+                            .toList();
 
-                            Object attr = auth.getAttributes().get("pgtUrl");
-                            if (attr instanceof String s) {
-                                LOGGER.info("Found proxyCallbackUrl (String): {}", s);
-                                proxies.add(s);
-                            } else if (attr instanceof List<?> list && !list.isEmpty()) {
-                                LOGGER.info("Found proxyCallbackUrl (List): {}", list.get(0));
-                                proxies.add(String.valueOf(list.get(0)));
-                            } else {
-                                String proxyId = auth.getPrincipal().getId();
-                                LOGGER.info("No proxyCallbackUrl found, using principal instead: {}", proxyId);
-                                proxies.add(proxyId);
-                            }
+                        if (!proxies.isEmpty()) {
+                            m.put("proxies", proxies);
                         }
 
                         Object serviceObj = model.get("service");
@@ -218,7 +219,7 @@ public class CasCustomTemplateManagerConfiguration {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
             serviceTemplateResources = files != null ? Arrays.asList(files) : Collections.emptyList();
         } catch (Exception e) {
-            LOGGER.debug("Could not load template directory: {}", e.getMessage(), e);
+            LOGGER.info("Could not load template directory: {}", e.getMessage(), e);
             serviceTemplateResources = Collections.emptyList();
         }
 
@@ -235,7 +236,7 @@ public class CasCustomTemplateManagerConfiguration {
     ) {
         try {
             Path location = casProperties.getServiceRegistry().getJson().getLocation().getFile().toPath();
-            LOGGER.debug("Using CesDebugServiceRegistry from path: {}", location);
+            LOGGER.info("Using CesDebugServiceRegistry from path: {}", location);
             return new CesAbstractResourceBasedServiceRegistry(
                     location,
                     serializer,
@@ -253,7 +254,7 @@ public class CasCustomTemplateManagerConfiguration {
             final ServiceRegistry cesDebugServiceRegistry
     ) {
         return plan -> {
-            LOGGER.debug("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
+            LOGGER.info("Registering CesDebugServiceRegistry in ServiceRegistryExecutionPlan");
             plan.registerServiceRegistry(cesDebugServiceRegistry);
         };
     }

@@ -26,10 +26,10 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
             if (service == null || serviceToMatch == null) {
                 return false;
             }
-            LOGGER.debug("service {} matchservice {}", service.getId(), serviceToMatch.getId());
+            LOGGER.info("service {} matchservice {}", service.getId(), serviceToMatch.getId());
 
                 if (Objects.isNull(service) || Objects.isNull(serviceToMatch)) {
-                    LOGGER.warn("One of the services is null: [{}], [{}]", service, serviceToMatch);
+                    LOGGER.info("One of the services is null: [{}], [{}]", service, serviceToMatch);
                     return false;
                 }
 
@@ -39,7 +39,7 @@ public class CesServiceMatchingStrategy implements ServiceMatchingStrategy {
                 val normalizedOriginal = normalizeServiceUrl(original);
                 val normalizedCandidate = normalizeServiceUrl(candidate);
 
-                LOGGER.debug("Comparing normalized URLs: [{}] vs [{}]", normalizedOriginal, normalizedCandidate);
+                LOGGER.info("Comparing normalized URLs: [{}] vs [{}]", normalizedOriginal, normalizedCandidate);
                 return normalizedOriginal.equalsIgnoreCase(normalizedCandidate);
 
         } catch (final Exception e) {

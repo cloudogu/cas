@@ -5,13 +5,40 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Anpassungen
+- [#280] Upgrade CAS zu Version 7.2.6
 
+## [v7.1.6-6] - 2025-08-14
+### Behoben
+- Es wurde ein Problem behoben, bei dem das Dogu eine spezifische Konfiguration nicht anwenden konnte.
+
+## [v7.0.10-5] - 2025-08-14
+### Behoben
+- Es wurde ein Problem behoben, bei dem das Dogu eine spezifische Konfiguration nicht anwenden konnte.
+
+## [v7.1.6-5] - 2025-08-13
+### Behoben
+- Abgelaufene Sitzungen, die aktiv bleiben werden entfernt, indem ein intervallbasierter Registry Cleaner konfiguriert wurde
+    - Das Intervall kann mit dem Schlüssel `registry_cleaner/repeat-interval` in Sekunden konfiguriert werden (Standardwert: 2)
+
+## [v7.0.10-4] - 2025-08-13
+### Behoben
+- Abgelaufene Sitzungen, die aktiv bleiben werden entfernt, indem ein intervallbasierter Registry Cleaner konfiguriert wurde
+    - Das Intervall kann mit dem Schlüssel `registry_cleaner/repeat-interval` in Sekunden konfiguriert werden (Standardwert: 2)
+    
 ## [v7.1.6-4] - 2025-07-28
 ### Behoben
 - Die LogoutURL enthält die richtige FQDN, wenn diese über die globale Konfiguration geändert wird.
 
 ## [v7.1.6-3] - 2025-05-09
+### Behoben
 - Behebt das Problem bei der die CAS-3-SuccessView für Redmine unvollständig war und somit der Authtentifizierungsprozess fehl schlug.
+- Beenden der OIDC-Session beim Abmelden
+    - Wenn die Session beim Abmelden nicht beendet wurde, konnte das Benutzerprofil in der OIDC-Sitzung nicht aktualisiert werden, da eine "alte" Session mit dem "alten" Profil vorhanden war.
+    - Dies führte dazu, dass eventuelle Änderungen des Benutzers (z.B. Benutzername oder Gruppenzuordnungen) nicht aktualisiert wurden.
+
+## [v7.0.10-3] - 2025-05-09
+### Behoben
 - Beenden der OIDC-Session beim Abmelden
     - Wenn die Session beim Abmelden nicht beendet wurde, konnte das Benutzerprofil in der OIDC-Sitzung nicht aktualisiert werden, da eine "alte" Session mit dem "alten" Profil vorhanden war.
     - Dies führte dazu, dass eventuelle Änderungen des Benutzers (z.B. Benutzername oder Gruppenzuordnungen) nicht aktualisiert wurden.
@@ -106,12 +133,10 @@ Das Dogu bietet nun die CAS-Version 7.0.8 an. Die Release Notes von CAS finden S
 - Behebt Style-Probleme in der Anmeldemaske
 
 ## Release 7.0.5.1-2
-
 - Das Design des Dogus wurde umgebaut, sodass es unserem neuen Theme entspricht
   - Dieses neue design ist in Kombination mit dem Whitelabeling-Dogu und der neuen Version vom Nginx (>=v1.26.1-5) komplett whitelabelbar.
 
 ## Release 7.0.5.1-1
-
 - Das Dogu bietet nun die CAS-Version 7.0.5.1 an. Die Release Notes von CAS finden Sie [in den CAS-Github-Releases](https://github.com/apereo/cas/releases/tag/v7.0.5.1).
 - Das Dogu bietet eine Funktionalität zur Blockierung wiederholt falscher Anmeldungen über einen definierten Zeitraum (throttling). 
 - In der Vergangenheit insbes. mit der Einführung von CAS 7.x führte hier eine fehlerhafte Standardkonfiguration im Zusammenhang mit Dogu-internen Nutzern zu Sperrungen des gesamten Cloudogu EcoSystems. Dieser Fehler ist in dieser Version behoben worden. Hierbei wurden einige Dogu-Konfigurationsschlüssel zugunsten neuer Konfigurationsschlüssel eingeführt:

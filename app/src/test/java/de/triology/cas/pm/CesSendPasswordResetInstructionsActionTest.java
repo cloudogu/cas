@@ -19,10 +19,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.apereo.cas.services.ServicesManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,8 +38,8 @@ public class CesSendPasswordResetInstructionsActionTest {
      * Since one method uses a static method that cannot be mocked with Mockito, this method is overwritten.
      */
     class CesSendPasswordResetInstructionsActionExtensionForUnitTest extends CesSendPasswordResetInstructionsAction {
-        public CesSendPasswordResetInstructionsActionExtensionForUnitTest(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver, PasswordResetUrlBuilder passwordResetUrlBuilder, MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector, AuthenticationSystemSupport authenticationSystemSupport, ApplicationContext applicationContext) {
-            super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+        public CesSendPasswordResetInstructionsActionExtensionForUnitTest(CasConfigurationProperties casProperties, CommunicationsManager communicationsManager, PasswordManagementService passwordManagementService, TicketRegistry ticketRegistry, TicketFactory ticketFactory, PrincipalResolver principalResolver, PasswordResetUrlBuilder passwordResetUrlBuilder, MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector, AuthenticationSystemSupport authenticationSystemSupport, ServicesManager servicesManager) {
+            super(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, servicesManager);
         }
 
         @Override
@@ -82,14 +82,14 @@ public class CesSendPasswordResetInstructionsActionTest {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Mock
-    private ApplicationContext applicationContext;
+    private ServicesManager servicesManager;
 
 
     private CesSendPasswordResetInstructionsActionExtensionForUnitTest cesSendPasswordResetInstructionsAction;
 
     @Before
     public void setup() {
-        cesSendPasswordResetInstructionsAction = new CesSendPasswordResetInstructionsActionExtensionForUnitTest(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, applicationContext);
+        cesSendPasswordResetInstructionsAction = new CesSendPasswordResetInstructionsActionExtensionForUnitTest(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, servicesManager);
     }
 
     @Test

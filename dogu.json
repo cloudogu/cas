@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.1.6-4",
+  "Version": "7.2.6-0",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -113,12 +113,20 @@
     {
       "Name": "session_tgt/max_time_to_live_in_seconds",
       "Description": "Maximum session timeout - TGT will expire after defined timespan regardless the usage",
-      "Optional": true
+      "Optional": true,
+      "Default": "50400"
     },
     {
       "Name": "session_tgt/time_to_kill_in_seconds",
       "Description": "Idle session timeout -  TGT will expire sooner if no further requests keep the session alive",
-      "Optional": true
+      "Optional": true,
+      "Default": "18000"
+    },
+    {
+      "Name": "registry_cleaner/repeat-interval",
+      "Description": "Time in seconds between background runs which cleans the registry to remove expired tickets (must be a positive number; defaults to 2 seconds)",
+      "Optional": true,
+      "Default": "2"
     },
     {
       "Name": "ldap/host",

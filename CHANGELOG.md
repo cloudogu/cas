@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#279] Changed Jenkins-Build to be able to start the integration tests more reliably
+- [#280] Upgraded CAS to 7.2.6
+- [#280] Upgraded Sprint Boot to 3.4.4
+
+## [v7.1.6-6] - 2025-08-14
+### Fixed
+- [#276] Fix typo in cas configuration
+
+## [v7.0.10-5] - 2025-08-14
+### Fixed
+- [#276] Fix typo in cas configuration
+
+## [v7.1.6-5] - 2025-08-13
+### Fixed
+- [#273] Remove expired sessions that stay active by configuring an interval-based registry cleaner
+
+## [v7.0.10-4] - 2025-08-13
+### Fixed
+- [#273] Remove expired sessions that stay active by configuring an interval-based registry cleaner
 
 ## [v7.1.6-4] - 2025-07-28
 ### Fixed
