@@ -178,8 +178,8 @@ dependencies {
     
     implementation 'org.apache.logging.log4j:log4j-core'
     implementation 'org.apache.logging.log4j:log4j-api'
-    implementation 'org.apache.logging.log4j:log4j-web'
-
+    implementation("org.apache.logging.log4j:log4j-jakarta-web") // has to be jakarta not javax!!
+    
     testImplementation platform("org.junit:junit-bom:5.10.0")
     testImplementation "org.junit.jupiter:junit-jupiter"
     testImplementation "org.mockito:mockito-core:4.7.0"
@@ -202,6 +202,8 @@ dependencies {
 }
 
 configurations.all {
+    exclude group: "org.apache.tomcat.embed"
+
     resolutionStrategy {
     }
 }
