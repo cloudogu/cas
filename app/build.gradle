@@ -202,24 +202,22 @@ dependencies {
     implementation "org.pac4j:pac4j-config"
     implementation "org.apereo.cas:cas-server-core-multitenancy"
 
-    testImplementation("jakarta.servlet:jakarta.servlet-api:6.0.0") { transitive = false }
-    testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:6.0.0") { transitive = false }
+    // App: nur zum Kompilieren, NICHT packen
+    compileOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")
 
-    // Nur falls JSP/JSTL im Test wirklich ausgeführt wird:
+    // Tests: brauchen die API wirklich
+    testImplementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
+    testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")
+
+    // JSP/JSTL nur falls Tests JSP rendern:
     testRuntimeOnly("org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1")
+
 }
 
-configurations {
-  runtimeClasspath {
-    // diese Zeile ENTFERNEN:
-    // exclude group: "jakarta.servlet", module: "jakarta.servlet-api"
-    exclude group: "org.apache.tomcat.embed"
-    exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
-  }
-  providedRuntime {
-    // diese Zeile ENTFERNEN:
-    // exclude group: "jakarta.servlet", module: "jakarta.servlet-api"
-    exclude group: "org.apache.tomcat.embed"
-  }
+configurations.all {
+  // harte Bremse gegen das falsche Artefakt:
+  exclude group: 'org.apache.logging.log4j', module: 'log4j-web'
+  exclude group: "com.sun.xml.ws", module: "jaxws-rt"
+  exclude group: "org.apache.tomcat.embed"
 }
 

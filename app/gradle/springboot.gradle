@@ -87,6 +87,13 @@ bootBuildImage {
 }
 
 bootWar {
+    doFirst {
+        // alles, was über Dependencies reinkommt (nicht nur Overlay), filtern
+        classpath = classpath.filter { file ->
+        def n = file.name
+        return !(n ==~ /(jakarta\.servlet-api|jaxws-rt)-.*\.jar/)
+        }
+    }
     def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
     if (executable) {
         logger.info "Including launch script for executable WAR artifact"
@@ -117,7 +124,8 @@ bootWar {
                     "WEB-INF/lib/tomcat-embed-*.jar",   // any embedded stuff
                     "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/jakarta.servlet-api-*.jar",
-                    "WEB-INF/lib/tomcat-servlet-api-*.jar"
+                    "WEB-INF/lib/tomcat-servlet-api-*.jar",
+                    "WEB-INF/lib/jaxws-rt-*.jar"
             ]
         }
     }
