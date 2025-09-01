@@ -114,6 +114,8 @@ bootWar {
             excludes = [
                     "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/tomcat-*-10.1.3*.jar", // as we use an external tomcat server we can remove the embedded on
+                    "WEB-INF/lib/jakarta.servlet-api-*.jar",
+                    "WEB-INF/lib/tomcat-servlet-api-*.jar"
             ]
         }
     }
