@@ -1,29 +1,51 @@
 package de.triology.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.Collections;
 
 @Aspect
 @Configuration("CesServicesManagerNullGuardAspectConfiguration")
-@ComponentScan("de.triology.cas.services")
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 public class CesServicesManagerNullGuardAspectConfiguration {
 
-  @Around("execution(java.util.Collection org.apereo.cas.services.ServicesManager.load(..))")
-  public Object aroundLoad(final ProceedingJoinPoint pjp) throws Throwable {
-    Object out = pjp.proceed();
-    if (out == null) {
-      LOGGER.warn("ServicesManager {} returned null from load(); converting to empty list",
-          pjp.getTarget().getClass().getName());
+  /** Guard all ServicesManager.load(..) calls (any impl, any args) */
+  @Around("execution(java.util.Collection *..ServicesManager+.load(..))")
+  public Object guardServicesManagerLoad(final ProceedingJoinPoint pjp) throws Throwable {
+    try {
+      Object out = pjp.proceed();
+      if (out == null) {
+        LOGGER.warn("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
+        return Collections.emptyList();
+      }
+      return out;
+    } catch (NullPointerException npe) {
+      LOGGER.error("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
+          pjp.getTarget().getClass().getName(), npe.getMessage());
       return Collections.emptyList();
     }
-    return out;
+  }
+
+  /** Guard all ServiceRegistry.load(..) calls as well (common root cause) */
+  @Around("execution(java.util.Collection *..ServiceRegistry+.load(..))")
+  public Object guardServiceRegistryLoad(final ProceedingJoinPoint pjp) throws Throwable {
+    try {
+      Object out = pjp.proceed();
+      if (out == null) {
+        LOGGER.warn("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
+        return Collections.emptyList();
+      }
+      return out;
+    } catch (NullPointerException npe) {
+      LOGGER.error("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
+          pjp.getTarget().getClass().getName(), npe.getMessage());
+      return Collections.emptyList();
+    }
   }
 }
