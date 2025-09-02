@@ -261,7 +261,7 @@ ces.delegation.oidc.clients[0].client-id={{ .Config.Get "oidc/client_id"}}
 ces.delegation.oidc.clients[0].client-secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
 
 ### required configuration
-cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_basic
+ces.delegation.oidc.clients[0].client-authentication-method=client_secret_basic
 cas.authn.pac4j.oidc[0].generic.use-nonce=true
 
 ### Max clock skew
@@ -278,7 +278,7 @@ cas.authn.pac4j.oidc[0].generic.scope={{ .Config.Get "oidc/scopes"}}
 cas.authn.pac4j.oidc[0].generic.response-type=code
 
 ### preferred algorithm to use for the open id connect jwt tokens
-cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256
+ces.delegation.oidc.clients[0].preferred-jws-algorithm=RS256
 
 ### the attribute that should be used as the principal id
 cas.authn.pac4j.oidc[0].generic.principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
