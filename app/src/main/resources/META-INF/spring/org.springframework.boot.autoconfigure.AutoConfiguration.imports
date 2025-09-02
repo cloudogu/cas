@@ -6,3 +6,4 @@
   de.triology.cas.pm.PmConfiguration
   de.triology.cas.pm.LdapPasswordManagementConfiguration
   de.triology.cas.services.CasCustomTemplateManagerConfiguration
+  de.triology.cas.services.CesServicesManagerNullGuardAspectConfiguration

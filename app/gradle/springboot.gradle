@@ -88,7 +88,6 @@ bootBuildImage {
 
 bootWar {
     doFirst {
-        // alles, was über Dependencies reinkommt (nicht nur Overlay), filtern
         classpath = classpath.filter { file ->
         def n = file.name
         return !(n ==~ /(jakarta\.servlet-api|jaxws-rt)-.*\.jar/)
