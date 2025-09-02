@@ -206,7 +206,8 @@ dependencies {
     testImplementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
     testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")
     testRuntimeOnly("org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1")
-    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.aspectj:aspectjrt:1.9.22.1"
+    implementation "org.aspectj:aspectjweaver:1.9.22.1"
 
 }
 
