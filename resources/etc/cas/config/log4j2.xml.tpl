@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging,de.triology.cas.logging">
+<Configuration monitorInterval="5">
     <Properties>
         <Property name="baseDir">logs</Property>
         <Property name="ces.log.level">{{ .Config.GetOrDefault "logging/root" "warn"}}</Property>
@@ -17,13 +17,14 @@
                 <SizeBasedTriggeringPolicy size="10 MB"/>
                 <TimeBasedTriggeringPolicy />
             </Policies>
+            <DefaultRolloverStrategy max="7">
+                <Delete basePath="${baseDir}" maxDepth="1">
+                    <IfFileName glob="cas-*.log" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
-        <DefaultRolloverStrategy max="7">
-            <Delete basePath="${baseDir}" maxDepth="1">
-                <IfFileName glob="cas-*.log" />
-                <IfLastModified age="7d" />
-            </Delete>
-        </DefaultRolloverStrategy>
+
         <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
                      filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
@@ -51,33 +52,39 @@
             <AppenderRef ref="console" />
         </CasAppender>
 
-        <Rewrite name="defaultMappingPasswordRewrite" >
-            <DefaultMappingPasswordRewritePolicy />
-            <AppenderRef ref="casConsole" />
+        <Rewrite name="R1-LoggingHandler">
+            <AppenderRef ref="casConsole"/>
+            <LoggingHandlerPasswordRewritePolicy/>
         </Rewrite>
-        <Rewrite name="abstractMvcViewPasswordRewrite" >
-            <AbstractMvcViewPasswordRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="R2-DefaultMapping">
+            <AppenderRef ref="R1-LoggingHandler"/>
+            <DefaultMappingPasswordRewritePolicy/>
         </Rewrite>
-        <Rewrite name="stringConverterPasswordRewrite" >
-            <StringConverterPasswordRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="R3-AbstractMvcView">
+            <AppenderRef ref="R2-DefaultMapping"/>
+            <AbstractMvcViewPasswordRewritePolicy/>
         </Rewrite>
-        <Rewrite name="loggingHandlerPasswordRewritePolicy" >
-            <LoggingHandlerPasswordRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="R4-StringConverter">
+            <AppenderRef ref="R3-AbstractMvcView"/>
+            <StringConverterPasswordRewritePolicy/>
         </Rewrite>
-        <Rewrite name="misspelledPasswordRewritePolicy" >
-            <MisspelledPasswordRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="R5-MisspelledPassword">
+            <AppenderRef ref="R4-StringConverter"/>
+            <MisspelledPasswordRewritePolicy/>
         </Rewrite>
-        <Rewrite name="defaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy" >
-            <DefaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="R6-DelegatedIdPProducer">
+            <AppenderRef ref="R5-MisspelledPassword"/>
+            <DefaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy/>
         </Rewrite>
-        <Rewrite name="requestResponseBodyMethodProcessorRewritePolicy" >
-            <RequestResponseBodyMethodProcessorRewritePolicy />
-            <AppenderRef ref="casConsole" />
+
+        <Rewrite name="SanitizePasswords">
+            <AppenderRef ref="R6-DelegatedIdPProducer"/>
+            <RequestResponseBodyMethodProcessorRewritePolicy/>
         </Rewrite>
     </Appenders>
     <Loggers>
@@ -105,25 +112,25 @@
 
         <!-- Rewrite messages with passwords in plain text - The following classes would otherwise output passwords in plain text at log level debug.-->
         <AsyncLogger name="org.springframework.binding.mapping.impl.DefaultMapping" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="defaultMappingPasswordRewrite"/>
+            <AppenderRef ref="R2-DefaultMapping"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.webflow.mvc.view.AbstractMvcView" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="abstractMvcViewPasswordRewrite"/>
+            <AppenderRef ref="R3-AbstractMvcView"/>
         </AsyncLogger>
         <AsyncLogger name="org.apache.commons.beanutils.converters.StringConverter" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="stringConverterPasswordRewrite"/>
+            <AppenderRef ref="R4-StringConverter"/>
         </AsyncLogger>
         <AsyncLogger name="io.netty.handler.logging.LoggingHandler" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="loggingHandlerPasswordRewritePolicy"/>
+            <AppenderRef ref="R1-LoggingHandler"/>
         </AsyncLogger>
         <AsyncLogger name="org.apereo.cas.web" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="misspelledPasswordRewritePolicy"/>
+            <AppenderRef ref="R5-MisspelledPassword"/>
         </AsyncLogger>
         <AsyncLogger name="org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="defaultDelegatedClientIdentityProviderConfigurationProducerRewritePolicy"/>
+            <AppenderRef ref="R6-DelegatedIdPProducer"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="requestResponseBodyMethodProcessorRewritePolicy"/>
+            <AppenderRef ref="SanitizePasswords"/>
         </AsyncLogger>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->

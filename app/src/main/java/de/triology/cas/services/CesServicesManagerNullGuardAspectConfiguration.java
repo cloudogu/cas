@@ -14,20 +14,20 @@ import java.util.Collections;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Slf4j
 public class CesServicesManagerNullGuardAspectConfiguration {
-
+  
   /** Guard all ServicesManager.load(..) calls (any impl, any args) */
   @Around("execution(java.util.Collection *..ServicesManager+.load(..))")
   public Object guardServicesManagerLoad(final ProceedingJoinPoint pjp) throws Throwable {
     try {
       Object out = pjp.proceed();
       if (out == null) {
-        LOGGER.warn("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
+        LOGGER.debug("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
         return Collections.emptyList();
       }
       return out;
     } catch (NullPointerException npe) {
-      LOGGER.error("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
-          pjp.getTarget().getClass().getName(), npe.getMessage());
+        LOGGER.debug("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
+            pjp.getTarget().getClass().getName(), npe.getMessage());
       return Collections.emptyList();
     }
   }
@@ -38,13 +38,13 @@ public class CesServicesManagerNullGuardAspectConfiguration {
     try {
       Object out = pjp.proceed();
       if (out == null) {
-        LOGGER.warn("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
+        LOGGER.debug("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
         return Collections.emptyList();
       }
       return out;
     } catch (NullPointerException npe) {
-      LOGGER.error("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
-          pjp.getTarget().getClass().getName(), npe.getMessage());
+        LOGGER.debug("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
+            pjp.getTarget().getClass().getName(), npe.getMessage());
       return Collections.emptyList();
     }
   }
