@@ -67,21 +67,24 @@ parallel(
                                                      """
                             clientSecret = ecoSystem.vagrant.sshOut """
                                             cd /dogu/integrationTests/keycloak/
-                                            cat kc_out.env && \
+                                            cat kc_out.env | \
                                             grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
                                             """
+
+                            echo "clientSecret length: ${clientSecret.size()}"
+
                         }
 
                         stage('Generate encrypted secret') {
                             // assume clientSecret already set earlier (or set it here)
-                            def outputfromcontainer = new com.cloudogu.ces.cesbuildlib.Docker(this)
-                                .image('registry.cloudogu.com/official/base:3.15.11-4')
-                                .mountJenkinsUser()
-                                .inside('-e ENVIRONMENT=ci') {
-                                sh "doguctl config oidc/client_secret ${clientSecret}"
-                                sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
-                                // return the stdout of this command from the closure
-                                sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
+
+                            def img = docker.image('registry.cloudogu.com/official/base:3.15.11-4').mountJenkinsUser()
+                            img.pull()
+                            img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
+                                    sh "doguctl config oidc/client_secret ${clientSecret}"
+                                    sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
+                                    // return the stdout of this command from the closure
+                                    sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
                                 }
 
                             // use it outside the container
