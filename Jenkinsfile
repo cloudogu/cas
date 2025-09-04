@@ -75,19 +75,23 @@ parallel(
                         }
 
                         stage('Generate encrypted secret') {
-                            def img = docker.image('registry.cloudogu.com/official/base:3.15.11-4')
-                            img.pull()
-                            img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
-                                    sh "doguctl config oidc/client_secret ${clientSecret}"
-                                    sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
-                                    // return the stdout of this command from the closure
-                                    sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
-                                }
+                            withCredentials([usernamePassword(credentialsId: 'ces-mirror-harbor-release', usernameVariable: 'EASY_USER', passwordVariable: 'EASY_API_TOKEN')]) {
+                                def pw = "Dropdead80!"
+                                sh "${pw} | docker login registry.cloudogu.com -u dschwarzer --password-stdin"
+                                def img = docker.image('registry.cloudogu.com/official/base:3.22.0-4')
+                                img.pull()
+                                img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
+                                        sh "doguctl config oidc/client_secret ${clientSecret}"
+                                        sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
+                                        // return the stdout of this command from the closure
+                                        sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
+                                    }
 
-                            // use it outside the container
-                            clientSecret = outputfromcontainer
-                            echo "clientSecret length: ${clientSecret.size()}"
-                            echo "clientSecret: ${clientSecret}"
+                                // use it outside the container
+                                clientSecret = outputfromcontainer
+                                echo "clientSecret length: ${clientSecret.size()}"
+                                echo "clientSecret: ${clientSecret}"
+                            }
                         }
 
                         stage('Setup') {
