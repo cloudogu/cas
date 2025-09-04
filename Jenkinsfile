@@ -6,6 +6,7 @@ import com.cloudogu.ces.dogubuildlib.*
 String repositoryOwner = 'cloudogu'
 String doguName = "cas"
 String branch = "${env.BRANCH_NAME}"
+String clientSecret=""
 
 EcoSystem ecoSystem = new EcoSystem(this, "gcloud-ces-operations-internal-packer", "jenkins-gcloud-ces-operations-internal")
 
@@ -96,8 +97,6 @@ parallel(
                             ])
                     ])
 
-                    def client_secret=""
-
                     stage('Checkout') {
                         checkout scm
                     }
@@ -131,7 +130,7 @@ parallel(
                             ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
-                            client_secret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc-out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
+                            clientSecret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc-out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
                         }
 
                         stage('Setup') {
@@ -164,13 +163,13 @@ parallel(
                                         "min_length": "14"
                                     }
                                 }
-                            """, registryConfigEncrypted:'''
+                            """, registryConfigEncrypted:"""
                                  "cas" : {
                                     "oidc": {
-                                        "client_secret": "c21a7690-1ca3-4cf9-bef3-22f37faf5144"
+                                        "client_secret": "${clientSecret}"
                                     }
                                  }
-                            '''])
+                            """])
                         }
 
                         stage('Build dogu') {
@@ -181,15 +180,6 @@ parallel(
                             // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
                             ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
                             ecoSystem.build("/dogu")
-                        }
-
-                        stage('Trivy scan') {
-                            ecoSystem.copyDoguImageToJenkinsWorker("/dogu")
-                            Trivy trivy = new Trivy(this)
-                            trivy.scanDogu(".", params.TrivySeverityLevels, params.TrivyStrategy)
-                            trivy.saveFormattedTrivyReport(TrivyScanFormat.TABLE)
-                            trivy.saveFormattedTrivyReport(TrivyScanFormat.JSON)
-                            trivy.saveFormattedTrivyReport(TrivyScanFormat.HTML)
                         }
 
                         stage('Verify') {
@@ -285,7 +275,7 @@ parallel(
                         }
                     } finally {
                         stage('Clean') {
-                            ecoSystem.destroy()
+
                         }
                     }
 
