@@ -4,7 +4,7 @@ set -euo pipefail
 # --- config (can be overridden via env or flags) ---
 NAME="${NAME:-kc}"
 HOST="${HOST:-192.168.56.2}"     # host/IP you will curl from
-PORT="${PORT:-8080}"             # host port to expose KC on
+PORT="${PORT:-9000}"             # host port to expose KC on
 IMAGE="${IMAGE:-quay.io/keycloak/keycloak:24.0}"
 ADMIN_USER="${ADMIN_USER:-admin}"
 ADMIN_PASS="${ADMIN_PASS:-admin}"
@@ -33,7 +33,7 @@ fi
 
 log "Starting ${IMAGE} as ${NAME} on :${PORT} (relative path: ${REL_PATH})…"
 sudo docker run -d --name "${NAME}" \
-  -p "${PORT}:8080" \
+  -p "${PORT}:9000" \
   -e KEYCLOAK_ADMIN="${ADMIN_USER}" \
   -e KEYCLOAK_ADMIN_PASSWORD="${ADMIN_PASS}" \
   -e KC_HEALTH_ENABLED=true \
