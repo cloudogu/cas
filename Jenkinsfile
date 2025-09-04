@@ -53,7 +53,7 @@ parallel(
                             if (gitflow.isPreReleaseBranch()) {
                                 sh "make prerelease_namespace"
                             }
-                            ecoSystem.provision("/dogu", "n2-standard-8", 15)
+                            ecoSystem.provision("/dogu", "n2-standard-8", 20)
                         }
 
                         stage('Start OIDC-Provider') {
