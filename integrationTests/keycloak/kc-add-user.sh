@@ -6,7 +6,7 @@ REALM="${REALM:-Test}"
 GROUP="${GROUP:-testers}"
 USERNAME="${USERNAME:-tester}"
 EMAIL="test@example.com"
-PASSWORD="test"
+PASSWORD="testsi"
 FIRST="Test"
 LAST="User"
 
@@ -56,7 +56,7 @@ set -euo pipefail
 
 # Keycloak 24 (Quarkus) usually runs at /auth; adjust if needed.
 REL="/auth"
-BASE="http://localhost:8080${REL}"
+BASE="http://localhost:9000${REL}"
 
 # Find kcadm for legacy/quarkus layouts
 if [ -x /opt/jboss/keycloak/bin/kcadm.sh ]; then

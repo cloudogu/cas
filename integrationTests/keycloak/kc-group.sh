@@ -45,7 +45,7 @@ sudo docker exec -i \
   "$NAME" bash -s <<'INSIDE'
 set -euo pipefail
 
-BASE="http://localhost:8080/auth"
+BASE="http://localhost:9000/auth"
 
 # kcadm path
 if [ -x /opt/keycloak/bin/kcadm.sh ]; then

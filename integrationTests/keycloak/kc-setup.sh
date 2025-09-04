@@ -4,7 +4,7 @@ set -euo pipefail
 # ------------ config (env or flags) ------------
 NAME="${NAME:-kc}"                 # container name
 KC_HOST="${KC_HOST:-192.168.56.2}" # host/IP used for discovery URL output
-KC_PORT="${KC_PORT:-8080}"         # host port of Keycloak
+KC_PORT="${KC_PORT:-9000}"         # host port of Keycloak
 REALM="${REALM:-Test}"
 CLIENT_ID="${CLIENT_ID:-cas}"
 CAS_URL="${CAS_URL:-http://192.168.56.2/cas}"   # your CAS base URL
