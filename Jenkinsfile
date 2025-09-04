@@ -207,6 +207,7 @@ parallel(
                         }
                     } finally {
                         stage('Clean') {
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-down.sh"
                         }
                     }
 

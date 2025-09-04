@@ -114,7 +114,7 @@ fi
 DEFAULTS_JSON="$("$KCADM" get "clients/${CLIENT_ID}/default-client-scopes" -r "$REALM" 2>/dev/null | to_one_line)"
 if ! printf '%s' "$DEFAULTS_JSON" | grep -q "\"id\":\"${SCOPE_ID}\""; then
   echo "[inside] Attaching scope '${SCOPE_NAME}' to client '${CLIENT_ID_STR}' as default…"
-  "$KCADM" create "clients/${CLIENT_ID}/default-client-scopes/${SCOPE_ID}" -r "$REALM" >/dev/null
+  "$KCADM" update "clients/${CLIENT_ID}/optional-client-scopes/${SCOPE_ID}" -r "$REALM" -n
 else
   echo "[inside] Scope '${SCOPE_NAME}' already attached as default."
 fi
