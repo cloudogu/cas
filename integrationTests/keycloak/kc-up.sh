@@ -3,7 +3,7 @@ set -euo pipefail
 
 # --- config (can be overridden via env or flags) ---
 NAME="${NAME:-kc}"
-HOST="${HOST:-192.168.56.2}"     # host/IP you will curl from
+HOST="${HOST:-localhost}"     # host/IP you will curl from
 PORT="${PORT:-9000}"             # host port to expose KC on
 IMAGE="${IMAGE:-quay.io/keycloak/keycloak:24.0}"
 ADMIN_USER="${ADMIN_USER:-admin}"
