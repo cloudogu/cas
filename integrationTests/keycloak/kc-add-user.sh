@@ -56,7 +56,7 @@ set -euo pipefail
 
 # Keycloak 24 (Quarkus) usually runs at /auth; adjust if needed.
 REL="/auth"
-BASE="http://localhost:9000${REL}"
+BASE="http://localhost:8080${REL}"
 
 # Find kcadm for legacy/quarkus layouts
 if [ -x /opt/jboss/keycloak/bin/kcadm.sh ]; then
@@ -150,11 +150,10 @@ fi
 echo "[inside] Done."
 INSIDE
 
-chmod +x "$TMP"
+chmod -R 777 "$TMP"
 sudo docker cp "$TMP" "$NAME":/tmp/kc-add-user.inside.sh
 rm -f "$TMP"
-
-sudo docker exec \
+sudo docker exec -i \
   -e REALM="$REALM" \
   -e GROUP="$GROUP" \
   -e USERNAME="$USERNAME" \

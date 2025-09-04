@@ -37,7 +37,7 @@ if ! sudo docker ps --format '{{.Names}}' | grep -qx "$NAME"; then
   exit 1
 fi
 
-sudo docker exec -i \
+sudo docker exec -iu 0 \
   -e REALM="$REALM" \
   -e CLIENT_ID_STR="$CLIENT_ID_STR" \
   -e SCOPE_NAME="$SCOPE_NAME" \
@@ -45,7 +45,7 @@ sudo docker exec -i \
   "$NAME" bash -s <<'INSIDE'
 set -euo pipefail
 
-BASE="http://localhost:9000/auth"
+BASE="http://localhost:8080/auth"
 
 # kcadm path
 if [ -x /opt/keycloak/bin/kcadm.sh ]; then

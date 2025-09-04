@@ -46,7 +46,7 @@ sudo docker run -d --name "${NAME}" \
 # wait until the discovery doc is reachable
 DISCOVERY_URL="http://${HOST}:${PORT}${REL_PATH}/realms/master/.well-known/openid-configuration"
 log "Waiting for Keycloak… (${DISCOVERY_URL})"
-for i in $(seq 1 60); do
+for i in $(seq 1 240); do
   if curl -fsS "${DISCOVERY_URL}" >/dev/null 2>&1; then
     log "Keycloak is up: http://${HOST}:${PORT}${REL_PATH}"
     exit 0
