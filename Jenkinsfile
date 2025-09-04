@@ -57,12 +57,39 @@ parallel(
                         }
 
                         stage('Start OIDC-Provider') {
-                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-down.sh"
-                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh -H localhost"
-                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
-                            ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
-                            ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
-                            clientSecret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc_out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
+                            ecoSystem.vagrant.sshOut """
+                                                       cd /dogu/integrationTests/keycloak/ && \
+                                                       ./kc-down.sh && \
+                                                       ./kc-up.sh -H localhost && \
+                                                       ./kc-setup.sh -H ${ecoSystem.externalIP} \
+                                                       ./kc-add-user.sh && \
+                                                       ./kc-group.sh && \
+                                                       cat /dogu/integrationTests/keycloak/kc_out.env && \
+                                                       grep CLIENT_SECRET= kc_out.env |\ 
+                                                       cut -d'=' -f2-
+                                                     """
+                            clientSecret = ecoSystem.vagrant.sshOut """
+                                            cd /dogu/integrationTests/keycloak/
+                                            cat kc_out.env && \
+                                            grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
+                                            """
+                        }
+
+                        stage('Generate encrypted secret') {
+                            // assume clientSecret already set earlier (or set it here)
+                            def outputfromcontainer = new com.cloudogu.ces.cesbuildlib.Docker(this)
+                                .image('registry.cloudogu.com/official/base:3.15.11-4')
+                                .mountJenkinsUser()
+                                .inside('-e ENVIRONMENT=ci') {
+                                sh "doguctl config oidc/client_secret ${clientSecret}"
+                                sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
+                                // return the stdout of this command from the closure
+                                sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
+                                }
+
+                            // use it outside the container
+                            clientSecret = outputfromcontainer
+                            echo "clientSecret length: ${clientSecret.size()}"
                         }
 
                         stage('Setup') {
