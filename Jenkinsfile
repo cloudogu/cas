@@ -62,7 +62,7 @@ parallel(
                             ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
-                            clientSecret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc-out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
+                            clientSecret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc_out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
                         }
 
                         stage('Setup') {
