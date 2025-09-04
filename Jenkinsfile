@@ -53,11 +53,12 @@ parallel(
                             if (gitflow.isPreReleaseBranch()) {
                                 sh "make prerelease_namespace"
                             }
-                            ecoSystem.provision("/dogu", "n1-standard-4", 15)
+                            ecoSystem.provision("/dogu", "n2-standard-8", 15)
                         }
 
                         stage('Start OIDC-Provider') {
-                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh -H ${ecoSystem.externalIP}"
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-down.sh"
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh"
                             ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
@@ -206,7 +207,6 @@ parallel(
                         }
                     } finally {
                         stage('Clean') {
-                           ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-down.sh'
                         }
                     }
 

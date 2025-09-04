@@ -7,8 +7,8 @@ KC_HOST="${KC_HOST:-192.168.56.2}" # host/IP used for discovery URL output
 KC_PORT="${KC_PORT:-9000}"         # host port of Keycloak
 REALM="${REALM:-Test}"
 CLIENT_ID="${CLIENT_ID:-cas}"
-CAS_URL="${CAS_URL:-http://192.168.56.2/cas}"   # your CAS base URL
-CAS_HTTPS_URL="${CAS_HTTPS_URL:-https://192.168.56.2/cas}"   # your CAS base URL
+CAS_URL="${CAS_URL:-http://${KC_HOST}/cas}"   # your CAS base URL
+CAS_HTTPS_URL="${CAS_HTTPS_URL:-https://${KC_HOST}/cas}"   # your CAS base URL
 REDIRECT="${REDIRECT:-${CAS_HTTPS_URL%/}/login*}"     # redirect pattern
 
 while getopts ":n:H:P:r:c:u:" opt; do
