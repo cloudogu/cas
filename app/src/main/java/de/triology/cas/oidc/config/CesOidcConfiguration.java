@@ -11,11 +11,13 @@ import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationCli
 import de.triology.cas.oidc.beans.delegation.CesDelegatedAuthenticationPreProcessor;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedClientUserProfileProvisioner;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
@@ -51,7 +53,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
@@ -81,7 +82,6 @@ public class CesOidcConfiguration {
 
     @Value("${ces.delegation.oidc.adminGroups:#{\"\"}}")
     private String adminGroupsConfigString;
-    
 
     /**
      * Binds all OIDC clients from cas.properties into a Java object.
@@ -171,7 +171,7 @@ public class CesOidcConfiguration {
                     LOGGER.warn("getClientAuthenticationMethod {}", clientProps.getClientAuthenticationMethod());
                     LOGGER.warn("getPreferredJwsAlgorithm {}", clientProps.getPreferredJwsAlgorithm());
 
-                    // config.setPkceMethod(method);
+                    config.setPkceMethod(CodeChallengeMethod.S256);
                     config.setPreferredJwsAlgorithmAsString(clientProps.getPreferredJwsAlgorithm().toUpperCase());
                     var client = new OidcClient(config);
                     client.setName(clientProps.getClientName());

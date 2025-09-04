@@ -96,6 +96,8 @@ parallel(
                             ])
                     ])
 
+                    def client_secret=""
+
                     stage('Checkout') {
                         checkout scm
                     }
@@ -125,11 +127,11 @@ parallel(
                         }
 
                         stage('Start OIDC-Provider') {
-                            // template realm file
-                            ecoSystem.vagrant.sshOut "sed 's/192.168.56.2/${ecoSystem.externalIP}/g' -i /dogu/integrationTests/keycloak-realm/realm-cloudogu.json"
-                            sh "echo \"Starting Keycloak as OIDC provider on ${ecoSystem.externalIP}:9000\""
-                            // start keycloak
-                            ecoSystem.vagrant.sshOut 'sudo docker run -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT=\'/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled\' -v  /dogu/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json quay.io/keycloak/keycloak:15.0.2'
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh -H ${ecoSystem.externalIP}"
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
+                            ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
+                            ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
+                            client_secret=ecoSystem.vagrant.sshOut "cat /dogu/integrationTests/keycloak/kc-out.env && grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-"
                         }
 
                         stage('Setup') {
@@ -144,11 +146,12 @@ parallel(
                                     },
                                     "oidc": {
                                         "enabled": "true",
-                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
-                                        "client_id": "casClient",
+                                        "discovery_uri": "http://${ecoSystem.externalIP}:8080/auth/realms/Cloudogu/.well-known/openid-configuration",
+                                        "client_id": "cas",
                                         "display_name": "MyProvider",
                                         "optional": "true",
                                         "scopes": "openid email profile groups",
+                                        "allowed_groups": "testers"
                                         "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
                                     }
                                 },

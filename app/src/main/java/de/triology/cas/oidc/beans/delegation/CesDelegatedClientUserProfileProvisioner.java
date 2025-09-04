@@ -4,6 +4,8 @@ import de.triology.cas.ldap.CesInternalLdapUser;
 import de.triology.cas.ldap.CesLdapException;
 import de.triology.cas.ldap.UserManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,6 +25,7 @@ import java.util.List;
  * The CesDelegatedClientUserProfileProvisioner also checks if the user belongs to the initial admin-users and assigns the admin-groups accordingly.
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CesDelegatedClientUserProfileProvisioner implements DelegatedClientUserProfileProvisioner {
 
     private final UserManager userManager;
@@ -35,17 +38,17 @@ public class CesDelegatedClientUserProfileProvisioner implements DelegatedClient
     public void execute(Principal principal, UserProfile profile, BaseClient client, Credential credential) throws Throwable {
         final CesInternalLdapUser fromProfile = userFromProfile(profile);
 
-        // 1) Try by uid (external users)
-        CesInternalLdapUser byUid = userManager.getUserByUid(fromProfile.getUid());
-        if (byUid != null) {
-            userManager.updateUser(mergeForUpdate(byUid.getUid(), fromProfile));
-            return;
-        }
-
-        // 2) Try by mail (any user; only fetch uid to avoid NPE on missing attributes)
+        // 1) Try by mail (any user; only fetch uid to avoid NPE on missing attributes)
         String existingUid = userManager.getUidByMail(fromProfile.getMail());
         if (existingUid != null) {
             userManager.updateUser(mergeForUpdate(existingUid, fromProfile)); // will set external=TRUE
+            return;
+        }
+
+        // 2) Try by uid (external users)
+        CesInternalLdapUser byUid = userManager.getUserByUid(fromProfile.getUid());
+        if (byUid != null) {
+            userManager.updateUser(mergeForUpdate(byUid.getUid(), fromProfile));
             return;
         }
 
@@ -66,30 +69,63 @@ public class CesDelegatedClientUserProfileProvisioner implements DelegatedClient
             PrincipalGroups.setGroupsInPrincipal(principal, principalGroups);
         }
     }
-
     private static CesInternalLdapUser userFromProfile(UserProfile profile) {
-        if (profile instanceof OidcProfile oidcProfile) {
-            return new CesInternalLdapUser(
-                    oidcProfile.getUsername(),
-                    oidcProfile.getFirstName(),
-                    oidcProfile.getFamilyName(),
-                    oidcProfile.getDisplayName(),
-                    oidcProfile.getEmail(),
-                    true
+        if (profile instanceof OidcProfile oidc) {
+            // Prefer a human-friendly stable handle
+            final String uid = firstNonBlank(
+                oidc.getUsername(),
+                (String) oidc.getAttribute("preferred_username"),
+                oidc.getEmail(),                 // if you allow emails as uid
+                oidc.getId()                     // LAST resort: sub
             );
-        }
 
+            final String given   = defaultString(oidc.getFirstName());
+            final String family  = defaultString(oidc.getFamilyName());
+            final String display = firstNonBlank(
+                oidc.getDisplayName(),
+                oidc.getUsername(),
+                oidc.getEmail(),
+                oidc.getId(),
+                uid
+            );
+            final String mail    = defaultString(oidc.getEmail());
+
+
+            LOGGER.warn(
+                "OIDC→LDAP mapping: candidates username='{}' preferred_username='{}' email='{}' sub='{}' -> chosen uid='{}'; given='{}' family='{}' display='{}' attributeKeys={}",
+                oidc.getUsername(),
+                (String) oidc.getAttribute("preferred_username"),
+                oidc.getEmail(),
+                oidc.getId(),
+                uid,
+                given,
+                family,
+                display,
+                oidc.getAttributes() != null ? oidc.getAttributes().keySet() : List.of()
+            );
+
+            return new CesInternalLdapUser(uid, given, family, display, mail, true);
+        }
         throw new RuntimeException("Unsupported profile type: " + profile.getClass().getSimpleName());
     }
-    
+
     private static CesInternalLdapUser mergeForUpdate(String existingUid, CesInternalLdapUser fromProfile) {
+        // Keep the existing uid; update everything else
         return new CesInternalLdapUser(
             existingUid,
             fromProfile.getGivenName(),
             fromProfile.getFamilyName(),
             fromProfile.getDisplayName(),
             fromProfile.getMail(),
-            true // mark as external when OIDC-provisioned
+            true
         );
     }
+
+    /* small string helpers */
+    private static String firstNonBlank(String... values) {
+        for (String v : values) if (v != null && !v.isBlank()) return v;
+        return null;
+    }
+    private static String defaultString(String v) { return v == null ? "" : v; }
+
 }
