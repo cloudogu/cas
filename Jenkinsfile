@@ -63,10 +63,7 @@ parallel(
                                                        ./kc-up.sh -H localhost && \
                                                        ./kc-setup.sh -H ${ecoSystem.externalIP} \
                                                        ./kc-add-user.sh && \
-                                                       ./kc-group.sh && \
-                                                       cat /dogu/integrationTests/keycloak/kc_out.env && \
-                                                       grep CLIENT_SECRET= kc_out.env |\ 
-                                                       cut -d'=' -f2-
+                                                       ./kc-group.sh
                                                      """
                             clientSecret = ecoSystem.vagrant.sshOut """
                                             cd /dogu/integrationTests/keycloak/
