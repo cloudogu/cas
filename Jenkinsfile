@@ -58,7 +58,7 @@ parallel(
 
                         stage('Start OIDC-Provider') {
                             ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-down.sh"
-                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh"
+                            ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-up.sh -H localhost"
                             ecoSystem.vagrant.sshOut "/dogu/integrationTests/keycloak/kc-setup.sh -H ${ecoSystem.externalIP}"
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-add-user.sh'
                             ecoSystem.vagrant.sshOut '/dogu/integrationTests/keycloak/kc-group.sh'
