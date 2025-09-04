@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
 # ------------ config (env or flags) ------------
 NAME="${NAME:-kc}"                 # container name
 KC_HOST="${KC_HOST:-192.168.56.2}" # host/IP used for discovery URL output
@@ -39,8 +37,6 @@ sudo docker exec -i \
   -e CLIENT_ID="${CLIENT_ID}" \
   -e REDIRECT="${REDIRECT}" \
   "${NAME}" bash -s <<'EOF'
-set -euo pipefail
-
 REL="/auth"
 BASE="http://localhost:8080${REL}"
 
@@ -149,7 +145,7 @@ cat /tmp/kc_out
 EOF
 
 # Save outputs locally, too
-sudo docker exec -i "${NAME}" bash -lc 'cat /tmp/kc_out' | tee kc_out.env >/dev/null
+sudo docker exec -i "${NAME}" bash -lc 'cat /tmp/kc_out' | sudo tee /dogu/integrationTests/keycloak/kc_out.env >/dev/null
 
 echo
 echo "==> Wrote kc_out.env:"
