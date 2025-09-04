@@ -72,13 +72,10 @@ parallel(
                                             """
 
                             echo "clientSecret length: ${clientSecret.size()}"
-
                         }
 
                         stage('Generate encrypted secret') {
-                            // assume clientSecret already set earlier (or set it here)
-
-                            def img = docker.image('registry.cloudogu.com/official/base:3.15.11-4').mountJenkinsUser()
+                            def img = docker.image('registry.cloudogu.com/official/base:3.15.11-4')
                             img.pull()
                             img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
                                     sh "doguctl config oidc/client_secret ${clientSecret}"
@@ -90,6 +87,7 @@ parallel(
                             // use it outside the container
                             clientSecret = outputfromcontainer
                             echo "clientSecret length: ${clientSecret.size()}"
+                            echo "clientSecret: ${clientSecret}"
                         }
 
                         stage('Setup') {
