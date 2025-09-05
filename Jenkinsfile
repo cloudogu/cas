@@ -108,7 +108,7 @@ parallel(
                                         "display_name": "MyProvider",
                                         "optional": "true",
                                         "scopes": "openid email profile groups",
-                                        "allowed_groups": "testers"
+                                        "allowed_groups": "testers",
                                         "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
                                     }
                                 },
