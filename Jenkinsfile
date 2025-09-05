@@ -75,27 +75,34 @@ parallel(
                         }
 
                         stage('Generate encrypted secret') {
-                            withCredentials([usernamePassword(credentialsId: 'ces-mirror-harbor-release', usernameVariable: 'EASY_USER', passwordVariable: 'EASY_API_TOKEN')]) {
-                                def pw = "Dropdead80!"
-                                sh "${pw} | docker login registry.cloudogu.com -u dschwarzer --password-stdin"
-                                def img = docker.image('registry.cloudogu.com/official/base:3.22.0-4')
-                                img.pull()
-                                img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
-                                        sh "doguctl config oidc/client_secret ${clientSecret}"
-                                        sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
-                                        // return the stdout of this command from the closure
-                                        sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
-                                    }
+                            ecoSystem.loginBackend('cesmarvin-setup')
+                            ecoSystem.vagrant.sshOut """
+                                                        sudo cesapp install official/registrator
+                                                        sudo cesapp start registrator
+                                                        sudo docker exec -it registrator bash
+                                                        doguctl config oidc/client_secret ${clientSecret}
+                                                        doguctl config -e oidc/client_secret \$(doguctl config oidc/client_secret)                                                        doguctl config oidc/client_secret'
+                                                    """
 
-                                // use it outside the container
-                                clientSecret = outputfromcontainer
-                                echo "clientSecret length: ${clientSecret.size()}"
-                                echo "clientSecret: ${clientSecret}"
+                            // withCredentials([usernamePassword(credentialsId: 'jenkins-image-puller', usernameVariable: 'HARBOR_ROBOT_USER', passwordVariable: 'HARBOR_ROBOT_TOKEN')]) {
+                            //     sh "docker login registry.cloudogu.com -u ${HARBOR_ROBOT_USER} -p ${HARBOR_ROBOT_TOKEN}"
+                            //     def img = docker.image('registry.cloudogu.com/official/base:3.22.0-4')
+                            //     img.pull()
+                            //     img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
+                            //             sh "doguctl config oidc/client_secret ${clientSecret}"
+                            //             sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
+                            //             // return the stdout of this command from the closure
+                            //             sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
+                            //         }
+
+                            //     // use it outside the container
+                            //     clientSecret = outputfromcontainer
+                            //     echo "clientSecret length: ${clientSecret.size()}"
+                            //     echo "clientSecret: ${clientSecret}"
                             }
                         }
 
                         stage('Setup') {
-                            ecoSystem.loginBackend('cesmarvin-setup')
                             ecoSystem.setup([registryConfig:"""
                                 "cas": {
                                     "forgot_password_text": "Contact your admin",
