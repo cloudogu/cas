@@ -61,7 +61,7 @@ parallel(
                                                        cd /dogu/integrationTests/keycloak/ && \
                                                        ./kc-down.sh && \
                                                        ./kc-up.sh -H ${ecoSystem.externalIP} && \
-                                                       ./kc-setup.sh -H ${ecoSystem.externalIP} \
+                                                       ./kc-setup.sh -H ${ecoSystem.externalIP} && \
                                                        ./kc-add-user.sh && \
                                                        ./kc-group.sh
                                                      """

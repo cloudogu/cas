@@ -7,7 +7,7 @@ REALM="${REALM:-Test}"
 CLIENT_ID="${CLIENT_ID:-cas}"
 CAS_URL="${CAS_URL:-http://${KC_HOST}/cas}"   # your CAS base URL
 CAS_HTTPS_URL="${CAS_HTTPS_URL:-https://${KC_HOST}/cas}"   # your CAS base URL
-REDIRECT="${REDIRECT:-${CAS_HTTPS_URL%/}/login*}"     # redirect pattern
+REDIRECT="${REDIRECT:-${CAS_HTTPS_URL%/}*}"     # redirect pattern
 
 while getopts ":n:H:P:r:c:u:" opt; do
   case "$opt" in
@@ -16,7 +16,7 @@ while getopts ":n:H:P:r:c:u:" opt; do
     P) KC_PORT="$OPTARG" ;;
     r) REALM="$OPTARG" ;;
     c) CLIENT_ID="$OPTARG" ;;
-    u) CAS_URL="$OPTARG"; REDIRECT="${CAS_URL%/}/login*" ;;
+    u) CAS_URL="$OPTARG"; REDIRECT="${CAS_HTTPS_URL%/}/login*" ;;
     *) ;;
   esac
 done
