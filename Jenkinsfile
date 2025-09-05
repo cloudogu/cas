@@ -79,11 +79,12 @@ parallel(
                             ecoSystem.vagrant.sshOut """
                                                         sudo cesapp install official/registrator
                                                         sudo cesapp start registrator
-                                                        sudo docker exec -it registrator bash
-                                                        doguctl config oidc/client_secret ${clientSecret}
-                                                        doguctl config -e oidc/client_secret \$(doguctl config oidc/client_secret)                                                        doguctl config oidc/client_secret'
                                                     """
-
+                            clientSecret = ecoSystem.vagrant.sshOut(
+                                """
+                                    sudo docker exec registrator doguctl config -e oidc/client_secret '${clientSecret}'
+                                    sudo docker exec registrator doguctl config oidc/client_secret
+                                """).trim().split("\n")[-1]   // grab last line
                             // withCredentials([usernamePassword(credentialsId: 'jenkins-image-puller', usernameVariable: 'HARBOR_ROBOT_USER', passwordVariable: 'HARBOR_ROBOT_TOKEN')]) {
                             //     sh "docker login registry.cloudogu.com -u ${HARBOR_ROBOT_USER} -p ${HARBOR_ROBOT_TOKEN}"
                             //     def img = docker.image('registry.cloudogu.com/official/base:3.22.0-4')
