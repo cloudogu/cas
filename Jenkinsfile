@@ -99,7 +99,7 @@ parallel(
                             //     clientSecret = outputfromcontainer
                             //     echo "clientSecret length: ${clientSecret.size()}"
                             //     echo "clientSecret: ${clientSecret}"
-                            }
+                            // }
                         }
 
                         stage('Setup') {
