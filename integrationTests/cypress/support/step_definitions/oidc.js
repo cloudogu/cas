@@ -6,3 +6,8 @@ const env = require('@cloudogu/dogu-integration-test-library/lib/environment_var
 Then("a button for delegated OIDC authentication is shown", function () {
     cy.get('[data-testid=login-provider-oidc]')
 });
+
+// Given("the user is currently not logged in the CES", function () {
+//     cy.visit("/cas/logout")
+// });
+// https://34.89.172.118/cas/clientredirect?client_name=MyProvider

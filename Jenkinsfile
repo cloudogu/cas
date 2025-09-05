@@ -17,7 +17,6 @@ GitFlow gitflow = new GitFlow(this, git)
 GitHub github = new GitHub(this, git)
 Changelog changelog = new Changelog(this)
 String productionReleaseBranch = "master"
-String developmentBranch = "develop"
 currentBranch = "${env.BRANCH_NAME}"
 String defaultEmailRecipients = env.EMAIL_RECIPIENTS
 
@@ -61,7 +60,7 @@ parallel(
                             ecoSystem.vagrant.sshOut """
                                                        cd /dogu/integrationTests/keycloak/ && \
                                                        ./kc-down.sh && \
-                                                       ./kc-up.sh -H localhost && \
+                                                       ./kc-up.sh -H ${ecoSystem.externalIP} && \
                                                        ./kc-setup.sh -H ${ecoSystem.externalIP} \
                                                        ./kc-add-user.sh && \
                                                        ./kc-group.sh
@@ -105,11 +104,11 @@ parallel(
                                         "enabled": "true",
                                         "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
                                         "client_id": "cas",
-                                        "display_name": "MyProvider",
+                                        "display_name": "cas",
                                         "optional": "true",
                                         "scopes": "openid email profile groups",
                                         "allowed_groups": "testers",
-                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
                                     }
                                 },
                                 "_global": {

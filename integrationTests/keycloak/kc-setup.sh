@@ -67,6 +67,11 @@ else
   echo "[inside] Realm ${REALM} exists."
 fi
 
+# disable HTTPS requirement for this realm
+echo "[inside] Disabling ssl...…"
+"${KCADM}" update "realms/${REALM}" -s sslRequired=NONE
+"${KCADM}" update "realms/master" -s sslRequired=NONE
+
 # Client (idempotent)
 if ! "${KCADM}" get clients -r "${REALM}" -q clientId="${CLIENT_ID}" --fields id | grep -q '"id"'; then
   echo "[inside] Creating client ${CLIENT_ID}…"
@@ -82,7 +87,7 @@ if ! "${KCADM}" get clients -r "${REALM}" -q clientId="${CLIENT_ID}" --fields id
     -s 'webOrigins=["*"]' \
     -s "redirectUris=[\"${REDIRECT}\"]" \
     -s 'attributes."pkce.code.challenge.method"="S256"' \
-    -s 'attributes."token.endpoint.auth.method"="client_secret_post"'
+    -s 'attributes."token.endpoint.auth.method"="client_secret_basic"'
 else
   echo "[inside] Client ${CLIENT_ID} exists."
 fi

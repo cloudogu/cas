@@ -32,7 +32,7 @@ if sudo docker ps -a --format '{{.Names}}' | grep -q "^${NAME}\$"; then
 fi
 
 log "Starting ${IMAGE} as ${NAME} on :${PORT} (relative path: ${REL_PATH})…"
-sudo docker run -d --name "${NAME}" \
+sudo docker run --network cesnet1 -d --name "${NAME}" \
   -p "${PORT}:8080" \
   -e KEYCLOAK_ADMIN="${ADMIN_USER}" \
   -e KEYCLOAK_ADMIN_PASSWORD="${ADMIN_PASS}" \
