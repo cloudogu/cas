@@ -16,10 +16,16 @@ while getopts ":n:H:P:r:c:u:" opt; do
     P) KC_PORT="$OPTARG" ;;
     r) REALM="$OPTARG" ;;
     c) CLIENT_ID="$OPTARG" ;;
-    u) CAS_URL="$OPTARG"; REDIRECT="${CAS_HTTPS_URL%/}/login*" ;;
+    u) CAS_URL="$OPTARG" ;;
     *) ;;
   esac
 done
+
+: "${KC_HOST:=192.168.56.2}"
+: "${KC_PORT:=9000}"
+: "${CAS_URL:=http://${KC_HOST}/cas}"
+: "${CAS_HTTPS_URL:=https://${KC_HOST}/cas}"
+: "${REDIRECT:=${CAS_HTTPS_URL%/}/login*}"
 
 log() { printf '[kc-setup] %s\n' "$*" >&2; }
 
