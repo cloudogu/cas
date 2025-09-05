@@ -44,11 +44,20 @@ sudo docker run --network cesnet1 -d --name "${NAME}" \
     --http-enabled=true >/dev/null
 
 # wait until the discovery doc is reachable
-DISCOVERY_URL="http://${HOST}:${PORT}${REL_PATH}/realms/master/.well-known/openid-configuration"
+DISCOVERY_URL="http://localhost:${PORT}${REL_PATH}/realms/master/.well-known/openid-configuration"
 log "Waiting for Keycloak… (${DISCOVERY_URL})"
 for i in $(seq 1 480); do
   if curl -fsS "${DISCOVERY_URL}" >/dev/null 2>&1; then
     log "Keycloak is up: http://${HOST}:${PORT}${REL_PATH}"
+
+    REL="/auth"
+    BASE="http://localhost:8080${REL}"
+    sudo docker exec "${NAME}" /opt/keycloak/bin/kcadm.sh config credentials --server "${BASE}" --realm master --user admin --password admin
+
+    # Wait until KC is up, then disable SSL requirement
+    sudo docker exec "${NAME}" /opt/keycloak/bin/kcadm.sh update realms/master \
+    -s sslRequired=NONE
+
     exit 0
   fi
   sleep 1
