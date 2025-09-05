@@ -57,6 +57,7 @@ parallel(
                         }
 
                         stage('Start OIDC-Provider') {
+                            // launching and setting up keycloak, adding test user, group, scope mapping etc
                             ecoSystem.vagrant.sshOut """
                                                        cd /dogu/integrationTests/keycloak/ && \
                                                        ./kc-down.sh && \
@@ -65,6 +66,7 @@ parallel(
                                                        ./kc-add-user.sh && \
                                                        ./kc-group.sh
                                                      """
+                            // retrieve secret from setup
                             clientSecret = ecoSystem.vagrant.sshOut """
                                             cd /dogu/integrationTests/keycloak/
                                             cat kc_out.env | \
@@ -74,34 +76,20 @@ parallel(
                             echo "clientSecret length: ${clientSecret.size()}"
                         }
 
-                        stage('Generate encrypted secret') {
-                            ecoSystem.loginBackend('cesmarvin-setup')
-                            ecoSystem.vagrant.sshOut """
-                                                        sudo cesapp install official/registrator
-                                                        sudo cesapp start registrator
-                                                    """
-                            clientSecret = ecoSystem.vagrant.sshOut(
-                                """
-                                    sudo docker exec registrator doguctl config -e oidc/client_secret '${clientSecret}'
-                                    sudo docker exec registrator doguctl config oidc/client_secret
-                                """).trim().split("\n")[-1]   // grab last line
-                            // withCredentials([usernamePassword(credentialsId: 'jenkins-image-puller', usernameVariable: 'HARBOR_ROBOT_USER', passwordVariable: 'HARBOR_ROBOT_TOKEN')]) {
-                            //     sh "docker login registry.cloudogu.com -u ${HARBOR_ROBOT_USER} -p ${HARBOR_ROBOT_TOKEN}"
-                            //     def img = docker.image('registry.cloudogu.com/official/base:3.22.0-4')
-                            //     img.pull()
-                            //     img.withRun('-v $PWD:/ws -w /ws', 'tail -f /dev/null') {
-                            //             sh "doguctl config oidc/client_secret ${clientSecret}"
-                            //             sh 'doguctl config -e oidc/client_secret $(doguctl config oidc/client_secret)'
-                            //             // return the stdout of this command from the closure
-                            //             sh(returnStdout: true, script: 'doguctl config oidc/client_secret').trim()
-                            //         }
-
-                            //     // use it outside the container
-                            //     clientSecret = outputfromcontainer
-                            //     echo "clientSecret length: ${clientSecret.size()}"
-                            //     echo "clientSecret: ${clientSecret}"
-                            // }
-                        }
+                        // stage('Generate encrypted secret') {
+                        //     ecoSystem.loginBackend('cesmarvin-setup')
+                        //     // install dogu to be able to use doguctl with registered etcd endpoint
+                        //     ecoSystem.vagrant.sshOut """
+                        //                                 sudo cesapp install official/registrator
+                        //                                 sudo cesapp start registrator
+                        //                             """
+                        //     // encrypt and retrieve secret to pass it on setup for cas
+                        //     clientSecret = ecoSystem.vagrant.sshOut(
+                        //         """
+                        //             sudo docker exec registrator doguctl config -e oidc/client_secret '${clientSecret}'
+                        //             sudo docker exec registrator doguctl config oidc/client_secret
+                        //         """).trim().split("\n")[-1]   // grab last line
+                        // }
 
                         stage('Setup') {
                             ecoSystem.setup([registryConfig:"""
@@ -114,7 +102,7 @@ parallel(
                                     },
                                     "oidc": {
                                         "enabled": "true",
-                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
+                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
                                         "client_id": "cas",
                                         "display_name": "MyProvider",
                                         "optional": "true",
