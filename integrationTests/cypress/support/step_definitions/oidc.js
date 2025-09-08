@@ -1,4 +1,5 @@
 const {
+    When,
     Then
 } = require("@badeball/cypress-cucumber-preprocessor");
 const env = require('@cloudogu/dogu-integration-test-library/lib/environment_variables')
