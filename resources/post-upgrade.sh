@@ -4,7 +4,7 @@ set -o nounset
 set -o pipefail
 
 sourcingExitCode=0
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=SC1090,SC1091,SC2086,SC2028
 source "${STARTUP_DIR}"/util.sh || sourcingExitCode=$?
 if [[ ${sourcingExitCode} -ne 0 ]]; then
   echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
