@@ -31,6 +31,8 @@ pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
+    String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
+    com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
     dir('app') {
         gradlew "clean build"
         gradlew 'test'
