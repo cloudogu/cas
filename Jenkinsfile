@@ -22,6 +22,7 @@ def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     ],
     doBatsTests        : true,
     runIntegrationTests: true,
+    doSonarTests       : true,
     dependencies       : ['nginx', 'cas']
 ])
 
@@ -42,19 +43,6 @@ pipe.insertStageAfter('Gradle Build', 'Unit Test') {
     dir('app') {
         gradlew 'test'
         junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
-    }
-}
-
-pipe.overrideStage('Build') {
-    // Override the build stage to include image pull & login logic
-    withCredentials([usernamePassword(credentialsId: 'gitlab-registry-easyredmine-itz',
-                                      usernameVariable: 'EASY_USER',
-                                      passwordVariable: 'EASY_API_TOKEN')]) {
-        def image = "registry.git.easy.cz/clients/cloudogu-gmbh-partners-account:${EASY_VERSION}"
-        ecoSystem.vagrant.ssh "sudo docker login -u ${EASY_USER} -p ${EASY_API_TOKEN} https://registry.git.easy.cz"
-        ecoSystem.vagrant.ssh "sudo docker pull ${image}"
-        ecoSystem.build(DOGU_PATH)
-        ecoSystem.vagrant.ssh 'sudo rm /root/.docker/config.json'
     }
 }
 

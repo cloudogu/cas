@@ -7,6 +7,7 @@ set -e
 # This is a special test script that checks if the cas dogu logs unencrypted user passwords
 # It checks the internal cas logs and the external docker logs
 echo "Testing CAS logs for unencrypted passwords"
+# shellcheck disable=SC2062,SC2024
 
 CES_URL=$1
 EXECUTION_TOKEN=""
