@@ -4,7 +4,8 @@ set -o nounset
 set -o pipefail
 
 sourcingExitCode=0
-# shellcheck disable=SC1090,SC1091
+# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 source "${STARTUP_DIR}"/util.sh || sourcingExitCode=$?
 if [[ ${sourcingExitCode} -ne 0 ]]; then
   echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
@@ -76,6 +77,7 @@ migrateServiceAccountsToFoldersByType() {
   # Parse services that have registered a service-account and their secret hash from ETCD response.
   # Formatted as tab-separated-values these can be iterated over in bash.
   servicesFile="$(mktemp)"
+  # shellcheck disable=SC2086
   jq -r ".node // {} | .nodes // [] | .[] | select(.dir | not) | { service: .key | sub(\".*/${saType}/(?<name>[^/]*)$\";\"\(.name)\"), clientSecretHash: .value } | [.service, .clientSecretHash] | @tsv" < "${outFile}" > ${servicesFile}
   # Read all lines from the file into an array
   mapfile -t lines < "${servicesFile}"
@@ -205,6 +207,7 @@ migrateServicesFromETCD() {
       # Now replace the random secret in the generated JSON with your extracted secret
       if [ -n "$secret" ]; then
         # Assume the created file name format is <app>-<id>.json
+        # shellcheck disable=SC2086,SC2012
         json_output_file=$(ls -1 "$SERVICE_REGISTRY_PRODUCTION"/${app}-*.json | head -n 1)  # Get the most recently created file
 
         if [[ -f "$json_output_file" ]]; then
@@ -266,7 +269,7 @@ migrateLegacyServicesFromETCD() {
 
   # Delete temporary migration relevant files
   rm -r "${basePath}"
-
+  # shellcheck disable=SC2028
   echo "Legacy service account migration done.\n"
 }
 

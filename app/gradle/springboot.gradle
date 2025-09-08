@@ -87,6 +87,12 @@ bootBuildImage {
 }
 
 bootWar {
+    doFirst {
+        classpath = classpath.filter { file ->
+        def n = file.name
+        return !(n ==~ /(jakarta\.servlet-api|jaxws-rt)-.*\.jar/)
+        }
+    }
     def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
     if (executable) {
         logger.info "Including launch script for executable WAR artifact"
@@ -112,8 +118,13 @@ bootWar {
             from "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}@war"
             provided = false
             excludes = [
+                    // as we use an external tomcat server we can remove the old and embedded ones to prevent version mismatches
+                    "WEB-INF/lib/tomcat-*-10.1.3*.jar", // any old versions
+                    "WEB-INF/lib/tomcat-embed-*.jar",   // any embedded stuff
                     "WEB-INF/lib/servlet-api-6*.jar",
-                    "WEB-INF/lib/tomcat-*-10.1.31.jar", // as we use an external tomcat server we can remove the embedded on
+                    "WEB-INF/lib/jakarta.servlet-api-*.jar",
+                    "WEB-INF/lib/tomcat-servlet-api-*.jar",
+                    "WEB-INF/lib/jaxws-rt-*.jar"
             ]
         }
     }

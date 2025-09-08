@@ -106,7 +106,14 @@ public class UserManager {
      * @throws CesLdapException for errors while updating the user in LDAP
      */
     public void updateUser(CesInternalLdapUser user) throws CesLdapException {
+        final String dn = createDnForUser(user);
+
         try {
+            // 0) If we plan to set 'external', make sure the entry allows it.
+            if (user.isExternal()) {
+                ensureAuxObjectClass(dn, "cesperson"); 
+            }
+
             final ModifyOperation modify = operationFactory.modifyOperation();
             final ModifyRequest request = ModifyRequest.builder()
                     .dn(createDnForUser(user))
@@ -115,7 +122,8 @@ public class UserManager {
                             new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.SnAttribute, user.getFamilyName())),
                             new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.GivenNameAttribute, user.getGivenName())),
                             new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.DisplayNameAttribute, user.getDisplayName())),
-                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail()))
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.MailAttribute, user.getMail())),
+                            new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute(CesInternalLdapUser.ExternalAttribute, user.isExternal() ? LDAP_TRUE : LDAP_FALSE))
                     )
                     .build();
             final ModifyResponse response = modify.execute(request);
@@ -125,6 +133,31 @@ public class UserManager {
             }
         } catch (LdapException e) {
             throw new CesLdapException("error while updating user", e);
+        }
+    }
+
+
+    /** Ensures the entry has the given auxiliary objectClass (e.g., 'cesperson'). */
+    private void ensureAuxObjectClass(String dn, String auxObjectClass) throws CesLdapException {
+        try {
+            final ModifyOperation mod = operationFactory.modifyOperation();
+            final ModifyRequest addOc = ModifyRequest.builder()
+                .dn(dn)
+                .modifications(new AttributeModification(
+                    AttributeModification.Type.ADD,
+                    new LdapAttribute(ObjectClassAttributeName, auxObjectClass)))
+                .build();
+
+            final ModifyResponse ocResp = mod.execute(addOc);
+            if (!ocResp.isSuccess()) {
+                // If it already exists, many servers return ATTRIBUTE_OR_VALUE_EXISTS — treat as OK.
+                if (!"ATTRIBUTE_OR_VALUE_EXISTS".equalsIgnoreCase(
+                        String.valueOf(ocResp.getResultCode()))) {
+                    throw new CesLdapException(ocResp.getDiagnosticMessage());
+                }
+            }
+        } catch (LdapException e) {
+            throw new CesLdapException("failed to ensure objectClass " + auxObjectClass + " for " + dn, e);
         }
     }
 
@@ -178,5 +211,84 @@ public class UserManager {
 
     private static String uidFilter(String uid) {
         return String.format("(%s=%s)", CesInternalLdapUser.UidAttribute, uid);
+    }
+
+    public CesInternalLdapUser getUserByMail(String mail) throws CesLdapException {
+        // Search across ALL users (external + internal), because the unique
+        // mail constraint applies directory-wide. If you only want external
+        // users, call the overloaded method with externalOnly=true.
+        return getUserByMail(mail, false);
+    }
+
+    public CesInternalLdapUser getUserByMail(String mail, boolean externalOnly) throws CesLdapException {
+        final SearchResponse response;
+        try {
+            final SearchRequest request = createGetUserByMailRequest(mail, externalOnly);
+            response = operationFactory.searchOperation().execute(request);
+        } catch (final LdapException e) {
+            throw new CesLdapException("Failed executing LDAP query", e);
+        }
+
+        if (!response.isSuccess()) {
+            throw new CesLdapException(response.getDiagnosticMessage());
+        }
+        if (response.getEntries().size() > 1) {
+            throw new CesLdapException("did not expect more then one result for mail=" + mail);
+        }
+
+        final LdapEntry entry = response.getEntry();
+        return entry == null ? null : CesInternalLdapUser.UserFromEntry(entry);
+    }
+
+    private SearchRequest createGetUserByMailRequest(String mail, boolean externalOnly) {
+        final String mailFilter = String.format("(%s=%s)", CesInternalLdapUser.MailAttribute, mail);
+        final String filter = externalOnly
+            ? String.format("(&%s%s)", mailFilter, externalUsersFilter())
+            : mailFilter;
+
+        final SearchRequest request = new SearchRequest();
+        request.setBaseDn(this.userBaseDN);
+        request.setReturnAttributes(
+            CesInternalLdapUser.UidAttribute,
+            CesInternalLdapUser.CnAttribute,
+            CesInternalLdapUser.SnAttribute,
+            CesInternalLdapUser.GivenNameAttribute,
+            CesInternalLdapUser.DisplayNameAttribute,
+            CesInternalLdapUser.MailAttribute,
+            CesInternalLdapUser.ExternalAttribute,
+            CesInternalLdapUser.MemberOfAttribute
+        );
+        request.setFilter(filter);
+        request.setSearchScope(SearchScope.SUBTREE);
+        request.setSizeLimit(1);
+        return request;
+    }
+
+    public String getUidByMail(String mail) throws CesLdapException {
+        final SearchResponse response;
+        try {
+            final SearchRequest request = new SearchRequest();
+            request.setBaseDn(this.userBaseDN);
+            request.setFilter(String.format("(%s=%s)", CesInternalLdapUser.MailAttribute, mail));
+            request.setReturnAttributes(CesInternalLdapUser.UidAttribute); // only need uid
+            request.setSearchScope(SearchScope.SUBTREE);
+            request.setSizeLimit(2); // detect duplicates
+            response = operationFactory.searchOperation().execute(request);
+        } catch (LdapException e) {
+            throw new CesLdapException("Failed executing LDAP query", e);
+        }
+
+        if (!response.isSuccess()) {
+            throw new CesLdapException(response.getDiagnosticMessage());
+        }
+        if (response.getEntries().size() > 1) {
+            throw new CesLdapException("did not expect more then one result for mail=" + mail);
+        }
+
+        final LdapEntry entry = response.getEntry();
+        if (entry == null) return null;
+
+        final LdapAttribute uidAttr = entry.getAttribute(CesInternalLdapUser.UidAttribute);
+        return uidAttr != null ? uidAttr.getStringValue() : null;
     }
 }

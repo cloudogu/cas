@@ -232,9 +232,11 @@ class CesOidcConfigurationTests {
     
         var clientProps = new CesDelegatedOidcClientProperties();
         clientProps.setClientId("client-id");
+        clientProps.setClientName("test-client");        
         clientProps.setClientSecret("client-secret");
         clientProps.setDiscoveryUri("https://issuer/.well-known/openid-configuration");
-        clientProps.setClientName("test-client");
+        clientProps.setClientAuthenticationMethod("client_secret_basic");
+        clientProps.setPreferredJwsAlgorithm("RS256");
     
         var clientsProps = new CesDelegatedOidcClientsProperties();
         clientsProps.setClients(List.of(clientProps));
