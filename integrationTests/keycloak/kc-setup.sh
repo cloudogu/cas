@@ -5,9 +5,6 @@ KC_HOST="${KC_HOST:-192.168.56.2}" # host/IP used for discovery URL output
 KC_PORT="${KC_PORT:-9000}"         # host port of Keycloak
 REALM="${REALM:-Test}"
 CLIENT_ID="${CLIENT_ID:-cas}"
-CAS_URL="${CAS_URL:-http://${KC_HOST}/cas}"   # your CAS base URL
-CAS_HTTPS_URL="${CAS_HTTPS_URL:-https://${KC_HOST}/cas}"   # your CAS base URL
-REDIRECT="${REDIRECT:-${CAS_HTTPS_URL%/}*}"     # redirect pattern
 
 while getopts ":n:H:P:r:c:u:" opt; do
   case "$opt" in
@@ -16,16 +13,13 @@ while getopts ":n:H:P:r:c:u:" opt; do
     P) KC_PORT="$OPTARG" ;;
     r) REALM="$OPTARG" ;;
     c) CLIENT_ID="$OPTARG" ;;
-    u) CAS_URL="$OPTARG" ;;
     *) ;;
   esac
 done
 
-: "${KC_HOST:=192.168.56.2}"
-: "${KC_PORT:=9000}"
-: "${CAS_URL:=http://${KC_HOST}/cas}"
-: "${CAS_HTTPS_URL:=https://${KC_HOST}/cas}"
-: "${REDIRECT:=${CAS_HTTPS_URL%/}/login*}"
+CAS_URL="${CAS_URL:-http://${KC_HOST}/cas}"   # your CAS base URL
+CAS_HTTPS_URL="${CAS_HTTPS_URL:-https://${KC_HOST}/cas}"   # your CAS base URL
+REDIRECT="${CAS_HTTPS_URL}*"     # redirect pattern
 
 log() { printf '[kc-setup] %s\n' "$*" >&2; }
 
@@ -155,7 +149,7 @@ cat /tmp/kc_out
 EOF
 
 # Save outputs locally, too
-sudo docker exec -i "${NAME}" bash -lc 'cat /tmp/kc_out' | sudo tee /dogu/integrationTests/keycloak/kc_out.env >/dev/null
+sudo docker exec -i "${NAME}" bash -lc 'cat /tmp/kc_out' | sudo tee kc_out.env >/dev/null
 
 echo
 echo "==> Wrote kc_out.env:"
