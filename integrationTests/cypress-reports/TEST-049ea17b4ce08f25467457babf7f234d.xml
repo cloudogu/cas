@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.785" tests="3" failures="3">
+  <testsuite name="Root Suite" timestamp="2025-09-08T08:03:05" tests="0" file="cypress/e2e/password_change.feature" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Tests for the behaviour when a user has to change his password" timestamp="2025-09-08T08:03:05" tests="3" time="0.780" failures="3">
+    <testcase name="Tests for the behaviour when a user has to change his password a user who needs to change his password will see a CAS prompt" time="0.000" classname="a user who needs to change his password will see a CAS prompt">
+      <failure message="expected 301 to equal 201" type="AssertionError"><![CDATA[AssertionError: expected 301 to equal 201
+    at Context.eval (http://192.168.56.2/__cypress/tests?p=cypress/support/e2e.js:200:38)]]></failure>
+    </testcase>
+    <testcase name="Tests for the behaviour when a user has to change his password a user who needs to change his password logs in and changes his password" time="0.000" classname="a user who needs to change his password logs in and changes his password">
+      <failure message="expected 301 to equal 201" type="AssertionError"><![CDATA[AssertionError: expected 301 to equal 201
+    at Context.eval (http://192.168.56.2/__cypress/tests?p=cypress/support/e2e.js:200:38)]]></failure>
+    </testcase>
+    <testcase name="Tests for the behaviour when a user has to change his password a user cannot change his password if the password entered does not comply with the password policy" time="0.000" classname="a user cannot change his password if the password entered does not comply with the password policy">
+      <failure message="expected 301 to equal 201" type="AssertionError"><![CDATA[AssertionError: expected 301 to equal 201
+    at Context.eval (http://192.168.56.2/__cypress/tests?p=cypress/support/e2e.js:200:38)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

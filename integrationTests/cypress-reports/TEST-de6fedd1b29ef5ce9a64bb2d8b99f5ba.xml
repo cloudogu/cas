@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="2.908" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-09-08T08:03:08" tests="0" file="cypress/e2e/password_reset.feature" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Simple tests for the password reset function of the CAS" timestamp="2025-09-08T08:03:08" tests="2" time="2.903" failures="0">
+    <testcase name="Simple tests for the password reset function of the CAS a user has an email sent to him via CAS to reset his password" time="0.863" classname="a user has an email sent to him via CAS to reset his password">
+    </testcase>
+    <testcase name="Simple tests for the password reset function of the CAS an unknown user tries to reset his password" time="0.543" classname="an unknown user tries to reset his password">
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="2.086" tests="1" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-09-08T07:58:49" tests="0" file="cypress/e2e/oidc.feature" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Simple tests to check the OIDC provider authentication delegation" timestamp="2025-09-08T07:58:49" tests="1" time="2.082" failures="0">
+    <testcase name="Simple tests to check the OIDC provider authentication delegation the user visits the cas login mask that shows a button to login via oidc provider" time="0.562" classname="the user visits the cas login mask that shows a button to login via oidc provider">
+    </testcase>
+  </testsuite>
+</testsuites>
