@@ -19,11 +19,11 @@ Then("a button for delegated OIDC authentication is shown", function () {
 
 When("the user enters keycloak username", function () {
     cy.get('input[id=username]').type("tester")
-})
+});
 
 When("the user enters keycloak password", function () {
     cy.get('input[id=password]').type("test")
-})
+});
 
 Then("login to keycloak", function () {
     cy.get('[id=kc-login]').click()
