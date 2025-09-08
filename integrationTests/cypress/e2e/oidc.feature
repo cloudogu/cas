@@ -7,3 +7,4 @@ Feature: Simple tests to check the OIDC provider authentication delegation
     When the user enters keycloak username
     When the user enters keycloak password
     Then login to keycloak
+    Then CAS shows successful login
