@@ -55,114 +55,114 @@ parallel(
                             ecoSystem.provision("/dogu", "n2-standard-8", 21)
                         }
 
-                        // stage('Start OIDC-Provider') {
-                        //     // launching and setting up keycloak, adding test user, group, scope mapping etc
-                        //     ecoSystem.vagrant.sshOut """
-                        //                                cd /dogu/integrationTests/keycloak/ && \
-                        //                                ./kc-down.sh && \
-                        //                                ./kc-up.sh -H ${ecoSystem.externalIP} && \
-                        //                                ./kc-setup.sh -H ${ecoSystem.externalIP} && \
-                        //                                ./kc-add-user.sh && \
-                        //                                ./kc-group.sh
-                        //                              """
-                        //     // retrieve secret from setup
-                        //     clientSecret = ecoSystem.vagrant.sshOut """
-                        //                     cd /dogu/integrationTests/keycloak/
-                        //                     cat kc_out.env | \
-                        //                     grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
-                        //                     """
+                        stage('Start OIDC-Provider') {
+                            // launching and setting up keycloak, adding test user, group, scope mapping etc
+                            ecoSystem.vagrant.sshOut """
+                                                       cd /dogu/integrationTests/keycloak/ && \
+                                                       ./kc-down.sh && \
+                                                       ./kc-up.sh -H ${ecoSystem.externalIP} && \
+                                                       ./kc-setup.sh -H ${ecoSystem.externalIP} && \
+                                                       ./kc-add-user.sh && \
+                                                       ./kc-group.sh
+                                                     """
+                            // retrieve secret from setup
+                            clientSecret = ecoSystem.vagrant.sshOut """
+                                            cd /dogu/integrationTests/keycloak/
+                                            cat kc_out.env | \
+                                            grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
+                                            """
 
-                        //     echo "clientSecret length: ${clientSecret.size()}"
-                        // }
+                            echo "clientSecret length: ${clientSecret.size()}"
+                        }
 
-                        // // stage('Generate encrypted secret') {
-                        // //     ecoSystem.loginBackend('cesmarvin-setup')
-                        // //     // install dogu to be able to use doguctl with registered etcd endpoint
-                        // //     ecoSystem.vagrant.sshOut """
-                        // //                                 sudo cesapp install official/registrator
-                        // //                                 sudo cesapp start registrator
-                        // //                             """
-                        // //     // encrypt and retrieve secret to pass it on setup for cas
-                        // //     clientSecret = ecoSystem.vagrant.sshOut(
-                        // //         """
-                        // //             sudo docker exec registrator doguctl config -e oidc/client_secret '${clientSecret}'
-                        // //             sudo docker exec registrator doguctl config oidc/client_secret
-                        // //         """).trim().split("\n")[-1]   // grab last line
-                        // // }
-
-                        // stage('Setup') {
+                        // stage('Generate encrypted secret') {
                         //     ecoSystem.loginBackend('cesmarvin-setup')
-                        //     ecoSystem.setup([registryConfig:"""
-                        //         "cas": {
-                        //             "forgot_password_text": "Contact your admin",
-                        //             "legal_urls": {
-                        //                 "privacy_policy": "https://www.triology.de/",
-                        //                 "terms_of_service": "https://docs.cloudogu.com/",
-                        //                 "imprint": "https://cloudogu.com/"
-                        //             },
-                        //             "oidc": {
-                        //                 "enabled": "true",
-                        //                 "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
-                        //                 "client_id": "cas",
-                        //                 "display_name": "cas",
-                        //                 "optional": "true",
-                        //                 "scopes": "openid email profile groups",
-                        //                 "allowed_groups": "testers",
-                        //                 "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
-                        //             }
-                        //         },
-                        //         "_global": {
-                        //             "password-policy": {
-                        //                 "must_contain_capital_letter": "true",
-                        //                 "must_contain_lower_case_letter": "true",
-                        //                 "must_contain_digit": "true",
-                        //                 "must_contain_special_character": "true",
-                        //                 "min_length": "14"
-                        //             }
-                        //         }
-                        //     """, registryConfigEncrypted:"""
-                        //          "cas" : {
-                        //             "oidc": {
-                        //                 "client_secret": "${clientSecret}"
-                        //             }
-                        //          }
-                        //     """])
+                        //     // install dogu to be able to use doguctl with registered etcd endpoint
+                        //     ecoSystem.vagrant.sshOut """
+                        //                                 sudo cesapp install official/registrator
+                        //                                 sudo cesapp start registrator
+                        //                             """
+                        //     // encrypt and retrieve secret to pass it on setup for cas
+                        //     clientSecret = ecoSystem.vagrant.sshOut(
+                        //         """
+                        //             sudo docker exec registrator doguctl config -e oidc/client_secret '${clientSecret}'
+                        //             sudo docker exec registrator doguctl config oidc/client_secret
+                        //         """).trim().split("\n")[-1]   // grab last line
                         // }
 
-                        // stage('Build dogu') {
-                        //     // purge cas from official namespace to prevent conflicts while building prerelease_official/cas
-                        //     if (gitflow.isPreReleaseBranch()) {
-                        //         ecoSystem.purgeDogu("cas", "--keep-config --keep-volumes --keep-service-accounts --keep-logs")
-                        //     }
-                        //     // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
-                        //     ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
-                        //     ecoSystem.build("/dogu")
-                        // }
+                        stage('Setup') {
+                            ecoSystem.loginBackend('cesmarvin-setup')
+                            ecoSystem.setup([registryConfig:"""
+                                "cas": {
+                                    "forgot_password_text": "Contact your admin",
+                                    "legal_urls": {
+                                        "privacy_policy": "https://www.triology.de/",
+                                        "terms_of_service": "https://docs.cloudogu.com/",
+                                        "imprint": "https://cloudogu.com/"
+                                    },
+                                    "oidc": {
+                                        "enabled": "true",
+                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
+                                        "client_id": "cas",
+                                        "display_name": "cas",
+                                        "optional": "true",
+                                        "scopes": "openid email profile groups",
+                                        "allowed_groups": "testers",
+                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
+                                    }
+                                },
+                                "_global": {
+                                    "password-policy": {
+                                        "must_contain_capital_letter": "true",
+                                        "must_contain_lower_case_letter": "true",
+                                        "must_contain_digit": "true",
+                                        "must_contain_special_character": "true",
+                                        "min_length": "14"
+                                    }
+                                }
+                            """, registryConfigEncrypted:"""
+                                 "cas" : {
+                                    "oidc": {
+                                        "client_secret": "${clientSecret}"
+                                    }
+                                 }
+                            """])
+                        }
 
-                        // stage('Verify') {
-                        //     ecoSystem.verify("/dogu")
-                        // }
+                        stage('Build dogu') {
+                            // purge cas from official namespace to prevent conflicts while building prerelease_official/cas
+                            if (gitflow.isPreReleaseBranch()) {
+                                ecoSystem.purgeDogu("cas", "--keep-config --keep-volumes --keep-service-accounts --keep-logs")
+                            }
+                            // force post-upgrade from cas version 7.0.8-4 to migrate existing services from defaultSetupConfig
+                            ecoSystem.vagrant.sshOut "sed 's/7.0.8-4/7.0.8-5/g' -i /dogu/dogu.json"
+                            ecoSystem.build("/dogu")
+                        }
 
-                        // stage('Wait for dependencies') {
-                        //     timeout(15) {
-                        //         ecoSystem.waitForDogu("nginx")
-                        //         ecoSystem.waitForDogu("cas")
+                        stage('Verify') {
+                            ecoSystem.verify("/dogu")
+                        }
 
-                        //         // The http health check is not yet implemented, so this is the manual workaround.
-                        //         waitForCondition(20, 10) {
-                        //             def status = sh(
-                        //                 script: """
-                        //                 wget --spider -S --tries=1 --timeout=10 --no-check-certificate http://${ecoSystem.externalIP}/cas/actuator/health 2>&1 \
-                        //                 | awk '/^  HTTP/{print \$2}' | tail -1
-                        //                 """,
-                        //                 returnStdout: true
-                        //             ).trim()
+                        stage('Wait for dependencies') {
+                            timeout(15) {
+                                ecoSystem.waitForDogu("nginx")
+                                ecoSystem.waitForDogu("cas")
 
-                        //             echo "HTTP status: ${status}"
-                        //             return status == "200"
-                        //         }
-                        //     }
-                        // }
+                                // The http health check is not yet implemented, so this is the manual workaround.
+                                waitForCondition(20, 10) {
+                                    def status = sh(
+                                        script: """
+                                        wget --spider -S --tries=1 --timeout=10 --no-check-certificate http://${ecoSystem.externalIP}/cas/actuator/health 2>&1 \
+                                        | awk '/^  HTTP/{print \$2}' | tail -1
+                                        """,
+                                        returnStdout: true
+                                    ).trim()
+
+                                    echo "HTTP status: ${status}"
+                                    return status == "200"
+                                }
+                            }
+                        }
 
                         stage('Integration Tests') {
                             echo "Create custom dogu to access OAuth endpoints for the integration tests"

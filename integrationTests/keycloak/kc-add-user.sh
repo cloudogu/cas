@@ -6,7 +6,7 @@ REALM="${REALM:-Test}"
 GROUP="${GROUP:-testers}"
 USERNAME="${USERNAME:-tester}"
 EMAIL="test@example.com"
-PASSWORD="testsi"
+PASSWORD="test"
 FIRST="Test"
 LAST="User"
 
