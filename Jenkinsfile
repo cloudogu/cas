@@ -6,6 +6,7 @@ import com.cloudogu.ces.dogubuildlib.*
 String repositoryOwner = 'cloudogu'
 String doguName = "cas"
 String branch = "${env.BRANCH_NAME}"
+String clientSecret=""
 
 EcoSystem ecoSystem = new EcoSystem(this, "gcloud-ces-operations-internal-packer", "jenkins-gcloud-ces-operations-internal")
 
@@ -125,11 +126,23 @@ parallel(
                         }
 
                         stage('Start OIDC-Provider') {
-                            // template realm file
-                            ecoSystem.vagrant.sshOut "sed 's/192.168.56.2/${ecoSystem.externalIP}/g' -i /dogu/integrationTests/keycloak-realm/realm-cloudogu.json"
-                            sh "echo \"Starting Keycloak as OIDC provider on ${ecoSystem.externalIP}:9000\""
-                            // start keycloak
-                            ecoSystem.vagrant.sshOut 'sudo docker run -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT=\'/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled\' -v  /dogu/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json quay.io/keycloak/keycloak:15.0.2'
+                            // launching and setting up keycloak, adding test user, group, scope mapping etc
+                            ecoSystem.vagrant.sshOut """
+                                                       cd /dogu/integrationTests/keycloak/ && \
+                                                       ./kc-down.sh && \
+                                                       ./kc-up.sh -H ${ecoSystem.externalIP} && \
+                                                       ./kc-setup.sh -H ${ecoSystem.externalIP} && \
+                                                       ./kc-add-user.sh && \
+                                                       ./kc-group.sh
+                                                     """
+                            // retrieve secret from setup
+                            clientSecret = ecoSystem.vagrant.sshOut """
+                                            cd /dogu/integrationTests/keycloak/
+                                            cat kc_out.env | \
+                                            grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
+                                            """
+
+                            echo "clientSecret length: ${clientSecret.size()}"
                         }
 
                         stage('Setup') {
@@ -144,12 +157,13 @@ parallel(
                                     },
                                     "oidc": {
                                         "enabled": "true",
-                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Cloudogu/.well-known/openid-configuration",
-                                        "client_id": "casClient",
-                                        "display_name": "MyProvider",
+                                        "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
+                                        "client_id": "cas",
+                                        "display_name": "cas",
                                         "optional": "true",
                                         "scopes": "openid email profile groups",
-                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
+                                        "allowed_groups": "testers",
+                                        "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
                                     }
                                 },
                                 "_global": {
@@ -161,13 +175,13 @@ parallel(
                                         "min_length": "14"
                                     }
                                 }
-                            """, registryConfigEncrypted:'''
+                            """, registryConfigEncrypted:"""
                                  "cas" : {
                                     "oidc": {
-                                        "client_secret": "c21a7690-1ca3-4cf9-bef3-22f37faf5144"
+                                        "client_secret": "${clientSecret}"
                                     }
                                  }
-                            '''])
+                            """])
                         }
 
                         stage('Build dogu') {
