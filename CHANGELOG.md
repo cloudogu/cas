@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [#283] Upgraded log4j to 2.24.3
 - [#283] Upgraded tomcat to 10.1.43
+- [#283] Integrated pipe-build-lib
+- [#284] Added oidc/platform login integrationtests
 ### Fixed
 - [#284] Fixed OIDC Platform Login
-- [#283] Log4j Version mismatch
+- [#283] Log4j Version mismatch on MN
 - [#283] removed deprecated javax references 
 
 ## [v7.2.6-1] - 2025-08-26
