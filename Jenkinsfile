@@ -5,7 +5,7 @@
   'dogu-build-lib'
 ]) _
 
-String clientSecret=""
+String clientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     doguName           : 'cas',
     shellScripts       : ['''
@@ -30,17 +30,9 @@ pipe.setBuildProperties()
 pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
-
-pipe.insertStageAfter('Bats Tests', 'Gradle Build') {
+pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     dir('app') {
-        stage('Build') {
-            gradlew "clean build"
-        }
-    }
-}
-
-pipe.insertStageAfter('Gradle Build', 'Unit Test') {
-    dir('app') {
+        gradlew "clean build"
         gradlew 'test'
         junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
     }
