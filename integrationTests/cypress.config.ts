@@ -1,24 +1,21 @@
-import * as doguTestLibrary from "@cloudogu/dogu-integration-test-library";
+import doguTestLibrary from "@cloudogu/dogu-integration-test-library";
 import { defineConfig } from "cypress";
+// @ts-ignore
+import fsConf from "cypress-fs/plugins/index.js";
+// @ts-ignore
 import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
-import * as preprocessor from "@badeball/cypress-cucumber-preprocessor";
+import preprocessor from "@badeball/cypress-cucumber-preprocessor";
 import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
-async function setupNodeEvents(
-  on: Cypress.PluginEvents,
-  config: Cypress.PluginConfigOptions
-) {
-  // Enable the Cucumber preprocessor (JSON reports, etc.)
+async function setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.ConfigOptions): Promise<Cypress.ConfigOptions> {
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
-
   on(
     "file:preprocessor",
     createBundler({
-      plugins: [createEsbuildPlugin(config)],
+      plugins: [createEsbuildPlugin.default(config)],
     })
   );
-
-  // Apply Dogu test library config customizations
+  fsConf(on);
   config = doguTestLibrary.configure(config);
 
   return config;
@@ -39,17 +36,13 @@ export default defineConfig({
       PrivacyPolicyURL: "https://www.triology.de/",
       TermsOfServiceURL: "https://docs.cloudogu.com/",
       ImprintURL: "https://cloudogu.com/",
-    },
+    } as Record<string, string | number>,
+
     specPattern: ["cypress/e2e/**/*.feature"],
     videoCompression: false,
     setupNodeEvents,
-    // Plugin-specific flags (kept from JS; ignore TS complaining if your tooling is strict)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     nonGlobalStepBaseDir: false,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    experimentalRunAllSpecs: true,
     chromeWebSecurity: false,
+    experimentalRunAllSpecs: true,
   },
 });
