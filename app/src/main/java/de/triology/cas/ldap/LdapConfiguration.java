@@ -5,6 +5,7 @@ import de.triology.cas.ldap.resolvers.CombinedGroupResolver;
 import de.triology.cas.ldap.resolvers.GroupResolver;
 import de.triology.cas.ldap.resolvers.MemberGroupResolver;
 import de.triology.cas.ldap.resolvers.MemberOfGroupResolver;
+import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -50,6 +52,19 @@ public class LdapConfiguration {
 
     @Value("${cas.authn.attributeRepository.ldap[0].attributes.baseDn}")
     private String baseDN;
+
+    @Bean(name = PrincipalFactory.BEAN_NAME)
+    public PrincipalFactory principalFactory() {
+        // Order matters: first match wins.
+        List<String> candidates = List.of(
+            "preferred_username",  // Keycloak / OIDC
+            "cn",                  // LDAP common name
+            "displayName",         // common LDAP/profile mapping
+            "mail"                 // last resort (email)
+        );
+
+        return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
+    }
 
     @Bean
     @RefreshScope
