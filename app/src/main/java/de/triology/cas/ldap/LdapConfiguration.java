@@ -57,8 +57,8 @@ public class LdapConfiguration {
     public PrincipalFactory principalFactory() {
         // Order matters: first match wins.
         List<String> candidates = List.of(
-            "preferred_username",  // Keycloak / OIDC
             "cn",                  // LDAP common name
+            "preferred_username",  // Keycloak / OIDC
             "displayName",         // common LDAP/profile mapping
             "mail"                 // last resort (email)
         );
