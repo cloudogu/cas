@@ -7,7 +7,7 @@ import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
 import preprocessor from "@badeball/cypress-cucumber-preprocessor";
 import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
-async function setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.ConfigOptions): Promise<Cypress.ConfigOptions> {
+async function setupNodeEvents(on, config) {
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
   on(
     "file:preprocessor",
@@ -36,12 +36,11 @@ export default defineConfig({
       PrivacyPolicyURL: "https://www.triology.de/",
       TermsOfServiceURL: "https://docs.cloudogu.com/",
       ImprintURL: "https://cloudogu.com/",
-    } as Record<string, string | number>,
+    },
 
     specPattern: ["cypress/e2e/**/*.feature"],
     videoCompression: false,
     setupNodeEvents,
-    nonGlobalStepBaseDir: false,
     chromeWebSecurity: false,
     experimentalRunAllSpecs: true,
   },
