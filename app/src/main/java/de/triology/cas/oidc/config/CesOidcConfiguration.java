@@ -11,9 +11,11 @@ import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationCli
 import de.triology.cas.oidc.beans.delegation.CesDelegatedAuthenticationPreProcessor;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedClientUserProfileProvisioner;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
+import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -82,6 +84,8 @@ public class CesOidcConfiguration {
     @Value("${ces.delegation.oidc.adminGroups:#{\"\"}}")
     private String adminGroupsConfigString;
     
+    @Value("${ces.delegation.oidc.principalIdAttribute:#{\"\"}}")
+    private String principalIdAttribute;
 
     /**
      * Binds all OIDC clients from cas.properties into a Java object.
@@ -100,6 +104,34 @@ public class CesOidcConfiguration {
     @ConfigurationProperties(prefix = "ces.delegation.oidc")
     public CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties() {
         return new CesDelegatedOidcClientsProperties();
+    }
+
+    @Bean(name = PrincipalFactory.BEAN_NAME)
+    public PrincipalFactory principalFactory() {
+        List<String> defaults = List.of(
+            "username",
+            "mail",                // last resort
+            "uid",                // LDAP username
+            "preferred_username", // OIDC / Keycloak
+            "sAMAccountName",     // AD short logon name
+            "userPrincipalName",  // AD user@domain
+            "cn",                 // LDAP common name
+            "displayName"        // human-friendly name
+        );
+
+        List<String> candidates = new ArrayList<>();
+
+        if (principalIdAttribute != null && !principalIdAttribute.isBlank()) {
+            candidates.add(principalIdAttribute);
+        }
+
+        for (String attr : defaults) {
+            if (!candidates.contains(attr)) {
+                candidates.add(attr);
+            }
+        }
+
+        return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
     }
 
     @Bean
