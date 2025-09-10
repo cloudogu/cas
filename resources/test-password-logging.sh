@@ -56,6 +56,7 @@ echo "Testing service ticket creation with new user"
 curl -f -L "https://${CES_URL}/cas/v1/tickets" --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" --insecure \
  -H 'Content-type: application/x-www-form-urlencoded' --http1.0 -X POST > serviceTicket
 echo "creating ticketGrantingTicket"
+# shellcheck disable=SC2062
 ticketGrantingTicket=$(grep -o TGT-.*cas serviceTicket)
 curl -f -L -v "https://${CES_URL}/cas/v1/tickets/${ticketGrantingTicket}?service=https%3A%2F%2F${CES_URL}%2Fusermgt" --insecure \
  -H 'Content-type: application/x-www-form-urlencoded' --http1.0 -X POST --data "username=${PWD_LOGGING_USER}&password=${PWD_LOGGING_PASSWORD}" > serviceTicket
@@ -65,6 +66,7 @@ curl -s -L -X GET --insecure "https://${CES_URL}/cas/p3/serviceValidate?service=
 # check docker logs
 echo "Checking external cas docker logs for unencrypted passwords"
 touch /dogu/cas_logs
+# shellcheck disable=SC2024
 sudo docker container logs cas > /dogu/cas_logs
 if grep -q "${ADMIN_PW}" /dogu/cas_logs; then
   echo "ERROR: Found a non-encrypted password in the docker log file. Exiting the pipeline..."

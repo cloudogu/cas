@@ -12,5 +12,7 @@ public class CesDelegatedOidcClientProperties implements Serializable {
     private String clientId;
     private String clientSecret;
     private String clientName;
+    private String preferredJwsAlgorithm;
+    private String clientAuthenticationMethod;
 }
 

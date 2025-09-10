@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.6-2] - 2025-09-10
+### Fixed
+- Fixed an issue where the OIDC login didn't work anymore.
+
 ## [v7.2.6-1] - 2025-08-26
 ### Changed
 - [#281] Upgrade CAS to version 7.2.6

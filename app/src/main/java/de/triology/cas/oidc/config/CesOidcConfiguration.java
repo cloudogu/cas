@@ -11,9 +11,11 @@ import de.triology.cas.oidc.beans.delegation.CesCustomDelegatedAuthenticationCli
 import de.triology.cas.oidc.beans.delegation.CesDelegatedAuthenticationPreProcessor;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedClientUserProfileProvisioner;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
+import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -51,11 +53,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
 
 @Configuration("CesOidcConfiguration")
 @AutoConfigureAfter(CasOidcAutoConfiguration.class)
@@ -81,6 +84,8 @@ public class CesOidcConfiguration {
     @Value("${ces.delegation.oidc.adminGroups:#{\"\"}}")
     private String adminGroupsConfigString;
     
+    @Value("${ces.delegation.oidc.principalIdAttribute:#{\"\"}}")
+    private String principalIdAttribute;
 
     /**
      * Binds all OIDC clients from cas.properties into a Java object.
@@ -92,7 +97,6 @@ public class CesOidcConfiguration {
      * As of CAS 7.1, delegated clients are expected to be provided explicitly and
      * are no longer built automatically from properties (`cas.authn.pac4j.*`).
      * 
-     * → Without your own manual bean, the list of available OIDC clients remains empty!
      * @return CesDelegatedOidcClientsProperties containing the list of all defined clients
      */
     @Bean
@@ -100,6 +104,34 @@ public class CesOidcConfiguration {
     @ConfigurationProperties(prefix = "ces.delegation.oidc")
     public CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties() {
         return new CesDelegatedOidcClientsProperties();
+    }
+
+    @Bean(name = PrincipalFactory.BEAN_NAME)
+    public PrincipalFactory principalFactory() {
+        List<String> defaults = List.of(
+            "username",
+            "mail",                // last resort
+            "uid",                // LDAP username
+            "preferred_username", // OIDC / Keycloak
+            "sAMAccountName",     // AD short logon name
+            "userPrincipalName",  // AD user@domain
+            "cn",                 // LDAP common name
+            "displayName"        // human-friendly name
+        );
+
+        List<String> candidates = new ArrayList<>();
+
+        if (principalIdAttribute != null && !principalIdAttribute.isBlank()) {
+            candidates.add(principalIdAttribute);
+        }
+
+        for (String attr : defaults) {
+            if (!candidates.contains(attr)) {
+                candidates.add(attr);
+            }
+        }
+
+        return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
     }
 
     @Bean
@@ -132,6 +164,9 @@ public class CesOidcConfiguration {
      * now a factory bean must be **manually provided**.
      * It implements DelegatedIdentityProviderFactory, which CAS expects for dynamic delegated client support.
      */
+
+
+
     @Bean
     @Primary
     @RefreshScope
@@ -142,8 +177,10 @@ public class CesOidcConfiguration {
         CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties
     ) {
         return new DelegatedIdentityProviderFactory() {
-            @Override
-            public Collection<BaseClient> build() {
+
+            private volatile List<BaseClient> cached;
+
+            public List<BaseClient> buildOnce() {
                 LOGGER.debug("Creating delegated clients from ces.delegation.oidc.clients...");
         
                 List<BaseClient> clients = new ArrayList<>();
@@ -152,16 +189,22 @@ public class CesOidcConfiguration {
                     if (StringUtils.isBlank(clientProps.getDiscoveryUri()) ||
                         StringUtils.isBlank(clientProps.getClientId()) ||
                         StringUtils.isBlank(clientProps.getClientSecret())) {
-                        LOGGER.error("Invalid configuration for OIDC client; skipping {}", clientProps.getClientName());
+                        LOGGER.error("Invalid configuration for OIDC client; name {} getClientId {} getClientSecret {} getDiscoveryUri {} ", clientProps.getClientName(), clientProps.getClientId(), clientProps.getClientSecret(), clientProps.getDiscoveryUri());
                         continue;
                     }
-        
+                    LOGGER.warn("Configuration for OIDC client; name {} getClientId {} getClientSecret {} getDiscoveryUri {} ", clientProps.getClientName(), clientProps.getClientId(), clientProps.getClientSecret(), clientProps.getDiscoveryUri());
                     var config = new OidcConfiguration();
                     config.setDiscoveryURI(clientProps.getDiscoveryUri());
                     config.setClientId(clientProps.getClientId());
                     config.setSecret(clientProps.getClientSecret());
                     config.setResponseType("code");
-        
+
+                    config.setClientAuthenticationMethodAsString(clientProps.getClientAuthenticationMethod()); 
+                    LOGGER.warn("getClientAuthenticationMethod {}", clientProps.getClientAuthenticationMethod());
+                    LOGGER.warn("getPreferredJwsAlgorithm {}", clientProps.getPreferredJwsAlgorithm());
+
+                    // config.setPkceMethod(method);
+                    config.setPreferredJwsAlgorithmAsString(clientProps.getPreferredJwsAlgorithm().toUpperCase());
                     var client = new OidcClient(config);
                     client.setName(clientProps.getClientName());
         
@@ -176,9 +219,21 @@ public class CesOidcConfiguration {
             }
     
             @Override
+            public List<BaseClient> build() {
+            if (cached == null) {
+                synchronized (this) {
+                if (cached == null) cached = buildOnce();
+                }
+            }
+            return cached;
+            }
+
+            @Override
             public Collection<BaseClient> rebuild() {
-                LOGGER.debug("Rebuilding delegated clients...");
-                return build();
+                synchronized (this) {
+                    cached = buildOnce();
+                    return cached;
+                }
             }
         };
     }
@@ -200,34 +255,21 @@ public class CesOidcConfiguration {
     @RefreshScope
     public DelegatedIdentityProviders delegatedIdentityProviders(
         CasConfigurationProperties casProperties,
-        DelegatedIdentityProviderFactory customDelegatedClientFactory
+        DelegatedIdentityProviderFactory customFactory
     ) {
-        LOGGER.debug("Setting up custom delegated identity providers manually...");
-    
-        return new DelegatedIdentityProviders() {
-            @Override
-            public List<Client> findAllClients() {
-                List<BaseClient> baseClients = new ArrayList<>(customDelegatedClientFactory.build());
-                if (baseClients.isEmpty()) {
-                    LOGGER.info("No delegated OIDC clients available! Check your cas.properties configuration.");
-                }
-                return new ArrayList<>(baseClients);
-            }
+    LOGGER.debug("Setting up custom delegated identity providers...");
+    // build once (initialized clients)
+    final List<BaseClient> initialized = new ArrayList<>(customFactory.build());
 
-            @Override
-            public List<Client> findAllClients(Service service, WebContext context) {
-                return findAllClients();
-            }
-    
-            @Override
-            public Optional<Client> findClient(String name) {
-                return findAllClients()
-                    .stream()
-                    .filter(c -> c.getName().equalsIgnoreCase(name))
-                    .findFirst();
+        return new DelegatedIdentityProviders() {
+            @Override public List<Client> findAllClients() { return new ArrayList<>(initialized); }
+            @Override public List<Client> findAllClients(Service s, WebContext c) { return findAllClients(); }
+            @Override public Optional<Client> findClient(String name) {
+            return initialized.stream().filter(c -> c.getName().equalsIgnoreCase(name)).map(Client.class::cast).findFirst();
             }
         };
     }
+
    
     // fixes No qualifying bean of type 'org.pac4j.core.client.Clients' available at logging out
     @Bean

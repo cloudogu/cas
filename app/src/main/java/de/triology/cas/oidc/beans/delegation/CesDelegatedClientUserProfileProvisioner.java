@@ -33,18 +33,25 @@ public class CesDelegatedClientUserProfileProvisioner implements DelegatedClient
 
     @Override
     public void execute(Principal principal, UserProfile profile, BaseClient client, Credential credential) throws Throwable {
-        CesInternalLdapUser userFromProfile = userFromProfile(profile);
+        final CesInternalLdapUser fromProfile = userFromProfile(profile);
 
-        CesInternalLdapUser existingLdapUser = userManager.getUserByUid(userFromProfile.getUid());
-        if (existingLdapUser == null) {
-            // user does not exist -> create
-            userManager.createUser(userFromProfile);
-
-            addAdminGroupsForUser(userFromProfile, principal);
-        } else {
-            // user does not exist -> update
-            userManager.updateUser(userFromProfile);
+        // 1) Try by uid (external users)
+        CesInternalLdapUser byUid = userManager.getUserByUid(fromProfile.getUid());
+        if (byUid != null) {
+            userManager.updateUser(mergeForUpdate(byUid.getUid(), fromProfile));
+            return;
         }
+
+        // 2) Try by mail (any user; only fetch uid to avoid NPE on missing attributes)
+        String existingUid = userManager.getUidByMail(fromProfile.getMail());
+        if (existingUid != null) {
+            userManager.updateUser(mergeForUpdate(existingUid, fromProfile)); // will set external=TRUE
+            return;
+        }
+
+        // 3) Create new
+        userManager.createUser(fromProfile);
+        addAdminGroupsForUser(fromProfile, principal);
     }
 
     private void addAdminGroupsForUser(CesInternalLdapUser user, Principal principal) throws CesLdapException {
@@ -73,5 +80,16 @@ public class CesDelegatedClientUserProfileProvisioner implements DelegatedClient
         }
 
         throw new RuntimeException("Unsupported profile type: " + profile.getClass().getSimpleName());
+    }
+    
+    private static CesInternalLdapUser mergeForUpdate(String existingUid, CesInternalLdapUser fromProfile) {
+        return new CesInternalLdapUser(
+            existingUid,
+            fromProfile.getGivenName(),
+            fromProfile.getFamilyName(),
+            fromProfile.getDisplayName(),
+            fromProfile.getMail(),
+            true // mark as external when OIDC-provisioned
+        );
     }
 }

@@ -57,7 +57,9 @@ function writeHealthStatus() {
 
 # Terminates the running Apache Tomcat process forcefully.
 function killApacheTomcat() {
+  # shellcheck disable=SC2155
   local tomcatPID=$(pgrep -f apache-tomcat)
+  # shellcheck disable=SC2086
   kill -9 $tomcatPID
 }
 

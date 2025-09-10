@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.6-2] - 2025-09-10
+### Changed
+- [#283] Upgraded log4j to 2.24.3
+- [#283] Upgraded tomcat to 10.1.43
+- [#283] Integrated pipe-build-lib
+- [#284] Added oidc/platform login integrationtests
+### Fixed
+- [#284] Fixed OIDC Platform Login
+- [#283] Log4j Version mismatch on MN
+- [#283] removed deprecated javax references
+- [#286] Fixed principal name shown in navigation bars of dogus
+
 ## [v7.2.6-1] - 2025-08-26
 ### Changed
 - [#279] Changed Jenkins-Build to be able to start the integration tests more reliably

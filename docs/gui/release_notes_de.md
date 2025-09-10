@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.6-2] - 2025-09-10
+### Behoben
+- Es wurde ein Problem behoben, bei dem der 'Federated Login' nicht mehr funktionierte.
+
 ## [v7.2.6-1] - 2025-08-26
 ### Anpassungen
 - [#281] Upgrade CAS zu Version 7.2.6
