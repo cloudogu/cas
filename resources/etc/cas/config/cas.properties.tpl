@@ -281,7 +281,7 @@ cas.authn.pac4j.oidc[0].generic.response-type=code
 ces.delegation.oidc.clients[0].preferred-jws-algorithm=RS256
 
 ### the attribute that should be used as the principal id
-cas.authn.pac4j.oidc[0].generic.principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
+ces.delegation.oidc.clients[0].principal-id-attribute={{ .Config.GetOrDefault "oidc/principal_attribute" ""}}
 
 ### redirect back to the ces after successful logout
 ces.delegation.oidc.redirect-uri={{ .Config.GetOrDefault "oidc/redirect_uri" "" }}

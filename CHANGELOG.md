@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [#284] Fixed OIDC Platform Login
 - [#283] Log4j Version mismatch on MN
-- [#283] removed deprecated javax references 
+- [#283] removed deprecated javax references
+- [#286] Fixed principal name shown in navigation bars of dogus
 
 ## [v7.2.6-1] - 2025-08-26
 ### Changed
