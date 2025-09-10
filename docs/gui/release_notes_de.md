@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.6-2] - 2025-09-10
 ### Behoben
 - Es wurde ein Problem behoben, bei dem der 'Federated Login' nicht mehr funktionierte.
 

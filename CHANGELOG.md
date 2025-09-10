@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.6-2] - 2025-09-10
 ### Changed
 - [#283] Upgraded log4j to 2.24.3
 - [#283] Upgraded tomcat to 10.1.43
