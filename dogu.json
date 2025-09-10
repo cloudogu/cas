@@ -40,13 +40,13 @@
   "Configuration": [
     {
       "Name": "limit/failure_threshold",
-      "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled; defaults to 500)",
+      "Description": "Number of failed login attempts. This number is used to calculate the failure rate in conjunction with limit/range_seconds. (0 means disabled; defaults to 500). A failure rate is calculated with failure_threshold/range_seconds and if the last two failed log in attempts are higher than the failure rate, the user is throttled.",
       "Optional": true,
       "Default": "500"
     },
     {
       "Name": "limit/range_seconds",
-      "Description": "Time in seconds defines timeframe over which the login failures are taken into account (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 10 seconds)",
+      "Description": "Time in seconds defines timeframe over which the login failures are taken into account (must be a positive number, takes only effect if limit/failure_threshold is > 0; defaults to 10 seconds). A failure rate is calculated with failure_threshold/range_seconds and if the last two failed log in attempts are higher than the failure rate, the user is throttled.",
       "Optional": true,
       "Default": "10"
     },
