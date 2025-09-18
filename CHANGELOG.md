@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.6-3] - 2025-09-18
+### Changed
+- [#290] make "ldap" a non-optional dependency to avoid not having a ldap-service-account when dogus are installed in a "wrong" order
+  - If an external ldap should be used, this can be configured, but the internal "ldap"-dogu must be installed
+
 ## [v7.2.6-2] - 2025-09-10
 ### Changed
 - [#283] Upgraded log4j to 2.24.3

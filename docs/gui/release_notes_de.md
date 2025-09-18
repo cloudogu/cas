@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.6-3] - 2025-09-18
+### Anpassungen
+-„ldap“ zu einer nicht optionalen Abhängigkeit gemacht, um zu vermeiden, dass kein LDAP‑Service‑Account vorhanden ist, wenn Dogus in einer „falschen“ Reihenfolge installiert werden.
+
 ## [v7.2.6-2] - 2025-09-10
 ### Behoben
 - Es wurde ein Problem behoben, bei dem der 'Federated Login' nicht mehr funktionierte.

@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.6-3] - 2025-09-18
+### Changed
+- Made "ldap" a non-optional dependency to avoid not having a ldap-service-account when dogus are installed in a "wrong" order.
+
 ## [v7.2.6-2] - 2025-09-10
 ### Fixed
 - Fixed an issue where the OIDC login didn't work anymore.
