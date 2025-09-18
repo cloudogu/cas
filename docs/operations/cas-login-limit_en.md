@@ -4,13 +4,30 @@ Login attempts can be limited by temporarily blocking user accounts after a give
 given time. In case the account is blocked, login attempts are redirected to a appropriate page. For this it is
 irrelevant, whether the account exists or not (that is even not existing accounts can be blocked).
 
-<strong>Note: CAS calculates an error rate based on the failure_threshold and range_seconds. It then
-<ins>looks at the last two</ins> failed logins and checks whether the time is below the error rate.
-
-Example: Failure_threshold = 500; Range_seconds = 10; Error rate = 500/10 = 50
-
-=> An error rate of 50 means that throttling occurs when two failed logins occur within 0.04 seconds: 500/10s -> 50/1s -> 5/0.1s -> 2/0.04s
+<strong>Note: CAS calculates an error rate based on the `failure_threshold` and `range_seconds`. It then
+<u>looks at the last two</u> failed logins and checks whether the time is below the error rate.
 </strong>
+
+Example configuration:
+
+| `failure_threshold` | `range_seconds` | Nominal error rate        | effective throttling starting at   |
+|---------------------|-----------------|---------------------------|------------------------------------|
+| 500                 | 10              | 50 incorrect Req/1000 ms  | 2 incorrect Req. in 0,04 Sek       |
+| 500                 | 100             | 5 incorrect Req/1000 ms   | 2 incorrect Req. in 0,4 Sek        |
+| 500                 | 200             | 2,5 incorrect Req/1000 ms | 2 incorrect Req. in 0,8 Sek        |
+| 100                 | 200             | 0,5 incorrect Req/1000 ms | 2 incorrect Req. in 4,0 Sek        |
+
+Calculation:
+An error rate of 50 means that throttling occurs when two incorrect logins (see above) occur within
+0.04 seconds:
+```
+  500 Req. in 10 s
+= 50 Req. in 1000 ms
+= 50/50 Req. in 1000/50 ms
+= 1 Req. in 20 ms
+= 2 Req. in 40 ms
+= 2 Req. in 0,04s
+```
 
 Configuration is done in the CAS module using the following parameters:
 
