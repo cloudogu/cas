@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Anpassungen
+-„ldap“ zu einer nicht optionalen Abhängigkeit gemacht, um zu vermeiden, dass kein LDAP‑Service‑Account vorhanden ist, wenn Dogus in einer „falschen“ Reihenfolge installiert werden.
 
 ## [v7.2.6-2] - 2025-09-10
 ### Behoben
