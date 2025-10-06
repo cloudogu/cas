@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+> [!CAUTION]
+> **Security Advisory**
+> CAS instances acting as an OAuth/OIDC **provider** are affected by a vulnerability in earlier releases.  
+> **Use 7.2.7 or newer (or 7.1.6.2 on 7.1.x).**  
+> See [Apereo CAS Advisory (2025-09-25)](https://apereo.github.io/2025/09/25/oauth-oidc-vuln/) for details.
+
 ### Changed
 - [#293] Upgraded CAS to 7.2.7
 
