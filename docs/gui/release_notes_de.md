@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-1] - 2025-10-06
+### Anpassungen
+- [#293] Upgrade CAS zu Version 7.2.7
+
 ## [v7.2.6-3] - 2025-09-18
 ### Anpassungen
 -„ldap“ zu einer nicht optionalen Abhängigkeit gemacht, um zu vermeiden, dass kein LDAP‑Service‑Account vorhanden ist, wenn Dogus in einer „falschen“ Reihenfolge installiert werden.

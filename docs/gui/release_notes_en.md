@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-1] - 2025-10-06
+### Changed
+- [#293] Upgraded CAS to 7.2.7
+
 ## [v7.2.6-3] - 2025-09-18
 ### Changed
 - Made "ldap" a non-optional dependency to avoid not having a ldap-service-account when dogus are installed in a "wrong" order.

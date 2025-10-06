@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-1] - 2025-10-06
+> [!CAUTION]
+> **Security Advisory**
+> CAS instances acting as an OAuth/OIDC **provider** are affected by a vulnerability in earlier releases.  
+> **Use 7.2.7 or newer (or 7.1.6.2 on 7.1.x).**  
+> See [Apereo CAS Advisory (2025-09-25)](https://apereo.github.io/2025/09/25/oauth-oidc-vuln/) for details.
+
+### Changed
+- [#293] Upgraded CAS to 7.2.7
+
 ## [v7.2.6-3] - 2025-09-18
 ### Changed
 - [#290] make "ldap" a non-optional dependency to avoid not having a ldap-service-account when dogus are installed in a "wrong" order
