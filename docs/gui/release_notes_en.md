@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Security
+- [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
 
 ## [v7.2.7-1] - 2025-10-06
 ### Changed

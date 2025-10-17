@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#295] - Upgraded Spring Boot to v3.4.6
+
+### Security
+- [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
 
 ## [v7.2.7-1] - 2025-10-06
 > [!CAUTION]

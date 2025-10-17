@@ -124,7 +124,9 @@ bootWar {
                     "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/jakarta.servlet-api-*.jar",
                     "WEB-INF/lib/tomcat-servlet-api-*.jar",
-                    "WEB-INF/lib/jaxws-rt-*.jar"
+                    "WEB-INF/lib/jaxws-rt-*.jar",
+                    "WEB-INF/lib/spring-security-core-6.4.5.jar",
+                    "WEB-INF/lib/spring-security-core-6.4.4.jar",
             ]
         }
     }
