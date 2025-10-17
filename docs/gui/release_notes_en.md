@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-2] - 2025-10-17
+### Security
+- [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
+
 ## [v7.2.7-1] - 2025-10-06
 ### Changed
 - [#293] Upgraded CAS to 7.2.7

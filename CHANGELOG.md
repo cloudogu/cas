@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-2] - 2025-10-17
+### Changed
+- [#295] - Upgraded Spring Boot to v3.4.6
+
+### Security
+- [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
+
 ## [v7.2.7-1] - 2025-10-06
 > [!CAUTION]
 > **Security Advisory**

@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-2] - 2025-10-17
+### Sicherheit
+- [#295] Behebung von CVE-2025-41232 - Schließt eine Sicherheitslücke in Spring Security, die unautorisierte Zugriffe ermöglichen konnte.
+
 ## [v7.2.7-1] - 2025-10-06
 ### Anpassungen
 - [#293] Upgrade CAS zu Version 7.2.7
