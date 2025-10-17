@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.7-2] - 2025-10-17
 ### Sicherheit
 - [#295] Behebung von CVE-2025-41232 - Schließt eine Sicherheitslücke in Spring Security, die unautorisierte Zugriffe ermöglichen konnte.
 
