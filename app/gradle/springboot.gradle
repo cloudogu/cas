@@ -127,6 +127,7 @@ bootWar {
                     "WEB-INF/lib/jaxws-rt-*.jar",
                     "WEB-INF/lib/spring-security-core-6.4.5.jar",
                     "WEB-INF/lib/spring-security-core-6.4.4.jar",
+                    "WEB-INF/lib/spring-web-6.2.5.jar"
             ]
         }
     }
