@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.7-3] - 2025-10-23
 ### Behoben
 - [#299] Fixed an issue where conflicting Spring-Boot versions were present.
 
