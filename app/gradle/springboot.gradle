@@ -125,9 +125,15 @@ bootWar {
                     "WEB-INF/lib/jakarta.servlet-api-*.jar",
                     "WEB-INF/lib/tomcat-servlet-api-*.jar",
                     "WEB-INF/lib/jaxws-rt-*.jar",
-                    "WEB-INF/lib/spring-security-core-6.4.5.jar",
-                    "WEB-INF/lib/spring-security-core-6.4.4.jar",
-                    "WEB-INF/lib/spring-web-6.2.5.jar"
+                    "WEB-INF/lib/spring-*-6.4.5.jar",
+                    "WEB-INF/lib/spring-*-6.4.4.jar",
+                    "WEB-INF/lib/spring-*-6.4.3.jar",
+                    "WEB-INF/lib/spring-*-6.2.5.jar",
+                    "WEB-INF/lib/spring-*-3.4.4.jar",
+                    "WEB-INF/lib/spring-*-2.0.11.jar",
+                    "WEB-INF/lib/jackson-*-2.18.3.jar",
+                    "WEB-INF/lib/jackson-*-2.18.3.jar",
+                    "WEB-INF/lib/httpclient5-5.4.2.jar",
             ]
         }
     }
