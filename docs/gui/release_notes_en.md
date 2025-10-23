@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-3] - 2025-10-23
+### Behoben
+- [#299] Fixed an issue where conflicting Spring-Boot versions were present.
+
 ## [v7.2.7-2] - 2025-10-17
 ### Security
 - [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.

@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-3] - 2025-10-23
+### Behoben
+- [#299] Es wurde ein Problem behoben, bei dem gemischte Spring-Boot Versionen im Konflikt standen.
+
 ## [v7.2.7-2] - 2025-10-17
 ### Sicherheit
 - [#295] Behebung von CVE-2025-41232 - Schließt eine Sicherheitslücke in Spring Security, die unautorisierte Zugriffe ermöglichen konnte.

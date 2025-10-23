@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-3] - 2025-10-23
+### Changed
+- [#299] - Fixed mixed version of Spring in final WAR
+
 ## [v7.2.7-2] - 2025-10-17
 ### Changed
 - [#295] - Upgraded Spring Boot to v3.4.6
