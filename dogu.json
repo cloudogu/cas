@@ -21,7 +21,9 @@
     {
       "type": "dogu",
       "name": "postfix"
-    },
+    }
+  ],
+  "OptionalDependencies": [
     {
       "Type": "dogu",
       "Name": "ldap"
