@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [#297] make "ldap" an optional dependency again and avoid a failing CAS upgrade 
+  - This change reverts #290 in version 7.2.6-3 from 2025-09-18 and makes external directory configurations a first-class
+    citizen again. 
+  - As in a CES VM the directory configuration is implemented in such an integral part that an additional LDAP dogu 
+    installation would lead to an unhealthy dogu on a regular basis. Unhealthy dogus are set to  
 
 ## [v7.2.7-3] - 2025-10-23
 ### Changed
