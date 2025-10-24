@@ -118,22 +118,12 @@ bootWar {
             from "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}@war"
             provided = false
             excludes = [
-                    // as we use an external tomcat server we can remove the old and embedded ones to prevent version mismatches
-                    "WEB-INF/lib/tomcat-*-10.1.3*.jar", // any old versions
+                    // as we use an external tomcat server we can remove the embedded ones to prevent version mismatches
                     "WEB-INF/lib/tomcat-embed-*.jar",   // any embedded stuff
                     "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/jakarta.servlet-api-*.jar",
                     "WEB-INF/lib/tomcat-servlet-api-*.jar",
-                    "WEB-INF/lib/jaxws-rt-*.jar",
-                    "WEB-INF/lib/spring-*-6.4.5.jar",
-                    "WEB-INF/lib/spring-*-6.4.4.jar",
-                    "WEB-INF/lib/spring-*-6.4.3.jar",
-                    "WEB-INF/lib/spring-*-6.2.5.jar",
-                    "WEB-INF/lib/spring-*-3.4.4.jar",
-                    "WEB-INF/lib/spring-*-2.0.11.jar",
-                    "WEB-INF/lib/jackson-*-2.18.3.jar",
-                    "WEB-INF/lib/jackson-*-2.18.3.jar",
-                    "WEB-INF/lib/httpclient5-5.4.2.jar",
+                    "WEB-INF/lib/jaxws-rt-*.jar"
             ]
         }
     }
