@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-4] - 2025-10-24
 ### Fixed
 - [#297] make "ldap" an optional dependency again and avoid a failing CAS upgrade 
   - This change reverts #290 in version 7.2.6-3 from 2025-09-18 and makes external directory configurations a first-class
