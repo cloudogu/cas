@@ -40,7 +40,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:21.0.5-1 AS cas
 LABEL NAME="official/cas" \
-      VERSION="7.2.7-3" \
+      VERSION="7.2.7-4" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
@@ -92,11 +92,16 @@ COPY --from=builder --chown=${USER}:${GROUP} cas-overlay/build/libs/cas.war ${CA
 RUN set -x \
  && cd ${CATALINA_BASE}/webapps/cas/ \
  && unzip cas.war \
- && rm -f cas.war \
- && chown -R ${USER}:${GROUP} ${CATALINA_BASE}
+ && rm -f cas.war 
 
 # copy resources
 COPY --chown=${USER}:${GROUP} resources /
+
+# prune duplicates before Tomcat ever scans the webapp
+# add the pruning script
+RUN chmod +x /prune-jars.sh \
+  && /prune-jars.sh "${CATALINA_BASE}/webapps/cas/WEB-INF/lib" \
+  && chown -R ${USER}:${GROUP} ${CATALINA_BASE}
 
 RUN chown -R ${USER}:${GROUP} /etc/cas /logs ${SSL_BASE_DIRECTORY}
 

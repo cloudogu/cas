@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-4] - 2025-10-27
+### Changed
+- [#301] - Added pruning script to avoid conflicting versions in final WAR
+
+### Fixed
+- [#297] make "ldap" an optional dependency again and avoid a failing CAS upgrade 
+  - This change reverts #290 in version 7.2.6-3 from 2025-09-18 and makes external directory configurations a first-class
+    citizen again. 
+  - As in a CES VM the directory configuration is implemented in such an integral part that an additional LDAP dogu 
+    installation would lead to an unhealthy dogu on a regular basis. Unhealthy dogus are set to  
+
 ## [v7.2.7-3] - 2025-10-23
 ### Changed
 - [#299] - Fixed mixed version of Spring in final WAR

@@ -6,13 +6,16 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-4] - 2025-10-27
+- Dieses Release behebt einen Upgrade-Fehler in solchen Umgebungen, die einen externen Verzeichnisdienst und nicht ein LDAP-Dogu verwenden. 
+
 ## [v7.2.7-3] - 2025-10-23
 ### Behoben
 - [#299] Es wurde ein Problem behoben, bei dem gemischte Spring-Boot Versionen im Konflikt standen.
 
 ## [v7.2.7-2] - 2025-10-17
 ### Sicherheit
-- [#295] Behebung von CVE-2025-41232 - Schließt eine Sicherheitslücke in Spring Security, die unautorisierte Zugriffe ermöglichen konnte.
+- [#295] Behebung von CVE-2025-41232, das eine Sicherheitslücke in Spring Security schließt, die unautorisierte Zugriffe ermöglichen konnte.
 
 ## [v7.2.7-1] - 2025-10-06
 ### Anpassungen
@@ -20,7 +23,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.2.6-3] - 2025-09-18
 ### Anpassungen
--„ldap“ zu einer nicht optionalen Abhängigkeit gemacht, um zu vermeiden, dass kein LDAP‑Service‑Account vorhanden ist, wenn Dogus in einer „falschen“ Reihenfolge installiert werden.
+-"ldap" wurde zu einer nicht-optionalen Abhängigkeit gemacht, um zu vermeiden, dass kein LDAP‑Service‑Account vorhanden ist, wenn Dogus in einer "falschen" Reihenfolge installiert werden.
 
 ## [v7.2.6-2] - 2025-09-10
 ### Behoben
@@ -71,7 +74,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.1.6-1] - 2025-04-30
 ### Anpassungen
-- [#263] Upgrade CAS zu Version 7.1.6
+- Upgrade CAS zu einer neueren Version 7.1.6
 
 ## [v7.0.10-2] - 2025-04-23
 ### Anpassungen
@@ -79,7 +82,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.0.10-1] - 2025-04-17
 ### Anpassungen
-- [#261] Upgrade CAS zu Version 7.0.10.1
+- Upgrade CAS zu einer neueren Version 7.0.10.1
 
 ## [v7.0.8-14] - 2025-04-16
 ### Sicherheit
