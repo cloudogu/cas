@@ -11,8 +11,10 @@ if [ "$(doguctl config "container_config/memory_limit" -d "empty")" != "empty" ]
   MEMORY_LIMIT_MIN_PERCENTAGE=$(doguctl config "container_config/java_min_ram_percentage")
   JAVA_OPTS="$JAVA_OPTS -XX:MaxRAMPercentage=${MEMORY_LIMIT_MAX_PERCENTAGE}"
   JAVA_OPTS="$JAVA_OPTS -XX:MinRAMPercentage=${MEMORY_LIMIT_MIN_PERCENTAGE}"
-  
-  # Elastic heap (SoftMax ~80% of Max-Budget)
-  # → allows G1 to return unused regions to the OS
-  JAVA_OPTS="$JAVA_OPTS -XX:SoftMaxHeapSize=1400m"
+
+  if [ "$(doguctl config "container_config/java_soft_max_heap" -d "empty")" != "empty" ];  then
+    # → allows G1 to return unused regions to the OS
+    MEMORY_SOFT_MAX_HEAP=$(doguctl config "container_config/java_soft_max_heap")
+    JAVA_OPTS="$JAVA_OPTS -XX:SoftMaxHeapSize=${MEMORY_SOFT_MAX_HEAP}"
+  fi
 fi
