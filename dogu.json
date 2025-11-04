@@ -319,7 +319,7 @@
     },
     {
       "Name": "container_config/java_soft_max_heap",
-      "Description": "Sets the SoftMaxHeapSize for the CAS java process. This value must be a positive integer followed by one of these units [b,k,m,g] (byte, kibibyte, mebibyte, gibibyte). It must equal or less than the absolute value of 'java_max_ram_percentage'.",
+      "Description": "Sets the SoftMaxHeapSize for the CAS java process. This value must be a positive integer followed by one of these units [b,k,m,g] (byte, kibibyte, mebibyte, gibibyte). It must be equal to or less than the actual heap size (calculated by multiplying 'memory_limit' with 'java_max_ram_percentage' and dividing by 100). This configuration is only applied when 'container_config/memory_request' is set.",
       "Optional": true
     },
     {
