@@ -5,6 +5,7 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- #[306] Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
 
 ## [v7.2.7-4] - 2025-10-27
 - Dieses Release behebt einen Upgrade-Fehler in solchen Umgebungen, die einen externen Verzeichnisdienst und nicht ein LDAP-Dogu verwenden. 
