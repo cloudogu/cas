@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-5] - 2025-11-26
 ### Changed
 - [#306] Updated default settings for java heap size, memory request and memory limit.
 
