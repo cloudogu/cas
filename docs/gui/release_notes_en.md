@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-5] - 2025-11-26
+- #[306] Updated default settings for java heap size, memory request and memory limit. 
+
 ## [v7.2.7-4] - 2025-10-27
 - This release fixes an upgrade error in environments that use an external directory service rather than an LDAP dogu.
 
