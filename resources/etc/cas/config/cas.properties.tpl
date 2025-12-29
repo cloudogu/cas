@@ -340,7 +340,3 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 # Increase start-delay of scheduler to prevent startup-errors on slow starts
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
-
-management.endpoints.web.exposure.include=refresh
-management.endpoint.refresh.enabled=true
-cas.monitor.endpoints.endpoint.refresh.access=ANONYMOUS
