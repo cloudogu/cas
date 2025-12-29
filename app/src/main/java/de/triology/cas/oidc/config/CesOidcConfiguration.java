@@ -100,7 +100,6 @@ public class CesOidcConfiguration {
      * @return CesDelegatedOidcClientsProperties containing the list of all defined clients
      */
     @Bean
-    @RefreshScope
     @ConfigurationProperties(prefix = "ces.delegation.oidc")
     public CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties() {
         return new CesDelegatedOidcClientsProperties();
@@ -135,14 +134,12 @@ public class CesOidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
         return new CesOAuthProfileRenderer();
     }
     
     @Bean
     @Primary
-    @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
         @Qualifier("defaultAuthenticationHandlerResolver")
         AuthenticationHandlerResolver authenticationHandlerResolver, 
@@ -169,7 +166,6 @@ public class CesOidcConfiguration {
 
     @Bean
     @Primary
-    @RefreshScope
     public DelegatedIdentityProviderFactory customDelegatedClientFactory(
         CasConfigurationProperties casProperties,
         Cache<String, Collection<BaseClient>> pac4jDelegatedClientFactoryCache,
@@ -252,7 +248,6 @@ public class CesOidcConfiguration {
      */    
     @Bean
     @Primary
-    @RefreshScope
     public DelegatedIdentityProviders delegatedIdentityProviders(
         CasConfigurationProperties casProperties,
         DelegatedIdentityProviderFactory customFactory
@@ -273,21 +268,18 @@ public class CesOidcConfiguration {
    
     // fixes No qualifying bean of type 'org.pac4j.core.client.Clients' available at logging out
     @Bean
-    @RefreshScope
     public Clients builtClients(DelegatedIdentityProviders delegatedIdentityProviders) {
         var allClients = delegatedIdentityProviders.findAllClients();
         return new Clients(allClients);
     }
 
     @Bean
-    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oidcCasClientRedirectActionBuilder() {
         LOGGER.debug("Create OIDC-OAuth client redirect action builder...");
         return new CesOidcClientRedirectActionBuilder();
     }
    
     @Bean
-    @RefreshScope
     public Action delegatedAuthenticationClientLogoutAction(
             ObjectProvider<Clients> builtClients,
             ObjectProvider<SessionStore> delegatedClientDistributedSessionStore) {
@@ -298,7 +290,6 @@ public class CesOidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(final CasConfigurationProperties casProperties) {
 
         UserManager userManager = getUserManager(casProperties);
@@ -309,7 +300,6 @@ public class CesOidcConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public DelegatedAuthenticationPreProcessor delegatedAuthenticationPreProcessor(final CasConfigurationProperties casProperties) {
 
         UserManager userManager = getUserManager(casProperties);

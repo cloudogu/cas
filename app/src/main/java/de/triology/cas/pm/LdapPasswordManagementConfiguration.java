@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
 
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public PasswordManagementService passwordChangeService(
             final CasConfigurationProperties casProperties,

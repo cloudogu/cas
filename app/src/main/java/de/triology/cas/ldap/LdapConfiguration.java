@@ -52,7 +52,6 @@ public class LdapConfiguration {
     private String baseDN;
 
     @Bean
-    @RefreshScope
     CombinedGroupResolver combinedGroupResolver(CasConfigurationProperties properties) {
         List<GroupResolver> groupResolvers = new ArrayList<>(2);
         groupResolvers.add(new MemberGroupResolver(baseDN, searchPooledLdapConnectionFactory(properties), searchFilter));
@@ -70,7 +69,6 @@ public class LdapConfiguration {
      * Creates, configures and initializes the LDAP authentication handler. The configuration is created using the
      * configuration from the cas.properties file.
      */
-    @RefreshScope
     @Bean
     public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler(CasConfigurationProperties casProperties,
                                                                         ConfigurableApplicationContext applicationContext,

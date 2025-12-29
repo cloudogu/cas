@@ -33,13 +33,11 @@ import org.apereo.cas.config.CasOidcAutoConfiguration;
 public class CesOAuthConfiguration {
 
     @Bean
-    @RefreshScope
     public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
         return new CesOAuthProfileRenderer();
     }
 
     @Bean
-    @RefreshScope()
     public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor) {
@@ -47,20 +45,17 @@ public class CesOAuthConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         LOGGER.debug("Create CES-OAuth client redirect action builder...");
         return new CesOidcClientRedirectActionBuilder();
     }
 
     @Bean
-    @RefreshScope
     public SingleLogoutMessageCreator oauthSingleLogoutMessageCreator(final TicketRegistry ticketRegistry) {
         return new CesOAuthSingleLogoutMessageCreator(ticketRegistry);
     }
 
     @Bean
-    @RefreshScope
     public SingleLogoutServiceMessageHandler oauthSingleLogoutServiceMessageHandler(
             ObjectProvider<HttpClient> noRedirectHttpClient,
             CasConfigurationProperties casProperties,
@@ -77,7 +72,6 @@ public class CesOAuthConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public LogoutExecutionPlanConfigurer cesOAuthLogoutExecutionPlanConfigurer(
             SingleLogoutServiceMessageHandler oauthSingleLogoutServiceMessageHandler) {
         return plan -> plan.registerSingleLogoutServiceMessageHandler(oauthSingleLogoutServiceMessageHandler);

@@ -53,7 +53,6 @@ public class CasCustomTemplateManagerConfiguration {
     }
 
     @Bean(name = "cas3ServiceSuccessView")
-    @RefreshScope
     public View cas3ServiceSuccessView(
         @Qualifier(AttributeDefinitionStore.BEAN_NAME) AttributeDefinitionStore attributeDefinitionStore,
         @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -199,7 +198,6 @@ public class CasCustomTemplateManagerConfiguration {
     
     //Fixes: Parameter 1 of method cesDebugServiceRegistry in de.triology.cas.services.CasCustomTemplateManagerConfiguration required a bean of type 'org.apereo.cas.services.util.RegisteredServiceJsonSerializer' that could not be found.
     @Bean
-    @RefreshScope
     public RegisteredServiceJsonSerializer registeredServiceJsonSerializer(
             final ConfigurableApplicationContext applicationContext
     ) {
@@ -207,7 +205,6 @@ public class CasCustomTemplateManagerConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public RegisteredServicesTemplatesManager registeredServicesTemplatesManager(
             final CasConfigurationProperties casProperties,
             final RegisteredServiceJsonSerializer registeredServiceJsonSerializer
@@ -230,7 +227,6 @@ public class CasCustomTemplateManagerConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public ServiceRegistry cesDebugServiceRegistry(
             final CasConfigurationProperties casProperties,
             final RegisteredServiceJsonSerializer serializer,
@@ -252,7 +248,6 @@ public class CasCustomTemplateManagerConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public ServiceRegistryExecutionPlanConfigurer cesDebugServiceRegistryExecutionPlanConfigurer(
             final ServiceRegistry cesDebugServiceRegistry
     ) {
