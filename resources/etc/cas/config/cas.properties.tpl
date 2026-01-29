@@ -340,3 +340,9 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 # Increase start-delay of scheduler to prevent startup-errors on slow starts
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
+
+
+########################################################################################################################
+# URL Validation
+cas.validation.allow-local-urls={{ .Config.Get "allow_local_urls"}}
+########################################################################################################################

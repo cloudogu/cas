@@ -5,12 +5,15 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Fixed
+- [#310] Fixed an issue where back-channel logouts from local clusters were not possible.
+  - Local URLs, such as *.localhost and *.localdomain, can be allowed with the `allow_local_urls` key.
 
 ### Security
 - [#308] fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
 ## [v7.2.7-5] - 2025-11-26
-- #[306] Updated default settings for java heap size, memory request and memory limit. 
+- [#306] Updated default settings for java heap size, memory request and memory limit. 
 
 ## [v7.2.7-4] - 2025-10-27
 - This release fixes an upgrade error in environments that use an external directory service rather than an LDAP dogu.

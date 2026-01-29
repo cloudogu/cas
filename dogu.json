@@ -396,6 +396,19 @@
       "Name": "oidc/initial_admin_usernames",
       "Description": "Specifies a list of usernames that will be assigned to the CES admin-group, when they first login.",
       "Optional": true
+    },
+    {
+      "Name": "allow_local_urls",
+      "Description": "Determines whether the CAS should allow domains like *.localhost or *.localdomain.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
     }
   ],
   "Volumes": [
