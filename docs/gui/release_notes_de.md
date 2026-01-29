@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+### Security
+- [#308] Sicherheitslücke geschlossen [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+
 ## [v7.2.7-5] - 2025-11-26
 - #[306] Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
 
