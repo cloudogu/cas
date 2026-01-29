@@ -6,6 +6,11 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-6] - 2026-01-29
+
+### Security
+- [#308] fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+
 ## [v7.2.7-5] - 2025-11-26
 - #[306] Updated default settings for java heap size, memory request and memory limit. 
 
