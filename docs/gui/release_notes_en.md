@@ -6,6 +6,12 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.0.10-6] - 2026-02-01
+
+### Security
+- Fixed CVE: [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+
+
 ## [v7.0.10-5] - 2025-08-14
 ### Fixed
 - Fixed an issue where the Dogu could not apply a specific configuration.

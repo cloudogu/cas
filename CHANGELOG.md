@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.0.10-6] - 2026-02-01
+
+### Security
+- CVE fixed: [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+
+
 ## [v7.0.10-5] - 2025-08-14
 ### Fixed
 - [#276] Fix typo in cas configuration

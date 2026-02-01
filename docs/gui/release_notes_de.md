@@ -6,6 +6,12 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.0.10-6] - 2026-02-01
+
+### Security
+- Geschlossene Sicherheitslücke: [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+
+
 ## [v7.0.10-5] - 2025-08-14
 ### Behoben
 - Es wurde ein Problem behoben, bei dem das Dogu eine spezifische Konfiguration nicht anwenden konnte.
