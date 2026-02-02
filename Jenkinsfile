@@ -2,7 +2,7 @@
 @Library([
   'pipe-build-lib',
   'ces-build-lib',
-  'dogu-build-lib'
+  'dogu-build-lib@bug/fix_verify_error'
 ]) _
 
 String clientSecret = ''
