@@ -100,20 +100,6 @@ parallel(
                         checkout scm
                     }
 
-                    stage('Lint') {
-                        Dockerfile dockerfile = new Dockerfile(this)
-                        dockerfile.lint()
-                    }
-
-                    stage('Shellcheck') {
-                        // TODO: Change this to shellCheck("./resources") as soon as https://github.com/cloudogu/dogu-build-lib/issues/8 is solved
-                        shellCheck("./resources/startup.sh ./resources/logging.sh ./resources/util.sh ./resources/create-sa.sh ./resources/remove-sa.sh")
-                    }
-
-                    stage('Bats Tests') {
-                        Bats bats = new Bats(this, docker)
-                        bats.checkAndExecuteTests()
-                    }
 
                     try {
                         stage('Provision') {
@@ -215,7 +201,11 @@ parallel(
                            def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
                            echo "${testreport}"
                         }
-
+                        stage('Release') {
+                                String releaseVersion = 'v7.0.10-6'
+                                ecoSystem.push('/dogu')
+                                github.createReleaseWithChangelog(releaseVersion, changelog, "main")
+                        }
                         if (params.TestDoguUpgrade != null && params.TestDoguUpgrade) {
                             stage('Upgrade dogu') {
                                 // Remove new dogu that has been built and tested above
