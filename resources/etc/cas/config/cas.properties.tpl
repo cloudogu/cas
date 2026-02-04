@@ -344,5 +344,5 @@ cas.service-registry.schedule.start-delay=PT1M
 
 ########################################################################################################################
 # URL Validation
-cas.validation.allow-local-urls={{ .Config.Get "allow_local_urls"}}
+custom.validation.allow-local-urls={{ .Config.GetOrDefault "allow_local_urls" "false"}}
 ########################################################################################################################

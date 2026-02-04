@@ -10,7 +10,7 @@ import static org.apache.commons.validator.routines.UrlValidator.ALLOW_LOCAL_URL
 
 @Configuration("CustomUrlValidatorConfiguration")
 public class CustomUrlValidatorConfiguration {
-    @Value("${cas.validation.allow-local-urls:false}")
+    @Value("${custom.validation.allow-local-urls}")
     public boolean allowLocalUrls;
 
     @Bean
