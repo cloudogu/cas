@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [#310] Add flag to allow local urls like *.localhost or *.localdomain
 
+## [v7.2.7-6] - 2026-01-29
+
 ### Security
 - [#308] CVE fixed: [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
