@@ -51,6 +51,22 @@ class CustomUrlValidatorConfigurationTest {
 
         result = urlValidator.isValid("http://test.de/");
         assertTrue(result);
+    }
 
+    @Test
+    void domainValidator() {
+        var config = new CustomUrlValidatorConfiguration();
+        config.allowLocalUrls = true;
+
+        var urlValidator = config.urlValidator();
+
+        var result = urlValidator.isValidDomain("localhost");
+        assertTrue(result);
+
+        result = urlValidator.isValidDomain("localdomain");
+        assertTrue(result);
+
+        result = urlValidator.isValidDomain("test");
+        assertTrue(result);
     }
 }

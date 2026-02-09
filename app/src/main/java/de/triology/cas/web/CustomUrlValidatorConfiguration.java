@@ -18,7 +18,7 @@ public class CustomUrlValidatorConfiguration {
         if (allowLocalUrls) {
             return new CustomUrlValidator(
                     new org.apache.commons.validator.routines.UrlValidator(null, null, ALLOW_LOCAL_URLS, DomainValidator.getInstance(true)),
-                    DomainValidator.getInstance()
+                    DomainValidator.getInstance(true)
             );
         }
         return new CustomUrlValidator(
