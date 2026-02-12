@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v7.2.7-6] - 2026-01-29
+## [v7.2.7-7] - 2026-02-12
+### Security
+- [#312] Upgrade java base-image to 21.0.10-3
+    - [#312] Update doguctl to v0.15.0 to fix [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) and [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
 
+## [v7.2.7-6] - 2026-01-29
 ### Security
 - [#308] CVE fixed: [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
