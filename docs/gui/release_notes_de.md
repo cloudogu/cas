@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Fixed
+- Dieses Release behebt ein Problem mit dem Local-Config-Volume in einem K8s-Cluster.
 
 ## [v7.2.7-7] - 2026-02-12
 ### Security
