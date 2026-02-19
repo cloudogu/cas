@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-8] - 2026-02-19
+### Fixed
+- The Release fixes an issue with the local config volume in a k8s cluster.
+
 ## [v7.2.7-7] - 2026-02-12
 ### Security
 - [#312] fixed [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).

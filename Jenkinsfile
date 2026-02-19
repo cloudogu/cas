@@ -23,7 +23,8 @@ def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     doBatsTests        : true,
     runIntegrationTests: true,
     doSonarTests       : true,
-    dependencies       : ['nginx', 'cas']
+    dependencies       : ['nginx', 'cas'],
+    defaultBranch      : "master"
 ])
 
 pipe.setBuildProperties()

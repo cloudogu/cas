@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-8] - 2026-02-19
+### Fixed
+- [#314] Upgrade base images to use doguctl v0.15.1. This doguctl version fixes an issue with
+  the local config volume in a k8s cluster.
+
 ## [v7.2.7-7] - 2026-02-12
 ### Security
 - [#312] Upgrade java base-image to 21.0.10-3

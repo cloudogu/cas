@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.23.3-3 AS tomcat
+FROM registry.cloudogu.com/official/base:3.23.3-4 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
@@ -38,9 +38,9 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
   && rm "apache-tomcat-${TOMCAT_VERSION}.tar"
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:21.0.10-3 AS cas
+FROM registry.cloudogu.com/official/java:21.0.10-4 AS cas
 LABEL NAME="official/cas" \
-      VERSION="7.2.7-7" \
+      VERSION="7.2.7-8" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
