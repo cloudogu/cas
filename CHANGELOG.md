@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-8] - 2026-02-19
 ### Fixed
 - [#314] Upgrade base images to use doguctl v0.15.1. This doguctl version fixes an issue with
   the local config volume in a k8s cluster.
