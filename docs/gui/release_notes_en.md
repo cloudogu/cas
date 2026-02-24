@@ -9,8 +9,15 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - [#310] Fixed an issue where back-channel logouts from local clusters were not possible.
   - Local URLs, such as *.localhost and *.localdomain, can be allowed with the `allow_local_urls` key.
 
-## [v7.2.7-6] - 2026-01-29
+## [v7.2.7-8] - 2026-02-19
+### Fixed
+- The Release fixes an issue with the local config volume in a k8s cluster.
 
+## [v7.2.7-7] - 2026-02-12
+### Security
+- [#312] fixed [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
+
+## [v7.2.7-6] - 2026-01-29
 ### Security
 - [#308] fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
