@@ -340,3 +340,16 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 # Increase start-delay of scheduler to prevent startup-errors on slow starts
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
+
+#### multi factor authentication ####
+cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
+cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
+cas.authn.mfa.core.provider-selection.cookie.enabled=false
+
+### gauth ###
+cas.authn.mfa.gauth.core.issuer=CASIssuer
+cas.authn.mfa.gauth.core.label=CASLabel
+cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
+
+logging.level.org.apereo.cas.authentication=DEBUG
+logging.level.org.apereo.cas.web.flow=DEBUG
