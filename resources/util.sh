@@ -161,14 +161,12 @@ function renderCustomMessagesTpl() {
 # create encrpytion codes
 # these codes are generated once
 function createTOTPEncryptionCodes() {
-  echo "calling function"
   ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/signing_key")
   if [[ "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
     echo "generating totp encryption and signing keys"
-    # signing keys need to be 512 bit - 64 chars
-    doguctl config "totp/signing_key" "$(doguctl random -l 64)"
-    doguctl config "totp/encryption_key" "$(doguctl random -l 64)"
-    doguctl config "totp/scratch_codes/encryption_key" "$(doguctl random -l 64)"
+    doguctl config "totp/signing_key" "YRSU5V3penSandm3tZ3Vt3pTX230w_RZoE9uHhYfhWnhfouQ0mNfc8t7yGCBijqrluNyTDiHuua3nsMeAwBKGQ"
+    doguctl config "totp/encryption_key" "AQTbyu3s3Kt3FbKtt3elYDu4gs1kRf3SdKRvV4wFGyFHXTnzMvsu5xtwalxn7gw_0K2ZBIk2DLjUFLI0pzigmg"
+    doguctl config "totp/scratch_codes/encryption_key" "AQTbyu3s3Kt3FbKtt3elYDu4gs1kRf3SdKRvV4wFGyFHXTnzMvsu5xtwalxn7gw_0K2ZBIk2DLjUFLI0pzigmg"
   fi
 }
 
