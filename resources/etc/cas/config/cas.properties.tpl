@@ -349,10 +349,10 @@ cas.authn.mfa.core.provider-selection.cookie.enabled=false
 ### gauth ###
 cas.authn.mfa.gauth.core.issuer=CASIssuer
 cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
-cas.authn.mfa.gauth.core.label=Ecosystem
-cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
-cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
-cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scratch_codes/encryption_key" }}
+# cas.authn.mfa.gauth.core.label=Ecosystem
+# cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
+# cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
+# cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scratch_codes/encryption_key" }}
 
 # persistence
 # cas.authn.mfa.gauth.json.location=/etc/cas/gauth/gauths.json

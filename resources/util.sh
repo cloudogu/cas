@@ -158,6 +158,20 @@ function renderCustomMessagesTpl() {
   fi
 }
 
+# create encrpytion codes
+# these codes are generated once
+function createTOTPEncryptionCodes() {
+  echo "calling function"
+  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/signing_key")
+  if [[ "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
+    echo "generating totp encryption and signing keys"
+    # signing keys need to be 512 bit - 64 chars
+    doguctl config "totp/signing_key" "$(doguctl random -l 64)"
+    doguctl config "totp/encryption_key" "$(doguctl random -l 64)"
+    doguctl config "totp/scratch_codes/encryption_key" "$(doguctl random -l 64)"
+  fi
+}
+
 # Sets general configuration option for the CAS server
 function configureCAS() {
   createLDAPConfiguration
@@ -245,16 +259,4 @@ function updateFqdnInServices() {
   rm $tmpFqdnService
 
   echo "Successfully finished fqdn update."
-}
-
-# create encrpytion codes
-# these codes are generated once
-function createTOTPEncryptionCodes() {
-  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/signing_key")
-  if [[ "ENCRYPTION_CODES_CREATED" == "false" ]]; then
-    echo "generating totp encryption and signing keys"
-    doguctl config "totp/signing_key" "$(doguctl random -l 512)"
-    doguctl config "totp/encryption_key" "$(doguctl random -l 512)"
-    doguctl config "totp/scratch_codes/encryption_key" "$(doguctl random -l 512)"
-  fi
 }
