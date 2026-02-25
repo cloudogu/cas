@@ -250,13 +250,11 @@ function updateFqdnInServices() {
 # create encrpytion codes
 # these codes are generated once
 function createTOTPEncryptionCodes() {
-  if $(doguctl config -default false totp/signing_key)
-  then
-    echo "totp keys already set"
-    return
+  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/signing_key")
+  if [[ "ENCRYPTION_CODES_CREATED" == "false" ]]; then
+    echo "generating totp encryption and signing keys"
+    doguctl config "totp/signing_key" "$(doguctl random -l 512)"
+    doguctl config "totp/encryption_key" "$(doguctl random -l 512)"
+    doguctl config "totp/scratch_codes/encryption_key" "$(doguctl random -l 512)"
   fi
-  echo "setting totp keys"
-  doguctl config "totp/signing_key" $(doguctl random -l 512)
-  doguctl config "totp/encryption_key" $(doguctl random -l 512)
-  doguctl config "totp/scratch_codes/encryption_key" $(doguctl random -l 512)
 }
