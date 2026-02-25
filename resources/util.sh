@@ -162,6 +162,7 @@ function renderCustomMessagesTpl() {
 function configureCAS() {
   createLDAPConfiguration
   createPasswordPolicyPattern
+  createTOTPEncryptionCodes
 
   renderCASPropertiesTpl
   renderCustomMessagesTpl
@@ -244,4 +245,18 @@ function updateFqdnInServices() {
   rm $tmpFqdnService
 
   echo "Successfully finished fqdn update."
+}
+
+# create encrpytion codes
+# these codes are generated once
+function createTOTPEncryptionCodes() {
+  if $(doguctl config -default false totp/signing_key)
+  then
+    echo "totp keys already set"
+    return
+  fi
+  echo "setting totp keys"
+  doguctl config "totp/signing_key" $(doguctl random -l 512)
+  doguctl config "totp/encryption_key" $(doguctl random -l 512)
+  doguctl config "totp/scratch_codes/encryption_key" $(doguctl random -l 512)
 }
