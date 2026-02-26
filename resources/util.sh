@@ -166,9 +166,9 @@ function createTOTPEncryptionCodes() {
     echo "generating totp encryption and signing keys"
     # cas jwk-jar generates a valid key json output plus unnecessary text
     # the json is isolated with sed and and jq is used for saving the generated key in the dogu config
-    SIGNING_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl "config totp/signing_key" "$SIGNING_KEY"
-    ENCRYPTION_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl "config totp/encryption_key" "$ENCRYPTION_KEY"
-    SCRATCH_CODES_ENCRYPTION_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl "config totp/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
+    SIGNING_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl config "totp/signing_key" "$SIGNING_KEY"
+    ENCRYPTION_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl config "totp/encryption_key" "$ENCRYPTION_KEY"
+    SCRATCH_CODES_ENCRYPTION_KEY=$(java -jar /jars/jwk-gen.jar -t oct -s 512 | sed -n '/{/,/}/p' | jq -r '.k'); doguctl config "totp/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
 #    doguctl config "totp/signing_key" "YRSU5V3penSandm3tZ3Vt3pTX230w_RZoE9uHhYfhWnhfouQ0mNfc8t7yGCBijqrluNyTDiHuua3nsMeAwBKGQ"
 #    doguctl config "totp/encryption_key" "AQTbyu3s3Kt3FbKtt3elYDu4gs1kRf3SdKRvV4wFGyFHXTnzMvsu5xtwalxn7gw_0K2ZBIk2DLjUFLI0pzigmg"
 #    doguctl config "totp/scratch_codes/encryption_key" "AQTbyu3s3Kt3FbKtt3elYDu4gs1kRf3SdKRvV4wFGyFHXTnzMvsu5xtwalxn7gw_0K2ZBIk2DLjUFLI0pzigmg"
