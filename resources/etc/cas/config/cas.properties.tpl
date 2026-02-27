@@ -341,13 +341,12 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
 
+{{ if eq (.Config.Get "experimental/totp/activate") "true"}}
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
-{{ if eq (.Config.Get "experimental/totp/activate") "true"}}
-### mfa ###
 cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 
