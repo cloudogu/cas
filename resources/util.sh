@@ -161,8 +161,8 @@ function renderCustomMessagesTpl() {
 # create totp signing and encrpytion codes
 # these codes are generated once
 function createTOTPEncryptionCodes() {
-  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/encryption_key")
-  if [[ "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
+  ACTIVATE_TOTP=$(doguctl config --default "false" "experimental/totp/activate")
+  if [[ "$ACTIVATE_TOTP" == "true" ]]; then
     echo "generating totp encryption and signing keys"
     # cas jwk-jar generates a valid key json output plus unnecessary text
     # the json is isolated with sed and and jq is used for saving the generated key in the dogu config

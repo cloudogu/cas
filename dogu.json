@@ -396,6 +396,12 @@
       "Name": "oidc/initial_admin_usernames",
       "Description": "Specifies a list of usernames that will be assigned to the CES admin-group, when they first login.",
       "Optional": true
+    },
+    {
+      "Name": "experimental/totp/activate",
+      "Description": "Warning: Experimental Feature. Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. This feature currently breaks dogu to dogu communication. Set this value to 'true' to enable.",
+      "Default": "false",
+      "Optional": true
     }
   ],
   "Volumes": [

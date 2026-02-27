@@ -346,19 +346,16 @@ cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
+{{ if eq (.Config.Get "experimental/totp/activate") "true"}}
+### mfa ###
+cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
+cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
+
 ### gauth ###
 cas.authn.mfa.gauth.core.issuer=CASIssuer
 cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
-cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
-cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scratch_codes/encryption_key" }}
 cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
-
-# cas.authn.mfa.gauth.core.label=Ecosystem
-
-# persistence
-# cas.authn.mfa.gauth.json.location=/etc/cas/gauth/gauths.json
-
-logging.level.org.apereo.cas.authentication=DEBUG
-logging.level.org.apereo.cas.web.flow=DEBUG
+cas.authn.mfa.gauth.core.label=Ecosystem
+{{ end }}
