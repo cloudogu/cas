@@ -19,14 +19,18 @@
             <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <h2 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title" th:utext="#{${title}}"> Confirm Account</h2>
+                        <h2 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
+                            th:utext="#{screen.authentication.gauth.confirm.title}">
+                            Confirm Account Registration
+                        </h2>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                    <button type="button" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}">
+                                    <a href="#" class="close" onclick="$(this).parent().hide();"
+                                       th:aria-label="#{screen.pm.button.close}">
                                         <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                    </button>
+                                    </a>
                                     <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
@@ -41,7 +45,7 @@
                                     <div class="mdc-input-group-field mdc-input-group-field-append">
                                         <div class="d-flex caps-check">
                                             <label for="token"
-                                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                                   class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
@@ -50,127 +54,100 @@
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
-                                                <input id="token"
-                                                       data-testid="register-totp-token-input-token-field"
-                                                       name="token"
-                                                       size="25"
+                                                <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                                        type="password"
-                                                       autocapitalize="none"
-                                                       spellcheck="false"
-                                                       required
-                                                       autocomplete="off"
+                                                       name="token"
+                                                       id="token"
+                                                       size="25"
                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                       class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
-                                                />
+                                                       required
+                                                       autocomplete="off"/>
                                             </label>
-                                            <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                                                    tabindex="-1"
-                                                    type="button">
-                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon" aria-hidden="true"></i>
-                                                <span class="visually-hidden">Toggle Token</span>
-                                            </button>
                                         </div>
-                                        <div th:if="${confirmationType == 'create'}">
-                                            <br>
-                                            <div class="d-flex">
-                                                <label for="accountName"
-                                                       class="mdc-text-field mdc-text-field--outlined control-label">
-                                                    <span class="mdc-notched-outline">
-                                                        <span class="mdc-notched-outline__leading"></span>
-                                                        <span class="mdc-notched-outline__notch">
-                                                            <span class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Account Name</span>
-                                                        </span>
-                                                        <span class="mdc-notched-outline__trailing"></span>
+                                        <section id="passwordRevealSection">
+                                            <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
+                                                <button type="button" role="checkbox" data-state="unchecked"
+                                                        value="on"
+                                                        data-testid="password-reveal-checkbox"
+                                                        id="password-reveal-checkbox" aria-controls="password"
+                                                        class="border rounded-sm outline-none focus-visible:ces-focused data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:hover:bg-brand-strong data-[state=checked]:hover:border-brand-strong data-[state=checked]:focus-visible:bg-brand-strong data-[state=checked]:focus-visible:border-brand-strong data-[state=checked]:disabled:bg-neutral-weak data-[state=checked]:disabled:border-neutral data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:hover:bg-brand-strong data-[state=indeterminate]:hover:border-brand-strong data-[state=indeterminate]:focus-visible:bg-brand-strong data-[state=indeterminate]:focus-visible:border-brand-strong data-[state=indeterminate]:disabled:bg-neutral-weak data-[state=indeterminate]:disabled:border-neutral data-[state=unchecked]:border-neutral data-[state=unchecked]:bg-default-background data-[state=unchecked]:hover:border-2 data-[state=unchecked]:hover:border-neutral-strong data-[state=unchecked]:focus-visible:border-2 data-[state=unchecked]:focus-visible:border-neutral-strong data-[state=unchecked]:disabled:bg-neutral-weak data-[state=unchecked]:disabled:border-neutral data-[state=unchecked]:disabled:border min-w-[24px] w-[24px] min-h-[24px] h-[24px] flex items-center justify-center">
+                                                    <span data-state="checked" style="pointer-events: none;" id="reveal-checkbox">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                                             viewBox="0 0 256 256" class="text-inverted-text">
+                                                            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                                            </path>
+                                                        </svg>
                                                     </span>
-                                                    <input id="accountName"
-                                                           data-testid="register-totp-token-input-devicename-field"
-                                                           name="accountName"
-                                                           size="50"
-                                                           type="text"
-                                                           autocapitalize="none"
-                                                           spellcheck="false"
-                                                           autocomplete="off"
-                                                           class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
-                                                    />
-                                                </label>
-                                                <script>document.getElementById("accountName").value = randomWord();</script>
-                                            </div>
-                                        </div>
-                                        <div th:if="${confirmationType == 'delete'}">
-                                            <input type="hidden" id="confirmAccountId" name="accountId" />
-                                        </div>
-                                        <div th:if="${confirmationType == 'add'}">
-                                            <br/>
-                                            <div class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
-                                                <input type="hidden" name="accountId">
-                                                <div class="mdc-select__anchor"
-                                                     role="button"
-                                                     aria-required="true"
-                                                     aria-haspopup="listbox"
-                                                     aria-expanded="false">
-                                                    <span class="mdc-line__ripple"></span>
-                                                    <span class="mdc-notched-outline">
-                                                            <span class="mdc-notched-outline__leading"></span>
-                                                            <span class="mdc-notched-outline__notch">
-                                                                <span id="outlined-select-label" class="mdc-floating-label"
-                                                                      th:utext="#{screen.account.mfadevices.title}">Registered Accounts</span>
-                                                            </span>
-                                                            <span class="mdc-notched-outline__trailing"></span>
-                                                        </span>
-                                                    <span class="mdc-select__selected-text-container">
-                                                            <span class="mdc-select__selected-text"/>
-                                                        </span>
-                                                    <span class="mdc-select__dropdown-icon">
-                                                            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
-                                                                 focusable="false">
-                                                                <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
-                                                                         fill-rule="evenodd" points="7 10 12 15 17 10">
-                                                                </polygon>
-                                                                <polygon class="mdc-select__dropdown-icon-active" stroke="none"
-                                                                         fill-rule="evenodd" points="7 15 12 10 17 15">
-                                                                </polygon>
-                                                            </svg>
-                                                        </span>
-                                                    <span class="mdc-line-ripple"></span>
-                                                </div>
+                                                </button>
+                                                <span th:text="#{screen.passwordfield.toggle}"></span>
+                                            </label>
 
-                                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-                                                    <ul class="mdc-list" role="listbox">
-                                                        <li th:each="account,iter : ${registeredDevices}" class="mdc-list-item "
-                                                            th:id="${account.id}"
-                                                            th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
-                                                            th:data-value="${account.id}" role="option">
-                                                            <span class="mdc-list-item__ripple"></span>
-                                                            <span class="mdc-list-item__text" th:utext="${account.name}">Device</span>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
+                                            <script>
+                                                document.getElementById("password-reveal-checkbox").onclick = () => {
+                                                    const checkbox = document.getElementById("password-reveal-checkbox");
+                                                    const span = document.getElementById("reveal-checkbox");
+                                                    const pwInput = document.getElementById("totp-token-input");
+                                                    if (pwInput.type === "password") {
+                                                        pwInput.type = "text";
+                                                        checkbox.setAttribute('data-state', 'checked');
+                                                        if (!span) {
+                                                            const newSpan = document.createElement('span');
+                                                            newSpan.id = "reveal-checkbox";
+                                                            newSpan.style.pointerEvents = 'none';
+                                                            newSpan.setAttribute('data-state', 'checked');
+                                                            newSpan.innerHTML = `
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="text-inverted-text">
+                                                <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                                </path>
+                                            </svg>`;
+                                                            checkbox.appendChild(newSpan);
+                                                        }
+                                                    } else {
+                                                        pwInput.type = "password";
+                                                        checkbox.setAttribute('data-state', 'unchecked');
+                                                        if (span) {
+                                                            span.parentNode.removeChild(span);
+                                                        }
+                                                    }
+                                                };
+                                            </script>
+                                        </section>
+                                        <br>
+                                        <div class="d-flex">
+                                            <label for="accountName"
+                                                   class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                        <span class="mdc-floating-label"
+                                                              th:utext="#{screen.authentication.gauth.name}">Account Name</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+                                                <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                                       type="text"
+                                                       name="accountName"
+                                                       id="accountName"
+                                                       size="50"
+                                                       autocomplete="off"/>
+                                            </label>
+                                            <script>document.getElementById("accountName").value = randomWord();</script>
                                         </div>
                                     </div>
                                 </section>
                             </div>
                         </div>
                         <footer class="mdc-dialog__actions">
-                            <button class="mdc-button mdc-button--raised btn btn-primary me-2"
+                            <button class="mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
                                     th:name="${actionButton}" th:id="${actionButton}">
-                                <span class="mdc-button__label" th:text="#{${actionButtonLabel}}">Continue</span>
+                                <span class="mdc-button__label"
+                                      th:text="#{${actionButtonLabel}}">Register</span>
                             </button>
-                            <button
-                                    id="cancel"
-                                    th:name="${actionButton}"
-                                    th:id="${actionButton}"
-                                    type="button"
-                                    th:text="#{${actionButtonLabel}}"
-                                    class="btn btn-primary mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
-                                    data-testid="continue-setup-totp"/>
-                            <button
-                                    id="cancel"
-                                    type="button"
-                                    data-mdc-dialog-button-default
-                                    th:utext="#{screen.authentication.gauth.cancel}"
-                                    class="btn btn-outline-secondary button-cancel mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
-                                    data-testid="cancel-setup-totp"/>
+                            <button type="button"
+                                    class="mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
+                                    data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
+                                <span class="mdc-button__label">Cancel</span>
+                            </button>
                         </footer>
                     </div>
                 </div>
