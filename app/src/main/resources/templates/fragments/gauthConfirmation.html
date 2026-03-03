@@ -19,22 +19,8 @@
             <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <h2 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
-                            th:utext="#{screen.authentication.gauth.confirm.title}">
-                            Confirm Account Registration
-                        </h2>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
-                                <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                     role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                    <a href="#" class="close" onclick="$(this).parent().hide();"
-                                       th:aria-label="#{screen.pm.button.close}">
-                                        <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                    </a>
-                                    <h3>Failure</h3>
-                                    <p th:utext="#{screen.authentication.gauth.invalidtoken}">
-                                </div>
-
                                 <p th:utext="#{${description}}">Description</p>
 
                                 <input type="hidden" th:name="${'_eventId_' + eventId}" value="Confirm"/>
@@ -63,6 +49,15 @@
                                                        required
                                                        autocomplete="off"/>
                                             </label>
+                                            <div class="banner banner-danger alert alert-danger banner-dismissible"
+                                                 role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
+                                                <a href="#" class="close" onclick="$(this).parent().hide();"
+                                                   th:aria-label="#{screen.pm.button.close}">
+                                                    <span class="mdi mdi-close-box" aria-hidden="true"></span>
+                                                </a>
+                                                <h3>Failure</h3>
+                                                <p th:utext="#{screen.authentication.gauth.invalidtoken}">
+                                            </div>
                                         </div>
                                         <section id="passwordRevealSection">
                                             <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
@@ -79,14 +74,14 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                <span th:text="#{screen.passwordfield.toggle}"></span>
+                                                <span>Token-Eingabe anzeigen</span>
                                             </label>
 
                                             <script>
                                                 document.getElementById("password-reveal-checkbox").onclick = () => {
                                                     const checkbox = document.getElementById("password-reveal-checkbox");
                                                     const span = document.getElementById("reveal-checkbox");
-                                                    const pwInput = document.getElementById("totp-token-input");
+                                                    const pwInput = document.getElementById("token");
                                                     if (pwInput.type === "password") {
                                                         pwInput.type = "text";
                                                         checkbox.setAttribute('data-state', 'checked');
@@ -119,8 +114,7 @@
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label"
-                                                              th:utext="#{screen.authentication.gauth.name}">Account Name</span>
+                                                        <span class="mdc-floating-label">Name des zweiten Faktors:</span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
@@ -129,9 +123,9 @@
                                                        name="accountName"
                                                        id="accountName"
                                                        size="50"
+                                                       value="Mein-Smartphone"
                                                        autocomplete="off"/>
                                             </label>
-                                            <script>document.getElementById("accountName").value = randomWord();</script>
                                         </div>
                                     </div>
                                 </section>
