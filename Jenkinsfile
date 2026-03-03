@@ -24,7 +24,7 @@ def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     runIntegrationTests: true,
     doSonarTests       : true,
     dependencies       : ['nginx', 'cas'],
-    additionalDogus    : ['official/nginx', 'official/cas', 'official/postgresql']
+    additionalDogus    : ['official/nginx', 'official/cas']
     defaultBranch      : "master"
 ])
 
@@ -60,65 +60,6 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
                     """
 
     echo "clientSecret length: ${clientSecret.size()}"
-}
-
-pipe.insertStageBefore('MN-Setup', 'MN-Setup-Prepare') {
-    // launching and setting up keycloak, adding test user, group, scope mapping etc
-    ecoSystem.vagrant.sshOut """
-                                cd /dogu/integrationTests/keycloak/ && \
-                                ./kc-down.sh && \
-                                ./kc-up.sh -H ${ecoSystem.externalIP} && \
-                                ./kc-setup.sh -H ${ecoSystem.externalIP} && \
-                                ./kc-add-user.sh && \
-                                ./kc-group.sh
-                                """
-    // retrieve secret from setup
-    clientSecret = ecoSystem.vagrant.sshOut """
-                    cd /dogu/integrationTests/keycloak/
-                    cat kc_out.env | \
-                    grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
-                    """
-
-    echo "clientSecret length: ${clientSecret.size()}"}
-}
-
-pipe.overrideStage('MN-Setup') {
-    ecoSystem.loginBackend('cesmarvin-setup')
-    ecoSystem.setup([registryConfig:"""
-        "cas": {
-            "forgot_password_text": "Contact your admin",
-            "legal_urls": {
-                "privacy_policy": "https://www.triology.de/",
-                "terms_of_service": "https://docs.cloudogu.com/",
-                "imprint": "https://cloudogu.com/"
-            },
-            "oidc": {
-                "enabled": "true",
-                "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
-                "client_id": "cas",
-                "display_name": "cas",
-                "optional": "true",
-                "scopes": "openid email profile groups",
-                "allowed_groups": "testers",
-                "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
-            }
-        },
-        "_global": {
-            "password-policy": {
-                "must_contain_capital_letter": "true",
-                "must_contain_lower_case_letter": "true",
-                "must_contain_digit": "true",
-                "must_contain_special_character": "true",
-                "min_length": "14"
-            }
-        }
-    """, registryConfigEncrypted:"""
-            "cas" : {
-            "oidc": {
-                "client_secret": "${clientSecret}"
-            }
-            }
-    """])
 }
 
 pipe.overrideStage('Setup') {
