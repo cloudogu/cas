@@ -63,7 +63,6 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 }
 
 pipe.overrideStage('MN-Setup') {
-    ecoSystem.loginBackend('cesmarvin-setup')
     ecoSystem.setup([registryConfig:"""
         "cas": {
             "forgot_password_text": "Contact your admin",
