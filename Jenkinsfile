@@ -62,26 +62,6 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
     echo "clientSecret length: ${clientSecret.size()}"
 }
 
-pipe.insertStageBefore('MN-Setup', 'MN-Setup-Prepare') {
-    // launching and setting up keycloak, adding test user, group, scope mapping etc
-    ecoSystem.vagrant.sshOut """
-                                cd /dogu/integrationTests/keycloak/ && \
-                                ./kc-down.sh && \
-                                ./kc-up.sh -H ${ecoSystem.externalIP} && \
-                                ./kc-setup.sh -H ${ecoSystem.externalIP} && \
-                                ./kc-add-user.sh && \
-                                ./kc-group.sh
-                                """
-    // retrieve secret from setup
-    clientSecret = ecoSystem.vagrant.sshOut """
-                    cd /dogu/integrationTests/keycloak/
-                    cat kc_out.env | \
-                    grep CLIENT_SECRET= kc_out.env | cut -d'=' -f2-
-                    """
-
-    echo "clientSecret length: ${clientSecret.size()}"}
-}
-
 pipe.overrideStage('MN-Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     ecoSystem.setup([registryConfig:"""
