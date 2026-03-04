@@ -2,7 +2,7 @@
 @Library([
   'pipe-build-lib',
   'ces-build-lib',
-  'dogu-build-lib'
+  'dogu-build-lib@test/user_clustername'
 ]) _
 
 String clientSecret = ''
