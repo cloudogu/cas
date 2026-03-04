@@ -341,6 +341,8 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
 
+cas.authn.pm.reset.multifactor-authentication-enabled=false
+
 {{ if eq (.Config.Get "experimental/totp/activate") "true"}}
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth

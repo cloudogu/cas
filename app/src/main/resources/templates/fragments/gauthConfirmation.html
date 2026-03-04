@@ -49,14 +49,6 @@
                                                        required
                                                        autocomplete="off"/>
                                             </label>
-                                            <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                                 role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                                <a href="#" class="close" onclick="$(this).parent().hide();"
-                                                   th:aria-label="#{screen.pm.button.close}">
-                                                    <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                                </a>
-                                                <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
-                                            </div>
                                         </div>
                                         <section id="passwordRevealSection">
                                             <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
@@ -106,6 +98,14 @@
                                                 };
                                             </script>
                                         </section>
+                                        <div class="banner banner-danger alert alert-danger banner-dismissible"
+                                             role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
+                                            <a href="#" class="close" onclick="$(this).parent().hide();"
+                                               th:aria-label="#{screen.pm.button.close}">
+                                                <span class="mdi mdi-close-box" aria-hidden="true"></span>
+                                            </a>
+                                            <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
+                                        </div>
                                         <br>
                                         <div class="d-flex">
                                             <label for="accountName"
