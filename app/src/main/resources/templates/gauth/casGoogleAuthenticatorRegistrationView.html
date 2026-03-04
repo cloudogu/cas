@@ -29,7 +29,7 @@
             dialogId='confirm-reg-dialog',
             title='screen.authentication.gauth.confirm.title', description='screen.authentication.gauth.confirm.desc',
             eventId='submit', confirmationType='create', actionButton='registerButton', actionButtonLabel='screen.welcome.button.register')}">
-                <a href="fragments/gauthConfirmation.html">Confirm</a>
+                <a href="fragments/gauthConfirmation.html"></a>
             </div>
             <!-- Confirmation Dialog -->
 
@@ -41,7 +41,7 @@
                         <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
                             <div class="mdc-chip__ripple"></div>
                             <span role="gridcell">
-                              <span class="mdc-chip__text font-bold" name="gauth-scratchcode" th:text="${code}">Code</span>
+                              <span class="mdc-chip__text font-bold" name="gauth-scratchcode" th:text="${code}"></span>
                             </span>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                         accesskey="f"
                         onclick="cas.openDialog('confirm-reg-dialog'); document.getElementById('registerButton').click();"
                         value="Confirm">
-                    <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
+                    <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}"></span>
                 </button>
 <!--                <button class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]"-->
 <!--                        id="print"-->
@@ -73,7 +73,7 @@
                         value="Cancel" id="cancel"
                         onclick="location.href = location.href;"
                         th:value="#{screen.pm.button.cancel}">
-                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
+                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}"></span>
                 </button>
             </div>
         </div>

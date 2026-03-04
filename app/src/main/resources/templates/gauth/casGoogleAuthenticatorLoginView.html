@@ -34,7 +34,7 @@
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                        <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}"></span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
@@ -182,7 +182,7 @@
             <button class="mdc-button mdc-button--raised btn btn-primary me-2"
                     onclick="cas.openDialog('confirm-reg-dialog')"
                     name="registerButton" id="registerButton">
-                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}"></span>
             </button>
 
             <!-- Confirmation Dialog -->
@@ -193,7 +193,6 @@
                         <div class="mdc-dialog__surface">
                             <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title"
                                 th:utext="#{screen.authentication.gauth.confirm.title}">
-                                Confirm Account Registration
                             </h1>
                             <div class="mdc-dialog__content" id="notif-dialog-content">
                                 <div class="mdc-typography--body1">
@@ -218,7 +217,7 @@
                                                         <span class="mdc-notched-outline__leading"></span>
                                                         <span class="mdc-notched-outline__notch">
                                                             <span class="mdc-floating-label"
-                                                                  th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                                  th:utext="#{cas.mfa.googleauth.label.token}"></span>
 
                                                         </span>
                                                         <span class="mdc-notched-outline__trailing"></span>
@@ -243,7 +242,7 @@
                                                         type="button">
                                                     <i class="mdi mdi-eye fas fa-eye reveal-password-icon"
                                                        aria-hidden="true"></i>
-                                                    <span class="visually-hidden">Toggle Token</span>
+                                                    <span class="visually-hidden"></span>
                                                 </button>
                                             </div>
 
@@ -262,7 +261,7 @@
                                                             <span class="mdc-notched-outline__notch">
                                                                 <span id="outlined-select-label"
                                                                       class="mdc-floating-label"
-                                                                      th:utext="#{screen.account.mfadevices.title}">Registered Accounts</span>
+                                                                      th:utext="#{screen.account.mfadevices.title}"></span>
                                                             </span>
                                                             <span class="mdc-notched-outline__trailing"></span>
                                                         </span>
@@ -294,7 +293,7 @@
                                                                 th:data-value="${account.id}" role="option">
                                                                 <span class="mdc-list-item__ripple"></span>
                                                                 <span class="mdc-list-item__text"
-                                                                      th:utext="${account.name}">Device</span>
+                                                                      th:utext="${account.name}"></span>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -314,7 +313,7 @@
                                 <button type="button"
                                         class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel"
                                         data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
-                                    <span class="mdc-button__label">Cancel</span>
+                                    <span class="mdc-button__label"></span>
                                 </button>
                             </footer>
                         </div>
