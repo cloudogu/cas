@@ -24,7 +24,7 @@ def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     runIntegrationTests: true,
     doSonarTests       : true,
     dependencies       : ['nginx', 'cas'],
-    additionalDogus    : ['official/postgresql', 'official/usermgt'],
+    additionalDogus    : ['official/postgresql', 'official/usermgt', 'official/ldap'],
     defaultBranch      : "master"
 ])
 
