@@ -16,6 +16,7 @@
     <div th:fragment="gauthConfirmation">
         <div class="mdc-dialog" th:id="${dialogId}" role="alertdialog"
              aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
+            <h2>3. Registrierung abschließen</h2>
             <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
@@ -30,16 +31,25 @@
                                 <section class="cas-field form-group my-3 mdc-input-group">
                                     <div class="mdc-input-group-field mdc-input-group-field-append">
                                         <div class="d-flex caps-check">
-                                            <label for="token"
+                                            <label style="max-width: 320px;" for="token"
                                                    class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
                                                         <span class="mdc-floating-label"
-                                                              th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                              th:utext="'Token'"></span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
+                                                <span>Tragen Sie einen Token aus der Authenticator-App ein, um Ihre Registrierung zu bestätigen.</span>
+                                                <div class="banner banner-danger alert alert-danger banner-dismissible"
+                                                     role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
+                                                    <a href="#" class="close" onclick="$(this).parent().hide();"
+                                                       th:aria-label="#{screen.pm.button.close}">
+                                                        <span class="mdi mdi-close-box" aria-hidden="true"></span>
+                                                    </a>
+                                                    <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
+                                                </div>
                                                 <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                                        type="password"
                                                        name="token"
@@ -65,7 +75,7 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                <span>Token-Eingabe anzeigen</span>
+                                                <span>Token anzeigen</span>
                                             </label>
 
                                             <script>
@@ -98,22 +108,14 @@
                                                 };
                                             </script>
                                         </section>
-                                        <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                             role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                            <a href="#" class="close" onclick="$(this).parent().hide();"
-                                               th:aria-label="#{screen.pm.button.close}">
-                                                <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                            </a>
-                                            <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
-                                        </div>
                                         <br>
                                         <div class="d-flex">
-                                            <label for="accountName"
+                                            <label  for="accountName" style="max-width: 320px"
                                                    class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label">Name des zweiten Faktors:</span>
+                                                        <span class="mdc-floating-label">Name des zweiten Faktors</span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>

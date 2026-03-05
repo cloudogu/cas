@@ -341,6 +341,7 @@ cas.service-registry.templates.directory.location=file:/etc/cas/services/templat
 cas.service-registry.schedule.start-delay=PT1M
 ########################################################################################################################
 
+# always enable password reset
 cas.authn.pm.reset.multifactor-authentication-enabled=false
 
 {{ if eq (.Config.Get "experimental/totp/activate") "true"}}

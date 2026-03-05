@@ -10,38 +10,32 @@
 </head>
 
 <body id="cas">
-<main class="container mt-3 mb-3">
+<main class="container mt-3 mb-2">
     <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
         <h1>Zwei-Faktor-Authentifizierung einrichten</h1>
         <!-- Account Information -->
         <div class="row">
-            <div style="display: block">
-                <img style="margin: auto" id="imageQRCode" th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"
+            <h2>1. Zweiten Faktor registrieren</h2>
+            <div>
+                <img id="imageQRCode" th:src="@{'data:image/jpeg;base64,' + ${QRcode}}"
                      th:alt="#{screen.authentication.gauth.qrimage}"/>
-                <p class="text-center font-bold" th:utext="'Secret-Key: ' + ${key.getSecretKey()}"></p>
+                <p th:utext="'Secret-Key: ' + ${key.getSecretKey()}"></p>
             </div>
             <div class="my-2" id="seckeypanel">
                 <p>Zum Registrieren des zweiten Faktors muss entweder der QR-Code gescannt werden oder der Secret-Key manuell in die Authenticator-App eingetragen werden</p>
             </div>
-            <hr>
-            <!-- Confirmation Dialog -->
-            <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
-            dialogId='confirm-reg-dialog',
-            title='screen.authentication.gauth.confirm.title', description='screen.authentication.gauth.confirm.desc',
-            eventId='submit', confirmationType='create', actionButton='registerButton', actionButtonLabel='screen.welcome.button.register')}">
-                <a href="fragments/gauthConfirmation.html"></a>
-            </div>
-            <!-- Confirmation Dialog -->
 
             <div>
                 <hr>
-                <p>Diese Scratch-Codes können verwendet werden, um den zweiten Faktor wiederherzustellen. Sie sollten sicher abgespeichert werden. Nach der Registrierung ist es nicht mehr möglich, auf diese Codes zuzugreifen.</p>
-                <div class="d-flex align-items-start justify-center mb-4">
+                <h2>2. Scratch-Codes sichern</h2>
+                <p>Speichern Sie die Scratch-Codes sicher. Mit diesen Codes können Sie den  zweiten Faktor  wiederherstellen. Nach der  Registrierung können Sie die Codes nicht mehr einsehen!</p>
+                <br>
+                <div class="d-flex align-items-start">
                     <div class="mdc-chip-set" role="grid" id="scratchcodes">
                         <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
                             <div class="mdc-chip__ripple"></div>
                             <span role="gridcell">
-                              <span class="mdc-chip__text font-bold" name="gauth-scratchcode" th:text="${code}"></span>
+                              <span class="mdc-chip__text" name="gauth-scratchcode" th:text="${code}"></span>
                             </span>
                         </div>
                     </div>
@@ -49,7 +43,16 @@
             </div>
         </div>
         <hr>
-        <div class="flex flex-col items-center">
+        <!-- Confirmation Dialog -->
+        <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
+            dialogId='confirm-reg-dialog',
+            title='screen.authentication.gauth.confirm.title', description='screen.authentication.gauth.confirm.desc',
+            eventId='submit', confirmationType='create', actionButton='registerButton', actionButtonLabel='screen.welcome.button.register')}">
+            <a href="fragments/gauthConfirmation.html"></a>
+        </div>
+        <!-- Confirmation Dialog -->
+
+        <div class="flex flex-col items-start">
             <div class="flex justify-center gap-4">
                 <button class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]"
                         name="confirm"
@@ -57,7 +60,7 @@
                         accesskey="f"
                         onclick="cas.openDialog('confirm-reg-dialog'); document.getElementById('registerButton').click();"
                         value="Confirm">
-                    <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}"></span>
+                    <span class="mdc-button__label" th:text="'Registrieren'"></span>
                 </button>
 <!--                <button class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]"-->
 <!--                        id="print"-->

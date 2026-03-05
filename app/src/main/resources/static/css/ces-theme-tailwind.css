@@ -1030,6 +1030,10 @@ legend {
   align-items: center;
 }
 
+.items-start {
+  align-items: start;
+}
+
 .justify-center {
   justify-content: center;
 }
