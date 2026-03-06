@@ -361,3 +361,9 @@ cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .GlobalConfig.Get "fqdn" }}
 {{ end }}
+
+
+########################################################################################################################
+# URL Validation
+custom.validation.allow-local-urls={{ .Config.GetOrDefault "allow_local_urls" "false"}}
+########################################################################################################################

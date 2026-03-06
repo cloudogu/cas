@@ -402,6 +402,19 @@
       "Description": "Warning: Experimental Feature. Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. This feature currently prohibits api access with basic auth to all dogus. Set this value to 'true' to enable.",
       "Default": "false",
       "Optional": true
+    },
+    {
+      "Name": "allow_local_urls",
+      "Description": "Determines whether the CAS should allow domains like *.localhost or *.localdomain.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
     }
   ],
   "Volumes": [

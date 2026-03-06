@@ -31,7 +31,7 @@ RUNTIME_ENV?=local
 $(info RUNTIME_ENV=$(RUNTIME_ENV))
 
 # The host and port of the local cluster
-K3S_CLUSTER_FQDN?=k3ces.local
+K3S_CLUSTER_FQDN?=k3ces.localdomain
 K3S_LOCAL_REGISTRY_PORT?=30099
 
 # The URL of the container-registry to use. Defaults to the registry of the local-cluster.
@@ -50,12 +50,12 @@ $(info CES_REGISTRY_HOST=$(CES_REGISTRY_HOST))
 
 # The name of the kube-context to use for applying resources.
 # If KUBE_CONTEXT_NAME is empty and RUNTIME_ENV is "remote" the currently configured kube-context is used.
-# If KUBE_CONTEXT_NAME is empty and RUNTIME_ENV is not "remote" the "k3ces.local" is used as kube-context.
+# If KUBE_CONTEXT_NAME is empty and RUNTIME_ENV is not "remote" the "k3ces.localdomain" is used as kube-context.
 ifeq (${KUBE_CONTEXT_NAME}, )
 	ifeq (${RUNTIME_ENV}, remote)
 		KUBE_CONTEXT_NAME = $(shell kubectl config current-context)
 	else
-		KUBE_CONTEXT_NAME = k3ces.local
+		KUBE_CONTEXT_NAME = k3ces.localdomain
 	endif
 endif
 $(info KUBE_CONTEXT_NAME=$(KUBE_CONTEXT_NAME))

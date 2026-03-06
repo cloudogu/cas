@@ -53,8 +53,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.oauth2.sdk.pkce.CodeChallengeMethod;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
