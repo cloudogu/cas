@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimentelle Zwei-Faktor-Authentifizierung mit TOTP
   - weitere Details siehe die [Dokumentation](../operations/two_factor_authentication_de.md)
