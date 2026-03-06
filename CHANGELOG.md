@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-9] - 2026-03-06
+### Added
+- [#316] Experimental two-factor authentication support with TOTP
+  - see the [documentation](./docs/operations/two_factor_authentication_en.md) for more details
+
 ## [v7.2.7-8] - 2026-02-19
 ### Fixed
 - [#314] Upgrade base images to use doguctl v0.15.1. This doguctl version fixes an issue with
