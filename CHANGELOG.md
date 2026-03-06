@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimental two-factor authentication support with TOTP
   - see the [documentation](./docs/operations/two_factor_authentication_en.md) for more details
