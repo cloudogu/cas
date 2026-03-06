@@ -1030,6 +1030,10 @@ legend {
   align-items: center;
 }
 
+.items-start {
+  align-items: start;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -1098,6 +1102,10 @@ legend {
   border-color: var(--ces-color-brand);
 }
 
+.border-danger {
+  border-color: var(--ces-color-danger);
+}
+
 .border-neutral {
   border-color: var(--ces-color-neutral);
 }
@@ -1108,6 +1116,14 @@ legend {
 
 .bg-brand {
   background-color: var(--ces-color-brand);
+}
+
+.bg-danger {
+  background-color: var(--ces-color-danger);
+}
+
+.border-danger {
+  border-color: var(--ces-color-danger);
 }
 
 .bg-cas-logo-bg {
@@ -1286,6 +1302,10 @@ legend {
   border-color: var(--ces-color-brand-strong);
 }
 
+.hover\:border-danger-strong:hover {
+  border-color: var(--ces-color-danger-strong);
+}
+
 .hover\:border-neutral-strong:hover {
   border-color: var(--ces-color-neutral-strong);
 }
@@ -1300,6 +1320,14 @@ legend {
 
 .hover\:bg-neutral-weak:hover {
   background-color: var(--ces-color-neutral-weak);
+}
+
+.hover\:bg-danger-strong:hover {
+  background-color: var(--ces-color-danger-strong);
+}
+
+.hover\:bg-danger-weak:hover {
+  background-color: var(--ces-color-danger-weak);
 }
 
 .hover\:p-1:hover {
@@ -1322,6 +1350,10 @@ legend {
   border-color: var(--ces-color-brand);
 }
 
+.focus\:border-danger:focus {
+  border-color: var(--ces-color-danger);
+}
+
 .focus-visible\:border-3:focus-visible {
   border-width: 3px;
 }
@@ -1329,6 +1361,11 @@ legend {
 .focus-visible\:border-brand-strong:focus-visible {
   border-color: var(--ces-color-brand-strong);
 }
+
+.focus-visible\:border-danger-strong:focus-visible {
+  border-color: var(--ces-color-danger-strong);
+}
+
 
 .focus-visible\:bg-brand-strong:focus-visible {
   background-color: var(--ces-color-brand-strong);
@@ -1340,6 +1377,14 @@ legend {
 
 .focus-visible\:bg-neutral-weak:focus-visible {
   background-color: var(--ces-color-neutral-weak);
+}
+
+.focus-visible\:bg-danger-strong:focus-visible {
+  background-color: var(--ces-color-danger-strong);
+}
+
+.focus-visible\:bg-danger-weak:focus-visible {
+  background-color: var(--ces-color-danger-weak);
 }
 
 .focus-visible\:p-1:focus-visible {
@@ -1379,6 +1424,14 @@ legend {
   border-color: var(--ces-color-brand-stronger);
 }
 
+.active\:border-danger:active {
+  border-color: var(--ces-color-danger);
+}
+
+.active\:border-danger-stronger:active {
+  border-color: var(--ces-color-danger-stronger);
+}
+
 .active\:border-neutral-stronger:active {
   border-color: var(--ces-color-neutral-stronger);
 }
@@ -1393,6 +1446,14 @@ legend {
 
 .active\:bg-neutral-weak:active {
   background-color: var(--ces-color-neutral-weak);
+}
+
+.active\:bg-danger-stronger:active {
+  background-color: var(--ces-color-danger-stronger);
+}
+
+.active\:bg-danger-weak:active {
+  background-color: var(--ces-color-danger-weak);
 }
 
 .active\:p-1:active {
@@ -1423,6 +1484,10 @@ legend {
   border-color: var(--ces-color-brand-weak);
 }
 
+.disabled\:border-danger-weak:disabled {
+  border-color: var(--ces-color-danger-weak);
+}
+
 .disabled\:border-neutral:disabled {
   border-color: var(--ces-color-neutral);
 }
@@ -1433,6 +1498,10 @@ legend {
 
 .disabled\:bg-brand-weak:disabled {
   background-color: var(--ces-color-brand-weak);
+}
+
+.disabled\:bg-danger-weak:disabled {
+  background-color: var(--ces-color-danger-weak);
 }
 
 .disabled\:bg-neutral-weak:disabled {
@@ -1575,12 +1644,20 @@ legend {
   border-color: var(--ces-color-brand-weak);
 }
 
+[aria-disabled="true"].aria-disabled\:border-danger-weak {
+  border-color: var(--ces-color-danger-weak);
+}
+
 [aria-disabled="true"].aria-disabled\:border-transparent {
   border-color: transparent;
 }
 
 [aria-disabled="true"].aria-disabled\:bg-brand-weak {
   background-color: var(--ces-color-brand-weak);
+}
+
+[aria-disabled="true"].aria-disabled\:bg-danger-weak {
+  background-color: var(--ces-color-danger-weak);
 }
 
 [aria-disabled="true"].aria-disabled\:bg-transparent {
