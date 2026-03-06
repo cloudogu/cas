@@ -9,6 +9,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 - [#310] Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
   - Lokale URLs, wie z.B. *.localhost und *.localdomain können mit dem Schlüssel `allow_local_urls` erlaubt werden.
 
+## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimentelle Zwei-Faktor-Authentifizierung mit TOTP
   - weitere Details siehe die [Dokumentation](../operations/two_factor_authentication_de.md)

@@ -9,6 +9,8 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - [#310] Fixed an issue where back-channel logouts from local clusters were not possible.
   - Local URLs, such as *.localhost and *.localdomain, can be allowed with the `allow_local_urls` key.
 
+
+## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimental two-factor authentication support with TOTP
   - see the [documentation](../operations/two_factor_authentication_en.md) for more details

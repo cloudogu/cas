@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [#310] Add flag to allow local urls like *.localhost or *.localdomain
 
+## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimental two-factor authentication support with TOTP
   - see the [documentation](./docs/operations/two_factor_authentication_en.md) for more details
