@@ -56,7 +56,8 @@ RUN set -o errexit \
   && apk add --no-cache --update \
     wget \
     jq \
-    curl
+    curl \
+    jose
 
 # configure environment
 ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
