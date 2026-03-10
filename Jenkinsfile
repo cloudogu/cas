@@ -104,10 +104,7 @@ pipe.overrideStage('Setup') {
 pipe.overrideStage('MN-Run Integration Tests') {
 
      echo "Create custom dogu to access OAuth endpoints for the integration tests"
-     sh "pwd"
-     sh "ls -lah"
-     sleep: time 600, unit: 'SECONDS'
-     sh "sudo kubectl cp dogu/integrationTests/services/ cas:/etc/cas/services/production/"
+     sh "sudo kubectl cp ./integrationTests/services/ cas:/etc/cas/services/production/"
      sh "sudo kubectl exec cas ls /etc/cas/services/production"
      // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
      sleep time: 30, unit: 'SECONDS'
