@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-10] - 2026-03-10
+### Security
+- Fix CVE-2019-17195 - Fixed a Nimbus Jose JWT Security issue that could cause application crash or authentication 
+  bypass.
+### Fixed
+- [#310] Add flag to allow local urls like *.localhost or *.localdomain
+
 ## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimental two-factor authentication support with TOTP

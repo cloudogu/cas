@@ -6,6 +6,11 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-10] - 2026-03-10
+### Behoben
+- [#310] Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
+  - Lokale URLs, wie z.B. *.localhost und *.localdomain können mit dem Schlüssel `allow_local_urls` erlaubt werden.
+
 ## [v7.2.7-9] - 2026-03-06
 ### Added
 - [#316] Experimentelle Zwei-Faktor-Authentifizierung mit TOTP
@@ -24,7 +29,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 - [#308] Sicherheitslücke geschlossen [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
 ## [v7.2.7-5] - 2025-11-26
-- #[306] Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
+- [#306] Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
 
 ## [v7.2.7-4] - 2025-10-27
 - Dieses Release behebt einen Upgrade-Fehler in solchen Umgebungen, die einen externen Verzeichnisdienst und nicht ein LDAP-Dogu verwenden. 
