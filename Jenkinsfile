@@ -108,6 +108,20 @@ pipe.overrideStage('MN-Run Integration Tests') {
 
      sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
      // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
+
+     pipe.multiNodeEcoSystem.waitForDogu("cas")
+     sh "make install-yq"
+     sh """
+        kubectl get configmap cas-config -n ecosystem -o yaml | .bin/yq '
+          .data."config.yaml" |= (
+            from_yaml
+              | ."forgot_password_text" = "Contact your admin"
+              | to_yaml
+           )
+        ' | tee ./out.yaml | kubectl apply -f -
+        """
+     pipe.multiNodeEcoSystem.restartDogu("cas", true)
+
      sleep time: 30, unit: 'SECONDS'
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
                     cypressImage     : pipe.upgradeCypressImage,
