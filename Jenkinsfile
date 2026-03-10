@@ -106,8 +106,8 @@ pipe.overrideStage('MN-Run Integration Tests') {
      echo "Create custom dogu to access OAuth endpoints for the integration tests"
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
 
-     sh "kubectl cp ./integrationTests/services/ $podname:/etc/cas/services/production/"
-     sh "kubectl exec $podname ls /etc/cas/services/production"
+     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
+     sh "kubectl --namespace=ecosystem exec $podname ls /etc/cas/services/production"
      // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
      sleep time: 30, unit: 'SECONDS'
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
