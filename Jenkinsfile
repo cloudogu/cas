@@ -104,8 +104,8 @@ pipe.overrideStage('Setup') {
 pipe.overrideStage('MN-Run Integration Tests') {
 
      echo "Create custom dogu to access OAuth endpoints for the integration tests"
-     sh "sudo kubectl cp ./integrationTests/services/ deploy/cas:/etc/cas/services/production/"
-     sh "sudo kubectl exec deploy/cas ls /etc/cas/services/production"
+     sh "kubectl cp ./integrationTests/services/ deploy/cas:/etc/cas/services/production/"
+     sh "kubectl exec deploy/cas ls /etc/cas/services/production"
      // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
      sleep time: 30, unit: 'SECONDS'
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
