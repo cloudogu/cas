@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.7-10] - 2026-03-10
 ### Behoben
 - [#310] Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
   - Lokale URLs, wie z.B. *.localhost und *.localdomain können mit dem Schlüssel `allow_local_urls` erlaubt werden.
