@@ -130,8 +130,9 @@ pipe.overrideStage('MN-Run Integration Tests') {
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
      sh "make install-yq"
-     mergeConfigMapYaml('cas-config', casConfigOverride, './out.yaml')
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
+
+     mergeConfigMapYaml('cas-config', casConfigOverride, './out.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
 
      sleep time: 30, unit: 'SECONDS'
