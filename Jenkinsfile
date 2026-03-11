@@ -109,7 +109,8 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     ecoSystem.setup([registryConfig:"""
-        "cas": ${casConfigOverride},
+        "cas":
+         ${casConfigOverride},
         "_global": ${globalConfigOverride}
     """, registryConfigEncrypted:"""
             "cas" : {
