@@ -111,7 +111,8 @@ pipe.overrideStage('Setup') {
     ecoSystem.setup([registryConfig:"""
         "cas":
          ${casConfigOverride},
-        "_global": ${globalConfigOverride}
+        "_global":
+        ${globalConfigOverride}
     """, registryConfigEncrypted:"""
             "cas" : {
             "oidc": {
