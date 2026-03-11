@@ -53,6 +53,29 @@ String casConfigOverride = """
 }
 """
 
+String globalConfigOverride = """
+{
+  "password-policy": {
+    "must_contain_capital_letter": "true",
+    "must_contain_lower_case_letter": "true",
+    "must_contain_digit": "true",
+    "must_contain_special_character": "true",
+    "min_length": "14"
+  }
+}
+"""
+
+def mergeConfigMapYaml = { String configMapName, String overrideConfig, String outputFile ->
+    sh """
+       kubectl get configmap ${configMapName} -n ecosystem -o yaml | .bin/yq '
+         .data."config.yaml" |= (
+           (from_yaml) * ${overrideConfig}
+           | to_yaml
+         )
+       ' | tee ${outputFile} | kubectl apply -f -
+       """
+}
+
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
@@ -87,15 +110,7 @@ pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     ecoSystem.setup([registryConfig:"""
         "cas": ${casConfigOverride},
-        "_global": {
-            "password-policy": {
-                "must_contain_capital_letter": "true",
-                "must_contain_lower_case_letter": "true",
-                "must_contain_digit": "true",
-                "must_contain_special_character": "true",
-                "min_length": "14"
-            }
-        }
+        "_global": ${globalConfigOverride}
     """, registryConfigEncrypted:"""
             "cas" : {
             "oidc": {
@@ -115,14 +130,8 @@ pipe.overrideStage('MN-Run Integration Tests') {
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
      sh "make install-yq"
-     sh """
-        kubectl get configmap cas-config -n ecosystem -o yaml | .bin/yq '
-          .data."config.yaml" |= (
-            (from_yaml) * ${casConfigOverride}
-            | to_yaml
-          )
-        ' | tee ./out.yaml | kubectl apply -f -
-        """
+     mergeConfigMapYaml('cas-config', casConfigOverride, './out.yaml')
+     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
 
      sleep time: 30, unit: 'SECONDS'
