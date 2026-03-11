@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [#317] Build cas as a helm chart as well as a normal dogu.
 
+## [v7.2.7-10] - 2026-03-10
+### Security
+- Fix CVE-2019-17195 - Fixed a Nimbus Jose JWT Security issue that could cause application crash or authentication 
+  bypass.
+### Fixed
+- [#310] Add flag to allow local urls like *.localhost or *.localdomain
+
+## [v7.2.7-9] - 2026-03-06
+### Added
+- [#316] Experimental two-factor authentication support with TOTP
+  - see the [documentation](./docs/operations/two_factor_authentication_en.md) for more details
+
 ## [v7.2.7-8] - 2026-02-19
 ### Fixed
 - [#314] Upgrade base images to use doguctl v0.15.1. This doguctl version fixes an issue with

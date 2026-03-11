@@ -8,6 +8,16 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ### Changed
 - [#317] Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
 
+## [v7.2.7-10] - 2026-03-10
+### Fixed
+- [#310] Fixed an issue where back-channel logouts from local clusters were not possible.
+  - Local URLs, such as *.localhost and *.localdomain, can be allowed with the `allow_local_urls` key.
+
+## [v7.2.7-9] - 2026-03-06
+### Added
+- [#316] Experimental two-factor authentication support with TOTP
+  - see the [documentation](../operations/two_factor_authentication_en.md) for more details
+
 ## [v7.2.7-8] - 2026-02-19
 ### Fixed
 - The Release fixes an issue with the local config volume in a k8s cluster.
@@ -21,7 +31,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - [#308] fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
 ## [v7.2.7-5] - 2025-11-26
-- #[306] Updated default settings for java heap size, memory request and memory limit. 
+- [#306] Updated default settings for java heap size, memory request and memory limit. 
 
 ## [v7.2.7-4] - 2025-10-27
 - This release fixes an upgrade error in environments that use an external directory service rather than an LDAP dogu.

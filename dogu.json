@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.2.7-8",
+  "Version": "7.2.7-10",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -396,6 +396,25 @@
       "Name": "oidc/initial_admin_usernames",
       "Description": "Specifies a list of usernames that will be assigned to the CES admin-group, when they first login.",
       "Optional": true
+    },
+    {
+      "Name": "experimental/totp/activate",
+      "Description": "Warning: Experimental Feature. Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. This feature currently prohibits api access with basic auth to all dogus. Set this value to 'true' to enable.",
+      "Default": "false",
+      "Optional": true
+    },
+    {
+      "Name": "allow_local_urls",
+      "Description": "Determines whether the CAS should allow domains like *.localhost or *.localdomain.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
     }
   ],
   "Volumes": [
@@ -416,6 +435,13 @@
     {
       "Name": "services",
       "Path": "/etc/cas/services/production",
+      "Owner": "1000",
+      "Group": "1000",
+      "NeedsBackup": true
+    },
+    {
+      "Name": "gauth",
+      "Path": "/etc/cas/gauth",
       "Owner": "1000",
       "Group": "1000",
       "NeedsBackup": true
