@@ -88,7 +88,7 @@ def componentStages = { group ->
             // Once we have completely transitioned to the lop-idp component in ecosystem-core,
             // this will come from the ldap component and we don't need it anymore.
             String originalCasConfigYaml = new String(
-                k3d.kubectl(command: "get secret cas-config -o jsonpath='{.data.config\\.yaml}'", returnStdout: true)
+                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\\.yaml}'", true)
                 .decodeBase64()
             )
             def ldapUsername = yq(originalCasConfigYaml, ".sa-ldap.username")
