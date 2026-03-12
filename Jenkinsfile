@@ -7,7 +7,6 @@
 
 import com.cloudogu.ces.cesbuildlib.K3d
 import com.cloudogu.ces.cesbuildlib.Makefile
-import groovy.yaml.YamlSlurper
 
 String clientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
