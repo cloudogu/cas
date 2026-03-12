@@ -33,7 +33,6 @@ pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
 String casConfigOverride = """
-{
   "forgot_password_text": "Contact your admin",
   "legal_urls": {
     "privacy_policy": "https://www.triology.de/",
@@ -50,11 +49,9 @@ String casConfigOverride = """
     "allowed_groups": "testers",
     "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
   }
-}
 """
 
 String globalConfigOverride = """
-{
   "password-policy": {
     "must_contain_capital_letter": "true",
     "must_contain_lower_case_letter": "true",
@@ -62,7 +59,6 @@ String globalConfigOverride = """
     "must_contain_special_character": "true",
     "min_length": "14"
   }
-}
 """
 
 def mergeConfigMapYaml = { String configMapName, String overrideConfig, String outputFile ->
