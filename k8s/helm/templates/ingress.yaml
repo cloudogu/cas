@@ -14,5 +14,5 @@ spec:
                 name: {{ include "cas.name" . }}
                 port:
                   name: {{ .Values.service.port.name }}
-            path: /{{ include "cas.name" . }}
+            path: /cas
             pathType: Prefix
