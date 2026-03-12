@@ -81,6 +81,7 @@ def componentStages = { group ->
         try {
             echo "[Component k3d] Start cluster"
             k3d.startK3d()
+            k3d.yqEvalYamlFile("k3d_values.yaml", ".defaultConfig.env.enableFqdnApplier = true")
             k3d.setup()
 
             echo "[Component k3d] Prepare prerequisites"
