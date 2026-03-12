@@ -72,7 +72,7 @@ def componentStages = { group ->
             echo "[Component k3d] Prepare prerequisites"
             k3d.kubectl("delete secret cas-ldap || true")
             String originalCasConfigYaml = new String(
-                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\.yaml}'")
+                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\\.yaml}'")
                 .decodeBase64()
             )
             def slurper = new YamlSlurper()
