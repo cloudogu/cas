@@ -5,6 +5,10 @@
   'dogu-build-lib'
 ]) _
 
+import com.cloudogu.ces.cesbuildlib.K3d
+import com.cloudogu.ces.cesbuildlib.Makefile
+import groovy.yaml.YamlSlurper
+
 String clientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     doguName           : 'cas',
@@ -27,9 +31,98 @@ def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     defaultBranch      : "master"
 ])
 
+def componentRegistry = "registry.cloudogu.com"
+def componentRegistryNamespace = "k8s"
+def componentChartTargetDir = "target/k8s/helm"
+def componentBuildImageRepository = "registry.cloudogu.com/official/cas"
+def componentReleaseName = "lop-idp-cas"
+def goVersion = "1.26.0"
+
 pipe.setBuildProperties()
 pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
+
+def runMakeInGoContainer = { target ->
+    new com.cloudogu.ces.cesbuildlib.Docker(this)
+        .image("golang:${goVersion}")
+        .mountJenkinsUser()
+        .inside("--volume ${WORKSPACE}:/workdir -w /workdir") {
+            sh "make ${target}"
+        }
+}
+
+def componentStages = { group ->
+    group.stage('Component Checkout') {
+        checkout scm
+    }
+
+    group.stage('Component Lint') {
+        runMakeInGoContainer("helm-lint")
+    }
+
+    group.stage('Component Smoke Test (k3d)') {
+        K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
+        Makefile makefile = new Makefile(this)
+        String releaseVersion = makefile.getVersion().trim()
+
+        try {
+            echo "[Component k3d] Start cluster"
+            k3d.startK3d()
+
+            echo "[Component k3d] Prepare prerequisites"
+            k3d.kubectl("delete secret cas-ldap || true")
+            String originalCasConfigYaml = new String(
+                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\.yaml}'")
+                .decodeBase64()
+            )
+            def slurper = new YamlSlurper()
+            def originalCasConfig = slurper.parseText(originalCasConfigYaml)
+            k3d.kubectl("create secret generic cas-ldap --from-literal=username='${originalCasConfig["sa-ldap"].username}' --from-literal=password='${originalCasConfig["sa-ldap"].password}'")
+
+            echo "[Component k3d] Generate helm chart"
+            runMakeInGoContainer("helm-generate")
+
+            echo "[Component k3d] Build image"
+            runMakeInGoContainer("docker-build")
+
+            echo "[Component k3d] Retag image for local smoke test"
+            sh "docker tag ${componentBuildImageRepository}:${releaseVersion} local-smoke/cas:${releaseVersion}"
+            echo "[Component k3d] Import previously built image"
+            sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${releaseVersion} -c ${k3d.registryName}"
+
+            echo "[Component k3d] Deploy component via helm"
+            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set image.registry=local-smoke --set image.tag=${releaseVersion} --set imagePullPolicy=Never --wait --timeout 5m")
+
+            echo "[Component k3d] Verify component startup"
+            k3d.kubectl("rollout status deployment/${componentReleaseName} --timeout=300s")
+            k3d.kubectl("wait --for=condition=ready pod -l app.kubernetes.io/instance=${componentReleaseName} --timeout=300s")
+        } catch (Exception e) {
+            k3d.collectAndArchiveLogs()
+            throw e as java.lang.Throwable
+        } finally {
+            k3d.deleteK3d()
+        }
+    }
+
+    if (pipe.gitflow.isReleaseBranch()) {
+        group.stage('Push Component Chart to Harbor') {
+            sh "make helm-package"
+
+            def componentChartFile = sh(returnStdout: true, script: "ls -1t ${componentChartTargetDir}/*.tgz 2>/dev/null | head -n 1").trim()
+            if (!componentChartFile) {
+                error("No packaged component chart found in ${componentChartTargetDir}")
+            }
+
+            withCredentials([usernamePassword(credentialsId: 'harborhelmchartpush', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
+                sh ".bin/helm registry login ${componentRegistry} --username '${HARBOR_USERNAME}' --password '${HARBOR_PASSWORD}'"
+                sh ".bin/helm push ${componentChartFile} oci://${componentRegistry}/${componentRegistryNamespace}/"
+                sh ".bin/helm registry logout ${componentRegistry}"
+            }
+        }
+    }
+}
+
+pipe.addStageGroup('component', pipe.agentMultinode, componentStages)
 
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
