@@ -116,6 +116,7 @@ pipe.overrideStage('Setup') {
             }
             }
     """])
+    echo "Setup complete"
 }
 
 pipe.overrideStage('MN-Run Integration Tests') {
