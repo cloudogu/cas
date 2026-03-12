@@ -83,6 +83,9 @@ spec:
             - mountPath: /etc/cas/services/production
               name: cas-data
               subPath: services
+            - mountPath: /etc/cas/gauth
+              name: cas-data
+              subPath: gauth
       enableServiceLinks: false
       hostname: cas
       {{- with .Values.global.imagePullSecrets }}
