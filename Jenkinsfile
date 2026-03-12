@@ -84,6 +84,9 @@ def componentStages = { group ->
 
             echo "[Component k3d] Prepare prerequisites"
             k3d.kubectl("delete secret cas-ldap || true")
+            // Steal username and password for ldap from cas dogu to use in component.
+            // Once we have completely transitioned to the lop-idp component in ecosystem-core,
+            // this will come from the ldap component and we don't need it anymore.
             String originalCasConfigYaml = new String(
                 k3d.kubectl(command: "get secret cas-config -o jsonpath='{.data.config\\.yaml}'", returnStdout: true)
                 .decodeBase64()
