@@ -55,12 +55,7 @@ def yq = { yaml, command ->
         .image("mikefarah/yq:latest")
         .mountJenkinsUser()
         .inside("--volume ${WORKSPACE}:/workdir -w /workdir") {
-            return sh (script: '''
-{ cat <<EOF
-${yaml}
-EOF
-} | yq ${command}
-''', returnStdout: true)
+            return sh (script: "echo '${yaml}' | yq ${command}", returnStdout: true)
         }
 }
 
