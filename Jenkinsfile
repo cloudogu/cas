@@ -50,6 +50,20 @@ def runMakeInGoContainer = { target ->
         }
 }
 
+def yq = { yaml, command ->
+    new com.cloudogu.ces.cesbuildlib.Docker(this)
+        .image("mikefarah/yq:latest")
+        .mountJenkinsUser()
+        .inside("--volume ${WORKSPACE}:/workdir -w /workdir") {
+            return sh (script: '''
+{ cat <<EOF
+${yaml}
+EOF
+} | yq ${command}
+''', returnStdout: true)
+        }
+}
+
 def componentStages = { group ->
     group.stage('Component Checkout') {
         checkout scm
@@ -71,12 +85,12 @@ def componentStages = { group ->
             echo "[Component k3d] Prepare prerequisites"
             k3d.kubectl("delete secret cas-ldap || true")
             String originalCasConfigYaml = new String(
-                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\\.yaml}'")
+                k3d.kubectl(command: "get secret cas-config -o jsonpath='{.data.config\\.yaml}'", returnStdout: true)
                 .decodeBase64()
             )
-            def slurper = new YamlSlurper()
-            def originalCasConfig = slurper.parseText(originalCasConfigYaml)
-            k3d.kubectl("create secret generic cas-ldap --from-literal=username='${originalCasConfig["sa-ldap"].username}' --from-literal=password='${originalCasConfig["sa-ldap"].password}'")
+            def ldapUsername = yq(originalCasConfigYaml, ".sa-ldap.username")
+            def ldapPassword = yq(originalCasConfigYaml, ".sa-ldap.password")
+            k3d.kubectl("create secret generic cas-ldap --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
 
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
