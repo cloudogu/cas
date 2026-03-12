@@ -96,7 +96,7 @@ def componentStages = { group ->
             runMakeInGoContainer("helm-generate")
 
             echo "[Component k3d] Build & push image"
-            k3d.buildAndPushToLocalRegistry("${componentBuildImageRepository}:${releaseVersion}", controllerVersion)
+            k3d.buildAndPushToLocalRegistry("${componentBuildImageRepository}", releaseVersion)
 
             echo "[Component k3d] Deploy component via helm"
             k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=${componentBuildImageRepository} --set containers.cas.image.tag=${releaseVersion} --set containers.cas.imagePullPolicy=Never --wait --timeout 5m")
