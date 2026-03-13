@@ -59,6 +59,17 @@ def yq = { yaml, command ->
         }
 }
 
+String getDoguVersion(boolean withVersionPrefix) {
+    def doguJson = this.readJSON file: 'dogu.json'
+    String version = doguJson.Version
+
+    if (withVersionPrefix) {
+        return "v" + version
+    } else {
+        return version
+    }
+}
+
 def componentStages = { group ->
     group.stage('Component Checkout') {
         checkout scm
@@ -70,8 +81,7 @@ def componentStages = { group ->
 
     group.stage('Component Smoke Test (k3d)') {
         K3d k3d = new K3d(this, "${WORKSPACE}", "${WORKSPACE}/k3d", env.PATH)
-        Makefile makefile = new Makefile(this)
-        String releaseVersion = makefile.getVersion().trim()
+        String imageTag = getDoguVersion(false)
 
         try {
             echo "[Component k3d] Start cluster"
@@ -96,10 +106,10 @@ def componentStages = { group ->
             runMakeInGoContainer("helm-generate")
 
             echo "[Component k3d] Build & push image"
-            k3d.buildAndPushToLocalRegistry("${componentBuildImageRepository}", releaseVersion)
+            k3d.buildAndPushToLocalRegistry("${componentBuildImageRepository}", imageTag)
 
             echo "[Component k3d] Deploy component via helm"
-            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=${componentBuildImageRepository} --set containers.cas.image.tag=${releaseVersion} --set containers.cas.imagePullPolicy=Never --wait --timeout 5m")
+            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=${componentBuildImageRepository} --set containers.cas.image.tag=${imageTag} --set containers.cas.imagePullPolicy=Never --wait --timeout 5m")
 
             echo "[Component k3d] Verify component startup"
             k3d.kubectl("rollout status deployment/${componentReleaseName} --timeout=300s")
