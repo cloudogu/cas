@@ -32,7 +32,9 @@ pipe.setBuildProperties()
 pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
-String casConfigOverride = """
+// Closure statt String, damit ecoSystem.externalIP erst beim Aufruf aufgelöst wird
+def casConfigOverride = {
+    return """
 {
   "forgot_password_text": "Contact your admin",
   "legal_urls": {
@@ -52,6 +54,7 @@ String casConfigOverride = """
   }
 }
 """
+}
 
 String globalConfigOverride = """
 {
@@ -108,19 +111,18 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
-    echo """
-                 "cas": ${casConfigOverride},
-                 "_global": ${globalConfigOverride}
-             """
-    ecoSystem.setup([registryConfig:"""
-        "cas": ${casConfigOverride},
+    String casConfig = casConfigOverride()
+    echo "cas: ${casConfig}"
+    echo "global: ${globalConfigOverride}"
+    ecoSystem.setup([registryConfig: """
+        "cas": ${casConfig},
         "_global": ${globalConfigOverride}
-    """, registryConfigEncrypted:"""
-            "cas" : {
+    """, registryConfigEncrypted: """
+        "cas": {
             "oidc": {
                 "client_secret": "${clientSecret}"
             }
-            }
+        }
     """])
 }
 
@@ -137,7 +139,7 @@ pipe.overrideStage('MN-Run Integration Tests') {
      sh "make install-yq"
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
 
-     mergeConfigMapYaml('cas-config', casConfigOverride, './out.yaml')
+     mergeConfigMapYaml('cas-config', casConfigOverride(), './out.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
 
      sleep time: 30, unit: 'SECONDS'
