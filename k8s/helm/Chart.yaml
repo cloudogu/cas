@@ -1,5 +1,5 @@
 apiVersion: v2
-name: cas
+name: lop-idp-cas
 description: A Helm chart for CAS, the LOP's single sign-on provider.
 
 # A chart can be either an 'application' or a 'library' chart.
