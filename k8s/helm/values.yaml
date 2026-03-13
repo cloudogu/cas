@@ -63,7 +63,7 @@ configuration:
       host: "ldap"
       port: "389"
     logging:
-      root: "DEBUG"
+      root: "WARN"
   secretRefs:
     ldapPassword:
       name: cas-ldap
