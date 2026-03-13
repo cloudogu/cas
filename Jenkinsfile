@@ -109,10 +109,33 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     ecoSystem.setup([registryConfig:"""
-        "cas":
-         ${casConfigOverride},
-        "_global":
-        ${globalConfigOverride}
+        "cas": {
+            "forgot_password_text": "Contact your admin",
+            "legal_urls": {
+                "privacy_policy": "https://www.triology.de/",
+                "terms_of_service": "https://docs.cloudogu.com/",
+                "imprint": "https://cloudogu.com/"
+            },
+            "oidc": {
+                "enabled": "true",
+                "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
+                "client_id": "cas",
+                "display_name": "cas",
+                "optional": "true",
+                "scopes": "openid email profile groups",
+                "allowed_groups": "testers",
+                "attribute_mapping": "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName,groups:externalGroups"
+            }
+        },
+        "_global": {
+            "password-policy": {
+                "must_contain_capital_letter": "true",
+                "must_contain_lower_case_letter": "true",
+                "must_contain_digit": "true",
+                "must_contain_special_character": "true",
+                "min_length": "14"
+            }
+        }
     """, registryConfigEncrypted:"""
             "cas" : {
             "oidc": {
@@ -120,8 +143,8 @@ pipe.overrideStage('Setup') {
             }
             }
     """])
-    echo "Setup complete"
 }
+
 
 pipe.overrideStage('MN-Run Integration Tests') {
 
