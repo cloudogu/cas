@@ -38,6 +38,9 @@ service:
     origin: 8080
     target: 8080
 ingress:
+  # If this component needs to be installed alongside the CAS dogu,
+  # e.g., for migration, the ingress has to be disabled to avoid conflicts.
+  enabled: true
   className: k8s-ecosystem-ces-service
 configuration:
   meta:
