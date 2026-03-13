@@ -33,7 +33,11 @@ function createLDAPConfiguration() {
   else
     echo "ldap type is embedded"
     LDAP_BASE_DN="ou=People,o=${DOMAIN},dc=cloudogu,dc=com"
-    LDAP_BIND_DN=$(doguctl config -e sa-ldap/username)
+    if [[ "${RUNTIME_MODE:-}" == 'component' ]]; then
+      LDAP_BIND_DN="${LDAP_USERNAME}"
+    else
+      LDAP_BIND_DN=$(doguctl config -e sa-ldap/username)
+    fi
   fi
 
   export LDAP_BASE_DN

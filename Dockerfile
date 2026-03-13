@@ -113,5 +113,5 @@ HEALTHCHECK --interval=20s CMD /healthcheck.sh 300
 
 USER cas
 
-CMD /startup.sh
+CMD ["/startup.sh"]
 

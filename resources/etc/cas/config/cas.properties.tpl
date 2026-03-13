@@ -65,10 +65,11 @@ cas.authn.ldap[0].ldap-url={{ .Env.Get "LDAP_PROTOCOL" }}://{{ .Config.Get "ldap
 cas.authn.ldap[0].bind-dn={{ .Env.Get "LDAP_BIND_DN" }}
 
 # Manager password for authenticated searches
-{{ if eq (.Config.Get "ldap/ds_type") "external"}}
+{{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
+cas.authn.ldap[0].bind-credential={{ .Env.Get "LDAP_PASSWORD" }}
+{{ else if eq (.Config.Get "ldap/ds_type") "external" }}
 cas.authn.ldap[0].bind-credential={{ .Config.GetAndDecrypt "ldap/password" }}
-{{ end }}
-{{ if eq (.Config.Get "ldap/ds_type") "embedded"}}
+{{ else if eq (.Config.Get "ldap/ds_type") "embedded" }}
 cas.authn.ldap[0].bind-credential={{ .Config.GetAndDecrypt "sa-ldap/password" }}
 {{ end }}
 
@@ -258,7 +259,11 @@ ces.delegation.oidc.clients[0].discovery-uri={{ .Config.GetOrDefault "oidc/disco
 
 ### name and secret for the client to identify itself by the provider
 ces.delegation.oidc.clients[0].client-id={{ .Config.Get "oidc/client_id"}}
+{{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
+ces.delegation.oidc.clients[0].client-secret={{ .Env.Get "OIDC_CLIENT_SECRET"}}
+{{ else }}
 ces.delegation.oidc.clients[0].client-secret={{ .Config.GetAndDecrypt "oidc/client_secret"}}
+{{ end }}
 
 ### required configuration
 ces.delegation.oidc.clients[0].client-authentication-method=client_secret_basic

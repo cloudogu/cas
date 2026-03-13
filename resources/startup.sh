@@ -42,7 +42,7 @@ if [[ ${loggingExitCode} -ne 0 ]]; then
 fi
 
 LDAP_TYPE=$(doguctl config ldap/ds_type)
-if [[ "$LDAP_TYPE" == 'embedded' ]]; then
+if [[ "$LDAP_TYPE" == 'embedded' ]] && [[ "${RUNTIME_MODE:-}" != 'component' ]]; then
   echo "Waiting until ldap passed all health checks..."
   if ! doguctl healthy --wait --timeout 120 ldap; then
     echo "timeout reached by waiting of ldap to get healthy"

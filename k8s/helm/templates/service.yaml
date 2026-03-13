@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cas.name" . }}
+  labels:
+    {{ include "cas.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{ include "cas.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: {{ .Values.service.port.name }}
+      port: {{ .Values.service.port.origin }}
+      protocol: TCP
+      targetPort: {{ .Values.service.port.target }}
