@@ -119,7 +119,14 @@ def componentStages = { group ->
             sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
 
             echo "[Component k3d] Deploy component via helm"
-            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=local-smoke/cas --set containers.cas.image.tag=${imageTag} --set containers.cas.imagePullPolicy=Never --set ingress.enabled=false --wait --timeout 5m")
+            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir}"
+            + " --namespace default --set containers.cas.image.registry=''"
+            + " --set containers.cas.image.repository=local-smoke/cas"
+            + " --set containers.cas.image.tag=${imageTag}"
+            + " --set containers.cas.imagePullPolicy=Never"
+            // disable ingress to avoid conflicts with the cas dogu
+            + " --set ingress.enabled=false"
+            + " --wait --timeout 5m")
 
             echo "[Component k3d] Verify component startup"
             k3d.kubectl("rollout status deployment/${componentReleaseName} --timeout=300s")

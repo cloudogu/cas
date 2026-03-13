@@ -40,7 +40,7 @@ spec:
           - name: OIDC_CLIENT_SECRET
             valueFrom:
               secretKeyRef: {{ toYaml .Values.configuration.secretRefs.oidcClientSecret | nindent 16 }}
-          image: "{{ .Values.containers.cas.image.registry }}/{{ .Values.containers.cas.image.repository }}:{{ .Values.containers.cas.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.containers.cas.image.registry }}{{ if .Values.containers.cas.image.registry }}/{{ end }}{{ .Values.containers.cas.image.repository }}:{{ .Values.containers.cas.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.containers.cas.imagePullPolicy }}
           livenessProbe:
             failureThreshold: 180
