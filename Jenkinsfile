@@ -75,6 +75,13 @@ def componentStages = { group ->
         checkout scm
     }
 
+    group.stage('Component Build') {
+        runMakeInGoContainer("install-yq")
+        docker.withRegistry('https://registry.cloudogu.com/', 'cesmarvin-setup') {
+            sh "make docker-build"
+        }
+    }
+
     group.stage('Component Lint') {
         runMakeInGoContainer("helm-lint")
     }
@@ -105,11 +112,14 @@ def componentStages = { group ->
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
 
-            echo "[Component k3d] Build & push image"
-            k3d.buildAndPushToLocalRegistry("${componentBuildImageRepository}", imageTag)
+            echo "[Component k3d] Retag image for local smoke test"
+            sh "docker tag ${componentBuildImageRepository}:${imageTag} local-smoke/cas:${imageTag}"
+
+            echo "[Component k3d] Import previously built image"
+            sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
 
             echo "[Component k3d] Deploy component via helm"
-            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=${componentBuildImageRepository} --set containers.cas.image.tag=${imageTag} --set containers.cas.imagePullPolicy=Never --wait --timeout 5m")
+            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir} --namespace default --set containers.cas.image.registry=local-smoke/cas --set containers.cas.image.tag=${imageTag} --set containers.cas.imagePullPolicy=Never --wait --timeout 5m")
 
             echo "[Component k3d] Verify component startup"
             k3d.kubectl("rollout status deployment/${componentReleaseName} --timeout=300s")
