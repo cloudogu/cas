@@ -109,8 +109,6 @@ initContainers:
       tag: 1.36
     imagePullPolicy: IfNotPresent
     securityContext:
-      appArmorProfile:
-        type: Unconfined
       capabilities:
         add:
           - CHOWN
@@ -119,9 +117,6 @@ initContainers:
           - ALL
       readOnlyRootFilesystem: false
       runAsNonRoot: false
-      seLinuxOptions: {}
-      seccompProfile:
-        type: Unconfined
   additionalMounts:
     image:
       registry: docker.io
@@ -129,8 +124,6 @@ initContainers:
       tag: 0.1.2
     imagePullPolicy: IfNotPresent
     securityContext:
-      appArmorProfile:
-        type: Unconfined
       capabilities:
         drop:
           - ALL
@@ -138,6 +131,3 @@ initContainers:
       runAsGroup: 1000
       runAsNonRoot: true
       runAsUser: 1000
-      seLinuxOptions: {}
-      seccompProfile:
-        type: Unconfined
