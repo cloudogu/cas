@@ -162,4 +162,4 @@ spec:
           name: cas-dogu-json
         - name: cas-data
           persistentVolumeClaim:
-            claimName: {{ include "cas.name" }}
+            claimName: {{ include "cas.name" . }}
