@@ -16,6 +16,17 @@ async function setupNodeEvents(on, config) {
 
   config = doguTestLibrary.configure(config);
 
+  if (!config.env.TAGS) {
+    config.env.TAGS = config.env.AdminUsername == "team-ces"
+        ? "not @classic"
+        : "not @multinode";
+  } else {
+    config.env.TAGS += config.env.AdminUsername == "team-ces"
+        ? " and not @classic"
+        : " and not @multinode";
+  }
+  config.env.TAGS += " and not @disabled"
+
   return config;
 }
 
