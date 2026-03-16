@@ -36,9 +36,9 @@ module.exports = defineConfig({
     env: {
       DoguName: "cas/login",
       MaxLoginRetries: -1,
-      AdminUsername: "ces-admin",
-      AdminPassword: "Ecosystem2016!",
-      AdminGroup: "CesAdministrators",
+      "AdminUsername": "ces-admin",
+      "AdminPassword": "Ecosystem2016!",
+      "AdminGroup": "CesAdministrators",
       ClientID: "inttest",
       ClientSecret: "integrationTestClientSecret",
       PasswordHintText: "Contact your admin",
