@@ -147,7 +147,6 @@ pipe.overrideStage('MN-Run Integration Tests') {
                     cypressImage     : pipe.upgradeCypressImage,
                     enableVideo      : pipe.script.params.EnableVideoRecording,
                     enableScreenshots: pipe.script.params.EnableScreenshotRecording,
-                    cypressEnvVars   : ["multiNode=true"]
                 ])
 }
 
