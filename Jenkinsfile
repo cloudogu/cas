@@ -32,6 +32,16 @@ pipe.setBuildProperties()
 pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
+
+set_blueprint_stopped() {
+  local name="${1:-blueprint}"
+  local namespace="${2:-${CES_NAMESPACE}}"
+  local stopped="true"
+
+  echo "Patching Blueprint/${name} in ${namespace}: spec.stopped=${stopped}"
+  kubectl patch blueprint "${name}" -n "${namespace}" --type merge -p "{\"spec\":{\"stopped\":${stopped}}}"
+}
+
 // Closure statt String, damit ecoSystem.externalIP erst beim Aufruf aufgelöst wird
 def casConfigOverride = { String externalIp ->
     return """
@@ -125,6 +135,8 @@ pipe.overrideStage('Setup') {
         }
     """])
 }
+
+
 
 
 pipe.overrideStage('MN-Run Integration Tests') {
