@@ -33,7 +33,7 @@ pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
 // Closure statt String, damit ecoSystem.externalIP erst beim Aufruf aufgelöst wird
-def casConfigOverride = {
+def casConfigOverride = { String externalIp ->
     return """
 {
   "forgot_password_text": "Contact your admin",
@@ -44,7 +44,7 @@ def casConfigOverride = {
   },
   "oidc": {
     "enabled": "true",
-    "discovery_uri": "http://${ecoSystem.externalIP}:9000/auth/realms/Test/.well-known/openid-configuration",
+    "discovery_uri": "http://${externalIp}:9000/auth/realms/Test/.well-known/openid-configuration",
     "client_id": "cas",
     "display_name": "cas",
     "optional": "true",
@@ -111,7 +111,7 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
-    String casConfig = casConfigOverride()
+    String casConfig = casConfigOverride(ecoSystem.externalIP)
     echo "cas: ${casConfig}"
     echo "global: ${globalConfigOverride}"
     ecoSystem.setup([registryConfig: """
@@ -135,14 +135,17 @@ pipe.overrideStage('MN-Run Integration Tests') {
      sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
      // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
 
+     //mit kubectl könnte man den bp operator auch stoppen
+
      pipe.multiNodeEcoSystem.waitForDogu("cas")
      sh "make install-yq"
-     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
-     String casConfig = casConfigOverride()
+     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
      mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
 
      sleep time: 30, unit: 'SECONDS'
+     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
+
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
                     cypressImage     : pipe.upgradeCypressImage,
                     enableVideo      : pipe.script.params.EnableVideoRecording,
