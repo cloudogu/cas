@@ -146,6 +146,8 @@ pipe.overrideStage('MN-Run Integration Tests') {
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
      sleep time: 30, unit: 'SECONDS'
+     ipe.multiNodeEcoSystem.waitForDogu("cas")
+
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
 
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
