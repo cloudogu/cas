@@ -86,7 +86,7 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig, String o
         gradlew 'test'
         junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
     }
-}
+
 
 pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
     // launching and setting up keycloak, adding test user, group, scope mapping etc
