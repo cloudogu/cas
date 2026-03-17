@@ -79,6 +79,7 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig, String o
        """
 }
 
+pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
     dir('app') {
@@ -86,7 +87,7 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig, String o
         gradlew 'test'
         junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
     }
-
+}
 
 pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
     // launching and setting up keycloak, adding test user, group, scope mapping etc
@@ -144,7 +145,6 @@ pipe.overrideStage('MN-Run Integration Tests') {
      mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
-
      sleep time: 30, unit: 'SECONDS'
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
 
