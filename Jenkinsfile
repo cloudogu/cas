@@ -1,13 +1,3 @@
-     sleep time: 30, unit: 'SECONDS'
-     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
-     //mit kubectl könnte man den bp operator auch stoppen
-
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
-     sh "make install-yq"
-     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
-     mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
-     pipe.multiNodeEcoSystem.restartDogu("cas", true)
-#!groovy
 @Library([
   'pipe-build-lib',
   'ces-build-lib',
