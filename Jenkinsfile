@@ -1,3 +1,4 @@
+#!groovy
 @Library([
   'pipe-build-lib',
   'ces-build-lib',
