@@ -1,3 +1,12 @@
+     sleep time: 30, unit: 'SECONDS'
+     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
+     //mit kubectl könnte man den bp operator auch stoppen
+
+     pipe.multiNodeEcoSystem.waitForDogu("cas")
+     sh "make install-yq"
+     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+     mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
+     pipe.multiNodeEcoSystem.restartDogu("cas", true)
 #!groovy
 @Library([
   'pipe-build-lib',
@@ -79,7 +88,6 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig, String o
        """
 }
 
-pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
     dir('app') {
@@ -144,6 +152,7 @@ pipe.overrideStage('MN-Run Integration Tests') {
      String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
      mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
      pipe.multiNodeEcoSystem.restartDogu("cas", true)
+     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
      sleep time: 30, unit: 'SECONDS'
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
