@@ -143,12 +143,13 @@ pipe.overrideStage('MN-Run Integration Tests') {
      sh "make install-yq"
      String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
      mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
-     pipe.multiNodeEcoSystem.restartDogu("cas", true)
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
-     sleep time: 30, unit: 'SECONDS'
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+     sleep time: 10, unit: 'SECONDS'
 
      mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
+     sleep time: 60, unit: 'SECONDS'
+
+     pipe.multiNodeEcoSystem.waitForDogu("cas")
 
      pipe.multiNodeEcoSystem.runCypressIntegrationTests([
                     cypressImage     : pipe.upgradeCypressImage,
