@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#322] Enable service-registration API to allow the auth-registration-operator to create service registrations.
 
 ## [v7.2.7-12] - 2026-03-26
 ### Changed
