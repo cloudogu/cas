@@ -32,7 +32,6 @@ pipe.setBuildProperties()
 pipe.addDefaultStages()
 com.cloudogu.ces.dogubuildlib.EcoSystem ecoSystem = pipe.ecoSystem
 
-// Closure statt String, damit ecoSystem.externalIP erst beim Aufruf aufgelöst wird
 def casConfigOverride = { String externalIp ->
     return """
 {
@@ -68,14 +67,14 @@ String globalConfigOverride = """
 }
 """
 
-def mergeConfigMapYaml = { String configMapName, String overrideConfig, String outputFile ->
+def mergeConfigMapYaml = { String configMapName, String overrideConfig ->
     sh """
        kubectl get configmap ${configMapName} -n ecosystem -o yaml | .bin/yq '
          .data."config.yaml" |= (
            (from_yaml) * ${overrideConfig}
            | to_yaml
          )
-       ' | tee ${outputFile} | kubectl apply -f -
+       ' | tee ${configMapName}-output.yml | kubectl apply -f -
        """
 }
 
@@ -126,36 +125,26 @@ pipe.overrideStage('Setup') {
     """])
 }
 
-
-
-
-pipe.overrideStage('MN-Run Integration Tests') {
-
+pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
      echo "Create custom dogu to access OAuth endpoints for the integration tests"
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
+     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
 
      sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
-     // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
-
-     //mit kubectl könnte man den bp operator auch stoppen
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
+
      sh "make install-yq"
-     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
-     mergeConfigMapYaml('cas-config', casConfig, './out.yaml')
+     mergeConfigMapYaml('cas-config', casConfig)
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
+
      sleep time: 10, unit: 'SECONDS'
 
-     mergeConfigMapYaml('global-config', globalConfigOverride, './out-global.yaml')
+     mergeConfigMapYaml('global-config', globalConfigOverride)
+
      sleep time: 60, unit: 'SECONDS'
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
-
-     pipe.multiNodeEcoSystem.runCypressIntegrationTests([
-                    cypressImage     : pipe.upgradeCypressImage,
-                    enableVideo      : pipe.script.params.EnableVideoRecording,
-                    enableScreenshots: pipe.script.params.EnableScreenshotRecording,
-                ])
 }
 
 pipe.overrideStage('Integration Tests') {
