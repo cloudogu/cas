@@ -158,10 +158,27 @@ function renderCustomMessagesTpl() {
   fi
 }
 
+# create totp signing and encrpytion codes
+# these codes are generated once
+function createTOTPEncryptionCodes() {
+  ACTIVATE_TOTP=$(doguctl config --default "false" "experimental/totp/activate")
+  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/encryption_key")
+  if [[ "$ACTIVATE_TOTP" == "true" && "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
+    echo "generating totp encryption and signing keys"
+    # cas wants a particular jar for jwk generation
+    # but we use jose instead, because the cas jar is from 2017 and has critical vulnerabilities
+    # jq is used for saving the generated key in the dogu config
+    SIGNING_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/signing_key" "$SIGNING_KEY"
+    ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/encryption_key" "$ENCRYPTION_KEY"
+    SCRATCH_CODES_ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
+  fi
+}
+
 # Sets general configuration option for the CAS server
 function configureCAS() {
   createLDAPConfiguration
   createPasswordPolicyPattern
+  createTOTPEncryptionCodes
 
   renderCASPropertiesTpl
   renderCustomMessagesTpl

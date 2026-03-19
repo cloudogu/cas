@@ -33,3 +33,7 @@ A problem occurred configuring root project 'cas'.
           - Variant 'apiElements' capability org.springframework.boot:spring-boot-gradle-plugin:3.2.1 declares a library, packaged as a jar, and its dependencies declared externally:
               - Incompatible because this component declares a component for use during compile-time, compatible with Java 17 and the consumer needed a component for use during runtime, compatible with Java 8
 ```
+
+## Configuration
+For local development in the k8s cluster, it is important that the key `allow_local_urls` is set to `true`.
+This makes the fqdn (k3ces.localdomain) a valid domain for the cas and the logout URLs are set correctly.
