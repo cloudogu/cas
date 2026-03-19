@@ -63,6 +63,13 @@ configuration:
       name: cas-oidc
       key: clientSecret
       optional: true
+secrets:
+  actuatorAuth:
+    create: true
+    name: "lop-idp-cas-actuator-auth"
+    username: "actuator"
+    usernameKey: username
+    passwordKey: password
 containers:
   cas:
     image:
