@@ -111,8 +111,6 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     String casConfig = casConfigOverride(ecoSystem.externalIP)
-    echo "cas: ${casConfig}"
-    echo "global: ${globalConfigOverride}"
     ecoSystem.setup([registryConfig: """
         "cas": ${casConfig},
         "_global": ${globalConfigOverride}
