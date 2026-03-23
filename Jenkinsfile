@@ -124,6 +124,8 @@ def componentStages = { group ->
             + " --set containers.cas.image.repository=local-smoke/cas"
             + " --set containers.cas.image.tag=${imageTag}"
             + " --set containers.cas.imagePullPolicy=Never"
+            // use ldap dogu instead of component service
+            + " --set configuration.normal.ldap.host=ldap"
             // disable ingress to avoid conflicts with the cas dogu
             + " --set ingress.enabled=false"
             + " --wait --timeout 5m")
