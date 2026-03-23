@@ -142,9 +142,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
 
      sleep time: 10, unit: 'SECONDS'
      pipe.multiNodeEcoSystem.waitForDogu("cas")
-
-
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
 }
 
 pipe.overrideStage('Integration Tests') {
