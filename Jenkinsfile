@@ -136,11 +136,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
      mergeConfigMapYaml('cas-config', casConfig)
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
-     sleep time: 10, unit: 'SECONDS'
+     pipe.multiNodeEcoSystem.waitForDogu("cas")
 
      mergeConfigMapYaml('global-config', globalConfigOverride)
 
-     sleep time: 60, unit: 'SECONDS'
+     sleep time: 10, unit: 'SECONDS'
+     pipe.multiNodeEcoSystem.waitForDogu("cas")
+
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
 }
