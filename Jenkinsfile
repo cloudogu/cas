@@ -140,7 +140,18 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
 
      mergeConfigMapYaml('global-config', globalConfigOverride)
 
-     sleep time: 10, unit: 'SECONDS'
+     //CAS started At > global config update timestamp
+     //While loop then continue
+
+     def globalConfigLastUodateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
+
+     echo "Global Config last update time: ${globalConfigLastUodateTime}"
+
+     def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+
+     echo "CAS started at: ${casDoguStartedAt}"
+
+
      pipe.multiNodeEcoSystem.waitForDogu("cas")
 }
 
