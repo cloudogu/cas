@@ -140,7 +140,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
 
      mergeConfigMapYaml('global-config', globalConfigOverride)
 
-     //This need to be integrated in dogu build lib in the waitForDogu method.
+     // This may be extracted to a dogu build lib function
      def globalConfigLastUodateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
      def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
 
