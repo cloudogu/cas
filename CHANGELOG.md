@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added 'Setup Configs' stage before integration tests in multinode Jenkins pipeline to ensure necessary configurations are in place before tests are executed.
+- Added required Dogus to Jenkins pipeline for multinode build.
 
 ## [v7.2.7-10] - 2026-03-10
 ### Security
