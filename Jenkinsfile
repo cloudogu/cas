@@ -51,15 +51,6 @@ def runMakeInGoContainer = { target ->
         }
 }
 
-def yq = { yaml, command ->
-    new com.cloudogu.ces.cesbuildlib.Docker(this)
-        .image("mikefarah/yq:latest")
-        .mountJenkinsUser()
-        .inside("--volume ${WORKSPACE}:/workdir -w /workdir") {
-            return sh (script: "echo '${yaml}' | yq ${command}", returnStdout: true)
-        }
-}
-
 String getDoguVersion(boolean withVersionPrefix) {
     def doguJson = this.readJSON file: 'dogu.json'
     String version = doguJson.Version
@@ -102,12 +93,24 @@ def componentStages = { group ->
             // Steal username and password for ldap from cas dogu to use in component.
             // Once we have completely transitioned to the lop-idp component in ecosystem-core,
             // this will come from the ldap component and we don't need it anymore.
-            String originalCasConfigYaml = new String(
-                k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\\.yaml}'", true)
-                .decodeBase64()
-            )
-            def ldapUsername = yq(originalCasConfigYaml, ".sa-ldap.username")
-            def ldapPassword = yq(originalCasConfigYaml, ".sa-ldap.password")
+            String casSecretRaw = k3d.kubectl("get secret cas-config -o jsonpath='{.data.config\\.yaml}'", true)
+            String casSecretYaml = new String(casSecretRaw.decodeBase64())
+
+            def ldapUsername = ""
+            def ldapPassword = ""
+
+            k3d.doInYQContainer {
+               ldapUsername = sh(
+                    script: "echo '${casSecretYaml}' | yq '.sa-ldap.username'",
+                    returnStdout: true
+               ).trim()
+               ldapPassword = sh(
+                    script: "echo '${casSecretYaml}' | yq '.sa-ldap.password'",
+                    returnStdout: true
+               ).trim()
+
+               echo "Read ldap secret from cas config..."
+            }
             k3d.kubectl("create secret generic cas-ldap --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
 
             echo "[Component k3d] Generate helm chart"
