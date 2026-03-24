@@ -2,9 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "cas.name" . }}
-  labels:
-    control-plane: controller-manager
-    {{ include "cas.labels" . | nindent 4 }}
+  labels: {{ include "cas.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
   strategy:
@@ -22,27 +20,30 @@ spec:
     spec:
       containers:
         - env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: ECOSYSTEM_MULTINODE
-            value: "true"
-          - name: RUNTIME_MODE
-            value: "component"
-          - name: LDAP_PASSWORD
-            valueFrom:
-              secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapPassword | nindent 16 }}
-          - name: LDAP_USERNAME
-            valueFrom:
-              secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapUsername | nindent 16 }}
-          - name: OIDC_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef: {{ toYaml .Values.configuration.secretRefs.oidcClientSecret | nindent 16 }}
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ECOSYSTEM_MULTINODE
+              value: "true"
+            - name: RUNTIME_MODE
+              value: "component"
+            - name: LDAP_PASSWORD
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapPassword | nindent 16 }}
+            - name: LDAP_USERNAME
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapUsername | nindent 16 }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.oidcClientSecret | nindent 16 }}
+            {{- with .Values.containers.cas.extraEnv }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
           image: "{{ .Values.containers.cas.image.registry }}{{ if .Values.containers.cas.image.registry }}/{{ end }}{{ .Values.containers.cas.image.repository }}:{{ .Values.containers.cas.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.containers.cas.imagePullPolicy }}
           livenessProbe:
@@ -89,6 +90,9 @@ spec:
             - mountPath: /etc/cas/gauth
               name: cas-data
               subPath: gauth
+            {{- with .Values.containers.cas.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
       enableServiceLinks: false
       hostname: cas
       {{- with .Values.global.imagePullSecrets }}
@@ -109,6 +113,9 @@ spec:
             limits: {{ toYaml .Values.resourceLimits | nindent 14 }}
             requests: {{ toYaml .Values.resourceRequests | nindent 14 }}
           securityContext: {{ toYaml .Values.initContainers.volumeChown.securityContext | nindent 12 }}
+          {{- with .Values.initContainers.volumeChown.extraEnv }}
+          env: {{ toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /logs
               name: cas-ephemeral
@@ -119,6 +126,9 @@ spec:
             - mountPath: /etc/cas/services/production
               name: cas-data
               subPath: services
+            {{- with .Values.initContainers.volumeChown.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
         - args:
             - copy
           image: "{{ .Values.initContainers.additionalMounts.image.registry }}/{{ .Values.initContainers.additionalMounts.image.repository }}:{{ .Values.initContainers.additionalMounts.image.tag }}"
@@ -128,6 +138,9 @@ spec:
             limits: {{ toYaml .Values.resourceLimits | nindent 14 }}
             requests: {{ toYaml .Values.resourceRequests | nindent 14 }}
           securityContext: {{ toYaml .Values.initContainers.additionalMounts.securityContext | nindent 12 }}
+          {{- with .Values.initContainers.additionalMounts.extraEnv }}
+          env: {{ toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /dogumount/logs
               name: cas-ephemeral
@@ -141,6 +154,12 @@ spec:
             - mountPath: /dogumount/etc/ces/config
               name: ces-config
               readOnly: true
+            {{- with .Values.initContainers.additionalMounts.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+        {{- with .Values.extraInitContainers }}
+        {{ toYaml . | nindent 8}}
+        {{- end }}
       securityContext: {{ toYaml .Values.securityContext | nindent 8 }}
       volumes:
         - emptyDir: { }
@@ -166,3 +185,15 @@ spec:
         - name: cas-data
           persistentVolumeClaim:
             claimName: {{ include "cas.name" . }}
+        {{- with .Values.extraVolumes }}
+        {{ toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
