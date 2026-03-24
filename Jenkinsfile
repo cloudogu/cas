@@ -144,7 +144,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
      def globalConfigLastUpdateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
      def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
 
-     while (casDoguStartedAt < globalConfigLastUodateTime) {
+     while (casDoguStartedAt < globalConfigLastUpdateTime) {
          echo "Waiting for CAS to restart and pick up the new global config..."
          sleep time: 10, unit: 'SECONDS'
          casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
