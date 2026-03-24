@@ -18,15 +18,13 @@ NPM_URL_RC=https://${NPM_REGISTRY_RC}
 
 K8S_COMPONENT_SOURCE_VALUES = ${HELM_SOURCE_DIR}/values.yaml
 K8S_COMPONENT_TARGET_VALUES = ${HELM_TARGET_DIR}/values.yaml
-HELM_PRE_GENERATE_TARGETS = helm-values-update-image-version
+HELM_PRE_GENERATE_TARGETS = helm-values-update-image-version $(HELM_DOGU_SPEC)
 HELM_POST_GENERATE_TARGETS = helm-values-replace-image-repo template-log-level template-image-pull-policy
 CHECK_VAR_TARGETS=check-all-vars
 IMAGE_IMPORT_TARGET=image-import
 
 HELM_DOGU_SPEC=$(HELM_SOURCE_DIR)/dogu.json
 
-HELM_PRE_APPLY_TARGETS=$(HELM_DOGU_SPEC)
-COMPONENT_PRE_APPLY_TARGETS=$(HELM_DOGU_SPEC)
 include build/make/k8s-component.mk
 
 .PHONY copy-dogu-spec:
