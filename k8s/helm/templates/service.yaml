@@ -9,7 +9,7 @@ spec:
   selector:
     {{ include "cas.selectorLabels" . | nindent 4 }}
   ports:
-    - name: {{ .Values.service.port.name }}
-      port: {{ .Values.service.port.origin }}
-      protocol: TCP
-      targetPort: {{ .Values.service.port.target }}
+    {{- range $name, $value := .Values.service.ports }}
+    - name: {{ $name | quote }}
+      {{ toYaml $value | nindent 6 }}
+    {{- end }}

@@ -33,10 +33,11 @@ securityContext:
 persistence:
   minVolumeSize: 2Gi
 service:
-  port:
-    name: web
-    origin: 8080
-    target: 8080
+  ports:
+    web:
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
 ingress:
   # If this component needs to be installed alongside the CAS dogu,
   # e.g., for migration, the ingress has to be disabled to avoid conflicts.
