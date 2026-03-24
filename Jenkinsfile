@@ -145,10 +145,10 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
      def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
 
      while (casDoguStartedAt < globalConfigLastUpdateTime) {
+         echo "${casDoguStartedAt} is not after ${globalConfigLastUpdateTime} yet."
          echo "Waiting for CAS to restart and pick up the new global config..."
          sleep time: 10, unit: 'SECONDS'
          casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
-         echo "CAS started at: ${casDoguStartedAt}"
      }
 
 
