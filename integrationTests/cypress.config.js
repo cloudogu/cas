@@ -17,6 +17,7 @@ async function setupNodeEvents(on, config) {
   config = doguTestLibrary.configure(config);
 
   if (!config.env.TAGS) {
+    // "team-ces" is from https://github.com/cloudogu/dogu-build-lib/blob/0f2b2b2b8ff6be4ffdfd61c660008e575d721195/src/com/cloudogu/ces/dogubuildlib/MultiNodeEcoSystem.groovy#L265
     config.env.TAGS = config.env.AdminUsername == "team-ces"
         ? "not @classic"
         : "not @multinode";
