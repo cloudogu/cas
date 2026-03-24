@@ -7,6 +7,8 @@ metadata:
     {{ include "cas.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{ include "cas.selectorLabels" . | nindent 6 }}
@@ -14,6 +16,7 @@ spec:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: cas
+        config/checksum: {{ printf "%s|%s" ( include (print $.Template.BasePath "/config.yaml") .) .Values.persistence.minVolumeSize | sha256sum }}
       labels:
         {{ include "cas.labels" . | nindent 8 }}
     spec:
