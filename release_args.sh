@@ -19,14 +19,11 @@ update_versions_modify_files() {
   local additionalMountsImageTag
   additionalMountsImageTag=$(./.bin/yq ".initContainers.additionalMounts.image.tag" "${valuesYAML}")
   yq -i ".values.images.additionalMountsInit |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${additionalMountsImageTag}\")" "${componentPatchTplYAML}"
-
-  make copy-dogu-spec
 }
 
 update_versions_stage_modified_files() {
   valuesYAML=k8s/helm/values.yaml
   componentPatchTplYAML=k8s/helm/component-patch-tpl.yaml
-  doguJson=k8s/helm/dogu.json
 
-  git add "${valuesYAML}" "${componentPatchTplYAML}" "${doguJson}"
+  git add "${valuesYAML}" "${componentPatchTplYAML}"
 }
