@@ -3,19 +3,6 @@ global:
     - name: "ces-container-registries"
 networkPolicies:
   enabled: true
-  ldap:
-    # you can disable this if ldap is hosted externally
-    enabled: true
-    matchLabels:
-      # set to `dogu.name: ldap` if you want compatability with the ldap dogu
-      app.kubernetes.io/name: ldap
-      app.kubernetes.io/instance: ldap
-  postfix:
-    enabled: true
-    matchLabels:
-      # set to `dogu.name: postfix` if you want compatability with the postfix dogu
-      app.kubernetes.io/name: postfix
-      app.kubernetes.io/instance: postfix
   gateway:
     enabled: true
     matchLabels:
