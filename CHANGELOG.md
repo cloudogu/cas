@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-12] - 2026-03-26
+### Changed
+- [#317] Build cas as a helm chart as well as a normal dogu.
+
 ## [v7.2.7-11] - 2026-03-26
 ### Added
 - Added 'Setup Configs' stage before integration tests in multinode Jenkins pipeline to ensure necessary configurations are in place before tests are executed.

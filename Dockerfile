@@ -40,7 +40,7 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
 # registry.cloudogu.com/official/cas
 FROM registry.cloudogu.com/official/java:21.0.10-4 AS cas
 LABEL NAME="official/cas" \
-      VERSION="7.2.7-11" \
+      VERSION="7.2.7-12" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
@@ -113,5 +113,5 @@ HEALTHCHECK --interval=20s CMD /healthcheck.sh 300
 
 USER cas
 
-CMD /startup.sh
+CMD ["/startup.sh"]
 

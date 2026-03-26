@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-12] - 2026-03-26
+### Changed
+- [#317] Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+
 ## [v7.2.7-11] - 2026-03-26
 ### Behoben
 - [#324] Es wurde ein Problem mit großgeschriebenen FQDNs behoben, welches die Authentifizierung in bestimmten Dogus verhindert hat.

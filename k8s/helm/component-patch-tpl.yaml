@@ -1,0 +1,25 @@
+apiVersion: v1
+values:
+  images:
+    cas: registry.cloudogu.com/official/cas:7.2.7-12
+    volumeChownInit: docker.io/busybox:1.36
+    additionalMountsInit: docker.io/cloudogu/dogu-additional-mounts-init:0.1.2
+patches:
+  values.yaml:
+    containers:
+      cas:
+        image:
+          registry: "{{ registryFrom .images.cas }}"
+          repository: "{{ repositoryFrom .images.cas }}"
+          tag: "{{ tagFrom .images.cas }}"
+    initContainers:
+      volumeChown:
+        image:
+          registry: "{{ registryFrom .images.volumeChownInit }}"
+          repository: "{{ repositoryFrom .images.volumeChownInit }}"
+          tag: "{{ tagFrom .images.volumeChownInit }}"
+      additionalMounts:
+        image:
+          registry: "{{ registryFrom .images.additionalMountsInit }}"
+          repository: "{{ repositoryFrom .images.additionalMountsInit }}"
+          tag: "{{ tagFrom .images.additionalMountsInit }}"
