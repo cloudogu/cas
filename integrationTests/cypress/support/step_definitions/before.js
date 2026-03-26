@@ -2,7 +2,6 @@ const {
     Before,
 } = require("@badeball/cypress-cucumber-preprocessor");
 
-
 /**
  * Create a new test user which must change his password at next login
  */
