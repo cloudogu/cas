@@ -2,8 +2,6 @@ MAKEFILES_VERSION=10.7.0
 
 .DEFAULT_GOAL:=dogu-release
 
-COMPONENT_ARTIFACT_ID=lop-idp-cas
-
 include build/make/variables.mk
 include build/make/self-update.mk
 include build/make/release.mk

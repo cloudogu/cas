@@ -35,7 +35,8 @@ def componentRegistry = "registry.cloudogu.com"
 def componentRegistryNamespace = "k8s"
 def componentChartTargetDir = "target/k8s/helm"
 def componentBuildImageRepository = "registry.cloudogu.com/official/cas"
-def componentReleaseName = "lop-idp-cas"
+def componentReleaseName = "cas"
+def helmTestReleaseName = "lop-idp-${componentReleaseName}"
 def goVersion = "1.26.0"
 
 pipe.setBuildProperties()
@@ -123,8 +124,9 @@ def componentStages = { group ->
             sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
 
             echo "[Component k3d] Deploy component via helm"
-            k3d.helm("upgrade --install ${componentReleaseName} ${componentChartTargetDir}"
-            + " --namespace default --set containers.cas.image.registry=''"
+            k3d.helm("upgrade --install ${helmTestReleaseName} ${componentChartTargetDir}"
+            + " --namespace default --set nameOverride=${helmTestReleaseName}"
+            + " --set containers.cas.image.registry=''"
             + " --set containers.cas.image.repository=local-smoke/cas"
             + " --set containers.cas.image.tag=${imageTag}"
             + " --set containers.cas.imagePullPolicy=Never"
@@ -135,8 +137,8 @@ def componentStages = { group ->
             + " --wait --timeout 5m")
 
             echo "[Component k3d] Verify component startup"
-            k3d.kubectl("rollout status deployment/${componentReleaseName} --timeout=300s")
-            k3d.kubectl("wait --for=condition=ready pod -l app.kubernetes.io/instance=${componentReleaseName} --timeout=300s")
+            k3d.kubectl("rollout status deployment/${helmTestReleaseName} --timeout=300s")
+            k3d.kubectl("wait --for=condition=ready pod -l app.kubernetes.io/instance=${helmTestReleaseName} --timeout=300s")
         } catch (Exception e) {
             k3d.collectAndArchiveLogs()
             throw e as java.lang.Throwable
