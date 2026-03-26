@@ -9,16 +9,16 @@ update_versions_modify_files() {
   valuesYAML=k8s/helm/values.yaml
   componentPatchTplYAML=k8s/helm/component-patch-tpl.yaml
 
-  yq -i ".containers.cas.image.tag = \"${newReleaseVersion}\"" "${valuesYAML}"
-  yq -i ".values.images.cas |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${newReleaseVersion}\")" "${componentPatchTplYAML}"
+  ./.bin/yq -i ".containers.cas.image.tag = \"${newReleaseVersion}\"" "${valuesYAML}"
+  ./.bin/yq -i ".values.images.cas |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${newReleaseVersion}\")" "${componentPatchTplYAML}"
 
   local chownImageTag
   chownImageTag=$(./.bin/yq ".initContainers.volumeChown.image.tag" "${valuesYAML}")
-  yq -i ".values.images.volumeChownInit |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${chownImageTag}\")" "${componentPatchTplYAML}"
+  ./.bin/yq -i ".values.images.volumeChownInit |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${chownImageTag}\")" "${componentPatchTplYAML}"
 
   local additionalMountsImageTag
   additionalMountsImageTag=$(./.bin/yq ".initContainers.additionalMounts.image.tag" "${valuesYAML}")
-  yq -i ".values.images.additionalMountsInit |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${additionalMountsImageTag}\")" "${componentPatchTplYAML}"
+  ./.bin/yq -i ".values.images.additionalMountsInit |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${additionalMountsImageTag}\")" "${componentPatchTplYAML}"
 }
 
 update_versions_stage_modified_files() {
