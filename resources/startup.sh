@@ -27,7 +27,7 @@ fi
 fqdn="$(doguctl config -g fqdn)"
 normalized="${fqdn,,}"
 doguctl config "normalized_fqdn" "$normalized"
-echo "TODO - DELETE ME: Normalized FQDN $normalized"
+echo "Using normalized FQDN internally: $normalized"
 
 # check whether post-upgrade script is still running
 while [[ "$(doguctl config "local_state" -d "empty")" == "upgrading" ]]; do
