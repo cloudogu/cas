@@ -7,6 +7,8 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ## [Unreleased]
 ### Changed
 - [#317] Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
+
+## [v7.2.7-11] - 2026-03-26
 ### Fixed
 - [#324] Fixed an issue where capitalized fqdns were problematic in some dogu authentication flows.
 
