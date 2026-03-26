@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-11] - 2026-03-26
+### Added
+- Added 'Setup Configs' stage before integration tests in multinode Jenkins pipeline to ensure necessary configurations are in place before tests are executed.
+- Added required Dogus to Jenkins pipeline for multinode build.
+### Fixed
+- [#324] Use lowercase fqdns inside of CAS to prevent problems with capitalized FQDN in OIDC-Workflows
+
 ## [v7.2.7-10] - 2026-03-10
 ### Security
 - Fix CVE-2019-17195 - Fixed a Nimbus Jose JWT Security issue that could cause application crash or authentication 

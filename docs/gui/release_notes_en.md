@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-11] - 2026-03-26
+### Fixed
+- [#324] Fixed an issue where capitalized fqdns were problematic in some dogu authentication flows.
+
 ## [v7.2.7-10] - 2026-03-10
 ### Fixed
 - [#310] Fixed an issue where back-channel logouts from local clusters were not possible.

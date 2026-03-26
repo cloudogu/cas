@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-11] - 2026-03-26
+### Behoben
+- [#324] Es wurde ein Problem mit großgeschriebenen FQDNs behoben, welches die Authentifizierung in bestimmten Dogus verhindert hat.
+
 ## [v7.2.7-10] - 2026-03-10
 ### Behoben
 - [#310] Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
