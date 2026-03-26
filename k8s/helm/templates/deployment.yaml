@@ -1,0 +1,199 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cas.name" . }}
+  labels: {{ include "cas.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas | default 1 }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{ include "cas.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: cas
+        config/checksum: {{ printf "%s|%s" ( include (print $.Template.BasePath "/config.yaml") .) .Values.persistence.minVolumeSize | sha256sum }}
+      labels:
+        {{ include "cas.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ECOSYSTEM_MULTINODE
+              value: "true"
+            - name: RUNTIME_MODE
+              value: "component"
+            - name: LDAP_PASSWORD
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapPassword | nindent 18 }}
+            - name: LDAP_USERNAME
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.ldapUsername | nindent 18 }}
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef: {{ toYaml .Values.configuration.secretRefs.oidcClientSecret | nindent 18 }}
+            {{- with .Values.containers.cas.extraEnv }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+          image: "{{ .Values.containers.cas.image.registry }}{{ if .Values.containers.cas.image.registry }}/{{ end }}{{ .Values.containers.cas.image.repository }}:{{ .Values.containers.cas.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.containers.cas.imagePullPolicy }}
+          livenessProbe:
+            failureThreshold: 180
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: {{ .Values.service.ports.web.port }}
+            timeoutSeconds: 1
+          name: cas
+          resources:
+            limits: {{ toYaml .Values.resourceLimits | nindent 14 }}
+            requests: {{ toYaml .Values.resourceRequests | nindent 14 }}
+          securityContext: {{ toYaml .Values.containers.cas.securityContext | nindent 12 }}
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - '[ $(doguctl state) == "ready" ]'
+            failureThreshold: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /var/ces/state
+              name: cas-ephemeral
+              subPath: state
+            - mountPath: /etc/ces/config
+              name: ces-config
+              readOnly: true
+            - mountPath: /etc/ces/dogu_json/cas
+              name: cas-dogu-json
+              readOnly: true
+            - mountPath: /logs
+              name: cas-ephemeral
+              subPath: logs
+            - mountPath: /var/ces/config
+              name: cas-data
+              subPath: localConfig
+            - mountPath: /etc/cas/services/production
+              name: cas-data
+              subPath: services
+            - mountPath: /etc/cas/gauth
+              name: cas-data
+              subPath: gauth
+            {{- with .Values.containers.cas.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+      enableServiceLinks: false
+      hostname: cas
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - mkdir -p "/logs" && chown -R 1000:1000 "/logs" && mkdir -p "/var/ces/config"
+              && chown -R 1000:1000 "/var/ces/config" && mkdir -p "/etc/cas/services/production"
+              && chown -R 1000:1000 "/etc/cas/services/production"
+          image: "{{ .Values.initContainers.volumeChown.image.registry }}/{{ .Values.initContainers.volumeChown.image.repository }}:{{ .Values.initContainers.volumeChown.image.tag }}"
+          imagePullPolicy: {{ .Values.initContainers.volumeChown.imagePullPolicy }}
+          name: dogu-volume-chown-init
+          resources:
+            limits: {{ toYaml .Values.resourceLimits | nindent 14 }}
+            requests: {{ toYaml .Values.resourceRequests | nindent 14 }}
+          securityContext: {{ toYaml .Values.initContainers.volumeChown.securityContext | nindent 12 }}
+          {{- with .Values.initContainers.volumeChown.extraEnv }}
+          env: {{ toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /logs
+              name: cas-ephemeral
+              subPath: logs
+            - mountPath: /var/ces/config
+              name: cas-data
+              subPath: localConfig
+            - mountPath: /etc/cas/services/production
+              name: cas-data
+              subPath: services
+            {{- with .Values.initContainers.volumeChown.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+        - args:
+            - copy
+          image: "{{ .Values.initContainers.additionalMounts.image.registry }}/{{ .Values.initContainers.additionalMounts.image.repository }}:{{ .Values.initContainers.additionalMounts.image.tag }}"
+          imagePullPolicy: {{ .Values.initContainers.additionalMounts.imagePullPolicy }}
+          name: dogu-additional-mounts-init
+          resources:
+            limits: {{ toYaml .Values.resourceLimits | nindent 14 }}
+            requests: {{ toYaml .Values.resourceRequests | nindent 14 }}
+          securityContext: {{ toYaml .Values.initContainers.additionalMounts.securityContext | nindent 12 }}
+          {{- with .Values.initContainers.additionalMounts.extraEnv }}
+          env: {{ toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /dogumount/logs
+              name: cas-ephemeral
+              subPath: logs
+            - mountPath: /dogumount/var/ces/config
+              name: cas-data
+              subPath: localConfig
+            - mountPath: /dogumount/etc/cas/services/production
+              name: cas-data
+              subPath: services
+            - mountPath: /dogumount/etc/ces/config
+              name: ces-config
+              readOnly: true
+            {{- with .Values.initContainers.additionalMounts.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+        {{- with .Values.extraInitContainers }}
+        {{ toYaml . | nindent 8}}
+        {{- end }}
+      securityContext: {{ toYaml .Values.securityContext | nindent 8 }}
+      volumes:
+        - emptyDir: { }
+          name: cas-ephemeral
+        - name: ces-config
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.configuration.meta.global.name }}
+                  items:
+                    - key: {{ .Values.configuration.meta.global.key }}
+                      path: global/config.yaml
+              - configMap:
+                  name: {{ include "cas.name" . }}-config
+                  items:
+                    - key: {{ .Values.configuration.meta.normal.key }}
+                      path: normal/config.yaml
+                    - key: {{ .Values.configuration.meta.sensitive.key }}
+                      path: sensitive/config.yaml
+        - configMap:
+            name: component-spec-{{ include "cas.name" . }}
+          name: cas-dogu-json
+        - name: cas-data
+          persistentVolumeClaim:
+            claimName: {{ include "cas.name" . }}
+        {{- with .Values.extraVolumes }}
+        {{ toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}

@@ -1,0 +1,6 @@
+# Ignore everything
+**
+
+# Allowed files and directories
+!app
+!resources

@@ -1,0 +1,39 @@
+{{- if .Values.networkPolicies.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "cas.name" . }}-deny-all
+  labels:
+    {{ include "cas.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{ include "cas.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress: []
+---
+{{- if .Values.networkPolicies.gateway.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "cas.name" . }}-gateway
+  labels:
+    {{ include "cas.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{ include "cas.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+          podSelector:
+            matchLabels:
+              {{ toYaml .Values.networkPolicies.gateway.matchLabels | nindent 14 }}
+{{- end }}
+---
+{{- end }}

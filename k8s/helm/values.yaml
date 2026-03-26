@@ -1,0 +1,123 @@
+global:
+  imagePullSecrets:
+    - name: "ces-container-registries"
+networkPolicies:
+  enabled: true
+  gateway:
+    enabled: true
+    matchLabels:
+      k8s.cloudogu.com/component.name: k8s-ces-gateway
+replicas: 1
+resourceLimits:
+  memory: 2500Mi
+resourceRequests:
+  cpu: 350m
+  memory: 2500Mi
+securityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  runAsNonRoot: true
+persistence:
+  minVolumeSize: 2Gi
+service:
+  ports:
+    web:
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+ingress:
+  # If this component needs to be installed alongside the CAS dogu,
+  # e.g., for migration, the ingress has to be disabled to avoid conflicts.
+  enabled: true
+  className: k8s-ecosystem-ces-service
+configuration:
+  meta:
+    global:
+      name: global-config
+      key: config.yaml
+    normal:
+      key: normal
+    sensitive:
+      key: sensitive
+  normal: # in config.yaml style
+    ldap:
+      ds_type: "embedded"
+      attribute_id: "uid"
+      attribute_group: "memberof"
+      attribute_mail: "mail"
+      search_filter: "(objectClass=person)"
+      attribute_fullname: "cn"
+      encryption: "none"
+      host: "lop-idp-ldap"
+      port: "389"
+    logging:
+      root: "WARN"
+  secretRefs:
+    ldapPassword:
+      name: cas-ldap
+      key: password
+    ldapUsername:
+      name: cas-ldap
+      key: username
+    oidcClientSecret:
+      name: cas-oidc
+      key: clientSecret
+      optional: true
+containers:
+  cas:
+    image:
+      registry: registry.cloudogu.com
+      repository: official/cas
+      tag: 7.2.7-10
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: false
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+    extraVolumeMounts: []
+    extraEnv: []
+initContainers:
+  volumeChown:
+    image:
+      registry: docker.io
+      repository: busybox
+      tag: 1.36
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      capabilities:
+        add:
+          - CHOWN
+          - DAC_OVERRIDE
+        drop:
+          - ALL
+      readOnlyRootFilesystem: false
+      runAsNonRoot: false
+    extraVolumeMounts: []
+    extraEnv: []
+  additionalMounts:
+    image:
+      registry: docker.io
+      repository: cloudogu/dogu-additional-mounts-init
+      tag: 0.1.2
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: false
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+    extraVolumeMounts: []
+    extraEnv: []
+extraLabels: {}
+tolerations: []
+affinity: {}
+nodeSelector: {}
+extraVolumes: []
+extraInitContainers: []
