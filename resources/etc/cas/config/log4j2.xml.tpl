@@ -104,6 +104,8 @@
         <!-- prevent log spamming of unusable log entries -->
         <AsyncLogger name="org.apache.catalina" level="error" includeLocation="true"/>
         <AsyncLogger name="org.springframework.jndi" level="error" includeLocation="true"/>
+        <AsyncLogger name="org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner" level="warn" includeLocation="true"/>
+        <AsyncLogger name="io.micrometer.observation.ObservationTextPublisher" level="warn" includeLocation="true"/>
 
         <!-- Log audit to all root appenders, and also to audit log (additivity is not false) -->
         <AsyncLogger name="org.apereo.inspektr.audit.support" level="${sys:ces.log.level}" includeLocation="true" additivity="false" >
