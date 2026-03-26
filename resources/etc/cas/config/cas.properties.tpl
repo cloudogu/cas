@@ -2,7 +2,7 @@
 # General server configuration
 # Properties: https://apereo.github.io/cas/6.3.x/configuration/Configuration-Properties.html#cas-server
 # ----------------------------------------------------------------------------------------------------------------------
-cas.server.name=https://{{ .GlobalConfig.Get "fqdn" }}
+cas.server.name=https://{{ .Config.Get "normalized_fqdn" }}
 cas.server.prefix=${cas.server.name}/cas
 
 # This property is very important. If this is not set to 0, the whole dogu can crash when ldap is not available
@@ -364,7 +364,7 @@ cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
 cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scratch_codes/encryption_key" }}
 cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
-cas.authn.mfa.gauth.core.label={{ .GlobalConfig.Get "fqdn" }}
+cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
 {{ end }}
 
 

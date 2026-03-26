@@ -37,7 +37,7 @@ fi
 
   echo "Create new sa for ${SERVICE} with account type: ${TYPE}..."
 
-  FQDN=$(doguctl config -g fqdn)
+  FQDN=$(doguctl config normalized_fqdn)
   # escape fqdn to use it within regex
   EFQDN=$(escapeDots "$FQDN")
   SERVICE_ID=$(findNextServiceID "$SERVICE_REGISTRY_PRODUCTION")
