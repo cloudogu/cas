@@ -284,6 +284,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     cd account.cloudogu.com
     sudo minikube start --driver=docker
     sudo mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
+    dev/k8s/deploy.sh minikube
     """
 
 
