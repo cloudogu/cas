@@ -268,12 +268,12 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh """
     mkdir -p ${WORKSPACE}/keycloak
-    apt install minikube -y
-    apt install maven -y
+    sudo apt install minikube -y
+    sudo apt install maven -y
     git clone https://ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com
     cd account.cloudogu.com
-    minikube start --driver=docker
-    mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
+    sudo minikube start --driver=docker
+    sudo mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
     """
 
 
