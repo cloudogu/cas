@@ -258,6 +258,23 @@ pipe.overrideStage('Setup') {
     """])
 }
 
+pipe.insertStageBefore('Setup Configs', 'MN-Setup Keycloak') {
+    echo "Setup Keycloak as OIDC provider for integration tests"
+
+    //Clone repository
+
+    sh """
+    mkdir -p ${WORKSPACE}/keycloak
+    apt get install minikube -y
+    apt get install maven -y
+    git clone https://ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com
+    cd account.cloudogu.com
+    minikube start --driver=docker
+    mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
+    """
+
+}
+
 pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
      echo "Create custom dogu to access OAuth endpoints for the integration tests"
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
