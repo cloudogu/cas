@@ -266,6 +266,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     //Clone repository
 
+    //Check if minikube is needed or if we just deploy the keycloak image into the already running cluster.
     sh """
     mkdir -p ${WORKSPACE}/keycloak
     cd ${WORKSPACE}/keycloak
