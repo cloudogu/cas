@@ -53,16 +53,16 @@ configuration:
       search_filter: "(objectClass=person)"
       attribute_fullname: "cn"
       encryption: "none"
-      host: "lop-idp-ldap"
+      host: "ldap"
       port: "389"
     logging:
       root: "WARN"
   secretRefs:
     ldapPassword:
-      name: cas-ldap
+      name: ldap-cas-sa
       key: password
     ldapUsername:
-      name: cas-ldap
+      name: ldap-cas-sa
       key: username
     oidcClientSecret:
       name: cas-oidc
@@ -71,7 +71,7 @@ configuration:
 secrets:
   actuatorAuth:
     create: true
-    name: "lop-idp-cas-actuator-auth"
+    name: "cas-actuator-auth"
     username: "actuator"
     usernameKey: username
     passwordKey: password
