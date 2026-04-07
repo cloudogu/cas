@@ -41,6 +41,16 @@ spec:
             - name: OIDC_CLIENT_SECRET
               valueFrom:
                 secretKeyRef: {{ toYaml .Values.configuration.secretRefs.oidcClientSecret | nindent 18 }}
+            - name: ACTUATOR_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.actuatorAuth.name is required" .Values.secrets.actuatorAuth.name }}
+                  key: {{ default "username" .Values.secrets.actuatorAuth.usernameKey }}
+            - name: ACTUATOR_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "secrets.actuatorAuth.name is required" .Values.secrets.actuatorAuth.name }}
+                  key: {{ default "password" .Values.secrets.actuatorAuth.passwordKey }}
             {{- with .Values.containers.cas.extraEnv }}
             {{ toYaml . | nindent 12 }}
             {{- end }}
