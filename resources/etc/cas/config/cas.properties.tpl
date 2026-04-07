@@ -32,15 +32,29 @@ spring.mail.protocol=smtp
 ########################################################################################################################
 
 ########################################################################################################################
-# Health-Endpoint configuration
-# Configuration guide: https://apereo.github.io/cas/7.0.x/monitoring/actuators/Actuator-Endpoint-Health.html#casendppointpropshealth
+# API-Endpoint configuration for Health and RegisteredServices
+# Health: https://apereo.github.io/cas/7.0.x/monitoring/actuators/Actuator-Endpoint-Health.html#casendppointpropshealth
+# RegisteredServices: https://apereo.github.io/cas/7.3.x/services/Service-Management.html#actuator-endpoints
 # ----------------------------------------------------------------------------------------------------------------------
+{{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
+management.endpoints.web.exposure.include=health,registeredServices
+{{ else }}
 management.endpoints.web.exposure.include=health
+{{ end }}
 management.endpoint.health.probes.enabled=true
 management.endpoint.health.show-details=ALWAYS
 management.endpoint.health.access=unrestricted
 cas.monitor.endpoints.endpoint.health.access=ANONYMOUS
 cas.monitor.endpoints.form-login-enabled=false
+
+{{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
+management.endpoint.registeredServices.enabled=true
+cas.monitor.endpoints.endpoint.registeredServices.access=AUTHENTICATED
+spring.security.user.name={{ .Env.Get "ACTUATOR_AUTH_USERNAME" }}
+spring.security.user.password={{ .Env.Get "ACTUATOR_AUTH_PASSWORD" }}
+{{ else }}
+management.endpoint.registeredServices.enabled=false
+{{ end }}
 
 
 ########################################################################################################################

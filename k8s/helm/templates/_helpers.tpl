@@ -25,3 +25,15 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ include "cas.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{- define "cas.lookupSecretValue" -}}
+{{- $root := .root -}}
+{{- $secretName := .secretName -}}
+{{- $key := .key -}}
+{{- $secret := lookup "v1" "Secret" $root.Release.Namespace $secretName -}}
+{{- if and $secret $secret.data -}}
+{{- with (index $secret.data $key) -}}
+{{- . | b64dec -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
