@@ -90,7 +90,7 @@ def componentStages = { group ->
             k3d.setup()
 
             echo "[Component k3d] Prepare prerequisites"
-            k3d.kubectl("delete secret cas-ldap || true")
+            k3d.kubectl("delete secret ldap-cas-sa || true")
             // Steal username and password for ldap from cas dogu to use in component.
             // Once we have completely transitioned to the lop-idp component in ecosystem-core,
             // this will come from the ldap component and we don't need it anymore.
@@ -112,7 +112,7 @@ def componentStages = { group ->
 
                echo "Read ldap secret from cas config..."
             }
-            k3d.kubectl("create secret generic cas-ldap --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
+            k3d.kubectl("create secret generic ldap-cas-sa --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
 
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
