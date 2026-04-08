@@ -121,7 +121,10 @@ def componentStages = { group ->
             sh "docker tag ${componentBuildImageRepository}:${imageTag} local-smoke/cas:${imageTag}"
 
             echo "[Component k3d] Import previously built image"
-            sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
+            retry(3) {
+                sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
+                sh "sudo docker exec k3d-${k3d.registryName}-server-0 ctr -n k8s.io images list | grep -F 'local-smoke/cas:${imageTag}'"
+            }
 
             echo "[Component k3d] Deploy component via helm"
             k3d.helm("upgrade --install ${helmTestReleaseName} ${componentChartTargetDir}"
