@@ -71,7 +71,7 @@ configuration:
 secrets:
   actuatorAuth:
     create: true
-    name: "cas-actuator-auth"
+    name: "lop-idp-cas-actuator-auth"
     username: "actuator"
     usernameKey: username
     passwordKey: password

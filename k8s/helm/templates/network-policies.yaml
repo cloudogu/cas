@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "cas.name" . }}-deny-all
+  name: {{ include "cas.fullname" . }}-deny-all
   labels:
     {{ include "cas.labels" . | nindent 4 }}
 spec:
@@ -17,7 +17,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "cas.name" . }}-gateway
+  name: {{ include "cas.fullname" . }}-gateway
   labels:
     {{ include "cas.labels" . | nindent 4 }}
 spec:
@@ -40,7 +40,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "cas.name" . }}-auth-registration-operator
+  name: {{ include "cas.fullname" . }}-auth-registration-operator
   labels:
     {{ include "cas.labels" . | nindent 4 }}
 spec:

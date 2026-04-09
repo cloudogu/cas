@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cas.name" . }}
+  name: {{ include "cas.fullname" . }}
   labels: {{ include "cas.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
@@ -183,18 +183,18 @@ spec:
                     - key: {{ .Values.configuration.meta.global.key }}
                       path: global/config.yaml
               - configMap:
-                  name: {{ include "cas.name" . }}-config
+                  name: {{ include "cas.fullname" . }}-config
                   items:
                     - key: {{ .Values.configuration.meta.normal.key }}
                       path: normal/config.yaml
                     - key: {{ .Values.configuration.meta.sensitive.key }}
                       path: sensitive/config.yaml
         - configMap:
-            name: component-spec-{{ include "cas.name" . }}
+            name: component-spec-{{ include "cas.fullname" . }}
           name: cas-dogu-json
         - name: cas-data
           persistentVolumeClaim:
-            claimName: {{ include "cas.name" . }}
+            claimName: {{ include "cas.fullname" . }}
         {{- with .Values.extraVolumes }}
         {{ toYaml . | nindent 8 }}
         {{- end }}
