@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "cas.name" . }}
+  name: {{ include "cas.fullname" . }}
   labels: {{ include "cas.labels" . | nindent 4 }}
 spec:
   accessModes:

@@ -5,6 +5,7 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
 
 ## [v7.2.7-13] - 2026-04-07
 - Diesese Release ermöglicht beim Einsatz als Mulitnode-Komponente die Nutzung der neuen Service-Registration-API.

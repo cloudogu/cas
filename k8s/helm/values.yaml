@@ -11,7 +11,7 @@ networkPolicies:
     enabled: true
     matchLabels:
       app.kubernetes.io/name: k8s-auth-registration-operator
-      app.kubernetes.io/instance: k8s-auth-registration-operator
+      app.kubernetes.io/instance: lop-idp
 replicas: 1
 resourceLimits:
   memory: 2500Mi
@@ -53,7 +53,7 @@ configuration:
       search_filter: "(objectClass=person)"
       attribute_fullname: "cn"
       encryption: "none"
-      host: "ldap"
+      host: "lop-idp-ldap"
       port: "389"
     logging:
       root: "WARN"
@@ -71,7 +71,7 @@ configuration:
 secrets:
   actuatorAuth:
     create: true
-    name: "cas-actuator-auth"
+    name: "lop-idp-cas-actuator-auth"
     username: "actuator"
     usernameKey: username
     passwordKey: password
