@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-14] - 2026-04-10
 ### Changed
 - [#327] Add helm release-name to component-name in helm-templates
 
