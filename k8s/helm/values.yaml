@@ -7,6 +7,11 @@ networkPolicies:
     enabled: true
     matchLabels:
       k8s.cloudogu.com/component.name: k8s-ces-gateway
+  authRegistrationOperator:
+    enabled: true
+    matchLabels:
+      app.kubernetes.io/name: k8s-auth-registration-operator
+      app.kubernetes.io/instance: lop-idp
 replicas: 1
 resourceLimits:
   memory: 2500Mi
@@ -54,21 +59,28 @@ configuration:
       root: "WARN"
   secretRefs:
     ldapPassword:
-      name: cas-ldap
+      name: ldap-cas-sa
       key: password
     ldapUsername:
-      name: cas-ldap
+      name: ldap-cas-sa
       key: username
     oidcClientSecret:
       name: cas-oidc
       key: clientSecret
       optional: true
+secrets:
+  actuatorAuth:
+    create: true
+    name: "lop-idp-cas-actuator-auth"
+    username: "actuator"
+    usernameKey: username
+    passwordKey: password
 containers:
   cas:
     image:
       registry: registry.cloudogu.com
       repository: official/cas
-      tag: 7.2.7-12
+      tag: 7.2.7-14
     imagePullPolicy: IfNotPresent
     securityContext:
       capabilities:

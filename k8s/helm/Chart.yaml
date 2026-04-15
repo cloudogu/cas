@@ -13,7 +13,3 @@ description: A Helm chart for CAS, the LOP's single sign-on provider.
 type: application
 version: 0.0.0-replaceme
 appVersion: "0.0.0-replaceme"
-
-annotations:
-  # we need the -0 as otherwise we cannot depend on (and therefore test) pre-release versions
-  "k8s.cloudogu.com/ces-dependency/k8s-auth-registration-operator": ">=0.0.1-0"

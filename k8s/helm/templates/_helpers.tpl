@@ -7,6 +7,13 @@ Kubernetes 1.4+.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "cas.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name (include "cas.name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
 
 {{/* All-in-one labels */}}
 {{- define "cas.labels" -}}
@@ -25,3 +32,15 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ include "cas.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{- define "cas.lookupSecretValue" -}}
+{{- $root := .root -}}
+{{- $secretName := .secretName -}}
+{{- $key := .key -}}
+{{- $secret := lookup "v1" "Secret" $root.Release.Namespace $secretName -}}
+{{- if and $secret $secret.data -}}
+{{- with (index $secret.data $key) -}}
+{{- . | b64dec -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

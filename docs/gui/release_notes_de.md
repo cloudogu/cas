@@ -6,6 +6,13 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-14] - 2026-04-10
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+
+## [v7.2.7-13] - 2026-04-07
+- Diesese Release ermöglicht beim Einsatz als Mulitnode-Komponente die Nutzung der neuen Service-Registration-API.
+- Für den Einsatz als Dogu ändert sich nichts.
+
 ## [v7.2.7-12] - 2026-03-26
 ### Changed
 - [#317] Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.

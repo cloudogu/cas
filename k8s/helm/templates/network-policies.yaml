@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "cas.name" . }}-deny-all
+  name: {{ include "cas.fullname" . }}-deny-all
   labels:
     {{ include "cas.labels" . | nindent 4 }}
 spec:
@@ -17,7 +17,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "cas.name" . }}-gateway
+  name: {{ include "cas.fullname" . }}-gateway
   labels:
     {{ include "cas.labels" . | nindent 4 }}
 spec:
@@ -34,6 +34,29 @@ spec:
           podSelector:
             matchLabels:
               {{ toYaml .Values.networkPolicies.gateway.matchLabels | nindent 14 }}
+{{- end }}
+---
+{{- if .Values.networkPolicies.authRegistrationOperator.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "cas.fullname" . }}-auth-registration-operator
+  labels:
+    {{ include "cas.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{ include "cas.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Release.Namespace }}
+          podSelector:
+            matchLabels:
+              {{ toYaml .Values.networkPolicies.authRegistrationOperator.matchLabels | nindent 14 }}
 {{- end }}
 ---
 {{- end }}
