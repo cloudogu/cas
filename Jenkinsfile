@@ -276,7 +276,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     """
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         sh(
-                script: "git clone ssh://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com:2222/repo/platform/account.cloudogu.com",
+                script: "git clone ssh://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com:2222/scm/repo/platform/account.cloudogu.com",
                 returnStdout: true
         )
     }
