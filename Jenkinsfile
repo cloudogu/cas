@@ -290,12 +290,9 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh """
     cd account.cloudogu.com
+    sudo mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
     dev/k8s/deploy.sh ${currentContext}
     """
-
-    Maven mvn = new MavenWrapper(this, credentialsId: 'SCM-Manager')
-
-    mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
 
 
