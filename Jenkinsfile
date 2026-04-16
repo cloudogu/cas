@@ -268,6 +268,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
 
     echo "Setup Keycloak as OIDC provider for integration tests"
+    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
+    echo "Current kubectl context: ${currentContext}"
 
     //Clone repository
 
@@ -288,9 +290,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh """
     cd account.cloudogu.com
-    sudo minikube start --driver=none
     sudo mvn clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build
-    dev/k8s/deploy.sh minikube
+    dev/k8s/deploy.sh ${currentContext}
     """
 
 
