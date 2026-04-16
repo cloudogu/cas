@@ -7,6 +7,10 @@
 
 import com.cloudogu.ces.cesbuildlib.K3d
 import com.cloudogu.ces.cesbuildlib.Makefile
+import com.cloudogu.ces.cesbuildlib.Maven
+import com.cloudogu.ces.cesbuildlib.MavenWrapper
+
+
 
 String clientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
