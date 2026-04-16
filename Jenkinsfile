@@ -295,14 +295,16 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh """
     cd account.cloudogu.com
-    dev/k8s/deploy.sh ${currentContext}
     """
 
-    Maven mvn = new MavenWrapper(this, credentialsId: 'SCM-Manager')
+    Maven mvn = new MavenWrapper(this, "adoptopenjdk/eclipse-temurin:21-jdk-alpine", credentialsId: 'SCM-Manager')
 
     mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
 
+    sh """
+    dev/k8s/deploy.sh ${currentContext}
+    """
 
 
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
