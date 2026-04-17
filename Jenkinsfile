@@ -295,7 +295,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     }
 
     sh """
-    cd account.cloudogu.com
+    cd keycloak-repo
     """
 
     def java_home = sh(returnStdout: true, script: "echo \$JAVA_HOME").trim()
