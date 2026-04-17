@@ -284,7 +284,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
     sudo cp minikube /usr/local/bin && rm minikube
     sudo apt install maven -y
-    rm -rf /account.cloudogu.com
+    sudo rm -rf account.cloudogu.com
     """
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         sh(
