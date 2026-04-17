@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-15] - 2026-04-17
+### Added
+- [#329] Added label `k8s.cloudogu.com/backup-scope` to include necessary k8s ressources in the backup for the cas Helm-based component.
+
 ## [v7.2.7-14] - 2026-04-10
 ### Changed
 - [#327] Add helm release-name to component-name in helm-templates

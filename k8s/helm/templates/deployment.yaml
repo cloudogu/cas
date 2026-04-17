@@ -2,7 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "cas.fullname" . }}
-  labels: {{ include "cas.labels" . | nindent 4 }}
+  labels:
+    {{ include "cas.labels" . | nindent 4 }}
+    {{ include "cas.backupScaleDownLabels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas | default 1 }}
   strategy:
