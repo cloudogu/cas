@@ -284,18 +284,18 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
     sudo cp minikube /usr/local/bin && rm minikube
     sudo apt install maven -y
-    sudo rm -rf keycloak-repo
-    sudo mkdir keycloak-repo
+    sudo rm -rf keycloak-repo1
+    sudo mkdir keycloak-repo1
     """
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         sh(
-                script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com keycloak-repo",
+                script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com keycloak-repo1",
                 returnStdout: true
         )
     }
 
     sh """
-    cd keycloak-repo
+    cd keycloak-repo1
     """
 
     def java_home = sh(returnStdout: true, script: "echo \$JAVA_HOME").trim()
