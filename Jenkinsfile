@@ -274,8 +274,10 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     echo "Setup Keycloak as OIDC provider for integration tests"
     def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
     echo "Current kubectl context: ${currentContext}"
-
+    def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
     //Clone repository
+
+    def dirName = "keycloak-repo-${random_suffix}"
 
     //Check if minikube is needed or if we just deploy the keycloak image into the already running cluster.
     sh """
@@ -284,18 +286,17 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
     sudo cp minikube /usr/local/bin && rm minikube
     sudo apt install maven -y
-    sudo rm -rf keycloak-repo1
-    sudo mkdir keycloak-repo1
+    sudo mkdir ${dirName}
     """
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         sh(
-                script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com keycloak-repo1",
+                script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
                 returnStdout: true
         )
     }
 
     sh """
-    cd keycloak-repo1
+    cd ${dirName}
     """
 
     def maven_home = tool 'M3'
