@@ -297,7 +297,9 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     cd account.cloudogu.com
     """
 
-    Maven mvn = new MavenWrapper(this, "adoptopenjdk/eclipse-temurin:21-jdk-alpine", credentialsId: 'SCM-Manager')
+    def java_home = sh(returnStdout: true, script: "echo \$JAVA_HOME").trim()
+
+    Maven mvn = new MavenWrapper(this, java_home)
 
     mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
