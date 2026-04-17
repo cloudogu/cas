@@ -299,14 +299,16 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     cd ${dirName}
     """
 
+    echo "Java version:"
+    sh "java -version"
+
     def maven_home = tool 'M3'
     echo "Maven Home: ${maven_home}"
-    def java_home = sh(returnStdout: true, script: "echo \$JAVA_HOME").trim()
+    def java_home = sh(returnStdout: true, script: "which java").trim()
     echo "Java Home: ${java_home}"
     Maven mvn = new MavenLocal(this, java_home, maven_home)
 
     mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
-
 
     sh """
     dev/k8s/deploy.sh ${currentContext}
