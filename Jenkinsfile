@@ -8,7 +8,7 @@
 import com.cloudogu.ces.cesbuildlib.K3d
 import com.cloudogu.ces.cesbuildlib.Makefile
 import com.cloudogu.ces.cesbuildlib.Maven
-import com.cloudogu.ces.cesbuildlib.MavenWrapper
+import com.cloudogu.ces.cesbuildlib.MavenLocal
 
 
 
@@ -298,9 +298,11 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     cd keycloak-repo1
     """
 
+    def maven_home = tool 'M3'
+    echo "Maven Home: ${maven_home}"
     def java_home = sh(returnStdout: true, script: "echo \$JAVA_HOME").trim()
-
-    Maven mvn = new MavenWrapper(this, java_home)
+    echo "Java Home: ${java_home}"
+    Maven mvn = new MavenLocal(this, java_home, maven_home)
 
     mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
