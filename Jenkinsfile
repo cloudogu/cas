@@ -8,7 +8,7 @@
 import com.cloudogu.ces.cesbuildlib.K3d
 import com.cloudogu.ces.cesbuildlib.Makefile
 import com.cloudogu.ces.cesbuildlib.Maven
-import com.cloudogu.ces.cesbuildlib.MavenLocal
+import com.cloudogu.ces.cesbuildlib.MavenInDocker
 
 
 
@@ -306,7 +306,9 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     echo "Maven Home: ${maven_home}"
     def java_home = sh(returnStdout: true, script: "which java").trim()
     echo "Java Home: ${java_home}"
-    Maven mvn = new MavenLocal(this, java_home, maven_home)
+    Maven mvn = new MavenInDocker(this, "eclipse-temurin:11.0.25_9-jdk-alpine")
+    mvn.useLocalRepoFromJenkins = true
+
 
     mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
