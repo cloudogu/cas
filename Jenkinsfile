@@ -295,26 +295,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         )
     }
 
-    sh """
-    cd ${dirName}
-    """
+    dir(dirName) {
 
-    echo "Java version:"
-    sh "java -version"
+        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
+        mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
-    def maven_home = tool 'M3'
-    echo "Maven Home: ${maven_home}"
-    def java_home = sh(returnStdout: true, script: "which java").trim()
-    echo "Java Home: ${java_home}"
-    Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
-    mvn.useLocalRepoFromJenkins = true
-
-
-    mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
-
-    sh """
-    dev/k8s/deploy.sh ${currentContext}
-    """
+        sh "dev/k8s/deploy.sh ${currentContext}"
+    }
 
 
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
