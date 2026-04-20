@@ -306,7 +306,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     echo "Maven Home: ${maven_home}"
     def java_home = sh(returnStdout: true, script: "which java").trim()
     echo "Java Home: ${java_home}"
-    Maven mvn = new MavenInDocker(this, "eclipse-temurin:11.0.25_9-jdk-alpine")
+    Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
     mvn.useLocalRepoFromJenkins = true
 
 
