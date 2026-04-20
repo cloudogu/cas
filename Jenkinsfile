@@ -298,6 +298,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     dir(dirName) {
 
         Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
+        mvn.enableDockerHost = true
+
         mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
         sh "dev/k8s/deploy.sh ${currentContext}"
