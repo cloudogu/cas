@@ -360,4 +360,7 @@ pipe.overrideStage('MN-Wait for Dogu') {
 pipe.overrideStage('MN-Verify') {
 }
 
+pipe.overrideStage('MN-Build') {
+}
+
 pipe.run()
