@@ -288,7 +288,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     dir(dirName) {
 
-        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
+        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-17")
         mvn.enableDockerHost = true
         mvn.docker.sh.returnStdOut "echo test"
 
