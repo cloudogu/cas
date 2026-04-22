@@ -279,7 +279,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def dirName = "keycloak-repo-${random_suffix}"
 
-    withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
+    withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
         sh(
                 script: "git clone https://\"${AUTH_USR}\":\"${AUTH_PS}\"@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
                 returnStdout: true
@@ -291,8 +291,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
         mvn.enableDockerHost = true
 
-    withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
-        mvn "clean verify -Dusername=${SCM_AUTH_USR} -Dpassword=${SCM_AUTH_PS} -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
+    withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
+        mvn "clean verify -Dusername=${AUTH_USR} -Dpassword=${AUTH_PS} -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
     }
 
 
