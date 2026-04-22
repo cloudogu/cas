@@ -271,9 +271,9 @@ pipe.overrideStage('Setup') {
 pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak') {
 
 
-    echo "Setup Keycloak as OIDC provider for integration tests"
-    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
-    echo "Current kubectl context: ${currentContext}"
+    //echo "Setup Keycloak as OIDC provider for integration tests"
+    //def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
+    //echo "Current kubectl context: ${currentContext}"
     def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
     //Clone repository
 
