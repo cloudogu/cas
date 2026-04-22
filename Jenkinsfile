@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib@feature/164-fix-mavenindocker-registry-url-when-passing-credentialsid',
+  'ces-build-lib',
   'dogu-build-lib'
 ]) _
 
@@ -288,10 +288,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     dir(dirName) {
 
-        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11", "SCM-Manager")
+        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
         mvn.enableDockerHost = true
 
+    withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
+    }
+
 
         sh "dev/k8s/deploy.sh ${currentContext}"
     }
