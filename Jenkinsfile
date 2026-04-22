@@ -281,7 +281,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
         sh(
-                script: "git clone https://${AUTH_USR}:${AUTH_PS}@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
+                script: "git clone https://\"${AUTH_USR}\":\"${AUTH_PS}\"@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
                 returnStdout: true
         )
     }
