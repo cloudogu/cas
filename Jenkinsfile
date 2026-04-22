@@ -292,7 +292,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         mvn.enableDockerHost = true
 
     withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
-        mvn "clean verify -Dusername=\'${AUTH_USR}\’ -Dpassword=\'${AUTH_PS}\' -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
+        mvn "clean verify -Dusername=\"${AUTH_USR}\" -Dpassword=\"${AUTH_PS}\" -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
     }
 
 
