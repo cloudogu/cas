@@ -292,7 +292,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         mvn.enableDockerHost = true
 
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
-        mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
+        mvn "clean verify -Dusername=${SCM_AUTH_USR} -Dpassword=${SCM_AUTH_PS} -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
     }
 
 
