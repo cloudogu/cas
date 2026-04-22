@@ -279,15 +279,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def dirName = "keycloak-repo-${random_suffix}"
 
-    //Check if minikube is needed or if we just deploy the keycloak image into the already running cluster.
-    sh """
-    mkdir -p ${WORKSPACE}/keycloak
-    cd ${WORKSPACE}/keycloak
-    curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
-    sudo cp minikube /usr/local/bin && rm minikube
-    sudo apt install maven -y
-    sudo mkdir ${dirName}
-    """
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
         sh(
                 script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
@@ -297,7 +288,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     dir(dirName) {
 
-        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11")
+        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-11", "SCM-Manager")
         mvn.enableDockerHost = true
 
         mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
