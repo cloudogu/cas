@@ -279,9 +279,9 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def dirName = "keycloak-repo-${random_suffix}"
 
-    withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'SCM_AUTH_USR', passwordVariable: 'SCM_AUTH_PS')]) {
+    withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
         sh(
-                script: "git clone https://$SCM_AUTH_USR:$SCM_AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
+                script: "git clone https://$AUTH_USR:$AUTH_PS@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
                 returnStdout: true
         )
     }
@@ -346,6 +346,18 @@ pipe.overrideStage('Integration Tests') {
         ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
         def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
         echo "${testreport}"
+}
+
+pipe.overrideStage('MN-Setup') {
+}
+
+pipe.overrideStage('Clean') {
+}
+
+pipe.overrideStage('MN-Wait for Dogu') {
+}
+
+pipe.overrideStage('MN-Verify') {
 }
 
 pipe.run()
