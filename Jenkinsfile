@@ -292,7 +292,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         mvn.enableDockerHost = true
         mvn.docker.sh.returnStdOut "echo test"
 
-    mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
+        mvn "clean verify -Dmaven.test.skip=true -Ddocker.imageName=account.cloudogu.com/cloudogu-keycloak io.fabric8:docker-maven-plugin:build"
 
         sh "dev/k8s/deploy.sh ${currentContext}"
     }
