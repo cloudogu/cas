@@ -270,7 +270,8 @@ pipe.overrideStage('Setup') {
 
 pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak') {
     echo "Setup Keycloak as OIDC provider for integration tests"
-    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
+    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim() + " --namespace ecosystem"
+
     def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
     def dirName = "keycloak-repo-${random_suffix}"
 
@@ -293,7 +294,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
         sudo apt-get update
         sudo apt-get install helm""")
-        sh "dev/k8s/deploy.sh ${currentContext} --namespace ecosystem"
+        sh "dev/k8s/deploy.sh ${currentContext}"
     }
 
 
