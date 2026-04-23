@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib',
+  'ces-build-lib@feature/164-fix-mavenindocker-registry-url-when-passing-credentialsid',
   'dogu-build-lib'
 ]) _
 
@@ -295,19 +295,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
 
     withCredentials([usernamePassword(credentialsId: 'jenkins', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
-        // we are creating a maven settings.xml and store it in the m2 folder. this is due to our private nexus repository where mandatory dependencies are stored for our spi's
-        String settingsXmlPath = "${pwd()}/.m2/settings.xml"
-        writeFile file: settingsXmlPath, text: """
-    <settings>
-        <servers>
-          <server>
-            <id>ecosystem.cloudogu.com</id>
-            <username>${AUTH_USR}</username>
-            <password><![CDATA[${AUTH_PS}]]></password>
-          </server>
-        </servers>
-    </settings>"""
-    mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build -s ${pwd()}/.m2/settings.xml"
+
+    mvn "clean verify -Dmaven.test.skip=true io.fabric8:docker-maven-plugin:build"
 
     }
 
