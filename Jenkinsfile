@@ -286,9 +286,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-17")
         mvn.enableDockerHost = true
         mvn.docker.sh.returnStdOut "echo test"
-
         mvn "clean verify -Dmaven.test.skip=true -Ddocker.imageName=account.cloudogu.com/cloudogu-keycloak io.fabric8:docker-maven-plugin:build"
-
+        sh("""
+        sudo apt-get install curl gpg apt-transport-https --yes
+        curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm""")
         sh "dev/k8s/deploy.sh ${currentContext}"
     }
 
