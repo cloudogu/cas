@@ -269,14 +269,9 @@ pipe.overrideStage('Setup') {
 
 
 pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak') {
-
-
-    //echo "Setup Keycloak as OIDC provider for integration tests"
-    //def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
-    //echo "Current kubectl context: ${currentContext}"
+    echo "Setup Keycloak as OIDC provider for integration tests"
+    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
     def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
-    //Clone repository
-
     def dirName = "keycloak-repo-${random_suffix}"
 
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
@@ -344,21 +339,6 @@ pipe.overrideStage('Integration Tests') {
         ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
         def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
         echo "${testreport}"
-}
-
-pipe.overrideStage('MN-Setup') {
-}
-
-pipe.overrideStage('Clean') {
-}
-
-pipe.overrideStage('MN-Wait for Dogu') {
-}
-
-pipe.overrideStage('MN-Verify') {
-}
-
-pipe.overrideStage('MN-Build') {
 }
 
 pipe.run()
