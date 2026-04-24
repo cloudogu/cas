@@ -295,7 +295,21 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
         sudo apt-get update
         sudo apt-get install helm""")
-        sh "dev/k8s/deploy.sh ${currentContext} ${namespace}"
+
+        def HELM_CMD = "install"
+        def deploymentExists = sh(returnStatus: true, script: "helm --kube-context=${currentContext} --namespace=${namespace} list -q | grep -q '^local-keycloak\$'")
+        if (deploymentExists == 0) {
+            HELM_CMD = "upgrade"
+        }
+
+        sh """
+            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} local-keycloak oci://registry-1.docker.io/bitnamicharts/keycloak
+              -f ./k8s/values-shared.yaml
+              -f ./k8s/values-local.yaml
+              --set image.registry=registry.cloudogu.com
+              --set image.repository=ci/account.cloudogu.com
+              --set image.tag=1.0.0
+        """
     }
 
 
