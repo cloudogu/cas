@@ -308,7 +308,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
               -f ./k8s/values-local.yaml \
               --set image.registry=registry.cloudogu.com \
               --set image.repository=ci/account.cloudogu.com \
-              --set image.tag=1.0.0
+              --set image.tag=1.0.0 \
+              --set "image.pullSecrets={'ces-container-registries'}"
         """
     }
 
