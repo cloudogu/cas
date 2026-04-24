@@ -270,14 +270,14 @@ pipe.overrideStage('Setup') {
 
 pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak') {
     echo "Setup Keycloak as OIDC provider for integration tests"
-    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim() + " --namespace ecosystem"
-
+    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
+    def namespace = "ecosystem"
     def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
     def dirName = "keycloak-repo-${random_suffix}"
 
     withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
         sh(
-                script: "git clone https://\"${AUTH_USR}\":\"${AUTH_PS}\"@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
+                script: "git clone --branch feature/add-namespace-parameter --single-branch --depth 1 https://\"${AUTH_USR}\":\"${AUTH_PS}\"@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
                 returnStdout: true
         )
     }
@@ -286,7 +286,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
         Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-17")
         mvn.enableDockerHost = true
-        mvn.docker.sh.returnStdOut "echo test"
         mvn "clean verify -Dmaven.test.skip=true -Ddocker.imageName=account.cloudogu.com/cloudogu-keycloak io.fabric8:docker-maven-plugin:build"
         sh("""
         sudo apt-get install curl gpg apt-transport-https --yes
@@ -294,7 +293,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
         sudo apt-get update
         sudo apt-get install helm""")
-        sh "dev/k8s/deploy.sh \"${currentContext}\""
+        sh "dev/k8s/deploy.sh ${currentContext} ${namespace}"
     }
 
 
