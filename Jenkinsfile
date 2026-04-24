@@ -303,11 +303,11 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         }
 
         sh """
-            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} local-keycloak oci://registry-1.docker.io/bitnamicharts/keycloak
-              -f ./k8s/values-shared.yaml
-              -f ./k8s/values-local.yaml
-              --set image.registry=registry.cloudogu.com
-              --set image.repository=ci/account.cloudogu.com
+            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} local-keycloak oci://registry-1.docker.io/bitnamicharts/keycloak \
+              -f ./k8s/values-shared.yaml \
+              -f ./k8s/values-local.yaml \
+              --set image.registry=registry.cloudogu.com \
+              --set image.repository=ci/account.cloudogu.com \
               --set image.tag=1.0.0
         """
     }
