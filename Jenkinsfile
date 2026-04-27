@@ -302,6 +302,41 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
             HELM_CMD = "upgrade"
         }
 
+        /**
+
+        externalDatabase:
+          host: ""
+          port: 5432
+          user: bn_keycloak
+          database: bitnami_keycloak
+          schema: public
+          password: ""
+          existingSecret: ""
+          existingSecretUserKey: ""
+          existingSecretPasswordKey: ""
+          annotations: {}
+          extraParams: ""
+
+        **/
+
+        pipe.multiNodeEcoSystem.waitForDogu("postgresql")
+
+        def postgreSqlPodName = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=postgresql --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
+
+        def postgresqlCreds = sh(returnStdout: true, script: "kubectl --namespace=ecosystem exec ${postgreSqlPodName} -- /create-sa.sh keycloak")
+        /**
+        # print details
+        echo "database: ${DATABASE}"
+        echo "username: ${USER}"
+        echo "password: ${PASSWORD}"
+        **/
+
+       def lines = postgresqlCreds.trim().split("\n")
+
+       def postgresqlDatabase = lines.find { it.startsWith("database:") }?.split(":", 2)[1]?.trim()
+       def postgresqlUsername = lines.find { it.startsWith("username:") }?.split(":", 2)[1]?.trim()
+       def postgresqlPassword = lines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
+
         sh """
             helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} local-keycloak oci://registry-1.docker.io/bitnamicharts/keycloak \
               -f ./k8s/values-shared.yaml \
@@ -309,7 +344,15 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
               --set image.registry=registry.cloudogu.com \
               --set image.repository=ci/account.cloudogu.com \
               --set image.tag=1.0.0 \
-              --set "image.pullSecrets={'ces-container-registries'}"
+              --set "image.pullSecrets={'ces-container-registries'}" \
+              --set postgresql.enabled=false \
+              --set externalDatabase.host=postgresql \
+              --set externalDatabase.port=5432 \
+              --set externalDatabase.user=${postgresqlUsername} \
+              --set externalDatabase.database=${postgresqlDatabse} \
+              --set externalDatabase.schema=public \
+              --set externalDatabase.password=${postgresqlPassword} \
+
         """
     }
 
