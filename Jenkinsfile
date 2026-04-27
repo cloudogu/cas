@@ -349,7 +349,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
               --set externalDatabase.host=postgresql \
               --set externalDatabase.port=5432 \
               --set externalDatabase.user=${postgresqlUsername} \
-              --set externalDatabase.database=${postgresqlDatabse} \
+              --set externalDatabase.database=${postgresqlDatabase} \
               --set externalDatabase.schema=public \
               --set externalDatabase.password=${postgresqlPassword} \
 
