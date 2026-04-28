@@ -341,7 +341,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
        def postgresqlPassword = lines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
 
         sh """
-            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} local-keycloak --version 24.2.0 bitnami/keycloak \
+            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} keycloak --version 24.2.0 bitnami/keycloak \
               -f ./k8s/values-shared.yaml \
               -f ./k8s/values-local.yaml \
               --set image.registry=registry.cloudogu.com \
