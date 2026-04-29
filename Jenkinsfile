@@ -397,8 +397,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     // Retrieve OIDC client secret from Keycloak
     echo "Retrieving OIDC client secret from Keycloak..."
-    sh "kubectl -n ecosystem port-forward svc/keycloak 18080:80 &"
-    sh "sleep 3"
+
+    // Wait for Keycloak pod to be ready
+    echo "Waiting for Keycloak pod to be ready..."
+    sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
+
+    sh "kubectl -n ecosystem port-forward svc/keycloak 18080:80 > /dev/null 2>&1 &"
+    sh "sleep 5"
 
     def oidcClientSecret = fetchKeycloakOidcClientSecret("ecosystem", "master", "cas")
     echo "OIDC client secret retrieved (length: ${oidcClientSecret.length()})"
