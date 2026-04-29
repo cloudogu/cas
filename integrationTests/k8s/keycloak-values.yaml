@@ -1,0 +1,90 @@
+global:
+  security:
+    allowInsecureImages: true
+
+cloudogu:
+  # Registrations & Logins
+  notificationWebhookUrl: ""
+  # Keycloak config-cli errors
+  alertingWebhookUrl: ""
+
+image:
+  registry: "registry.cloudogu.com"
+  repository: ci/account.cloudogu.com
+  tag: 1.0.0
+
+ingress:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+    host: "postgresql"
+    port: 5432
+    schema: public
+
+# set to 1000 since the dockerfile specifies the keycloak user as uid 1000
+containerSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+
+# these are set so the application can write on the filesystem, since the filesystem is read-only set by the securityContext
+extraVolumes:
+  - name: data
+    emptyDir: {}
+extraVolumeMounts:
+  - name: data
+    mountPath: /opt/keycloak/data
+    readOnly: false
+
+initContainers:
+  - name: wait-for-postgres
+    image: busybox
+    command:
+      - sh
+      - -c
+      - |
+        until nc -z postgresql 5432; do
+          echo "Waiting for PostgreSQL...";
+          sleep 2;
+        done;
+        echo "PostgreSQL is available.";
+
+extraEnvVars: |
+  - name: TZ
+    value: "Europe/Berlin"
+  - name: PROXY_ADDRESS_FORWARDING
+    value: "true"
+  - name: GOOGLE_WEBHOOK_URL
+    value: "{{ .Values.cloudogu.notificationWebhookUrl }}"
+  - name: ALERTING_WEBHOOK_URL
+    value: "{{ .Values.cloudogu.alertingWebhookUrl }}"
+  - name: DISCOURSE_BASE_URL
+    value: "{{ .Values.cloudogu.discourseBaseUrl }}"
+  - name: DISCOURSE_API_KEY
+    value: "{{ .Values.cloudogu.discourseApiKey }}"
+  - name: DISCOURSE_SECRET_KEY
+    value: ichBinEinSecretKey
+  - name: NOTIFICATION_CHANNEL_WEBHOOK
+    value: "{{ .Values.cloudogu.notificationChannelWebhook }}"
+  - name: ALERT_CHANNEL_WEBHOOK
+    value: "{{ .Values.cloudogu.alertChannelWebhook }}"
+  # - name: APP_ROOT_PATH
+  #   value: "{{ .Values.cloudogu.appRootPath }}"
+
+command:
+  - "/opt/keycloak/bin/kc.sh"
+  - "start"
+  - "--hostname-strict=false"
+  - "--cache=local"
+  - "--db-url-host=${KEYCLOAK_DATABASE_HOST}" # these env vars are set by the bitnami chart. their corresponding values are set here in postgresql:auth
+  - "--db-url-database=${KEYCLOAK_DATABASE_NAME}"
+  - "--db-username=${KEYCLOAK_DATABASE_USER}"
+  - "--db-password=${KEYCLOAK_DATABASE_PASSWORD}"
+#
+# THIS IS JUST FOR DEBUG
+# command:
+#   - "bin/sh"
+#   - "-c"
+#   - "sleep infinity"

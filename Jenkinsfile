@@ -222,6 +222,49 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig ->
        """
 }
 
+def fetchKeycloakOidcClientSecret = { String namespace, String realm, String clientId ->
+    def kcAdminPass = sh(returnStdout: true, script: """kubectl -n ${namespace} get secret keycloak -o jsonpath='{.data.admin-password}' | base64 -d""").trim()
+
+    def token = sh(returnStdout: true, script: """
+        set +x
+        curl -sS -X POST "http://127.0.0.1:18080/auth/realms/master/protocol/openid-connect/token" \
+          -H 'Content-Type: application/x-www-form-urlencoded' \
+          -d "grant_type=password&client_id=admin-cli&username=admin&password=${kcAdminPass}" \
+          | jq -r '.access_token'
+    """).trim()
+
+    if (!token || token == 'null') {
+        error("Failed to obtain Keycloak admin token")
+    }
+
+    def clientIds = sh(returnStdout: true, script: """
+        set +x
+        curl -sS -H "Authorization: Bearer ${token}" \
+          "http://127.0.0.1:18080/auth/admin/realms/${realm}/clients?clientId=${clientId}" \
+          | jq -r '.[0].id'
+    """).trim()
+
+    if (!clientIds || clientIds == 'null') {
+        error("Client '${clientId}' not found in realm '${realm}'")
+    }
+
+    def secret = sh(returnStdout: true, script: """
+        set +x
+        curl -sS -H "Authorization: Bearer ${token}" \
+          "http://127.0.0.1:18080/auth/admin/realms/${realm}/clients/${clientIds}/client-secret" \
+          | jq -r '.value'
+    """).trim()
+
+    echo "Retrieved client secret of length ${secret.length()} for client '${clientId}'"
+    echo "Client secret content: ${secret}"
+
+    if (!secret || secret == 'null') {
+        error("Failed to retrieve client secret for '${clientId}'")
+    }
+
+    return secret
+}
+
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
@@ -300,7 +343,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         sh 'helm repo update'
 
         def HELM_CMD = "install"
-        def deploymentExists = sh(returnStatus: true, script: "helm --kube-context=${currentContext} --namespace=${namespace} list -q | grep -q '^local-keycloak\$'")
+        def deploymentExists = sh(returnStatus: true, script: "helm --kube-context=${currentContext} --namespace=${namespace} list -q | grep -q '^keycloak\$'")
         if (deploymentExists == 0) {
             HELM_CMD = "upgrade"
         }
@@ -343,24 +386,25 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         sh """
             helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} keycloak --version 24.2.0 bitnami/keycloak \
               -f ./k8s/values-shared.yaml \
-              -f ./k8s/values-local.yaml \
-              --set image.registry=registry.cloudogu.com \
-              --set image.repository=ci/account.cloudogu.com \
-              --set image.tag=1.0.0 \
+              -f ../integrationTests/k8s/keycloak-values.yaml \
               --set "image.pullSecrets={'ces-container-registries'}" \
-              --set postgresql.enabled=false \
-              --set externalDatabase.host=postgresql \
-              --set externalDatabase.port=5432 \
               --set externalDatabase.user=${postgresqlUsername} \
               --set externalDatabase.database=${postgresqlDatabase} \
-              --set externalDatabase.schema=public \
               --set externalDatabase.password=${postgresqlPassword} \
 
         """
     }
 
+    // Retrieve OIDC client secret from Keycloak
+    echo "Retrieving OIDC client secret from Keycloak..."
+    sh "kubectl -n ecosystem port-forward svc/keycloak 18080:80 &"
+    sh "sleep 3"
 
-     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
+    def oidcClientSecret = fetchKeycloakOidcClientSecret("ecosystem", "master", "cas")
+    echo "OIDC client secret retrieved (length: ${oidcClientSecret.length()})"
+
+     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
+
      String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
 
      sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
@@ -369,6 +413,17 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
      sh "make install-yq"
      mergeConfigMapYaml('cas-config', casConfig)
+
+     // Merge OIDC client secret into cas-config
+     def oidcSecretOverride = """
+{
+  "oidc": {
+    "client_secret": "${oidcClientSecret}"
+  }
+}
+"""
+     mergeConfigMapYaml('cas-config', oidcSecretOverride)
+
      sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
