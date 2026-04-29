@@ -395,8 +395,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         """
     }
 
-    // Retrieve OIDC client secret from Keycloak
-    echo "Retrieving OIDC client secret from Keycloak..."
+    // Retrieve OIDC client secret from Keycloak (and create realm/client/user if Keycloak is fresh)
+    echo "Retrieving OIDC client secret from Keycloak (ensure realm/client/user exist)..."
 
     // Wait for Keycloak pod to be ready
     echo "Waiting for Keycloak pod to be ready..."
@@ -405,7 +405,87 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     sh "kubectl -n ecosystem port-forward svc/keycloak 18080:80 > /dev/null 2>&1 &"
     sh "sleep 5"
 
-    def oidcClientSecret = fetchKeycloakOidcClientSecret("ecosystem", "master", "cas")
+    // Ensure Test realm, testers group, cas client and a test user exist. Return the client secret.
+    def oidcClientSecret = sh(returnStdout: true, script: '''
+      set -euo pipefail
+      KC_PASS=$(kubectl -n ecosystem get secret keycloak -o jsonpath='{.data.admin-password}' | base64 -d)
+
+      TOKEN=$(curl -sS -X POST "http://127.0.0.1:18080/auth/realms/master/protocol/openid-connect/token" \
+        -H 'Content-Type: application/x-www-form-urlencoded' \
+        -d "grant_type=password&client_id=admin-cli&username=admin&password=${KC_PASS}" | jq -r '.access_token')
+
+      if [ -z "${TOKEN}" ] || [ "${TOKEN}" = "null" ]; then
+        echo "Failed to obtain Keycloak admin token" >&2
+        exit 1
+      fi
+
+      REALM=Test
+      CLIENT_ID=cas
+
+      # create realm if missing
+      if ! curl -sS -H "Authorization: Bearer ${TOKEN}" http://127.0.0.1:18080/auth/admin/realms | jq -r '.[].realm' | grep -x "${REALM}" >/dev/null 2>&1; then
+        echo "Realm ${REALM} not found, creating..." >&2
+        curl -sS -X POST -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" -d "{\"realm\":\"${REALM}\",\"enabled\":true}" http://127.0.0.1:18080/auth/admin/realms
+        sleep 1
+      else
+        echo "Realm ${REALM} exists" >&2
+      fi
+
+      # create group 'testers' if missing
+      if ! curl -sS -H "Authorization: Bearer ${TOKEN}" http://127.0.0.1:18080/auth/admin/realms/${REALM}/groups | jq -r '.[].name' | grep -x "testers" >/dev/null 2>&1; then
+        echo "Creating group testers" >&2
+        curl -sS -X POST -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" -d '{"name":"testers"}' http://127.0.0.1:18080/auth/admin/realms/${REALM}/groups
+      else
+        echo "Group testers exists" >&2
+      fi
+
+      # create client if missing
+      if ! curl -sS -H "Authorization: Bearer ${TOKEN}" "http://127.0.0.1:18080/auth/admin/realms/${REALM}/clients?clientId=${CLIENT_ID}" | jq -e '.[0]' >/dev/null 2>&1; then
+        echo "Creating client ${CLIENT_ID}" >&2
+        curl -sS -X POST -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" -d '{\
+          "clientId":"'"${CLIENT_ID}"'",\
+          "enabled":true,\
+          "publicClient":false,\
+          "protocol":"openid-connect",\
+          "redirectUris":["http://localhost:8080/*"],\
+          "directAccessGrantsEnabled":true\
+        }' http://127.0.0.1:18080/auth/admin/realms/${REALM}/clients
+      else
+        echo "Client ${CLIENT_ID} exists" >&2
+      fi
+
+      CID=$(curl -sS -H "Authorization: Bearer ${TOKEN}" "http://127.0.0.1:18080/auth/admin/realms/${REALM}/clients?clientId=${CLIENT_ID}" | jq -r '.[0].id')
+
+      # (re)generate secret - POST returns value; it's fine to call even if secret exists
+      SECRET=$(curl -sS -X POST -H "Authorization: Bearer ${TOKEN}" http://127.0.0.1:18080/auth/admin/realms/${REALM}/clients/${CID}/client-secret | jq -r '.value')
+
+      # create test user and add to testers group
+      USERNAME=tester
+      PASSWORD='TestPass12345!'
+      if ! curl -sS -H "Authorization: Bearer ${TOKEN}" "http://127.0.0.1:18080/auth/admin/realms/${REALM}/users?username=${USERNAME}" | jq -e '.[0]' >/dev/null 2>&1; then
+        echo "Creating user ${USERNAME}" >&2
+        curl -sS -X POST -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" -d '{"username":"'"${USERNAME}"'","enabled":true,"credentials":[{"type":"password","value":"'"${PASSWORD}"'","temporary":false}]}' http://127.0.0.1:18080/auth/admin/realms/${REALM}/users
+        sleep 1
+      else
+        echo "User ${USERNAME} exists" >&2
+      fi
+
+      USER_ID=$(curl -sS -H "Authorization: Bearer ${TOKEN}" "http://127.0.0.1:18080/auth/admin/realms/${REALM}/users?username=${USERNAME}" | jq -r '.[0].id')
+      GROUP_ID=$(curl -sS -H "Authorization: Bearer ${TOKEN}" http://127.0.0.1:18080/auth/admin/realms/${REALM}/groups | jq -r '.[] | select(.name=="testers") | .id')
+
+      if [ -n "${GROUP_ID}" ] && [ -n "${USER_ID}" ]; then
+        if ! curl -sS -H "Authorization: Bearer ${TOKEN}" http://127.0.0.1:18080/auth/admin/realms/${REALM}/users/${USER_ID}/groups | jq -r '.[].name' | grep -x "testers" >/dev/null 2>&1; then
+          echo "Adding user to group testers" >&2
+          curl -sS -X PUT -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" -d '{}' http://127.0.0.1:18080/auth/admin/realms/${REALM}/users/${USER_ID}/groups/${GROUP_ID}
+        else
+          echo "User already member of testers" >&2
+        fi
+      fi
+
+      # print secret to stdout for groovy capture
+      echo "${SECRET}"
+    ''' ).trim()
+
     echo "OIDC client secret retrieved (length: ${oidcClientSecret.length()})"
 
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
