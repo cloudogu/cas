@@ -51,6 +51,10 @@ initContainers:
         done;
         echo "PostgreSQL is available.";
 
+extraEnv:
+  - name: KEYCLOAK_IMPORT
+    value: ../keycloak-realm/realm-cloudogu.json
+
 extraEnvVars: |
   - name: TZ
     value: "Europe/Berlin"
