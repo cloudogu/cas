@@ -352,44 +352,67 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         """
     }
 
-    // Retrieve OIDC client secret from Keycloak (and create realm/client/user if Keycloak is fresh)
-    echo "Retrieving OIDC client secret from Keycloak (ensure realm/client/user exist)..."
+    // Retrieve OIDC client secret from the running Keycloak pod.
+    echo "Retrieving OIDC client secret from running Keycloak..."
 
     // Wait for Keycloak pod to be ready
     echo "Waiting for Keycloak pod to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
 
+    def keycloakPodName = sh(returnStdout: true, script: """kubectl -n ecosystem get pod -l app.kubernetes.io/name=keycloak -o jsonpath='{.items[0].metadata.name}'""").trim()
+    def keycloakRealm = 'Cloudogu'
 
-     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
+    clientSecret = sh(returnStdout: true, script: '''
+kubectl -n ecosystem exec -i ''' + keycloakPodName + ''' -- sh -s <<'EOF'
+set -eu
+: "${KEYCLOAK_ADMIN:=admin}"
+: "${KEYCLOAK_ADMIN_PASSWORD:=admin}"
 
-     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+KCADM=/opt/keycloak/bin/kcadm.sh
+"$KCADM" config credentials --server http://localhost:8080 --realm master --user "$KEYCLOAK_ADMIN" --password "$KEYCLOAK_ADMIN_PASSWORD" >/dev/null
 
-     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
+client_id="$("$KCADM" get clients -r ''' + keycloakRealm + ''' -q clientId=casClient | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1)"
+if [ -z "$client_id" ]; then
+  echo "Failed to resolve casClient in realm ''' + keycloakRealm + '''" >&2
+  exit 1
+fi
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+"$KCADM" get "clients/$client_id/client-secret" -r ''' + keycloakRealm + ''' | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n1
+EOF
+''').trim()
 
-     sh "make install-yq"
-     mergeConfigMapYaml('cas-config', casConfig)
+    echo "Retrieved client secret: ${clientSecret}"
 
-     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
+    def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
 
-     mergeConfigMapYaml('global-config', globalConfigOverride)
+    sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
 
-     // This may be extracted to a dogu build lib function
-     def globalConfigLastUpdateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
-     def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
 
-     while (casDoguStartedAt < globalConfigLastUpdateTime) {
-         echo "${casDoguStartedAt} is not after ${globalConfigLastUpdateTime} yet."
-         echo "Waiting for CAS to restart and pick up the new global config..."
-         sleep time: 10, unit: 'SECONDS'
-         casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
-     }
+    sh "make install-yq"
+    mergeConfigMapYaml('cas-config', casConfig)
+
+    sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
+
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
+
+    mergeConfigMapYaml('global-config', globalConfigOverride)
+
+    // This may be extracted to a dogu build lib function
+    def globalConfigLastUpdateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
+    def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+
+    while (casDoguStartedAt < globalConfigLastUpdateTime) {
+        echo "${casDoguStartedAt} is not after ${globalConfigLastUpdateTime} yet."
+        echo "Waiting for CAS to restart and pick up the new global config..."
+        sleep time: 10, unit: 'SECONDS'
+        casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+    }
 
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
 }
 
 pipe.overrideStage('Integration Tests') {
