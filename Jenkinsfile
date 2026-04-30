@@ -360,8 +360,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
 
 
-    echo "OIDC client secret retrieved (length: ${oidcClientSecret.length()})"
-
      def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
      String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
