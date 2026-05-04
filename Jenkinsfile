@@ -362,26 +362,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     def keycloakPodName = sh(returnStdout: true, script: """kubectl -n ecosystem get pod -l app.kubernetes.io/name=keycloak -o jsonpath='{.items[0].metadata.name}'""").trim()
     def keycloakRealm = 'Cloudogu'
 
-    clientSecret = sh(returnStdout: true, script: '''
-kubectl -n ecosystem exec -i ''' + keycloakPodName + ''' -- sh -s <<'EOF'
-set -eu
-: "${KEYCLOAK_ADMIN:=admin}"
-: "${KEYCLOAK_ADMIN_PASSWORD:=admin}"
-
-KCADM=/opt/keycloak/bin/kcadm.sh
-"$KCADM" config credentials --server http://localhost:8080 --realm master --user "$KEYCLOAK_ADMIN" --password "$KEYCLOAK_ADMIN_PASSWORD" >/dev/null
-
-client_id="$("$KCADM" get clients -r ''' + keycloakRealm + ''' -q clientId=casClient | python3 -c 'import json,sys; data=json.load(sys.stdin); print(next((c["id"] for c in data if c.get("clientId")=="casClient"), ""))')"
-if [ -z "$client_id" ]; then
-  echo "Failed to resolve casClient in realm ''' + keycloakRealm + '''" >&2
-  exit 1
-fi
-
-"$KCADM" get "clients/$client_id/client-secret" -r ''' + keycloakRealm + ''' | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])'
-EOF
-''').trim()
-
-    echo "Retrieved client secret: ${clientSecret}"
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
