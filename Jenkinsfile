@@ -386,22 +386,23 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     """
 
     def casClientId = sh(returnStdout: true, script: """
-        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} \\
-          --server http://localhost:8080/auth \\
-          --config /tmp/kcadm.config \\
-          -q clientId=casClient | \\
-        tr -d '\\r\\n' | \\
-        sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\\([^"]*\\)".*/\\1/p' | \\
-        head -n1
+        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} \
+          --server http://localhost:8080/auth \
+          --config /tmp/kcadm.config \
+          -q clientId=casClient --fields id | \
+        tr -d '\\r' | \
+        grep -o '"id"[[:space:]]*:[[:space:]]*"[^"]*"' | \
+        head -n1 | \
+        cut -d'"' -f4
     """).trim()
 
     keycloakCasClientSecret = sh(returnStdout: true, script: """
-        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret \\
-          -r ${keycloakRealm} \\
-          --server http://localhost:8080/auth \\
-          --config /tmp/kcadm.config | \\
-        tr -d '\\r\\n' | \\
-        sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\\([^"]*\\)".*/\\1/p' | \\
+        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret \
+          -r ${keycloakRealm} \
+          --server http://localhost:8080/auth \
+          --config /tmp/kcadm.config | \
+        tr -d '\\r' | \
+        grep -o '"value"[[:space:]]*:[[:space:]]*"[^"]*"' | \
         head -n1
     """).trim()
 
