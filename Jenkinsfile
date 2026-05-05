@@ -385,8 +385,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
           --password admin
     """
 
-    def casClientId = sh(returnStdout: true, script: """kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config -q clientId=casClient | tr -d '\r\n' | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1""").trim()
-    keycloakCasClientSecret = sh(returnStdout: true, script: """kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config | tr -d '\r\n' | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1""").trim()
+    def casClientId = sh(returnStdout: true, script: $/kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config -q clientId=casClient | tr -d '\r\n' | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1/$).trim()
+    keycloakCasClientSecret = sh(returnStdout: true, script: $/kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config | tr -d '\r\n' | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1/$).trim()
 
     if (!keycloakCasClientSecret) {
         error("Failed to read casClient secret from Keycloak")
