@@ -340,6 +340,13 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
        def postgresqlUsername = lines.find { it.startsWith("username:") }?.split(":", 2)[1]?.trim()
        def postgresqlPassword = lines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
 
+        sh "test -f ../integrationTests/keycloak-realm/realm-cloudogu.json"
+        sh """
+            kubectl --namespace=${namespace} create configmap keycloak-realm \
+              --from-file=realm-cloudogu.json=../integrationTests/keycloak-realm/realm-cloudogu.json \
+              --dry-run=client -o yaml | kubectl --namespace=${namespace} apply -f -
+        """
+
         sh """
             helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} keycloak --version 24.2.0 bitnami/keycloak \
               -f ./k8s/values-shared.yaml \
@@ -361,7 +368,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def keycloakPodName = sh(returnStdout: true, script: """kubectl -n ecosystem get pod -l app.kubernetes.io/name=keycloak -o jsonpath='{.items[0].metadata.name}'""").trim()
     def keycloakRealm = 'Cloudogu'
-
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 

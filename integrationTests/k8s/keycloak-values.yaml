@@ -33,10 +33,16 @@ containerSecurityContext:
 extraVolumes:
   - name: data
     emptyDir: {}
+  - name: realm-import
+    configMap:
+      name: keycloak-realm
 extraVolumeMounts:
   - name: data
     mountPath: /opt/keycloak/data
     readOnly: false
+  - name: realm-import
+    mountPath: /opt/keycloak/data/import
+    readOnly: true
 
 initContainers:
   - name: wait-for-postgres
@@ -50,10 +56,6 @@ initContainers:
           sleep 2;
         done;
         echo "PostgreSQL is available.";
-
-extraEnv:
-  - name: KEYCLOAK_IMPORT
-    value: ../keycloak-realm/realm-cloudogu.json
 
 extraEnvVars: |
   - name: TZ
@@ -80,6 +82,7 @@ extraEnvVars: |
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "start"
+  - "--import-realm"
   - "--hostname-strict=false"
   - "--cache=local"
   - "--db-url-host=${KEYCLOAK_DATABASE_HOST}" # these env vars are set by the bitnami chart. their corresponding values are set here in postgresql:auth
