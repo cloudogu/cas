@@ -341,9 +341,15 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
        def postgresqlPassword = lines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
 
         sh "test -f ../integrationTests/keycloak-realm/realm-cloudogu.json"
+        // Keycloak Quarkus rejects imported JS authorization policies when script upload is disabled.
+        // For CI we strip authorizationSettings from casClient before creating the ConfigMap.
+        sh """
+            jq '(.clients[]? | select(.clientId == "casClient")) |= del(.authorizationSettings)' \
+              ../integrationTests/keycloak-realm/realm-cloudogu.json > ../integrationTests/keycloak-realm/realm-cloudogu.import.json
+        """
         sh """
             kubectl --namespace=${namespace} create configmap keycloak-realm \
-              --from-file=realm-cloudogu.json=../integrationTests/keycloak-realm/realm-cloudogu.json \
+              --from-file=realm-cloudogu.json=../integrationTests/keycloak-realm/realm-cloudogu.import.json \
               --dry-run=client -o yaml | kubectl --namespace=${namespace} apply -f -
         """
 
