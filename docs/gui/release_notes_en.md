@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Fixed an issue where the java heap memory was too low although the pod's memory request was big enough.
+  This sometimes caused a java heap memory error.
 
 ## [v7.2.7-15] - 2026-04-17
 - Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
