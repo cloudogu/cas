@@ -13,6 +13,7 @@ import com.cloudogu.ces.cesbuildlib.MavenInDocker
 
 
 String clientSecret = ''
+String keycloakCasClientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     doguName           : 'cas',
     shellScripts       : ['''
@@ -374,6 +375,25 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def keycloakPodName = sh(returnStdout: true, script: """kubectl -n ecosystem get pod -l app.kubernetes.io/name=keycloak -o jsonpath='{.items[0].metadata.name}'""").trim()
     def keycloakRealm = 'Cloudogu'
+
+    sh """
+        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh config credentials \
+          --config /tmp/kcadm.config \
+          --server http://localhost:8080/auth \
+          --realm master \
+          --user admin \
+          --password admin
+    """
+
+    def casClientId = sh(returnStdout: true, script: """kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config -q clientId=casClient | tr -d '\r\n' | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1""").trim()
+    keycloakCasClientSecret = sh(returnStdout: true, script: """kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret -r ${keycloakRealm} --server http://localhost:8080/auth --config /tmp/kcadm.config | tr -d '\r\n' | sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1""").trim()
+
+    if (!keycloakCasClientSecret) {
+        error("Failed to read casClient secret from Keycloak")
+    }
+
+
+    echo "Retrieved casClient secret length: ${keycloakCasClientSecret}"
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
