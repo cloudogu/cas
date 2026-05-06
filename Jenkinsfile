@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib',
+  'ces-build-lib@develop',
   'dogu-build-lib'
 ]) _
 
