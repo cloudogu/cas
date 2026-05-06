@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib@feature/164-fix-mavenindocker-registry-url-when-passing-credentialsid',
+  'ces-build-lib',
   'dogu-build-lib'
 ]) _
 
