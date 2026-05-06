@@ -414,7 +414,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     echo "Retrieved casClient secret length: ${keycloakCasClientSecret}"
 
     sh("""
-    ./integrationTests/keycloak/kc-setup-k8s.sh
+    bash ./integrationTests/keycloak/kc-setup-k8s.sh
     """)
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
