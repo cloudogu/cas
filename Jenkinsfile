@@ -417,6 +417,17 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     bash ./integrationTests/keycloak/kc-setup-k8s.sh
     """)
 
+    // Ensure the OIDC test user exists in Keycloak before running integration tests.
+    sh("""
+    KC_NAMESPACE=${namespace} \
+    REALM=Test \
+    GROUP=testers \
+    USERNAME=tester \
+    EMAIL=tester@example.com \
+    PASSWORD=test \
+    bash ./integrationTests/keycloak/kc-add-user-k8s.sh
+    """)
+
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
