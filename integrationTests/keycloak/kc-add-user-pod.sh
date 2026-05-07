@@ -32,26 +32,27 @@ else
   echo "[inside] Realm ${REALM} exists."
 fi
 
-# Ensure group
-if ! $KCADM get groups -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null | grep -q '"name"'; then
+# Ensure group (capture create output when creating so we can extract the id reliably)
+GROUP_ID=""
+if ! $KCADM get groups -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null | tr -d '\r\n' | grep -q "\"name\"[[:space:]]*:[[:space:]]*\"${GROUP}\""; then
   echo "[inside] Creating group ${GROUP}..."
-  $KCADM create groups -r "${REALM}" -s name="${GROUP}" --config "$KCADM_CONFIG"
-else
-  echo "[inside] Groups in realm ${REALM} already exist."
+  CREATE_OUT=$($KCADM create groups -r "${REALM}" -s name="${GROUP}" --config "$KCADM_CONFIG" 2>/dev/null || true)
+  # try to extract id from create output which may contain "Created new group with id '...'", JSON, or plain id
+  GROUP_ID=$(printf '%s' "$CREATE_OUT" | tr -d '\r\n' | sed -n -e "s/.*Created new group with id '\\([^'\\]\\+\\)'.*/\\1/p" -e "s/.*\"id\"[[:space:]]*:[[:space:]]*\"\\([^\"]\\+\\)\".*/\\1/p" -e "s/.*\\b\\([0-9a-fA-F-]\{36\}\\)\\b.*/\\1/p" | head -n1)
 fi
 
-# Resolve group id
-GROUP_JSON=$($KCADM get "groups?search=${GROUP}" -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null || true)
-GROUP_ID=$(printf '%s' "$GROUP_JSON" | tr -d '\r\n' | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]\+\)","name"[[:space:]]*:[[:space:]]*"'"${GROUP}"'".*/\1/p; q')
+# If GROUP_ID still empty, fallback to GET search parsing
 if [ -z "$GROUP_ID" ]; then
-  GROUP_ID=$(printf '%s' "$GROUP_JSON" | tr -d '\r\n' | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"'"${GROUP}"'"[^"]*"id"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p; q')
+  GROUP_JSON=$($KCADM get "groups?search=${GROUP}" -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null || true)
+  GROUP_ID=$(printf '%s' "$GROUP_JSON" | tr -d '\r\n' | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^\"]\+\)".*/\1/p' | head -n1)
 fi
+
 if [ -z "$GROUP_ID" ]; then
   echo '[inside][ERROR] Could not resolve group id' >&2
   exit 1
 fi
 
-echo '[inside] Group UUID: '"$GROUP_ID"
+echo "[inside] Group UUID: ${GROUP_ID}"
 
 # Ensure user exists
 if ! $KCADM get users -r "${REALM}" -q username="${USERNAME}" --fields id --config "$KCADM_CONFIG" 2>/dev/null | grep -q '"id"'; then
