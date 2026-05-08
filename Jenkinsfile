@@ -366,53 +366,11 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         """
     }
 
-    // Retrieve OIDC client secret from the running Keycloak pod.
-    echo "Retrieving OIDC client secret from running Keycloak..."
-
-    // Wait for Keycloak pod to be ready
+    // Wait for Keycloak pod to be ready.
     echo "Waiting for Keycloak pod to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
 
-    def keycloakPodName = sh(returnStdout: true, script: """kubectl -n ecosystem get pod -l app.kubernetes.io/name=keycloak -o jsonpath='{.items[0].metadata.name}'""").trim()
-    def keycloakRealm = 'Cloudogu'
-
-    sh """
-        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh config credentials \
-          --config /tmp/kcadm.config \
-          --server http://localhost:8080/auth \
-          --realm master \
-          --user admin \
-          --password admin
-    """
-
-    def casClientId = sh(returnStdout: true, script: """
-        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients -r ${keycloakRealm} \
-          --server http://localhost:8080/auth \
-          --config /tmp/kcadm.config \
-          -q clientId=casClient --fields id | \
-        tr -d '\\r' | \
-        grep -o '"id"[[:space:]]*:[[:space:]]*"[^"]*"' | \
-        head -n1 | \
-        cut -d'"' -f4
-    """).trim()
-
-    keycloakCasClientSecret = sh(returnStdout: true, script: """
-        kubectl -n ecosystem exec ${keycloakPodName} -- /opt/keycloak/bin/kcadm.sh get clients/${casClientId}/client-secret \
-          -r ${keycloakRealm} \
-          --server http://localhost:8080/auth \
-          --config /tmp/kcadm.config | \
-        tr -d '\\r' | \
-        grep -o '"value"[[:space:]]*:[[:space:]]*"[^"]*"' | \
-        head -n1
-    """).trim()
-
-    if (!keycloakCasClientSecret) {
-        error("Failed to read casClient secret from Keycloak")
-    }
-
-
-    echo "Retrieved casClient secret length: ${keycloakCasClientSecret}"
-
+    // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
     bash ./integrationTests/keycloak/kc-setup-k8s.sh
     """)
@@ -437,6 +395,16 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     CLAIM_NAME=groups \
     bash ./integrationTests/keycloak/kc-group-k8s.sh
     """)
+
+    keycloakCasClientSecret = sh(returnStdout: true, script: """
+        grep '^CLIENT_SECRET=' kc_out.env | cut -d'=' -f2-
+    """).trim()
+
+    if (!keycloakCasClientSecret) {
+        error("Failed to read client secret from the Test realm")
+    }
+
+    echo "Retrieved Test realm client secret: ${keycloakCasClientSecret}"
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
