@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib@develop',
+  'ces-build-lib',
   'dogu-build-lib'
 ]) _
 
@@ -426,6 +426,16 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     EMAIL=tester@example.com \
     PASSWORD=test \
     bash ./integrationTests/keycloak/kc-add-user-k8s.sh
+    """)
+
+    // Configure Keycloak client-scope and group mapper for OIDC group claims.
+    sh("""
+    KC_NAMESPACE=${namespace} \
+    REALM=Test \
+    CLIENT_ID_STR=cas \
+    SCOPE_NAME=groups \
+    CLAIM_NAME=groups \
+    bash ./integrationTests/keycloak/kc-group-k8s.sh
     """)
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
