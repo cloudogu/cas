@@ -177,6 +177,16 @@ def componentStages = { group ->
 
 pipe.addStageGroup('component', pipe.agentMultinode, componentStages)
 
+def casSecretOverride = { String clientSecret ->
+    return """
+{
+  "oidc": {
+    "client_secret": "${clientSecret}"
+  }
+}
+"""
+}
+
 def casConfigOverride = { String externalIp ->
     return """
 {
@@ -409,6 +419,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+    String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
 
     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
 
@@ -416,6 +427,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh "make install-yq"
     mergeConfigMapYaml('cas-config', casConfig)
+    mergeConfigMapYaml('cas-config', casSecretConfig)
 
     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
