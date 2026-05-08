@@ -177,11 +177,11 @@ def componentStages = { group ->
 
 pipe.addStageGroup('component', pipe.agentMultinode, componentStages)
 
-def casSecretOverride = { String clientSecret ->
+def casSecretOverride = { String casClientSecret ->
     return """
 {
   "oidc": {
-    "client_secret": "${clientSecret}"
+    "client_secret": "${casClientSecret}"
   }
 }
 """
