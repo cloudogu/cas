@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-16] - 2026-05-12
 ### Fixed
 - [#332] Fixed a problem where the default values for the java heap memory were only used if a memory limit was configured. 
 
