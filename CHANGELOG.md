@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-16] - 2026-05-12
+### Fixed
+- [#332] Fixed a problem where the default values for the java heap memory were only used if a memory limit was configured. 
+
 ## [v7.2.7-15] - 2026-04-17
 ### Added
 - [#329] Added label `k8s.cloudogu.com/backup-scope` to include necessary k8s ressources in the backup for the cas Helm-based component.
