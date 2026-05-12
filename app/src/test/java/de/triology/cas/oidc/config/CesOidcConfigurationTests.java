@@ -1,35 +1,29 @@
 package de.triology.cas.oidc.config;
 
-import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.util.LdapUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.lang.reflect.Field;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mockStatic;
-import org.apereo.cas.util.LdapUtils;
-
-
-
-import org.apereo.cas.configuration.model.core.CasServerProperties;
-
-import java.util.Collection;
-import java.util.List;
 
 class CesOidcConfigurationTests {
 
@@ -71,25 +65,27 @@ class CesOidcConfigurationTests {
 
     @Test
     void shouldReturnDelegatedIdentityProviders() {
-        var casProperties = mock(CasConfigurationProperties.class);
-        DelegatedIdentityProviderFactory factory = mock(DelegatedIdentityProviderFactory.class);
-        when(factory.build()).thenReturn(Collections.emptyList());
+        var client = delegatedClient("oidc-client");
+        var providers = delegatedIdentityProvidersFor(client);
+        var service = mock(Service.class);
+        var webContext = mock(WebContext.class);
 
-        var providers = configuration.delegatedIdentityProviders(casProperties, factory);
         assertNotNull(providers);
-        assertTrue(providers.findAllClients().isEmpty());
-        assertTrue(providers.findClient("unknown").isEmpty());
+        assertEquals(List.of(client), providers.findAllClients(service, webContext));
+        assertEquals(List.of(client), providers.findAllClients(webContext));
+        assertSame(client, providers.findClient("OIDC-CLIENT", webContext).orElseThrow());
+        assertTrue(providers.findClient("unknown", webContext).isEmpty());
     }
 
     @Test
     void shouldBuildClients() {
-        var providers = mock(DelegatedIdentityProviders.class);
-        when(providers.findAllClients()).thenReturn(Collections.emptyList());
+        var client = delegatedClient("oidc-client");
+        var providers = delegatedIdentityProvidersFor(client);
 
         var clients = configuration.builtClients(providers);
 
         assertNotNull(clients);
-        assertTrue(clients.getClients().isEmpty());
+        assertEquals(List.of(client), clients.getClients());
     }
 
     @Test
@@ -173,7 +169,7 @@ class CesOidcConfigurationTests {
         when(factory.build()).thenReturn(Collections.emptyList());
     
         var providers = configuration.delegatedIdentityProviders(casProperties, factory);
-        var clients = providers.findAllClients();
+        var clients = providers.findAllClients(mock(WebContext.class));
     
         assertTrue(clients.isEmpty(), "Clients should be empty, triggering log output");
     }
@@ -221,6 +217,20 @@ class CesOidcConfigurationTests {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
+    }
+
+    private BaseClient delegatedClient(String name) {
+        var client = mock(BaseClient.class);
+        when(client.getName()).thenReturn(name);
+        return client;
+    }
+
+    private DelegatedIdentityProviders delegatedIdentityProvidersFor(BaseClient... clients) {
+        var casProperties = mock(CasConfigurationProperties.class);
+        DelegatedIdentityProviderFactory factory = mock(DelegatedIdentityProviderFactory.class);
+        when(factory.build()).thenReturn(List.of(clients));
+
+        return configuration.delegatedIdentityProviders(casProperties, factory);
     }
 
     @Test
