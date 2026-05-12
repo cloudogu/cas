@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.benmanes.caffeine.cache.Cache;
 
@@ -178,7 +177,7 @@ public class CesOidcConfiguration {
 
             private volatile List<BaseClient> cached;
 
-            public List<BaseClient> buildOnce() {
+            public List<BaseClient> buildOnce(CasConfigurationProperties properties) {
                 LOGGER.debug("Creating delegated clients from ces.delegation.oidc.clients...");
         
                 List<BaseClient> clients = new ArrayList<>();
@@ -206,7 +205,7 @@ public class CesOidcConfiguration {
                     var client = new OidcClient(config);
                     client.setName(clientProps.getClientName());
         
-                    String callbackUrl = casProperties.getServer().getPrefix() + "/login";
+                    String callbackUrl = properties.getServer().getPrefix() + "/login";
                     client.setCallbackUrl(callbackUrl);
         
                     LOGGER.debug("Registered delegated OIDC client [{}] with discovery [{}]", client.getName(), clientProps.getDiscoveryUri());
@@ -218,20 +217,43 @@ public class CesOidcConfiguration {
     
             @Override
             public List<BaseClient> build() {
-            if (cached == null) {
-                synchronized (this) {
-                if (cached == null) cached = buildOnce();
+                if (cached == null) {
+                    synchronized (this) {
+                        if (cached == null) {
+                            cached = buildOnce(casProperties);
+                        }
+                    }
                 }
-            }
-            return cached;
+                return cached;
             }
 
             @Override
-            public Collection<BaseClient> rebuild() {
+            public List<BaseClient> rebuild() {
                 synchronized (this) {
-                    cached = buildOnce();
+                    cached = buildOnce(casProperties);
                     return cached;
                 }
+            }
+
+            @Override
+            public List<BaseClient> buildFrom(CasConfigurationProperties properties) {
+                return buildOnce(properties);
+            }
+
+            @Override
+            public void store(String key, List<BaseClient> currentClients) {
+                pac4jDelegatedClientFactoryCache.put(key, currentClients);
+            }
+
+            @Override
+            public List<BaseClient> retrieve(String key) {
+                Collection<BaseClient> clients = pac4jDelegatedClientFactoryCache.getIfPresent(key);
+                return clients == null ? List.of() : new ArrayList<>(clients);
+            }
+
+            @Override
+            public void destroy() {
+                cached = null;
             }
         };
     }
@@ -255,17 +277,10 @@ public class CesOidcConfiguration {
         CasConfigurationProperties casProperties,
         DelegatedIdentityProviderFactory customFactory
     ) {
-    LOGGER.debug("Setting up custom delegated identity providers...");
-    // build once (initialized clients)
-    final List<BaseClient> initialized = new ArrayList<>(customFactory.build());
+        LOGGER.debug("Setting up custom delegated identity providers...");
+        final List<BaseClient> initialized = new ArrayList<>(customFactory.build());
 
-        return new DelegatedIdentityProviders() {
-            @Override public List<Client> findAllClients() { return new ArrayList<>(initialized); }
-            @Override public List<Client> findAllClients(Service s, WebContext c) { return findAllClients(); }
-            @Override public Optional<Client> findClient(String name) {
-            return initialized.stream().filter(c -> c.getName().equalsIgnoreCase(name)).map(Client.class::cast).findFirst();
-            }
-        };
+        return (Service service, WebContext webContext) -> new ArrayList<>(initialized);
     }
 
    
@@ -273,7 +288,10 @@ public class CesOidcConfiguration {
     @Bean
     @RefreshScope
     public Clients builtClients(DelegatedIdentityProviders delegatedIdentityProviders) {
-        var allClients = delegatedIdentityProviders.findAllClients();
+        List<Client> allClients = delegatedIdentityProviders.findAllClients((WebContext) null)
+            .stream()
+            .map(Client.class::cast)
+            .toList();
         return new Clients(allClients);
     }
 
