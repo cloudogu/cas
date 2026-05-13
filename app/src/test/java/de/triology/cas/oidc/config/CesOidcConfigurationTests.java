@@ -17,9 +17,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,7 +58,7 @@ class CesOidcConfigurationTests {
         var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
 
         assertNotNull(factory);
-        assertTrue(factory.build() instanceof Collection);
+        assertNotNull(factory.build());
     }
 
     @Test
@@ -71,8 +69,8 @@ class CesOidcConfigurationTests {
         var webContext = mock(WebContext.class);
 
         assertNotNull(providers);
-        assertEquals(List.of(client), providers.findAllClients(service, webContext));
-        assertEquals(List.of(client), providers.findAllClients(webContext));
+        assertEquals(java.util.List.of(client), providers.findAllClients(service, webContext));
+        assertEquals(java.util.List.of(client), providers.findAllClients(webContext));
         assertSame(client, providers.findClient("OIDC-CLIENT", webContext).orElseThrow());
         assertTrue(providers.findClient("unknown", webContext).isEmpty());
     }
@@ -85,7 +83,7 @@ class CesOidcConfigurationTests {
         var clients = configuration.builtClients(providers);
 
         assertNotNull(clients);
-        assertEquals(List.of(client), clients.getClients());
+        assertEquals(java.util.List.of(client), clients.getClients());
     }
 
     @Test
@@ -113,7 +111,7 @@ class CesOidcConfigurationTests {
         var ldapProps = mock(org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties.class);
     
         when(casProperties.getAuthn()).thenReturn(authnProps);
-        when(authnProps.getLdap()).thenReturn(List.of(ldapProps));
+        when(authnProps.getLdap()).thenReturn(java.util.List.of(ldapProps));
     
         when(ldapProps.getBaseDn()).thenReturn("dc=example,dc=org");
         when(ldapProps.getLdapUrl()).thenReturn("ldap://localhost");
@@ -199,7 +197,7 @@ class CesOidcConfigurationTests {
         invalidClientProps.setClientName("invalid-client"); // nur Name, Rest fehlt
     
         var clientsProps = new CesDelegatedOidcClientsProperties();
-        clientsProps.setClients(List.of(invalidClientProps));
+        clientsProps.setClients(java.util.List.of(invalidClientProps));
     
         var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
         var clients = factory.build();
@@ -228,7 +226,7 @@ class CesOidcConfigurationTests {
     private DelegatedIdentityProviders delegatedIdentityProvidersFor(BaseClient... clients) {
         var casProperties = mock(CasConfigurationProperties.class);
         DelegatedIdentityProviderFactory factory = mock(DelegatedIdentityProviderFactory.class);
-        when(factory.build()).thenReturn(List.of(clients));
+        when(factory.build()).thenReturn(java.util.List.of(clients));
 
         return configuration.delegatedIdentityProviders(casProperties, factory);
     }
@@ -249,14 +247,14 @@ class CesOidcConfigurationTests {
         clientProps.setPreferredJwsAlgorithm("RS256");
     
         var clientsProps = new CesDelegatedOidcClientsProperties();
-        clientsProps.setClients(List.of(clientProps));
+        clientsProps.setClients(java.util.List.of(clientProps));
     
         var serverProps = mock(CasServerProperties.class);
         when(serverProps.getPrefix()).thenReturn("https://cas.example.org");
         when(casProperties.getServer()).thenReturn(serverProps);
     
         var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
-        Collection<org.pac4j.core.client.BaseClient> clients = factory.build();
+        var clients = factory.build();
     
         assertEquals(1, clients.size());
         var client = (org.pac4j.oidc.client.OidcClient) clients.iterator().next();
