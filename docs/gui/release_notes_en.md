@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-16] - 2026-05-12
+- Fixed an issue where the java heap memory was too low although the pod's memory request was big enough.
+  This sometimes caused a java heap memory error.
+
 ## [v7.2.7-15] - 2026-04-17
 - Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
 

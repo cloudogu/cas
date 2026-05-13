@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-16] - 2026-05-12
+- Es wurde ein Problem behoben, bei dem der Java-Heap-Speicher zu niedrig war, obwohl die Speicheranforderung des Pods ausreichend konfiguriert war.
+  Dies führte gelegentlich zu einem Java-Heap-Speicherfehler.
+
 ## [v7.2.7-15] - 2026-04-17
 - Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
 
