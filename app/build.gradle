@@ -41,6 +41,8 @@ plugins {
     id 'jacoco'
 }
 
+ext['commons-lang3.version'] = '3.19.0'
+
 repositories {
     if (project.privateRepoUrl) {
         maven {
@@ -221,4 +223,3 @@ configurations.all {
   exclude group: "com.sun.xml.ws", module: "jaxws-rt"
   exclude group: "org.apache.tomcat.embed"
 }
-
