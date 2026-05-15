@@ -41,8 +41,6 @@ plugins {
     id 'jacoco'
 }
 
-ext['commons-lang3.version'] = '3.19.0'
-
 repositories {
     if (project.privateRepoUrl) {
         maven {
