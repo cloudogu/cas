@@ -33,6 +33,14 @@ app.kubernetes.io/name: {{ include "cas.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "cas.backupLabels"  -}}
+k8s.cloudogu.com/backup-scope: cas
+{{- end }}
+
+{{- define "cas.backupScaleDownLabels"  -}}
+k8s.cloudogu.com/restore-scaledown-scope: cas
+{{- end }}
+
 {{- define "cas.lookupSecretValue" -}}
 {{- $root := .root -}}
 {{- $secretName := .secretName -}}
