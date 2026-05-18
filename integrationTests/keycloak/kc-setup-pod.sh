@@ -31,7 +31,7 @@ $KCADM update realms/"${REALM}" -s sslRequired=NONE --config "$KCADM_CONFIG" || 
 # Client
 if ! $KCADM get clients -r "${REALM}" -q clientId="${CLIENT_ID}" --fields id --config "$KCADM_CONFIG" | grep -q '"id"'; then
   echo "[inside] Creating client ${CLIENT_ID}..."
-  $KCADM create clients -r "${REALM}" -s clientId="${CLIENT_ID}" -s serviceAccountsEnabled=true -s directAccessGrantsEnabled=true -s authorizationServicesEnabled=true -s enabled=true -s protocol=openid-connect -s publicClient=false -s standardFlowEnabled=true -s implicitFlowEnabled=false -s directAccessGrantsEnabled=false -s clientAuthenticatorType=client-secret -s 'webOrigins=["*"]' -s "redirectUris=[\"${CLIENT_REDIRECT}\"]" -s 'attributes."token.endpoint.auth.method"="client_secret_basic"' --config "$KCADM_CONFIG"
+  $KCADM create clients -r "${REALM}" -s clientId="${CLIENT_ID}" -s serviceAccountsEnabled=true -s directAccessGrantsEnabled=true -s authorizationServicesEnabled=true -s enabled=true -s protocol=openid-connect -s publicClient=false -s standardFlowEnabled=true -s implicitFlowEnabled=false -s clientAuthenticatorType=client-secret -s 'webOrigins=["*"]' -s "redirectUris=[\"${CLIENT_REDIRECT}\"]" -s 'attributes."token.endpoint.auth.method"="client_secret_basic"' --config "$KCADM_CONFIG"
 else
   echo "[inside] Client ${CLIENT_ID} exists."
 fi
