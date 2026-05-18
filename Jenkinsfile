@@ -243,12 +243,11 @@ def mergeSecretYaml = { String secretName, String overrideConfig ->
        else
          DECODED=\$(echo "\$CURRENT_B64" | base64 -d)
        fi
-       UPDATED=\$(echo "\$DECODED" | .bin/yq '
-         . |= (
-           (from_yaml) * ${overrideConfig}
-           | to_yaml
-         )
-       ')
+       OVERRIDE_JSON=\$(cat <<'JSON'
+${overrideConfig}
+JSON
+)
+       UPDATED=\$(printf '%s\n---\n%s\n' "\$DECODED" "\$OVERRIDE_JSON" | .bin/yq ea 'select(fileIndex == 0) * select(fileIndex == 1)' -)
        NEW_B64=\$(echo "\$UPDATED" | base64 | tr -d '\\n')
        kubectl get secret ${secretName} -n ecosystem -o yaml | .bin/yq --arg new "\$NEW_B64" '.data."config.yaml" = \$new' | kubectl apply -f -
     """
@@ -447,7 +446,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     pipe.multiNodeEcoSystem.waitForDogu("cas")
 
     sh "make install-yq"
-    mergeConfigMapYaml('cas-config', casConfig)
     mergeSecretYaml('cas-config', casSecretConfig)
 
     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
