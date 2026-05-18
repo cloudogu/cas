@@ -233,6 +233,27 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig ->
        """
 }
 
+// Merge into a Secret that stores a YAML document in .data."config.yaml" (base64 encoded)
+def mergeSecretYaml = { String secretName, String overrideConfig ->
+    sh """
+       CURRENT_B64=\$(kubectl get secret ${secretName} -n ecosystem -o jsonpath='{.data.config\\.yaml}' || true)
+       if [ -z \"\$CURRENT_B64\" ]; then
+         # create empty yaml if secret or key does not exist
+         DECODED='{}'
+       else
+         DECODED=\$(echo "\$CURRENT_B64" | base64 -d)
+       fi
+       UPDATED=\$(echo "\$DECODED" | .bin/yq '
+         . |= (
+           (from_yaml) * ${overrideConfig}
+           | to_yaml
+         )
+       ')
+       NEW_B64=\$(echo "\$UPDATED" | base64 | tr -d '\\n')
+       kubectl get secret ${secretName} -n ecosystem -o yaml | .bin/yq --arg new "\$NEW_B64" '.data."config.yaml" = \$new' | kubectl apply -f -
+    """
+}
+
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
@@ -427,7 +448,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     sh "make install-yq"
     mergeConfigMapYaml('cas-config', casConfig)
-    mergeConfigMapYaml('cas-config', casSecretConfig)
+    mergeSecretYaml('cas-config', casSecretConfig)
 
     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
