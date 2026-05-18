@@ -187,7 +187,7 @@ def casSecretOverride = { String casClientSecret ->
 """
 }
 
-def casConfigOverride = { String externalIp ->
+def casConfigOverride = { String keycloakUrl ->
     return """
 {
   "forgot_password_text": "Contact your admin",
@@ -198,7 +198,7 @@ def casConfigOverride = { String externalIp ->
   },
   "oidc": {
     "enabled": "true",
-    "discovery_uri": "http://${externalIp}:9000/auth/realms/Test/.well-known/openid-configuration",
+    "discovery_uri": "http://${keycloakUrl}/auth/realms/Test/.well-known/openid-configuration",
     "client_id": "cas",
     "display_name": "cas",
     "optional": "true",
@@ -265,7 +265,7 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
-    String casConfig = casConfigOverride(ecoSystem.externalIP)
+    String casConfig = casConfigOverride(ecoSystem.externalIP + ":9000")
     ecoSystem.setup([registryConfig: """
         "cas": ${casConfig},
         "_global": ${globalConfigOverride}
@@ -418,7 +418,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
-    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+    String casConfig = casConfigOverride("keycloak.ecosystem.svc.cluster.local:80")
     String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
 
     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
