@@ -390,6 +390,11 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     echo "Waiting for Keycloak pod to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
 
+    //setup keycloak ingress
+    sh """
+    kubectl apply -f ../integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
+    """
+
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
     bash ./integrationTests/keycloak/kc-setup-k8s.sh
@@ -428,7 +433,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
-    String casConfig = casConfigOverride("keycloak.ecosystem.svc.cluster.local:80")
+    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP + "/keycloak")
     String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
 
     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "

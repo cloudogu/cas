@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-ingress
+  namespace: ecosystem
+spec:
+  ingressClassName: k8s-ecosystem-ces-service
+  rules:
+    - http:
+        paths:
+          - path: /keycloak
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80

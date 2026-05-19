@@ -58,6 +58,8 @@ initContainers:
         echo "PostgreSQL is available.";
 
 extraEnvVars: |
+  - name: KC_HTTP_RELATIVE_PATH
+    value: /keycloak
   - name: TZ
     value: "Europe/Berlin"
   - name: PROXY_ADDRESS_FORWARDING
@@ -78,6 +80,22 @@ extraEnvVars: |
     value: "{{ .Values.cloudogu.alertChannelWebhook }}"
   # - name: APP_ROOT_PATH
   #   value: "{{ .Values.cloudogu.appRootPath }}"
+  
+  
+  - name: KC_PROXY_HEADERS
+    value: xforwarded
+
+  - name: KC_HOSTNAME
+    value: 34.89.129.254
+
+  - name: KC_HTTP_ENABLED
+    value: "true"
+
+  - name: KC_HOSTNAME_STRICT
+    value: "false"
+
+  - name: KC_HOSTNAME_STRICT_HTTPS
+    value: "false"
 
 command:
   - "/opt/keycloak/bin/kc.sh"
