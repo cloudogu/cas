@@ -392,7 +392,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     //setup keycloak ingress
     sh """
-    kubectl apply -f /integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
+    kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
     """
 
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
