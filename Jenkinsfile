@@ -248,8 +248,8 @@ ${overrideConfig}
 JSON
 )
        UPDATED=\$(printf '%s\n---\n%s\n' "\$DECODED" "\$OVERRIDE_JSON" | .bin/yq ea 'select(fileIndex == 0) * select(fileIndex == 1)' -)
-       NEW_B64=\$(echo "\$UPDATED" | base64 | tr -d '\\n')
-       kubectl get secret ${secretName} -n ecosystem -o yaml | NEW_B64="\$NEW_B64" .bin/yq '.data."config.yaml" = strenv(NEW_B64)' - | kubectl apply -f -
+       NEW_B64=\$(echo -n "\$UPDATED" | base64 | tr -d '\\n')
+       kubectl patch secret ${secretName} -n ecosystem --type json -p "[{\\"op\\":\\"replace\\",\\"path\\":\\"/data/config.yaml\\",\\"value\\":\\"{\$NEW_B64}\\"}]"
     """
 }
 
