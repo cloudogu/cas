@@ -382,6 +382,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
               --set externalDatabase.user=${postgresqlUsername} \
               --set externalDatabase.database=${postgresqlDatabase} \
               --set externalDatabase.password=${postgresqlPassword} \
+              --set KC_HOSTNAME=${pipe.multiNodeEcoSystem.externalIP} \
 
         """
     }

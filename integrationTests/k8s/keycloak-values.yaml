@@ -83,9 +83,6 @@ extraEnvVars: |
   - name: KC_PROXY_HEADERS
     value: xforwarded
 
-  - name: KC_HOSTNAME
-    value: 34.89.129.254
-
   - name: KC_HTTP_ENABLED
     value: "true"
 
