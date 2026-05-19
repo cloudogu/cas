@@ -233,25 +233,18 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig ->
        """
 }
 
-// Merge into a Secret that stores a YAML document in .data."config.yaml" (base64 encoded)
 def mergeSecretYaml = { String secretName, String overrideConfig ->
     sh """
-       CURRENT_B64=\$(kubectl get secret ${secretName} -n ecosystem -o jsonpath='{.data.config\\.yaml}' || true)
-       if [ -z \"\$CURRENT_B64\" ]; then
-         # create empty yaml if secret or key does not exist
-         DECODED='{}'
-       else
-         DECODED=\$(echo "\$CURRENT_B64" | base64 -d)
-       fi
-       OVERRIDE_JSON=\$(cat <<'JSON'
-${overrideConfig}
-JSON
-)
-       UPDATED=\$(printf '%s\n---\n%s\n' "\$DECODED" "\$OVERRIDE_JSON" | .bin/yq ea 'select(fileIndex == 0) * select(fileIndex == 1)' -)
-       NEW_B64=\$(echo -n "\$UPDATED" | base64 | tr -d '\\n')
-       kubectl patch secret ${secretName} -n ecosystem --type json -p "[{\\"op\\":\\"replace\\",\\"path\\":\\"/data/config.yaml\\",\\"value\\":\\"{\$NEW_B64}\\"}]"
-    """
+       kubectl get secret ${secretName} -n ecosystem -o yaml | .bin/yq '
+         .data."config.yaml" |= (
+           (. | @base64d | from_yaml) * ${overrideConfig}
+           | to_yaml
+           | @base64
+         )
+       ' | tee ${secretName}-output.yml | kubectl apply -f -
+       """
 }
+
 
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
@@ -286,15 +279,12 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
     String casConfig = casConfigOverride(ecoSystem.externalIP + ":9000")
+    String casSecret = casSecretOverride(clientSecret)
     ecoSystem.setup([registryConfig: """
         "cas": ${casConfig},
         "_global": ${globalConfigOverride}
     """, registryConfigEncrypted: """
-        "cas": {
-            "oidc": {
-                "client_secret": "${clientSecret}"
-            }
-        }
+        "cas": ${casSecret}
     """])
 }
 
@@ -446,6 +436,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     pipe.multiNodeEcoSystem.waitForDogu("cas")
 
     sh "make install-yq"
+    mergeConfigMapYaml('cas-config', casConfig)
     mergeSecretYaml('cas-config', casSecretConfig)
 
     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
