@@ -58,8 +58,6 @@ initContainers:
         echo "PostgreSQL is available.";
 
 extraEnvVars: |
-  - name: KC_HTTP_RELATIVE_PATH
-    value: /keycloak
   - name: TZ
     value: "Europe/Berlin"
   - name: PROXY_ADDRESS_FORWARDING
