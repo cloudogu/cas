@@ -78,7 +78,8 @@ extraEnvVars: |
     value: "{{ .Values.cloudogu.alertChannelWebhook }}"
   # - name: APP_ROOT_PATH
   #   value: "{{ .Values.cloudogu.appRootPath }}"
-  
+  - name: KC_HTTP_RELATIVE_PATH
+    value: /keycloak
   
   - name: KC_PROXY_HEADERS
     value: xforwarded

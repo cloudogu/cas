@@ -434,7 +434,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
-    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP + "/keycloak")
     String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
 
     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
