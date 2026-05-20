@@ -398,7 +398,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
-    bash ./integrationTests/keycloak/kc-setup-k8s.sh
+    CLIENT_REDIRECT=https://${pipe.multiNodeEcoSystem.externalIP}/cas/* \
+    bash ./integrationTests/keycloak/kc-setup-k8s.sh \
     """)
 
     // Ensure the OIDC test user exists in Keycloak before running integration tests.
