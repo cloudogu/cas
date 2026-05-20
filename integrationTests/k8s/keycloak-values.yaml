@@ -78,8 +78,6 @@ extraEnvVars: |
     value: "{{ .Values.cloudogu.alertChannelWebhook }}"
   # - name: APP_ROOT_PATH
   #   value: "{{ .Values.cloudogu.appRootPath }}"
-  - name: KC_HTTP_RELATIVE_PATH
-    value: /keycloak
   
   - name: KC_PROXY_HEADERS
     value: xforwarded
@@ -99,6 +97,7 @@ command:
   - "--import-realm"
   - "--hostname-strict=false"
   - "--cache=local"
+  - "--http-relative-path=/keycloak"
   - "--db-url-host=${KEYCLOAK_DATABASE_HOST}" # these env vars are set by the bitnami chart. their corresponding values are set here in postgresql:auth
   - "--db-url-database=${KEYCLOAK_DATABASE_NAME}"
   - "--db-username=${KEYCLOAK_DATABASE_USER}"
