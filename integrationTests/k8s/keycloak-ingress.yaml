@@ -8,7 +8,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /keycloak
+          - path: /auth
             pathType: Prefix
             backend:
               service:
