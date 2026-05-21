@@ -326,53 +326,14 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
             HELM_CMD = "upgrade"
         }
 
-        /**
-
-        externalDatabase:
-          host: ""
-          port: 5432
-          user: bn_keycloak
-          database: bitnami_keycloak
-          schema: public
-          password: ""
-          existingSecret: ""
-          existingSecretUserKey: ""
-          existingSecretPasswordKey: ""
-          annotations: {}
-          extraParams: ""
-
-        **/
-
         pipe.multiNodeEcoSystem.waitForDogu("postgresql")
 
         def postgreSqlPodName = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=postgresql --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
-
         def postgresqlCreds = sh(returnStdout: true, script: "kubectl --namespace=ecosystem exec ${postgreSqlPodName} -- /create-sa.sh keycloak")
-        /**
-        # print details
-        echo "database: ${DATABASE}"
-        echo "username: ${USER}"
-        echo "password: ${PASSWORD}"
-        **/
-
-       def lines = postgresqlCreds.trim().split("\n")
-
-       def postgresqlDatabase = lines.find { it.startsWith("database:") }?.split(":", 2)[1]?.trim()
-       def postgresqlUsername = lines.find { it.startsWith("username:") }?.split(":", 2)[1]?.trim()
-       def postgresqlPassword = lines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
-
-        sh "test -f ../integrationTests/keycloak-realm/realm-cloudogu.json"
-        // Keycloak Quarkus rejects imported JS authorization policies when script upload is disabled.
-        // For CI we strip authorizationSettings from casClient before creating the ConfigMap.
-        sh """
-            jq '(.clients[]? | select(.clientId == "casClient")) |= del(.authorizationSettings)' \
-              ../integrationTests/keycloak-realm/realm-cloudogu.json > ../integrationTests/keycloak-realm/realm-cloudogu.import.json
-        """
-        sh """
-            kubectl --namespace=${namespace} create configmap keycloak-realm \
-              --from-file=realm-cloudogu.json=../integrationTests/keycloak-realm/realm-cloudogu.import.json \
-              --dry-run=client -o yaml | kubectl --namespace=${namespace} apply -f -
-        """
+        def postgreSqlCredentialLines = postgresqlCreds.trim().split("\n")
+        def postgresqlDatabase = postgreSqlCredentialLines.find { it.startsWith("database:") }?.split(":", 2)[1]?.trim()
+        def postgresqlUsername = postgreSqlCredentialLines.find { it.startsWith("username:") }?.split(":", 2)[1]?.trim()
+        def postgresqlPassword = postgreSqlCredentialLines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
 
         sh """
             helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} keycloak --version 24.2.0 bitnami/keycloak \
@@ -382,8 +343,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
               --set externalDatabase.user=${postgresqlUsername} \
               --set externalDatabase.database=${postgresqlDatabase} \
               --set externalDatabase.password=${postgresqlPassword} \
-              --set KC_HOSTNAME=${pipe.multiNodeEcoSystem.externalIP} \
-
+              --set KC_HOSTNAME=${pipe.multiNodeEcoSystem.externalIP}
         """
   }
 
@@ -399,7 +359,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
     CLIENT_REDIRECT=https://${pipe.multiNodeEcoSystem.externalIP}/cas/* \
-    bash ./integrationTests/keycloak/kc-setup-k8s.sh \
+    bash ./integrationTests/keycloak/k8s/kc-setup-k8s.sh \
     """)
 
     // Ensure the OIDC test user exists in Keycloak before running integration tests.
@@ -410,7 +370,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     USERNAME=tester \
     EMAIL=tester@example.com \
     PASSWORD=test \
-    bash ./integrationTests/keycloak/kc-add-user-k8s.sh
+    bash ./integrationTests/keycloak/k8s/kc-add-user-k8s.sh
     """)
 
     // Configure Keycloak client-scope and group mapper for OIDC group claims.
@@ -420,7 +380,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     CLIENT_ID_STR=cas \
     SCOPE_NAME=groups \
     CLAIM_NAME=groups \
-    bash ./integrationTests/keycloak/kc-group-k8s.sh
+    bash ./integrationTests/keycloak/k8s/kc-group-k8s.sh
     """)
 
     keycloakCasClientSecret = sh(returnStdout: true, script: """
@@ -431,14 +391,14 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         error("Failed to read client secret from the Test realm")
     }
 
-    echo "Retrieved Test realm client secret: ${keycloakCasClientSecret}"
+    echo "Retrieved Test realm client secret length: ${keycloakCasClientSecret.size()}"
 
-    def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
+    def casPodname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
     String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
 
-    sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
+    sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $casPodname:/etc/cas/services/production/ "
 
     pipe.multiNodeEcoSystem.waitForDogu("cas")
 

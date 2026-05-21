@@ -18,7 +18,7 @@ POD=$(kubectl -n "$NAMESPACE" get pod -l app.kubernetes.io/name=keycloak -o json
 log "Executing setup inside pod ${POD} (realm=${REALM}, client=${CLIENT_ID})"
 
 # Copy the setup script into the pod and execute it
-kubectl -n "$NAMESPACE" cp "$(dirname "$0")/kc-setup-pod.sh" "$POD":/tmp/kc-setup-pod.sh
+kubectl -n "$NAMESPACE" cp "$(dirname "$0")/k8s/kc-setup-pod.sh" "$POD":/tmp/kc-setup-pod.sh
 
 # Execute the setup script inside the pod with required environment variables
 kubectl -n "$NAMESPACE" exec "$POD" -- bash -c "

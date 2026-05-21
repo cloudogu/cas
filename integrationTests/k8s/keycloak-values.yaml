@@ -33,9 +33,6 @@ containerSecurityContext:
 extraVolumes:
   - name: data
     emptyDir: {}
-  - name: realm-import
-    configMap:
-      name: keycloak-realm
 extraVolumeMounts:
   - name: data
     mountPath: /opt/keycloak/data
