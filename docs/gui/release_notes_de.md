@@ -5,6 +5,7 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.
 
 ## [v7.2.7-16] - 2026-05-12
 - Es wurde ein Problem behoben, bei dem der Java-Heap-Speicher zu niedrig war, obwohl die Speicheranforderung des Pods ausreichend konfiguriert war.
