@@ -87,6 +87,7 @@ def componentStages = { group ->
             echo "[Component k3d] Start cluster"
             k3d.startK3d()
             k3d.yqEvalYamlFile("k3d_values.yaml", ".defaultConfig.env.enableFqdnApplier = true")
+            k3d.appendToYamlFile("k3d_values.yaml", ".components.k8s-exposition-crd.version", "1.0.0")
             k3d.setup()
 
             echo "[Component k3d] Prepare prerequisites"
@@ -113,9 +114,6 @@ def componentStages = { group ->
                echo "Read ldap secret from cas config..."
             }
             k3d.kubectl("create secret generic ldap-cas-sa --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
-
-            echo "[Component k3d] Deploy k8s-exposition-crd component via helm"
-            k3d.helm("upgrade --install k8s-exposition-crd oci://${componentRegistry}/${componentRegistryNamespace}/k8s-exposition-crd --version 1.0.0 --namespace default")
 
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
