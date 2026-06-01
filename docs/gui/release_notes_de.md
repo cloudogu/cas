@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Security
+- Sicherheitslücke [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789) geschlossen
 
 ## [v7.2.7-17] - 2026-05-28
 - Redundante Funktion zum stoppen des Blueprint Operators in der Jenkins Datei gelöscht.
