@@ -7,6 +7,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ## [Unreleased]
 - Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.
 
+## [v7.2.7-17] - 2026-05-28
+- Redundante Funktion zum stoppen des Blueprint Operators in der Jenkins Datei gelöscht.
+
 ## [v7.2.7-16] - 2026-05-12
 - Es wurde ein Problem behoben, bei dem der Java-Heap-Speicher zu niedrig war, obwohl die Speicheranforderung des Pods ausreichend konfiguriert war.
   Dies führte gelegentlich zu einem Java-Heap-Speicherfehler.
