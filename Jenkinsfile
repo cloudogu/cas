@@ -440,8 +440,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     mergeConfigMapYaml('cas-config', casConfig)
     mergeSecretYaml('cas-config', casSecretConfig)
 
-    sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
-
     pipe.multiNodeEcoSystem.waitForDogu("cas")
 
     mergeConfigMapYaml('global-config', globalConfigOverride)
