@@ -374,6 +374,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     }
 **/
     sleep time: 60, unit: 'SECONDS'
+    def keycloakPodName = sh(returnStdout: true, script: """kubectl get pod -l app.kubernetes.io/name=keycloak --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
+
     echo "Waiting for Keycloak pod ${keycloakPod} to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod ${keycloakPod} --timeout=600s"
 
