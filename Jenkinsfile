@@ -349,13 +349,23 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 
     // Wait for Keycloak pod to exist and be ready. Sometimes the pod is not created yet, so poll for it.
     echo "Waiting for Keycloak pod to appear..."
-    def keycloakPod = sh(returnStdout: true, script: "kubectl get pod -l app.kubernetes.io/name=keycloak --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}' || true").trim()
+    def keycloakExists = sh(
+        script: """
+            kubectl get pods -n ecosystem --no-headers | grep -q '^keycloak'
+        """,
+        returnStatus: true
+    ) == 0
     int keycloakWaitAttempts = 0
     int keycloakMaxAttempts = 30
-    while (!keycloakPod) {
+    while (!keycloakExists) {
         echo "Keycloak pod not found yet (attempt ${keycloakWaitAttempts + 1}/${keycloakMaxAttempts}). Waiting 10s..."
         sleep time: 10, unit: 'SECONDS'
-        keycloakPod = sh(returnStdout: true, script: "kubectl get pod -l app.kubernetes.io/name=keycloak --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}' || true").trim()
+        keycloakExists = sh(
+            script: """
+                kubectl get pods -n ecosystem --no-headers | grep -q '^keycloak'
+            """,
+            returnStatus: true
+        ) == 0
         keycloakWaitAttempts++
         if (keycloakWaitAttempts >= keycloakMaxAttempts) {
             error("Timed out waiting for Keycloak pod to appear in namespace 'ecosystem'.")
