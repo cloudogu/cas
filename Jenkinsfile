@@ -114,6 +114,9 @@ def componentStages = { group ->
             }
             k3d.kubectl("create secret generic ldap-cas-sa --from-literal=username='${ldapUsername}' --from-literal=password='${ldapPassword}'")
 
+            echo "[Component k3d] Deploy k8s-exposition-crd component via helm"
+            k3d.helm("upgrade --install k8s-exposition-crd oci://${componentRegistry}/${componentRegistryNamespace}/k8s-exposition-crd --version 1.0.0 --namespace default")
+
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
 
