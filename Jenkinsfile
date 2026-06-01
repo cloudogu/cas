@@ -347,6 +347,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         """
   }
 
+/**
     // Wait for Keycloak pod to exist and be ready. Sometimes the pod is not created yet, so poll for it.
     echo "Waiting for Keycloak pod to appear..."
     def keycloakExists = sh(
@@ -371,7 +372,8 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
             error("Timed out waiting for Keycloak pod to appear in namespace 'ecosystem'.")
         }
     }
-
+**/
+    sleep time: 60, unit: 'SECONDS'
     echo "Waiting for Keycloak pod ${keycloakPod} to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod ${keycloakPod} --timeout=600s"
 
