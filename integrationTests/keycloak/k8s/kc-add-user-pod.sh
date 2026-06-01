@@ -72,9 +72,14 @@ fi
 
 echo '[inside] User UUID: '"$USER_ID"
 
-# Set password
-echo '[inside] Setting password for user '"$USERNAME"'...'
-$KCADM set-password -r "${REALM}" --userid "$USER_ID" --new-password "${PASSWORD}" --temporary=false --config "$KCADM_CONFIG" || true
+# Set password only if it has not been set yet
+if ! $KCADM get "users/${USER_ID}/credentials" -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null | tr -d '\r\n' | grep -Eq '"(type|credentialType)"[[:space:]]*:[[:space:]]*"password"'; then
+  echo '[inside] Setting password for user '"$USERNAME"'...'
+  # Fail fast here so later login tests do not hide a password provisioning problem.
+  $KCADM set-password -r "${REALM}" --userid "$USER_ID" --new-password "${PASSWORD}" --temporary=false --config "$KCADM_CONFIG"
+else
+  echo '[inside] Password for user '"$USERNAME"' already set.'
+fi
 
 # Add user to group
 if ! $KCADM get "users/${USER_ID}/groups" -r "${REALM}" --config "$KCADM_CONFIG" 2>/dev/null | grep -q '"id"'; then

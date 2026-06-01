@@ -55,26 +55,6 @@ initContainers:
         echo "PostgreSQL is available.";
 
 extraEnvVars: |
-  - name: TZ
-    value: "Europe/Berlin"
-  - name: PROXY_ADDRESS_FORWARDING
-    value: "true"
-  - name: GOOGLE_WEBHOOK_URL
-    value: "{{ .Values.cloudogu.notificationWebhookUrl }}"
-  - name: ALERTING_WEBHOOK_URL
-    value: "{{ .Values.cloudogu.alertingWebhookUrl }}"
-  - name: DISCOURSE_BASE_URL
-    value: "{{ .Values.cloudogu.discourseBaseUrl }}"
-  - name: DISCOURSE_API_KEY
-    value: "{{ .Values.cloudogu.discourseApiKey }}"
-  - name: DISCOURSE_SECRET_KEY
-    value: ichBinEinSecretKey
-  - name: NOTIFICATION_CHANNEL_WEBHOOK
-    value: "{{ .Values.cloudogu.notificationChannelWebhook }}"
-  - name: ALERT_CHANNEL_WEBHOOK
-    value: "{{ .Values.cloudogu.alertChannelWebhook }}"
-  # - name: APP_ROOT_PATH
-  #   value: "{{ .Values.cloudogu.appRootPath }}"
   
   - name: KC_PROXY_HEADERS
     value: xforwarded
@@ -98,9 +78,3 @@ command:
   - "--db-url-database=${KEYCLOAK_DATABASE_NAME}"
   - "--db-username=${KEYCLOAK_DATABASE_USER}"
   - "--db-password=${KEYCLOAK_DATABASE_PASSWORD}"
-#
-# THIS IS JUST FOR DEBUG
-# command:
-#   - "bin/sh"
-#   - "-c"
-#   - "sleep infinity"

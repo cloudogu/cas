@@ -347,14 +347,48 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         """
   }
 
-    // Wait for Keycloak pod to be ready.
-    echo "Waiting for Keycloak pod to be ready..."
-    sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=600s"
+    // Wait for Keycloak pod to exist and be ready. Sometimes the pod is not created yet, so poll for it.
+    echo "Waiting for Keycloak pod to appear..."
+    def keycloakPod = sh(returnStdout: true, script: "kubectl get pod -l app.kubernetes.io/name=keycloak --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}' || true").trim()
+    int keycloakWaitAttempts = 0
+    int keycloakMaxAttempts = 30
+    while (!keycloakPod) {
+        echo "Keycloak pod not found yet (attempt ${keycloakWaitAttempts + 1}/${keycloakMaxAttempts}). Waiting 10s..."
+        sleep time: 10, unit: 'SECONDS'
+        keycloakPod = sh(returnStdout: true, script: "kubectl get pod -l app.kubernetes.io/name=keycloak --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}' || true").trim()
+        keycloakWaitAttempts++
+        if (keycloakWaitAttempts >= keycloakMaxAttempts) {
+            error("Timed out waiting for Keycloak pod to appear in namespace 'ecosystem'.")
+        }
+    }
+
+    echo "Waiting for Keycloak pod ${keycloakPod} to be ready..."
+    sh "kubectl -n ecosystem wait --for=condition=ready pod ${keycloakPod} --timeout=600s"
 
     //setup keycloak ingress
     sh """
     kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
     """
+
+    // Verify that the ingress routes to Keycloak by polling the OIDC discovery endpoint
+    echo "Checking Keycloak ingress routing via external IP ${pipe.multiNodeEcoSystem.externalIP}..."
+    def discoveryUrl = "http://${pipe.multiNodeEcoSystem.externalIP}/auth/realms/Test/.well-known/openid-configuration"
+    int ingressAttempts = 0
+    int ingressMaxAttempts = 30
+    def httpCode = ''
+    while (ingressAttempts < ingressMaxAttempts) {
+        httpCode = sh(returnStdout: true, script: "curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 ${discoveryUrl} || true").trim()
+        if (httpCode == '200') {
+            echo "Keycloak ingress is reachable (HTTP ${httpCode})."
+            break
+        }
+        echo "Keycloak ingress not reachable yet (status=${httpCode}). Waiting 10s (attempt ${ingressAttempts + 1}/${ingressMaxAttempts})..."
+        sleep time: 10, unit: 'SECONDS'
+        ingressAttempts++
+    }
+    if (httpCode != '200') {
+        error("Timed out waiting for Keycloak ingress to route to Keycloak (last HTTP status: ${httpCode})")
+    }
 
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
