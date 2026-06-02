@@ -373,8 +373,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         }
     }
 
-    sleep time: 60, unit: 'SECONDS'
-
     echo "Waiting for Keycloak pod  to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=300s"
 
