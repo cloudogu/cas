@@ -37,9 +37,6 @@ extraVolumeMounts:
   - name: data
     mountPath: /opt/keycloak/data
     readOnly: false
-  - name: realm-import
-    mountPath: /opt/keycloak/data/import
-    readOnly: true
 
 initContainers:
   - name: wait-for-postgres
@@ -55,7 +52,7 @@ initContainers:
         echo "PostgreSQL is available.";
 
 extraEnvVars: |
-  
+
   - name: KC_PROXY_HEADERS
     value: xforwarded
 
