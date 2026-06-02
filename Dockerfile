@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.23.4-1 AS tomcat
+FROM registry.cloudogu.com/official/base:3.23.4-2 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION

@@ -6,6 +6,13 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-18] - 2026-06-02
+### Security
+- Sicherheitslücke [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789) geschlossen
+
+## [v7.2.7-17] - 2026-05-28
+- Redundante Funktion zum stoppen des Blueprint Operators in der Jenkins Datei gelöscht.
+
 ## [v7.2.7-16] - 2026-05-12
 - Es wurde ein Problem behoben, bei dem der Java-Heap-Speicher zu niedrig war, obwohl die Speicheranforderung des Pods ausreichend konfiguriert war.
   Dies führte gelegentlich zu einem Java-Heap-Speicherfehler.
@@ -22,20 +29,20 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.2.7-12] - 2026-03-26
 ### Changed
-- [#317] Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
 
 ## [v7.2.7-11] - 2026-03-26
 ### Behoben
-- [#324] Es wurde ein Problem mit großgeschriebenen FQDNs behoben, welches die Authentifizierung in bestimmten Dogus verhindert hat.
+- Es wurde ein Problem mit großgeschriebenen FQDNs behoben, welches die Authentifizierung in bestimmten Dogus verhindert hat.
 
 ## [v7.2.7-10] - 2026-03-10
 ### Behoben
-- [#310] Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
+- Es wurde ein Problem behoben,  bei dem Back-Channel Logouts aus lokalen Clustern nicht möglich waren.
   - Lokale URLs, wie z.B. *.localhost und *.localdomain können mit dem Schlüssel `allow_local_urls` erlaubt werden.
 
 ## [v7.2.7-9] - 2026-03-06
 ### Added
-- [#316] Experimentelle Zwei-Faktor-Authentifizierung mit TOTP
+- Experimentelle Zwei-Faktor-Authentifizierung mit TOTP
   - weitere Details siehe die [Dokumentation](../operations/two_factor_authentication_de.md)
 
 ## [v7.2.7-8] - 2026-02-19
@@ -44,29 +51,29 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.2.7-7] - 2026-02-12
 ### Security
-- [#312] Sicherheitslücke geschlossen [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
+- Sicherheitslücke geschlossen [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
 
 ## [v7.2.7-6] - 2026-01-29
 ### Security
-- [#308] Sicherheitslücke geschlossen [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+- Sicherheitslücke geschlossen [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
 ## [v7.2.7-5] - 2025-11-26
-- [#306] Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
+- Die Standardeinstellungen für Java-Heap-Größe, Speicheranforderung und -limit wurden aktualisiert. 
 
 ## [v7.2.7-4] - 2025-10-27
 - Dieses Release behebt einen Upgrade-Fehler in solchen Umgebungen, die einen externen Verzeichnisdienst und nicht ein LDAP-Dogu verwenden. 
 
 ## [v7.2.7-3] - 2025-10-23
 ### Behoben
-- [#299] Es wurde ein Problem behoben, bei dem gemischte Spring-Boot Versionen im Konflikt standen.
+- Es wurde ein Problem behoben, bei dem gemischte Spring-Boot Versionen im Konflikt standen.
 
 ## [v7.2.7-2] - 2025-10-17
 ### Sicherheit
-- [#295] Behebung von CVE-2025-41232, das eine Sicherheitslücke in Spring Security schließt, die unautorisierte Zugriffe ermöglichen konnte.
+- Behebung von CVE-2025-41232, das eine Sicherheitslücke in Spring Security schließt, die unautorisierte Zugriffe ermöglichen konnte.
 
 ## [v7.2.7-1] - 2025-10-06
 ### Anpassungen
-- [#293] Upgrade CAS zu Version 7.2.7
+- Upgrade CAS zu Version 7.2.7
 
 ## [v7.2.6-3] - 2025-09-18
 ### Anpassungen
@@ -78,7 +85,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [v7.2.6-1] - 2025-08-26
 ### Anpassungen
-- [#281] Upgrade CAS zu Version 7.2.6
+- Upgrade CAS zu Version 7.2.6
 
 ## [v7.1.6-6] - 2025-08-14
 ### Behoben

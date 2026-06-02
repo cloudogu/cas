@@ -274,7 +274,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
 
      sh "make install-yq"
      mergeConfigMapYaml('cas-config', casConfig)
-     sh """kubectl patch blueprint blueprint-ces-module -n ecosystem --type merge -p '{"spec":{"stopped":true}}'"""
 
      pipe.multiNodeEcoSystem.waitForDogu("cas")
 
