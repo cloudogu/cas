@@ -28,7 +28,7 @@ POD=$(kubectl -n "$NAMESPACE" get pod -l app.kubernetes.io/name=keycloak -o json
 log "Executing user creation inside pod ${POD} (realm=${REALM}, user=${USERNAME}, group=${GROUP})"
 
 # Copy the setup script into the pod and execute it.
-kubectl -n "$NAMESPACE" cp "$(dirname "$0")/k8s/kc-add-user-pod.sh" "$POD":/tmp/kc-add-user-pod.sh
+kubectl -n "$NAMESPACE" cp "$(dirname "$0")/kc-add-user-pod.sh" "$POD":/tmp/kc-add-user-pod.sh
 
 # Execute the user creation script inside the pod with required environment variables.
 kubectl -n "$NAMESPACE" exec "$POD" -- bash -c "

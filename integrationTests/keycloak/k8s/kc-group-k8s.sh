@@ -25,7 +25,7 @@ POD=$(kubectl -n "$NAMESPACE" get pod -l app.kubernetes.io/name=keycloak -o json
 log "Executing group/scope setup inside pod ${POD} (realm=${REALM}, client=${CLIENT_ID_STR})"
 
 # Copy the setup script into the pod and execute it.
-kubectl -n "$NAMESPACE" cp "$(dirname "$0")/k8s/kc-group-pod.sh" "$POD":/tmp/kc-group-pod.sh
+kubectl -n "$NAMESPACE" cp "$(dirname "$0")/kc-group-pod.sh" "$POD":/tmp/kc-group-pod.sh
 
 # Execute the setup script inside the pod with required environment variables.
 kubectl -n "$NAMESPACE" exec "$POD" -- bash -c "
