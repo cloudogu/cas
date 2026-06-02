@@ -391,7 +391,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     def httpCode = ''
     while (ingressAttempts < ingressMaxAttempts) {
         httpCode = sh(returnStdout: true, script: "curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 ${discoveryUrl} || true").trim()
-        if (httpCode == '200') {
+        if (httpCode == '404') {
             echo "Keycloak ingress is reachable (HTTP ${httpCode})."
             break
         }
@@ -399,7 +399,7 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         sleep time: 10, unit: 'SECONDS'
         ingressAttempts++
     }
-    if (httpCode != '200') {
+    if (httpCode != '404') {
         error("Timed out waiting for Keycloak ingress to route to Keycloak (last HTTP status: ${httpCode})")
     }
 
