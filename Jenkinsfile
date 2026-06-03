@@ -373,13 +373,17 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
         }
     }
 
+    //setup keycloak-postgresql network policy
+    sh """
+    kubectl apply -f integrationTests/k8s/keycloak-postgresql-network-policy.yaml -n ${namespace}
+    """
+
     echo "Waiting for Keycloak pod  to be ready..."
     sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=300s"
 
-    //setup keycloak ingress and network policies
+    //setup keycloak ingress
     sh """
-    kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace} \
-    kubectl apply -f integrationTests/k8s/keycloak-postgresql-network-policy.yaml -n ${namespace}
+    kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
     """
 
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
