@@ -7,8 +7,13 @@
 
 import com.cloudogu.ces.cesbuildlib.K3d
 import com.cloudogu.ces.cesbuildlib.Makefile
+import com.cloudogu.ces.cesbuildlib.Maven
+import com.cloudogu.ces.cesbuildlib.MavenInDocker
+
+
 
 String clientSecret = ''
+String keycloakCasClientSecret = ''
 def pipe = new com.cloudogu.sos.pipebuildlib.DoguPipe(this, [
     doguName           : 'cas',
     shellScripts       : ['''
@@ -172,7 +177,17 @@ def componentStages = { group ->
 
 pipe.addStageGroup('component', pipe.agentMultinode, componentStages)
 
-def casConfigOverride = { String externalIp ->
+def casSecretOverride = { String casClientSecret ->
+    return """
+{
+  "oidc": {
+    "client_secret": "${casClientSecret}"
+  }
+}
+"""
+}
+
+def casConfigOverride = { String keycloakUrl ->
     return """
 {
   "forgot_password_text": "Contact your admin",
@@ -183,7 +198,7 @@ def casConfigOverride = { String externalIp ->
   },
   "oidc": {
     "enabled": "true",
-    "discovery_uri": "http://${externalIp}:9000/auth/realms/Test/.well-known/openid-configuration",
+    "discovery_uri": "http://${keycloakUrl}/auth/realms/Test/.well-known/openid-configuration",
     "client_id": "cas",
     "display_name": "cas",
     "optional": "true",
@@ -218,6 +233,19 @@ def mergeConfigMapYaml = { String configMapName, String overrideConfig ->
        """
 }
 
+def mergeSecretYaml = { String secretName, String overrideConfig ->
+    sh """
+       kubectl get secret ${secretName} -n ecosystem -o yaml | .bin/yq '
+         .data."config.yaml" |= (
+           (. | @base64d | from_yaml) * ${overrideConfig}
+           | to_yaml
+           | @base64
+         )
+       ' | tee ${secretName}-output.yml | kubectl apply -f -
+       """
+}
+
+
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:21-jdk-alpine'
     com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
@@ -250,48 +278,201 @@ pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
 
 pipe.overrideStage('Setup') {
     ecoSystem.loginBackend('cesmarvin-setup')
-    String casConfig = casConfigOverride(ecoSystem.externalIP)
+    String casConfig = casConfigOverride(ecoSystem.externalIP + ":9000")
+    String casSecret = casSecretOverride(clientSecret)
     ecoSystem.setup([registryConfig: """
         "cas": ${casConfig},
         "_global": ${globalConfigOverride}
     """, registryConfigEncrypted: """
-        "cas": {
-            "oidc": {
-                "client_secret": "${clientSecret}"
-            }
-        }
+        "cas": ${casSecret}
     """])
 }
 
-pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs') {
-     echo "Create custom dogu to access OAuth endpoints for the integration tests"
-     def podname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
-     String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
 
-     sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $podname:/etc/cas/services/production/ "
+pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak') {
+    echo "Setup Keycloak as OIDC provider for integration tests"
+    def currentContext = sh(returnStdout: true, script: "kubectl config current-context").trim()
+    def namespace = "ecosystem"
+    def random_suffix = sh(returnStdout: true, script: "head /dev/urandom | tr -dc a-z0-9 | head -c 8").trim()
+    def dirName = "keycloak-repo-${random_suffix}"
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+    withCredentials([usernamePassword(credentialsId: 'SCM-Manager', usernameVariable: 'AUTH_USR', passwordVariable: 'AUTH_PS')]) {
+        sh(
+                script: "git clone https://\"${AUTH_USR}\":\"${AUTH_PS}\"@ecosystem.cloudogu.com/scm/repo/platform/account.cloudogu.com ${dirName}",
+                returnStdout: true
+        )
+    }
 
-     sh "make install-yq"
-     mergeConfigMapYaml('cas-config', casConfig)
+    dir(dirName) {
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+        Maven mvn = new MavenInDocker(this, "3.9.9-eclipse-temurin-17")
+        mvn.enableDockerHost = true
+        mvn "clean verify -Dmaven.test.skip=true -Ddocker.imageName=account.cloudogu.com/cloudogu-keycloak io.fabric8:docker-maven-plugin:build"
+        sh "docker tag account.cloudogu.com/cloudogu-keycloak:latest registry.cloudogu.com/ci/account.cloudogu.com:1.0.0"
+        sh "docker push registry.cloudogu.com/ci/account.cloudogu.com:1.0.0"
+        sh("""
+        sudo apt-get install curl gpg apt-transport-https --yes
+        curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+        sudo apt-get update
+        sudo apt-get install helm""")
 
-     mergeConfigMapYaml('global-config', globalConfigOverride)
+        sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
+        sh 'helm repo update'
 
-     // This may be extracted to a dogu build lib function
-     def globalConfigLastUpdateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
-     def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+        def HELM_CMD = "install"
+        def deploymentExists = sh(returnStatus: true, script: "helm --kube-context=${currentContext} --namespace=${namespace} list -q | grep -q '^keycloak\$'")
+        if (deploymentExists == 0) {
+            HELM_CMD = "upgrade"
+        }
 
-     while (casDoguStartedAt < globalConfigLastUpdateTime) {
-         echo "${casDoguStartedAt} is not after ${globalConfigLastUpdateTime} yet."
-         echo "Waiting for CAS to restart and pick up the new global config..."
-         sleep time: 10, unit: 'SECONDS'
-         casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
-     }
+        pipe.multiNodeEcoSystem.waitForDogu("postgresql")
+
+        def postgreSqlPodName = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=postgresql --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""")
+        def postgresqlCreds = sh(returnStdout: true, script: "kubectl --namespace=ecosystem exec ${postgreSqlPodName} -- /create-sa.sh keycloak")
+        def postgreSqlCredentialLines = postgresqlCreds.trim().split("\n")
+        def postgresqlDatabase = postgreSqlCredentialLines.find { it.startsWith("database:") }?.split(":", 2)[1]?.trim()
+        def postgresqlUsername = postgreSqlCredentialLines.find { it.startsWith("username:") }?.split(":", 2)[1]?.trim()
+        def postgresqlPassword = postgreSqlCredentialLines.find { it.startsWith("password:") }?.split(":", 2)[1]?.trim()
+
+        sh """
+            helm --kube-context=${currentContext} --namespace=${namespace} ${HELM_CMD} keycloak --version 24.2.0 bitnami/keycloak \
+              -f ./k8s/values-shared.yaml \
+              -f ../integrationTests/k8s/keycloak-values.yaml \
+              --set "image.pullSecrets={'ces-container-registries'}" \
+              --set externalDatabase.user=${postgresqlUsername} \
+              --set externalDatabase.database=${postgresqlDatabase} \
+              --set externalDatabase.password=${postgresqlPassword} \
+              --set KC_HOSTNAME=${pipe.multiNodeEcoSystem.externalIP}
+        """
+  }
 
 
-     pipe.multiNodeEcoSystem.waitForDogu("cas")
+    // Wait for Keycloak pod to exist and be ready. Sometimes the pod is not created yet, so poll for it.
+    echo "Waiting for Keycloak pod to appear..."
+    def keycloakExists = sh(
+        script: """
+            kubectl get pods -n ecosystem --no-headers | grep -q '^keycloak'
+        """,
+        returnStatus: true
+    ) == 0
+    int keycloakWaitAttempts = 0
+    int keycloakMaxAttempts = 30
+    while (!keycloakExists) {
+        echo "Keycloak pod not found yet (attempt ${keycloakWaitAttempts + 1}/${keycloakMaxAttempts}). Waiting 10s..."
+        sleep time: 10, unit: 'SECONDS'
+        keycloakExists = sh(
+            script: """
+                kubectl get pods -n ecosystem --no-headers | grep -q '^keycloak'
+            """,
+            returnStatus: true
+        ) == 0
+        keycloakWaitAttempts++
+        if (keycloakWaitAttempts >= keycloakMaxAttempts) {
+            error("Timed out waiting for Keycloak pod to appear in namespace 'ecosystem'.")
+        }
+    }
+
+    //setup keycloak-postgresql network policy
+    sh """
+    kubectl apply -f integrationTests/k8s/keycloak-postgresql-network-policy.yaml -n ${namespace}
+    """
+
+    echo "Waiting for Keycloak pod  to be ready..."
+    sh "kubectl -n ecosystem wait --for=condition=ready pod -l app.kubernetes.io/name=keycloak --timeout=300s"
+
+    //setup keycloak ingress
+    sh """
+    kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
+    """
+
+    // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
+    sh("""
+    CLIENT_REDIRECT=https://${pipe.multiNodeEcoSystem.externalIP}/cas/* \
+    bash ./integrationTests/keycloak/k8s/kc-setup-k8s.sh \
+    """)
+
+    // Ensure the OIDC test user exists in Keycloak before running integration tests.
+    sh("""
+    KC_NAMESPACE=${namespace} \
+    REALM=Test \
+    GROUP=testers \
+    USERNAME=tester \
+    EMAIL=tester@example.com \
+    PASSWORD=test \
+    bash ./integrationTests/keycloak/k8s/kc-add-user-k8s.sh
+    """)
+
+    // Configure Keycloak client-scope and group mapper for OIDC group claims.
+    sh("""
+    KC_NAMESPACE=${namespace} \
+    REALM=Test \
+    CLIENT_ID_STR=cas \
+    SCOPE_NAME=groups \
+    CLAIM_NAME=groups \
+    bash ./integrationTests/keycloak/k8s/kc-group-k8s.sh
+    """)
+
+    keycloakCasClientSecret = sh(returnStdout: true, script: """
+        grep '^CLIENT_SECRET=' kc_out.env | cut -d'=' -f2-
+    """).trim()
+
+    if (!keycloakCasClientSecret) {
+        error("Failed to read client secret from the Test realm")
+    }
+
+    echo "Retrieved Test realm client secret length: ${keycloakCasClientSecret.size()}"
+
+    // Verify that the ingress routes to Keycloak by polling the OIDC discovery endpoint
+    echo "Checking Keycloak ingress routing via external IP ${pipe.multiNodeEcoSystem.externalIP}..."
+    def discoveryUrl = "http://${pipe.multiNodeEcoSystem.externalIP}/auth/realms/Test/.well-known/openid-configuration"
+    int ingressAttempts = 0
+    int ingressMaxAttempts = 30
+    def httpCode = ''
+    while (ingressAttempts < ingressMaxAttempts) {
+        httpCode = sh(returnStdout: true, script: "curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 ${discoveryUrl} || true").trim()
+        if (httpCode == '200') {
+            echo "Keycloak ingress is reachable (HTTP ${httpCode})."
+            break
+        }
+        echo "Keycloak ingress not reachable yet (status=${httpCode}). Waiting 10s (attempt ${ingressAttempts + 1}/${ingressMaxAttempts})..."
+        sleep time: 10, unit: 'SECONDS'
+        ingressAttempts++
+    }
+    if (httpCode != '200') {
+        error("Timed out waiting for Keycloak ingress to route to Keycloak (last HTTP status: ${httpCode})")
+    }
+
+    def casPodname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
+
+    String casConfig = casConfigOverride(pipe.multiNodeEcoSystem.externalIP)
+    String casSecretConfig = casSecretOverride(keycloakCasClientSecret)
+
+    sh "kubectl --namespace=ecosystem cp ./integrationTests/services/ $casPodname:/etc/cas/services/production/ "
+
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
+
+    sh "make install-yq"
+    mergeConfigMapYaml('cas-config', casConfig)
+    mergeSecretYaml('cas-config', casSecretConfig)
+
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
+
+    mergeConfigMapYaml('global-config', globalConfigOverride)
+
+    // This may be extracted to a dogu build lib function
+    def globalConfigLastUpdateTime = sh(returnStdout: true, script: """kubectl get configmap -n ecosystem --show-managed-fields global-config -o json | jq -r '.metadata.managedFields[].time' | sort | tail -1""").trim()
+    def casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+
+    while (casDoguStartedAt < globalConfigLastUpdateTime) {
+        echo "${casDoguStartedAt} is not after ${globalConfigLastUpdateTime} yet."
+        echo "Waiting for CAS to restart and pick up the new global config..."
+        sleep time: 10, unit: 'SECONDS'
+        casDoguStartedAt = sh(returnStdout: true, script: """kubectl get dogu -n ecosystem cas -o json | jq -r '.status.startedAt'""").trim()
+    }
+
+
+    pipe.multiNodeEcoSystem.waitForDogu("cas")
 }
 
 pipe.overrideStage('Integration Tests') {

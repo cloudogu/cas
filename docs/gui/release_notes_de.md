@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.2.7-19] - 2026-06-03
+- Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.
+
 ## [v7.2.7-18] - 2026-06-02
 ### Security
 - Sicherheitslücke [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789) geschlossen
