@@ -381,26 +381,6 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     kubectl apply -f integrationTests/k8s/keycloak-ingress.yaml -n ${namespace}
     """
 
-    // Verify that the ingress routes to Keycloak by polling the OIDC discovery endpoint
-    echo "Checking Keycloak ingress routing via external IP ${pipe.multiNodeEcoSystem.externalIP}..."
-    def discoveryUrl = "http://${pipe.multiNodeEcoSystem.externalIP}/auth/realms/Test/.well-known/openid-configuration"
-    int ingressAttempts = 0
-    int ingressMaxAttempts = 30
-    def httpCode = ''
-    while (ingressAttempts < ingressMaxAttempts) {
-        httpCode = sh(returnStdout: true, script: "curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 ${discoveryUrl} || true").trim()
-        if (httpCode == '404') {
-            echo "Keycloak ingress is reachable (HTTP ${httpCode})."
-            break
-        }
-        echo "Keycloak ingress not reachable yet (status=${httpCode}). Waiting 10s (attempt ${ingressAttempts + 1}/${ingressMaxAttempts})..."
-        sleep time: 10, unit: 'SECONDS'
-        ingressAttempts++
-    }
-    if (httpCode != '404') {
-        error("Timed out waiting for Keycloak ingress to route to Keycloak (last HTTP status: ${httpCode})")
-    }
-
     // Set up the Test realm/client inside the pod and copy the generated secret to kc_out.env.
     sh("""
     CLIENT_REDIRECT=https://${pipe.multiNodeEcoSystem.externalIP}/cas/* \
@@ -437,6 +417,26 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
     }
 
     echo "Retrieved Test realm client secret length: ${keycloakCasClientSecret.size()}"
+
+    // Verify that the ingress routes to Keycloak by polling the OIDC discovery endpoint
+    echo "Checking Keycloak ingress routing via external IP ${pipe.multiNodeEcoSystem.externalIP}..."
+    def discoveryUrl = "http://${pipe.multiNodeEcoSystem.externalIP}/auth/realms/Test/.well-known/openid-configuration"
+    int ingressAttempts = 0
+    int ingressMaxAttempts = 30
+    def httpCode = ''
+    while (ingressAttempts < ingressMaxAttempts) {
+        httpCode = sh(returnStdout: true, script: "curl -s -o /dev/null -w \"%{http_code}\" --max-time 5 ${discoveryUrl} || true").trim()
+        if (httpCode == '200') {
+            echo "Keycloak ingress is reachable (HTTP ${httpCode})."
+            break
+        }
+        echo "Keycloak ingress not reachable yet (status=${httpCode}). Waiting 10s (attempt ${ingressAttempts + 1}/${ingressMaxAttempts})..."
+        sleep time: 10, unit: 'SECONDS'
+        ingressAttempts++
+    }
+    if (httpCode != '200') {
+        error("Timed out waiting for Keycloak ingress to route to Keycloak (last HTTP status: ${httpCode})")
+    }
 
     def casPodname = sh(returnStdout: true, script: """kubectl get pod -l dogu.name=cas --namespace=ecosystem -o jsonpath='{.items[0].metadata.name}'""").trim()
 
