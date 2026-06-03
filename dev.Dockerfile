@@ -1,5 +1,5 @@
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:11.0.20-1
+FROM registry.cloudogu.com/official/java:11.0.30-5
 
 LABEL NAME="official/cas" \
       VERSION="6.6.12-1" \

@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Setup Keycloak as an OIDC provider in the multinode Jenkins pipeline and use it for the CAS integration tests.
   - Setup the Test Realm in Keycloak with a test client and test user for the CAS integration tests.
 
+## [v7.2.7-18] - 2026-06-02
+### Changed
+- [#340] Update base image to v3.23.4-2
+- [#340] Update java base image to v21.0.10-7 and v11.0.30-5
+
+### Security
+- [#340] Fix [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789)
+
 ## [v7.2.7-17] - 2026-05-28
 ### Changed
 - [#336] Removed obsolete blueprint operator stop in Jenkins pipeline

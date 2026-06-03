@@ -7,6 +7,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ## [Unreleased]
 - Fixed an issue where the CAS integration tests failed in multinode environments.
 
+## [v7.2.7-18] - 2026-06-02
+### Security
+- Fix vulnerability [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789)
+
 ## [v7.2.7-17] - 2026-05-28
 - Removed obsolete blueprint operator stop function in Jenkins pipeline.
 
@@ -26,20 +30,20 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [v7.2.7-12] - 2026-03-26
 ### Changed
-- [#317] Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
+- Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
 
 ## [v7.2.7-11] - 2026-03-26
 ### Fixed
-- [#324] Fixed an issue where capitalized fqdns were problematic in some dogu authentication flows.
+- Fixed an issue where capitalized fqdns were problematic in some dogu authentication flows.
 
 ## [v7.2.7-10] - 2026-03-10
 ### Fixed
-- [#310] Fixed an issue where back-channel logouts from local clusters were not possible.
+- Fixed an issue where back-channel logouts from local clusters were not possible.
   - Local URLs, such as *.localhost and *.localdomain, can be allowed with the `allow_local_urls` key.
 
 ## [v7.2.7-9] - 2026-03-06
 ### Added
-- [#316] Experimental two-factor authentication support with TOTP
+- Experimental two-factor authentication support with TOTP
   - see the [documentation](../operations/two_factor_authentication_en.md) for more details
 
 ## [v7.2.7-8] - 2026-02-19
@@ -48,29 +52,29 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [v7.2.7-7] - 2026-02-12
 ### Security
-- [#312] fixed [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
+- fixed [CVE-2025-61732](https://avd.aquasec.com/nvd/2026/CVE-2025-61732) und [CVE-2025-68121](https://avd.aquasec.com/nvd/2026/CVE-2025-68121).
 
 ## [v7.2.7-6] - 2026-01-29
 ### Security
-- [#308] fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
+- fixed [cve-2025-15467](https://avd.aquasec.com/nvd/2025/cve-2025-15467/)
 
 ## [v7.2.7-5] - 2025-11-26
-- [#306] Updated default settings for java heap size, memory request and memory limit. 
+- Updated default settings for java heap size, memory request and memory limit. 
 
 ## [v7.2.7-4] - 2025-10-27
 - This release fixes an upgrade error in environments that use an external directory service rather than an LDAP dogu.
 
 ## [v7.2.7-3] - 2025-10-23
 ### Behoben
-- [#299] Fixed an issue where conflicting Spring-Boot versions were present.
+- Fixed an issue where conflicting Spring-Boot versions were present.
 
 ## [v7.2.7-2] - 2025-10-17
 ### Security
-- [#295] Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
+- Fix CVE-2025-41232 - Fixed a Spring Security issue that could allow unauthorized access.
 
 ## [v7.2.7-1] - 2025-10-06
 ### Changed
-- [#293] Upgraded CAS to 7.2.7
+- Upgraded CAS to 7.2.7
 
 ## [v7.2.6-3] - 2025-09-18
 ### Changed
@@ -82,7 +86,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [v7.2.6-1] - 2025-08-26
 ### Changed
-- [#281] Upgrade CAS to version 7.2.6
+- Upgrade CAS to version 7.2.6
 
 ## [v7.1.6-6] - 2025-08-14
 ### Fixed
@@ -125,7 +129,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [v7.1.6-1] - 2025-04-30
 ### Changed
-- [#263] Upgrade CAS to version 7.1.6
+- Upgrade CAS to version 7.1.6
 
 ## [v7.0.10-2] - 2025-04-23
 ### Changed
@@ -133,7 +137,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [v7.0.10-1] - 2025-04-17
 ### Changed
-- [#261] Upgrade CAS to version 7.0.10.1
+- Upgrade CAS to version 7.0.10.1
 
 ## [v7.0.8-14] - 2025-04-16
 ### Security
