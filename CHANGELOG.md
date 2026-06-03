@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.2.7-19] - 2026-06-03
 ### Fixed
 - [#326] Fixed a problem where the CAS integration test step failed in the multinode Jenkins pipeline because there was no OIDC provider.
   - Setup Keycloak as an OIDC provider in the multinode Jenkins pipeline and use it for the CAS integration tests.
