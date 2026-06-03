@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.2.7-19] - 2026-06-03
 - Fixed an issue where the CAS integration tests failed in multinode environments.
 
 ## [v7.2.7-18] - 2026-06-02
