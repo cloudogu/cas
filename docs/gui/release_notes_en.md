@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.2.7-19] - 2026-06-03
+- Fixed an issue where the CAS integration tests failed in multinode environments.
+
 ## [v7.2.7-18] - 2026-06-02
 ### Security
 - Fix vulnerability [CVE-2026-31789](https://nvd.nist.gov/vuln/detail/CVE-2026-31789)

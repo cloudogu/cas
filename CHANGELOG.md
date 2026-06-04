@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-19] - 2026-06-03
+### Fixed
+- [#326] Fixed a problem where the CAS integration test step failed in the multinode Jenkins pipeline because there was no OIDC provider.
+  - Setup Keycloak as an OIDC provider in the multinode Jenkins pipeline and use it for the CAS integration tests.
+  - Setup the Test Realm in Keycloak with a test client and test user for the CAS integration tests.
+
 ## [v7.2.7-18] - 2026-06-02
 ### Changed
 - [#340] Update base image to v3.23.4-2
