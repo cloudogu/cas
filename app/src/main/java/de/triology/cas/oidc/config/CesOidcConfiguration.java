@@ -1,6 +1,9 @@
 package de.triology.cas.oidc.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
+import lombok.NonNull;
+import lombok.val;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
@@ -18,6 +21,7 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcess
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
@@ -33,6 +37,7 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -163,13 +168,24 @@ public class CesOidcConfiguration {
      */
 
 
+    @Bean
+    //@ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
+    @RefreshScope()
+    public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
+            final CasConfigurationProperties casProperties) {
+        val core = casProperties.getAuthn().getPac4j().getCore();
+        return Caffeine.newBuilder()
+                .maximumSize(core.getCacheSize())
+                .expireAfterWrite(Beans.newDuration(core.getCacheDuration()))
+                .build();
+    }
 
     @Bean
     @Primary
     @RefreshScope
     public DelegatedIdentityProviderFactory customDelegatedClientFactory(
         CasConfigurationProperties casProperties,
-        Cache<String, Collection<BaseClient>> pac4jDelegatedClientFactoryCache,
+        Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache,
         ConfigurableApplicationContext applicationContext,
         CesDelegatedOidcClientsProperties cesDelegatedOidcClientsProperties
     ) {
