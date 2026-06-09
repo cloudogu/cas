@@ -168,9 +168,22 @@ public class CesOidcConfiguration {
      */
 
 
+    /**
+     * Provides the Caffeine cache used by {@link #customDelegatedClientFactory} to store and retrieve
+     * delegated OIDC clients by key.
+     *
+     * <p>This bean must NOT be annotated with {@code @RefreshScope}. When a bean is refresh-scoped,
+     * Spring Cloud wraps it in a scoped proxy that does not reliably preserve generic type information
+     * (e.g. {@code Cache<String, List<BaseClient>>}). As a result, Spring cannot match it as an
+     * autowire candidate for the typed parameter in {@code customDelegatedClientFactory}, causing a
+     * {@code NoSuchBeanDefinitionException} at runtime on every login page load.
+     * Making it a plain singleton avoids this and is correct: the cache outlives individual refresh
+     * cycles, and the factory that uses it is already refresh-scoped.
+     *
+     * <p>The {@code @ConditionalOnMissingBean} was removed because CAS 7.3 no longer provides this
+     * bean itself, so the condition would never trigger and the cache would never be created.
+     */
     @Bean
-    //@ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
-    @RefreshScope()
     public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
             final CasConfigurationProperties casProperties) {
         val core = casProperties.getAuthn().getPac4j().getCore();
