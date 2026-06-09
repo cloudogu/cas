@@ -5,6 +5,7 @@ In diesem Abschnitt werden die benötigten Schritte beschrieben, um die Integrat
 ## Voraussetzungen
 
 * Es ist notwendig, das Programm `yarn` zu installieren
+* Führen Sie `yarn install` und `npm install` aus, um die benötigte Version der dogu-integration-lib tatsächlich zu verwenden.
 
 ## Konfiguration 
 
@@ -35,7 +36,7 @@ module.exports = defineConfig({
         "baseUrl": "https://192.168.56.2",
         "env": {
             "DoguName": "cas/login",
-            "MaxLoginRetries": 3,
+            "MaxLoginRetries": -1,
             "AdminUsername": "ces-admin",
             "AdminPassword": "Ecosystem2016!",
             "AdminGroup": "CesAdministrators",
@@ -79,6 +80,16 @@ etcdctl set /config/cas/service_accounts/oauth/inttest/secret "fda8e031d07de22bf
 ```
 Hier muss `inttest` dem Namen des "leeren" Dogus aus dem ersten Schritt entsprechen. Bei dem Wert handelt es sich um das konfigurierte Client-Secret aus der `cypress.json` als SHA-256 Hash.
 
+Falls dies nicht direkt funktioniert, überprüfe im `cas`-Container, ob der Service tatsächlich registriert wurde:
+```bash
+docker exec -it cas bash
+less /etc/cas/services/production/inttest-xy.json # xy steht für eine beliebige Zahl
+# Falls die Datei existiert, ändere das Secret auf den oben genannten Wert.
+# Falls nicht, führe folgendes Script aus und trage anschließend das Secret in die Datei ein
+/create-sa.sh oauth inttest 
+# Stelle sicher, dass der etcd-Eintrag weiterhin korrekt ist.
+```
+
 **Schritt 3:**
 
 Damit unsere Tests für die Passwort-Vergessen-Funktion durchgeführt werden können, müssen wir im CAS einen Text definieren, der bei einem Klick auf den Passwort-Vergessen-Button angezeigt werden soll.
@@ -116,10 +127,15 @@ Die von den Tests erwarteten URLs sind in der `cypress.json` unter den Attribute
 
 **Schritt 1:** Keycloak auf der Host-Maschine starten und Realm importieren (**Achtung: Der Pfad zur JSON muss angepasst werden!**)
 
+Passe den Volume-Pfad an die Ordnerstruktur an. Auch die Verwendung von `pwd` innerhalb des Repositorys funktioniert: `-v "$(pwd)"/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json`
+
 ```bash
 docker run --rm -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e 
 KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile.feature.upload_scripts=enabled" -v  /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json quay.io/keycloak/keycloak:15.0.2
 ```
+
+
+Zusätzlich muss der Benutzer "tester" im Keycloak-Realm "Cloudogu" angelegt werden. Es ist möglich dazu die Skripte unter `/keycloak` zu verwenden: `./keycloak/kc-add-user.sh -u tester -r Cloudogu`
 
 **Schritt 2:** Konfiguration für den CAS im CES:
 
