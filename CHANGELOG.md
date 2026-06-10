@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#334] Upgrade Apereo CAS from 7.2.7 to 7.3.7.
+  - Aligned the managed platform with the CAS 7.3.7 baseline: Spring Boot 3.5.6 and Tomcat 11.0.22.
+- [#334] Disabled pac4j distributed session replication, since this dogu runs as a single pod.
+  - Set `cas.authn.oauth.session-replication.replicate-sessions=false` (OAuth/OIDC server) and
+    `cas.authn.pac4j.core.session-replication.replicate-sessions=false` (delegated authentication).
+  - CAS 7.3 enables replication by default, which stores the session reference in a cookie whose
+    value contains the user-agent (spaces/parentheses) and is therefore dropped by Tomcat as an
+    invalid cookie; the in-pod HTTP session is used instead.
+- [#334] The forced password-change screen (expired / must-change at login) now requires the user
+  to enter their current password, as mandated by CAS 7.3.
 
 ## [v7.2.7-19] - 2026-06-03
 ### Fixed
