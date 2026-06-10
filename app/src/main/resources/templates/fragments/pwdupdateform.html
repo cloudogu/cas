@@ -83,6 +83,45 @@
                 </div>
             </details>
 
+            <!--
+                "Current password" field — required since the CAS 7.2.7 -> 7.3.7 upgrade.
+                As of CAS 7.3, org.apereo.cas.pm.web.flow.actions.PasswordChangeAction rejects a
+                password change made during the login flow (the forced "must change / expired"
+                case) unless the submitted currentPassword equals the password the user just
+                authenticated with. This check is hardcoded in CAS — there is NO property to
+                disable it (verified against cas.authn.pm.* in 7.3.7). It is a deliberate
+                re-authentication gate before a sensitive action.
+                Yes, the user just typed this password at login, so it feels redundant; we keep
+                the field anyway to stay on stock CAS behaviour with zero custom Java to maintain
+                across upgrades. If this field is removed, the forced password change will fail
+                with: ERROR "Current password is not correct or is undefined".
+                See docs/development/cas-7.3-upgrade-notes.md.
+            -->
+            <section>
+                <div class="relative" aria-live="polite">
+                    <label for="currentPassword"
+                           id="current-password-label"
+                           class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                            <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label"
+                                    th:utext="#{screen.pm.currentpsw}">Current Password:</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+
+                        <input
+                                class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                type="password"
+                                name="currentPassword"
+                                id="currentPassword"
+                                data-testid="currentPassword-input" th:field="*{currentPassword}"
+                                autocomplete="off" required/>
+                    </label>
+                </div>
+            </section>
+
             <section>
                 <div class="relative" aria-live="polite">
                     <label for="password"
