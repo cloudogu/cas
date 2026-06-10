@@ -347,6 +347,21 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 
 # https://apereo.github.io/cas/7.0.x/authentication/OIDC-Authentication-TokenExpirationPolicy.html#id-tokens
 cas.authn.oidc.id-token.include-id-token-claims=false
+
+# Store pac4j session data (OAuth server: pac4jRequestedUrl; delegated OIDC client: state/nonce) in the
+# local HTTP session instead of the ticket-registry-backed distributed session store.
+# CAS 7.3 enables distributed session replication by default (replicate-sessions=true). The distributed
+# store writes a cookie ("DISSESSIONOauthOidcServerSupport" for the OAuth/OIDC server, "DISSESSIONAuthnDelegation"
+# for delegated authentication) whose value is the compound "TST-<id>@<clientIP>@<userAgent>". The user-agent
+# contains spaces/parentheses, making it an illegal (RFC 6265) cookie value that Tomcat truncates/drops -> the
+# transient session ticket is lost across the redirect -> OAuth /authorize returns no code, and delegated OIDC
+# login fails with "OidcMissingSessionStateException: State cannot be determined".
+# This CAS dogu runs as a single pod, so cross-instance replication is unnecessary; the in-pod HTTP session
+# survives all redirects (including the round-trip to the external IdP). If CAS is ever scaled beyond one pod,
+# enable sticky sessions at the ingress or re-enable replication with a properly encrypted session cookie.
+# Two independent subsystems, two independent settings -> both must be disabled:
+cas.authn.oauth.session-replication.replicate-sessions=false
+cas.authn.pac4j.core.session-replication.replicate-sessions=false
 ########################################################################################################################
 
 ########################################################################################################################
