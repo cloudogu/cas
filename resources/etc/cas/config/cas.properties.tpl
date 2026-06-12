@@ -39,7 +39,7 @@ spring.mail.protocol=smtp
 {{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
 management.endpoints.web.exposure.include=health,registeredServices
 {{ else }}
-management.endpoints.web.exposure.include=health
+### management.endpoints.web.exposure.include=health
 {{ end }}
 management.endpoint.health.probes.enabled=true
 management.endpoint.health.show-details=ALWAYS
@@ -379,8 +379,16 @@ cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scrat
 cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
+
+### api ###
+management.endpoints.web.exposure.include=health,gauthCredentialRepository
+cas.monitor.endpoints.endpoint.gauthCredentialRepository.access=AUTHENTICATED
+management.endpoint.gauthCredentialRepository.enabled=true
 {{ end }}
 
+### TODO Encrypted and only set config if variables are set
+spring.security.user.name={{ .Config.Get "experimental/totp/api_user_name" }}
+spring.security.user.password={{ .Config.Get "experimental/totp/api_user_password" }}
 
 ########################################################################################################################
 # URL Validation
