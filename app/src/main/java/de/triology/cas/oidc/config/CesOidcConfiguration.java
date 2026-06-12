@@ -2,7 +2,6 @@ package de.triology.cas.oidc.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
-import lombok.NonNull;
 import lombok.val;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
@@ -37,7 +36,6 @@ import org.pac4j.oidc.config.OidcConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
