@@ -1,10 +1,14 @@
 package de.triology.cas.oidc.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.LdapUtils;
@@ -260,5 +264,91 @@ class CesOidcConfigurationTests {
         var client = (org.pac4j.oidc.client.OidcClient) clients.iterator().next();
         assertEquals("test-client", client.getName());
         assertEquals("https://cas.example.org/login", client.getCallbackUrl());
-    }    
+    }
+
+    @Test
+    void shouldProvidePac4jDelegatedClientFactoryCache() {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var authnProps = mock(AuthenticationProperties.class);
+        var pac4jProps = mock(Pac4jDelegatedAuthenticationProperties.class);
+        var coreProps = mock(Pac4jDelegatedAuthenticationCoreProperties.class);
+
+        when(casProperties.getAuthn()).thenReturn(authnProps);
+        when(authnProps.getPac4j()).thenReturn(pac4jProps);
+        when(pac4jProps.getCore()).thenReturn(coreProps);
+        when(coreProps.getCacheSize()).thenReturn(100L);
+        when(coreProps.getCacheDuration()).thenReturn("PT8H");
+
+        var cache = configuration.pac4jDelegatedClientFactoryCache(casProperties);
+
+        assertNotNull(cache);
+        // Prove the configured Caffeine cache is functional, not just non-null.
+        cache.put("key", java.util.List.of());
+        assertNotNull(cache.getIfPresent("key"));
+    }
+
+    @Test
+    void shouldStoreAndRetrieveClientsViaFactoryCache() {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var applicationContext = mock(ConfigurableApplicationContext.class);
+        com.github.benmanes.caffeine.cache.Cache<String, java.util.List<BaseClient>> cache =
+                Caffeine.newBuilder().build();
+
+        var factory = configuration.customDelegatedClientFactory(
+                casProperties, cache, applicationContext, new CesDelegatedOidcClientsProperties());
+
+        // Empty cache -> the null branch must yield an empty (non-null) list.
+        assertTrue(factory.retrieve("missing").isEmpty());
+
+        var client = mock(BaseClient.class);
+        factory.store("key", java.util.List.of(client));
+        assertEquals(java.util.List.of(client), factory.retrieve("key"));
+    }
+
+    @Test
+    void shouldBuildClientsFromExplicitPropertiesViaBuildFrom() throws Exception {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var applicationContext = mock(ConfigurableApplicationContext.class);
+        var cache = mock(com.github.benmanes.caffeine.cache.Cache.class);
+
+        var clientProps = new CesDelegatedOidcClientProperties();
+        clientProps.setClientId("client-id");
+        clientProps.setClientName("buildfrom-client");
+        clientProps.setClientSecret("client-secret");
+        clientProps.setDiscoveryUri("https://issuer/.well-known/openid-configuration");
+        clientProps.setClientAuthenticationMethod("client_secret_basic");
+        clientProps.setPreferredJwsAlgorithm("RS256");
+
+        var clientsProps = new CesDelegatedOidcClientsProperties();
+        clientsProps.setClients(java.util.List.of(clientProps));
+
+        // buildFrom must use the passed-in properties (not the captured casProperties) for the callback URL.
+        var serverProps = mock(CasServerProperties.class);
+        when(serverProps.getPrefix()).thenReturn("https://other.example.org");
+        var explicitProperties = mock(CasConfigurationProperties.class);
+        when(explicitProperties.getServer()).thenReturn(serverProps);
+
+        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+        var clients = factory.buildFrom(explicitProperties);
+
+        assertEquals(1, clients.size());
+        var client = (org.pac4j.oidc.client.OidcClient) clients.getFirst();
+        assertEquals("buildfrom-client", client.getName());
+        assertEquals("https://other.example.org/login", client.getCallbackUrl());
+    }
+
+    @Test
+    void shouldDestroyCachedClients() throws Exception {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var applicationContext = mock(ConfigurableApplicationContext.class);
+        var cache = mock(com.github.benmanes.caffeine.cache.Cache.class);
+
+        var factory = configuration.customDelegatedClientFactory(
+                casProperties, cache, applicationContext, new CesDelegatedOidcClientsProperties());
+
+        assertNotNull(factory.build());
+        factory.destroy();
+        // After destroy() the internal cache is reset and build() must repopulate it without error.
+        assertNotNull(factory.build());
+    }
 }
