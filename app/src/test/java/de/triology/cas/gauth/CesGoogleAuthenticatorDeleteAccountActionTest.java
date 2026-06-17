@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,8 +72,6 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
 
     @Test
     void wrongTokenReturnsErrorLeavesAccountRegisteredAndExposesErrorMessage() throws Throwable {
-        when(validator.validate(any(), any())).thenReturn(null);
-
         var context = requestContext("true", "000000");
         var event = action.execute(context);
 
@@ -83,6 +80,69 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
         assertTrue(context.getFlashScope().get("gauthDeleteDeviceError", Boolean.class));
         assertTrue(context.getMessageContext().hasErrorMessages());
     }
+
+    @Test
+    void emptyTokenReturnsErrorLeavesAccountRegisteredAndExposesErrorMessage() throws Throwable {
+        var context = requestContext("true", "");
+        var event = action.execute(context);
+
+        assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
+        assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
+        assertTrue(context.getFlashScope().get("gauthDeleteDeviceError", Boolean.class));
+        assertTrue(context.getMessageContext().hasErrorMessages());
+    }
+
+
+    @Test
+    void noAuthenticationReturnsError() throws Throwable {
+        var flow = new Flow("login");
+        flow.setApplicationContext(new StaticApplicationContext());
+        var context = new MockRequestContext(flow);
+        context.putRequestParameter("accountId", Long.toString(ACCOUNT_ID));
+        context.putRequestParameter("validate", "true");
+        context.putRequestParameter("token", "123456");
+
+        var event = action.execute(context);
+
+        assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
+        assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
+        assertTrue(context.getFlashScope().get("gauthDeleteDeviceError", Boolean.class));
+        assertTrue(context.getMessageContext().hasErrorMessages());
+    }
+
+    @Test
+    void accountIdBlankReturnsError() throws Throwable {
+        var flow = new Flow("login");
+        flow.setApplicationContext(new StaticApplicationContext());
+        var context = new MockRequestContext(flow);
+        context.putRequestParameter("validate", "true");
+        context.putRequestParameter("token", "123456");
+
+        var event = action.execute(context);
+
+        assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
+        assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
+        assertTrue(context.getFlashScope().get("gauthDeleteDeviceError", Boolean.class));
+        assertTrue(context.getMessageContext().hasErrorMessages());
+    }
+
+    @Test
+    void accountIdNaNReturnsError() throws Throwable {
+        var flow = new Flow("login");
+        flow.setApplicationContext(new StaticApplicationContext());
+        var context = new MockRequestContext(flow);
+        context.putRequestParameter("accountId", "HelloWorld");
+        context.putRequestParameter("validate", "true");
+        context.putRequestParameter("token", "123456");
+
+        var event = action.execute(context);
+
+        assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
+        assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
+        assertTrue(context.getFlashScope().get("gauthDeleteDeviceError", Boolean.class));
+        assertTrue(context.getMessageContext().hasErrorMessages());
+    }
+
 
     @Test
     void oldSingleStepDeletePostReturnsErrorAndDoesNotDelete() throws Throwable {
