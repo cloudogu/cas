@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Service UI Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <th:block th:fragment="tokenInput(tokenTestId, accountId)">
+        <section class="cas-field form-group my-3 mdc-input-group">
+            <div class="d-flex">
+                <div class="w-100 mdc-input-group-field mdc-input-group-field-append">
+                    <div class="d-flex">
+                        <!--
+                          Plain request parameter (no th:field): this fragment is used both by the
+                          credential-bound login view and by the confirm-registration view, which has no
+                          th:object. The server reads accountId/token straight from the request parameters
+                          in both flows, so binding is unnecessary. The owning view passes the account id.
+                        -->
+                        <input type="hidden" name="accountId" size="25" autocomplete="off"
+                               th:value="${accountId}"/>
+
+                        <label for="token"
+                               class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label"
+                                          th:utext="#{cas.mfa.googleauth.label.token}"></span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <input id="totp-token-input"
+                                   name="token"
+                                   th:attr="data-testid=${tokenTestId}"
+                                   size="25"
+                                   type="password"
+                                   autocapitalize="none"
+                                   spellcheck="false"
+                                   class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                                   required
+                            />
+                        </label>
+                    </div>
+
+                    <section id="passwordRevealSection">
+                        <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
+                            <button type="button" role="checkbox" data-state="unchecked"
+                                    value="on"
+                                    data-testid="password-reveal-checkbox"
+                                    id="password-reveal-checkbox" aria-controls="password"
+                                    class="border rounded-sm outline-none focus-visible:ces-focused data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:hover:bg-brand-strong data-[state=checked]:hover:border-brand-strong data-[state=checked]:focus-visible:bg-brand-strong data-[state=checked]:focus-visible:border-brand-strong data-[state=checked]:disabled:bg-neutral-weak data-[state=checked]:disabled:border-neutral data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:hover:bg-brand-strong data-[state=indeterminate]:hover:border-brand-strong data-[state=indeterminate]:focus-visible:bg-brand-strong data-[state=indeterminate]:focus-visible:border-brand-strong data-[state=indeterminate]:disabled:bg-neutral-weak data-[state=indeterminate]:disabled:border-neutral data-[state=unchecked]:border-neutral data-[state=unchecked]:bg-default-background data-[state=unchecked]:hover:border-2 data-[state=unchecked]:hover:border-neutral-strong data-[state=unchecked]:focus-visible:border-2 data-[state=unchecked]:focus-visible:border-neutral-strong data-[state=unchecked]:disabled:bg-neutral-weak data-[state=unchecked]:disabled:border-neutral data-[state=unchecked]:disabled:border min-w-[24px] w-[24px] min-h-[24px] h-[24px] flex items-center justify-center">
+                            <span data-state="checked" style="pointer-events: none;" id="reveal-checkbox">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                     viewBox="0 0 256 256" class="text-inverted-text">
+                                    <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                    </path>
+                                </svg>
+                            </span>
+                            </button>
+                            <span>Token-Eingabe anzeigen</span>
+                        </label>
+
+                        <script>
+                            document.getElementById("password-reveal-checkbox").onclick = () => {
+                                const checkbox = document.getElementById("password-reveal-checkbox");
+                                const span = document.getElementById("reveal-checkbox");
+                                const pwInput = document.getElementById("totp-token-input");
+                                if (pwInput.type === "password") {
+                                    pwInput.type = "text";
+                                    checkbox.setAttribute('data-state', 'checked');
+                                    if (!span) {
+                                        const newSpan = document.createElement('span');
+                                        newSpan.id = "reveal-checkbox";
+                                        newSpan.style.pointerEvents = 'none';
+                                        newSpan.setAttribute('data-state', 'checked');
+                                        newSpan.innerHTML = `
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="text-inverted-text">
+                                            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+                                            </path>
+                                        </svg>`;
+                                        checkbox.appendChild(newSpan);
+                                    }
+                                } else {
+                                    pwInput.type = "password";
+                                    checkbox.setAttribute('data-state', 'unchecked');
+                                    if (span) {
+                                        span.parentNode.removeChild(span);
+                                    }
+                                }
+                            };
+                        </script>
+                    </section>
+                </div>
+                <div class="mdc-text-field-helper-line caps-warn" style="display: none;" id="tokenCapsWarn">
+                    <p
+                            class="mdc-text-field-helper-text form-text text-small mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                        <span th:utext="#{screen.capslock.on}"/>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <script type="text/javascript" th:inline="javascript">
+            (function () {
+                'use strict';
+
+                function initCapsLockDetection() {
+                    const capsWarnDiv = document.getElementById('tokenCapsWarn');
+
+                    if (!capsWarnDiv) {
+                        return;
+                    }
+
+                    function checkCapsLock(event) {
+                        try {
+                            const isCapsLockOn = event.getModifierState && event.getModifierState('CapsLock');
+                            capsWarnDiv.style.display = isCapsLockOn ? 'block' : 'none';
+                        } catch (e) {
+                            console.error('Error checking caps lock', e);
+                        }
+                    }
+
+                    document.addEventListener('keydown', checkCapsLock);
+                    document.addEventListener('keyup', checkCapsLock);
+                }
+
+                // Initialize when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initCapsLockDetection);
+                } else {
+                    initCapsLockDetection();
+                }
+            })();
+        </script>
+    </th:block>
+</main>
+</body>
+
+</html>

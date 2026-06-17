@@ -8,4 +8,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   de.triology.cas.pm.LdapPasswordManagementConfiguration,\
   de.triology.cas.services.CasCustomTemplateManagerConfiguration,\
   de.triology.cas.services.CesServicesManagerNullGuardAspectConfiguration,\
+  de.triology.cas.gauth.CesGoogleAuthenticatorConfiguration,\
   de.triology.cas.web.CustomUrlValidatorConfiguration

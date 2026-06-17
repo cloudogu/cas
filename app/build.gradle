@@ -217,6 +217,9 @@ dependencies {
     implementation "org.aspectj:aspectjweaver:1.9.22.1"
 
     implementation "org.apereo.cas:cas-server-support-gauth:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-gauth-core:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-gauth-core-mfa:${project.'cas.version'}"
+    implementation "org.apereo.cas:cas-server-support-otp-mfa-core:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-notifications:${project.'cas.version'}"
 }
 

@@ -3,69 +3,126 @@
       layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>Übersicht zweiter Faktor</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
 <body id="cas">
-    <main class="container mt-3 mb-3">
-        <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
-            <h1>Übersicht zweiter Faktor</h1>
-            <p>Dieses Gerät ist zurzeit als zweiter Faktor für <code th:text="${principal.id}"></code> registriert. Wird dieses Gerät gelöscht, muss die Zwei-Faktor-Authentifizierung erneut eingerichtet werden.</p>
-            <div class="card-text">
-                <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
-                    <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
-                        <h4 class="d-flex align-items-center">
-                            <ul style="list-style: none">
-                                <code>
-                                <li><i class="mdi mdi-laptop fas fa-laptop me-2" aria-hidden="true"></i>
-                                    <span th:id="${'name-' + device.name}" th:text="'Gerätename: ' + ${device.name}"></span>
-                                </li>
-                                <li><i class="mdi mdi-account-clock fas fa-user-clock me-2" aria-hidden="true"></i>
-                                    <span th:text="'Registrierungsdatum: ' + ${#temporals.format(device.registrationDate, 'dd.MM.yyyy HH:mm')}"></span>
-                                </li>
-                                <li><i class="mdi mdi-account-details fas fa-user-tag me-2" aria-hidden="true"></i>
-                                    <span th:id="${'id-' + device.id}" th:text="'Geräte-ID: ' + ${device.id}"></span>
-                                </li>
-                                </code>
-                            </ul>
-                        </h4>
-                        <button
-                                th:id="${'useButton-' + device.id}"
-                                th:value="#{screen.authentication.gauth.selectdevice}"
-                                th:utext="'Gerät beibehalten'"
-                                class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]">
-                        </button>
-                        <button
-                                th:id="${'delButton-' + device.id}"
-                                th:if="${#bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}"
-                                th:value="#{screen.authentication.gauth.deletedevice}"
-                                th:text="#{screen.authentication.gauth.deletedevice}"
-                                onclick="$(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();"
-                                class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-danger hover:bg-danger-strong focus-visible:bg-danger-strong active:bg-danger-stronger disabled:bg-danger-weak aria-disabled:bg-danger-weak rounded border-2 border-danger hover:border-danger-strong focus-visible:border-danger-strong active:border-danger-stronger disabled:border-danger-weak aria-disabled:border-danger-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]">
-                        ></button>
-                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                        <input type="hidden" name="accountId" th:value="${device.id}" />
-                        <input type="hidden" name="_eventId" value="select" />
-                    </form>
-                </div>
-            </div>
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
+        <h1>Übersicht zweiter Faktor</h1>
+        <p>Dieses Gerät ist zurzeit als zweiter Faktor für <code th:text="${principal.id}"></code> registriert. Wird
+            dieses Gerät gelöscht, muss die Zwei-Faktor-Authentifizierung erneut eingerichtet werden.</p>
+        <div class="card-text">
+            <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
+                <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
+                    <ul style="list-style: none" class="mb-3">
+                        <li class="d-flex align-items-center mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"
+                                 class="inline text-brand align-middle mr-3 h-[1lh] shrink-0" aria-hidden="true">
+                                <path d="M232,156h-4V72a28,28,0,0,0-28-28H56A28,28,0,0,0,28,72v84H24a12,12,0,0,0-12,12v24a28,28,0,0,0,28,28H216a28,28,0,0,0,28-28V168A12,12,0,0,0,232,156ZM52,72a4,4,0,0,1,4-4H200a4,4,0,0,1,4,4v84H52ZM220,192a4,4,0,0,1-4,4H40a4,4,0,0,1-4-4V180H220ZM156,96a12,12,0,0,1-12,12H112a12,12,0,0,1,0-24h32A12,12,0,0,1,156,96Z"/>
+                            </svg>
+                            <span>Gerätename: <strong th:id="${'name-' + device.name}"
+                                                       th:text="${device.name}"></strong></span>
+                        </li>
+                        <li class="d-flex align-items-center mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"
+                                 class="inline text-brand align-middle mr-3 h-[1lh] shrink-0" aria-hidden="true">
+                                <path d="M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm68-84a12,12,0,0,1-12,12H128a12,12,0,0,1-12-12V72a12,12,0,0,1,24,0v44h44A12,12,0,0,1,196,128Z"/>
+                            </svg>
+                            <span>Registrierungsdatum:
+                                <!--
+                                  registrationDate is a UTC ZonedDateTime. The server can't know the user's
+                                  timezone, so the visible text is converted to the browser's local time by
+                                  the script below. Without JavaScript it stays the UTC value, explicitly
+                                  marked, so the timestamp is never silently ambiguous.
+                                -->
+                                <time class="js-local-datetime"
+                                      th:data-epoch="${device.registrationDate.toInstant().toEpochMilli()}"
+                                      th:text="${#temporals.format(device.registrationDate, 'dd.MM.yyyy HH:mm') + ' UTC'}"></time>
+                            </span>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"
+                                 class="inline text-brand align-middle mr-3 h-[1lh] shrink-0" aria-hidden="true">
+                                <path d="M200,20H56A20,20,0,0,0,36,40V216a20,20,0,0,0,20,20H200a20,20,0,0,0,20-20V40A20,20,0,0,0,200,20Zm-4,192H60V44H196ZM84,68A12,12,0,0,1,96,56h64a12,12,0,0,1,0,24H96A12,12,0,0,1,84,68Zm8.8,127.37a48,48,0,0,1,70.4,0,12,12,0,0,0,17.6-16.32,72,72,0,0,0-19.21-14.68,44,44,0,1,0-67.19,0,72.12,72.12,0,0,0-19.2,14.68,12,12,0,0,0,17.6,16.32ZM128,116a20,20,0,1,1-20,20A20,20,0,0,1,128,116Z"/>
+                            </svg>
+                            <span th:id="${'id-' + device.id}" th:text="'Geräte-ID: ' + ${device.id}"></span>
+                        </li>
+                    </ul>
+                    <button type="submit" formnovalidate
+                            th:id="${'useButton-' + device.id}"
+                            th:value="#{screen.authentication.gauth.selectdevice}"
+                            th:utext="'Gerät beibehalten'"
+                            class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]">
+                    </button>
 
-            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
-                <p>
-                <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-                <input type="hidden" name="_eventId_register" value="Register"/>
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="register" class="mdc-button mdc-button--raised btn btn-primary me-2" name="register" accesskey="r" value="Register">
-                    <span class="mdc-button__label" th:text="#{screen.welcome.button.register}"></span>
-                </button>
-            </form>
-            <p>
+                    <hr class="my-4"/>
+
+                    <!--
+                      Delete group: removing the device requires proving possession of a current second
+                      factor. This view has no th:object; the delete action reads accountId/token/validate
+                      from the raw request parameters, and errors surface via the gauthDeleteDeviceError
+                      banner above. The fragment owns the accountId/token inputs.
+                    -->
+                    <p>Zum Löschen des Geräts geben Sie bitte einen aktuellen Authenticator- oder Scratch-Code ein.</p>
+                    <div th:if="${gauthDeleteDeviceError}" id="gauthDeleteErrorPanel" class="text-danger mt-3"
+                         role="alert" aria-live="polite">
+                        <p><strong th:utext="#{screen.authentication.gauth.delete.invalidtoken}"></strong></p>
+                    </div>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <div th:replace="~{fragments/gauthTokenInput :: tokenInput(tokenTestId='delete-totp-token-input-field', accountId=${device.id})}"/>
+                    <div data-testid=login-form-totp-login-button-container>
+                        <button type="button"
+                                th:id="${'delButton-' + device.id}"
+                                th:value="#{screen.authentication.gauth.deletedevice}"
+                                th:utext="#{screen.authentication.gauth.deletedevice}"
+                                onclick="var f=this.closest('form'); if(!f.querySelector('input[name=token]').value.trim()){f.querySelector('input[name=token]').focus();return false;} f.querySelector('input[name=validate]').value='true'; f.querySelector('input[name=_eventId]').value='delete'; f.submit();"
+                                class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-danger hover:bg-danger-strong focus-visible:bg-danger-strong active:bg-danger-stronger disabled:bg-danger-weak aria-disabled:bg-danger-weak rounded border-2 border-danger hover:border-danger-strong focus-visible:border-danger-strong active:border-danger-stronger disabled:border-danger-weak aria-disabled:border-danger-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0 mr-[8px]">
+                        </button>
+                    </div>
+                    <input type="hidden" name="validate" value="false"/>
+                    <input type="hidden" name="_eventId" value="select"/>
+                </form>
+            </div>
         </div>
-    </main>
+
+        <form method="post" id="fm2"
+              th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
+            <p>
+            <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
+            <input type="hidden" name="_eventId_register" value="Register"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <button id="register" class="mdc-button mdc-button--raised btn btn-primary me-2" name="register"
+                    accesskey="r" value="Register">
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}"></span>
+            </button>
+        </form>
+        <p>
+
+        <script>
+            // Convert UTC registration timestamps to the visitor's local timezone, including the zone
+            // abbreviation so the displayed time is unambiguous. Falls back to the marked UTC text if this
+            // does not run.
+            (function () {
+                var fmt = new Intl.DateTimeFormat('de-DE', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', hour12: false,
+                    timeZoneName: 'short'
+                });
+                document.querySelectorAll('time.js-local-datetime[data-epoch]').forEach(function (el) {
+                    var ms = Number(el.getAttribute('data-epoch'));
+                    if (!isNaN(ms)) {
+                        el.textContent = fmt.format(new Date(ms));
+                    }
+                });
+            })();
+        </script>
+    </div>
+</main>
 </body>
 
 </html>
