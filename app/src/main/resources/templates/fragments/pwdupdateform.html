@@ -89,13 +89,7 @@
                 password change made during the login flow (the forced "must change / expired"
                 case) unless the submitted currentPassword equals the password the user just
                 authenticated with. This check is hardcoded in CAS — there is NO property to
-                disable it (verified against cas.authn.pm.* in 7.3.7). It is a deliberate
-                re-authentication gate before a sensitive action.
-                Yes, the user just typed this password at login, so it feels redundant; we keep
-                the field anyway to stay on stock CAS behaviour with zero custom Java to maintain
-                across upgrades. If this field is removed, the forced password change will fail
-                with: ERROR "Current password is not correct or is undefined".
-                See docs/development/cas-7.3-upgrade-notes.md.
+                disable it. It is a deliberate re-authentication gate before a sensitive action.
             -->
             <section>
                 <div class="relative" aria-live="polite">

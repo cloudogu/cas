@@ -177,9 +177,6 @@ public class CesOidcConfiguration {
      * {@code NoSuchBeanDefinitionException} at runtime on every login page load.
      * Making it a plain singleton avoids this and is correct: the cache outlives individual refresh
      * cycles, and the factory that uses it is already refresh-scoped.
-     *
-     * <p>The {@code @ConditionalOnMissingBean} was removed because CAS 7.3 no longer provides this
-     * bean itself, so the condition would never trigger and the cache would never be created.
      */
     @Bean
     public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(

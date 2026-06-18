@@ -7,6 +7,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ## [Unreleased]
 - Upgrade CAS zu Version 7.3.7
 - Bei der Aufforderung zum Ändern des Passworts muss zur Sicherheit nun erneut das aktuelle Passwort eingegeben werden.
+- Mehrfaktor-Authetifizierung benötigt nun die Eingabe eines Tokens oder Scratch-Codes zur Löschung eines Zweifaktor-Geräts.
 
 ## [v7.2.7-19] - 2026-06-03
 - Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.

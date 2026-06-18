@@ -45,8 +45,6 @@
         <hr>
         <!--
           Step 3 (token + device name + Registrieren/Abbrechen) is rendered inline by this fragment.
-          It used to be an MDC modal opened via cas.openDialog, but the ces-theme has no MDC dialog CSS,
-          so the modal never displayed; the fragment now shows the confirmation form directly.
         -->
         <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
             dialogId='confirm-reg-dialog',

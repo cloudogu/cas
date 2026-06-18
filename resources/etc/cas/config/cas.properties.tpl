@@ -359,7 +359,7 @@ cas.authn.oidc.id-token.include-id-token-claims=false
 # This CAS dogu runs as a single pod, so cross-instance replication is unnecessary; the in-pod HTTP session
 # survives all redirects (including the round-trip to the external IdP). If CAS is ever scaled beyond one pod,
 # enable sticky sessions at the ingress or re-enable replication with a properly encrypted session cookie.
-# Two independent subsystems, two independent settings -> both must be disabled:
+# Two independent subsystems, two independent settings -> both must be disabled. Also these are deprecated with no alternative.
 cas.authn.oauth.session-replication.replicate-sessions=false
 cas.authn.pac4j.core.session-replication.replicate-sessions=false
 ########################################################################################################################
