@@ -52,7 +52,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
             ACCOUNT_ID == credential.getAccountId() && "123456".equals(credential.getToken()))))
             .thenReturn(new GoogleAuthenticatorToken(123456, USERNAME));
 
-        var event = action.execute(requestContext("true", "123456"));
+        Event event = action.execute(requestContext("true", "123456"));
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS, event);
         assertNull(repository.get(ACCOUNT_ID));
@@ -64,7 +64,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
             ACCOUNT_ID == credential.getAccountId() && "87654321".equals(credential.getToken()))))
             .thenReturn(new GoogleAuthenticatorToken(87654321, USERNAME));
 
-        var event = action.execute(requestContext("true", "87654321"));
+        Event event = action.execute(requestContext("true", "87654321"));
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS, event);
         assertNull(repository.get(ACCOUNT_ID));
@@ -72,8 +72,8 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
 
     @Test
     void wrongTokenReturnsErrorLeavesAccountRegisteredAndExposesErrorMessage() throws Throwable {
-        var context = requestContext("true", "000000");
-        var event = action.execute(context);
+        MockRequestContext context = requestContext("true", "000000");
+        Event event = action.execute(context);
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
@@ -83,8 +83,8 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
 
     @Test
     void emptyTokenReturnsErrorLeavesAccountRegisteredAndExposesErrorMessage() throws Throwable {
-        var context = requestContext("true", "");
-        var event = action.execute(context);
+        MockRequestContext context = requestContext("true", "");
+        Event event = action.execute(context);
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
@@ -102,7 +102,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
         context.putRequestParameter("validate", "true");
         context.putRequestParameter("token", "123456");
 
-        var event = action.execute(context);
+        Event event = action.execute(context);
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
@@ -118,7 +118,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
         context.putRequestParameter("validate", "true");
         context.putRequestParameter("token", "123456");
 
-        var event = action.execute(context);
+        Event event = action.execute(context);
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
@@ -135,7 +135,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
         context.putRequestParameter("validate", "true");
         context.putRequestParameter("token", "123456");
 
-        var event = action.execute(context);
+        Event event = action.execute(context);
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());
@@ -146,7 +146,7 @@ class CesGoogleAuthenticatorDeleteAccountActionTest {
 
     @Test
     void oldSingleStepDeletePostReturnsErrorAndDoesNotDelete() throws Throwable {
-        var event = action.execute(requestContext("false", null));
+        Event event = action.execute(requestContext("false", null));
 
         assertEvent(CasWebflowConstants.TRANSITION_ID_ERROR, event);
         assertEquals(ACCOUNT_ID, repository.get(ACCOUNT_ID).getId());

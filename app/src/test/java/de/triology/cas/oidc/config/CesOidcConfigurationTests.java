@@ -1,27 +1,38 @@
 package de.triology.cas.oidc.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.util.LdapUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ldaptive.PooledConnectionFactory;
+import org.mockito.MockedStatic;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.oidc.client.OidcClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.webflow.execution.Action;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,7 +59,7 @@ class CesOidcConfigurationTests {
 
     @Test
     void shouldReturnCesDelegatedOidcClientsProperties() {
-        var properties = configuration.cesDelegatedOidcClientsProperties();
+        CesDelegatedOidcClientsProperties properties = configuration.cesDelegatedOidcClientsProperties();
         assertNotNull(properties, "CesDelegatedOidcClientsProperties should not be null");
     }
 
@@ -59,7 +70,7 @@ class CesOidcConfigurationTests {
         var cache = mock(com.github.benmanes.caffeine.cache.Cache.class);
 
         var clientsProps = new CesDelegatedOidcClientsProperties(); // empty
-        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
 
         assertNotNull(factory);
         assertNotNull(factory.build());
@@ -67,8 +78,8 @@ class CesOidcConfigurationTests {
 
     @Test
     void shouldReturnDelegatedIdentityProviders() {
-        var client = delegatedClient("oidc-client");
-        var providers = delegatedIdentityProvidersFor(client);
+        BaseClient client = delegatedClient("oidc-client");
+        DelegatedIdentityProviders providers = delegatedIdentityProvidersFor(client);
         var service = mock(Service.class);
         var webContext = mock(WebContext.class);
 
@@ -81,10 +92,10 @@ class CesOidcConfigurationTests {
 
     @Test
     void shouldBuildClients() {
-        var client = delegatedClient("oidc-client");
-        var providers = delegatedIdentityProvidersFor(client);
+        BaseClient client = delegatedClient("oidc-client");
+        DelegatedIdentityProviders providers = delegatedIdentityProvidersFor(client);
 
-        var clients = configuration.builtClients(providers);
+        Clients clients = configuration.builtClients(providers);
 
         assertNotNull(clients);
         assertEquals(java.util.List.of(client), clients.getClients());
@@ -92,7 +103,7 @@ class CesOidcConfigurationTests {
 
     @Test
     void shouldCreateOidcCasClientRedirectActionBuilder() {
-        var builder = configuration.oidcCasClientRedirectActionBuilder();
+        OAuth20CasClientRedirectActionBuilder builder = configuration.oidcCasClientRedirectActionBuilder();
         assertNotNull(builder);
     }
 
@@ -104,7 +115,7 @@ class CesOidcConfigurationTests {
         when(builtClients.getObject()).thenReturn(new Clients());
         when(sessionStore.getObject()).thenReturn(mock(org.pac4j.core.context.session.SessionStore.class));
 
-        var action = configuration.delegatedAuthenticationClientLogoutAction(builtClients, sessionStore);
+        Action action = configuration.delegatedAuthenticationClientLogoutAction(builtClients, sessionStore);
         assertNotNull(action);
     }
 
@@ -120,11 +131,11 @@ class CesOidcConfigurationTests {
         when(ldapProps.getBaseDn()).thenReturn("dc=example,dc=org");
         when(ldapProps.getLdapUrl()).thenReturn("ldap://localhost");
     
-        try (var mocked = mockStatic(LdapUtils.class)) {
+        try (MockedStatic<LdapUtils> mocked = mockStatic(LdapUtils.class)) {
             var mockFactory = mock(org.ldaptive.PooledConnectionFactory.class);
             mocked.when(() -> LdapUtils.newLdaptivePooledConnectionFactory(any())).thenReturn(mockFactory);
-    
-            var provisioner = configuration.clientUserProfileProvisioner(casProperties);
+
+            DelegatedClientUserProfileProvisioner provisioner = configuration.clientUserProfileProvisioner(casProperties);
             assertNotNull(provisioner);
         }
     }   
@@ -151,14 +162,14 @@ class CesOidcConfigurationTests {
         } catch (Exception e) {
             fail("Could not set private fields via reflection: " + e.getMessage(), e);
         }
-    
+
         var builtClients = mock(ObjectProvider.class);
         var sessionStore = mock(ObjectProvider.class);
     
         when(builtClients.getObject()).thenReturn(new Clients());
         when(sessionStore.getObject()).thenReturn(mock(org.pac4j.core.context.session.SessionStore.class));
-    
-        var action = configuration.delegatedAuthenticationClientLogoutAction(builtClients, sessionStore);
+
+        Action action = configuration.delegatedAuthenticationClientLogoutAction(builtClients, sessionStore);
         assertNotNull(action);
     }
     
@@ -169,9 +180,9 @@ class CesOidcConfigurationTests {
         var factory = mock(DelegatedIdentityProviderFactory.class);
     
         when(factory.build()).thenReturn(Collections.emptyList());
-    
-        var providers = configuration.delegatedIdentityProviders(casProperties, factory);
-        var clients = providers.findAllClients(mock(WebContext.class));
+
+        DelegatedIdentityProviders providers = configuration.delegatedIdentityProviders(casProperties, factory);
+        List<? extends Client> clients = providers.findAllClients(mock(WebContext.class));
     
         assertTrue(clients.isEmpty(), "Clients should be empty, triggering log output");
     }
@@ -184,9 +195,9 @@ class CesOidcConfigurationTests {
         var applicationContext = mock(ConfigurableApplicationContext.class);
     
         var clientsProps = new CesDelegatedOidcClientsProperties(); // leer
-        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
-    
-        var rebuiltClients = factory.rebuild();
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+
+        List<BaseClient> rebuiltClients = factory.rebuild();
         assertNotNull(rebuiltClients);
     }
     
@@ -202,15 +213,15 @@ class CesOidcConfigurationTests {
     
         var clientsProps = new CesDelegatedOidcClientsProperties();
         clientsProps.setClients(java.util.List.of(invalidClientProps));
-    
-        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
-        var clients = factory.build();
+
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+        List<BaseClient> clients = factory.build();
     
         assertTrue(clients.isEmpty(), "Invalid clients should be skipped");
     }
     
     private Object callSplitAndTrim(String input) throws Exception {
-        var method = CesOidcConfiguration.class.getDeclaredMethod("splitAndTrim", String.class);
+        Method method = CesOidcConfiguration.class.getDeclaredMethod("splitAndTrim", String.class);
         method.setAccessible(true);
         return method.invoke(null, input);
     }
@@ -256,9 +267,9 @@ class CesOidcConfigurationTests {
         var serverProps = mock(CasServerProperties.class);
         when(serverProps.getPrefix()).thenReturn("https://cas.example.org");
         when(casProperties.getServer()).thenReturn(serverProps);
-    
-        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
-        var clients = factory.build();
+
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+        List<BaseClient> clients = factory.build();
     
         assertEquals(1, clients.size());
         var client = (org.pac4j.oidc.client.OidcClient) clients.iterator().next();
@@ -279,7 +290,7 @@ class CesOidcConfigurationTests {
         when(coreProps.getCacheSize()).thenReturn(100L);
         when(coreProps.getCacheDuration()).thenReturn("PT8H");
 
-        var cache = configuration.pac4jDelegatedClientFactoryCache(casProperties);
+        Cache<String, List<BaseClient>> cache = configuration.pac4jDelegatedClientFactoryCache(casProperties);
 
         assertNotNull(cache);
         // Prove the configured Caffeine cache is functional, not just non-null.
@@ -294,7 +305,7 @@ class CesOidcConfigurationTests {
         com.github.benmanes.caffeine.cache.Cache<String, java.util.List<BaseClient>> cache =
                 Caffeine.newBuilder().build();
 
-        var factory = configuration.customDelegatedClientFactory(
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(
                 casProperties, cache, applicationContext, new CesDelegatedOidcClientsProperties());
 
         // Empty cache -> the null branch must yield an empty (non-null) list.
@@ -328,8 +339,8 @@ class CesOidcConfigurationTests {
         var explicitProperties = mock(CasConfigurationProperties.class);
         when(explicitProperties.getServer()).thenReturn(serverProps);
 
-        var factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
-        var clients = factory.buildFrom(explicitProperties);
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(casProperties, cache, applicationContext, clientsProps);
+        List<BaseClient> clients = factory.buildFrom(explicitProperties);
 
         assertEquals(1, clients.size());
         var client = (org.pac4j.oidc.client.OidcClient) clients.getFirst();
@@ -343,7 +354,7 @@ class CesOidcConfigurationTests {
         var applicationContext = mock(ConfigurableApplicationContext.class);
         var cache = mock(com.github.benmanes.caffeine.cache.Cache.class);
 
-        var factory = configuration.customDelegatedClientFactory(
+        DelegatedIdentityProviderFactory factory = configuration.customDelegatedClientFactory(
                 casProperties, cache, applicationContext, new CesDelegatedOidcClientsProperties());
 
         assertNotNull(factory.build());

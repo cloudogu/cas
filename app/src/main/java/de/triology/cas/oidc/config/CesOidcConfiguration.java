@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcess
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -181,7 +182,7 @@ public class CesOidcConfiguration {
     @Bean
     public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
             final CasConfigurationProperties casProperties) {
-        val core = casProperties.getAuthn().getPac4j().getCore();
+        Pac4jDelegatedAuthenticationCoreProperties core = casProperties.getAuthn().getPac4j().getCore();
         return Caffeine.newBuilder()
                 .maximumSize(core.getCacheSize())
                 .expireAfterWrite(Beans.newDuration(core.getCacheDuration()))

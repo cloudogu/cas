@@ -1,5 +1,6 @@
 package de.triology.cas.gauth;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
@@ -8,6 +9,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -54,7 +56,7 @@ public class CesGoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAct
     protected Event doExecuteInternal(final RequestContext requestContext) {
         requestContext.getFlashScope().remove(ATTRIBUTE_DELETE_DEVICE_ERROR);
 
-        var requestParameters = requestContext.getRequestParameters();
+        ParameterMap requestParameters = requestContext.getRequestParameters();
         /*
          * Old CAS 7.2-style delete posts only submit accountId. Treat them as invalid instead of honoring
          * CAS 7.2's password-only device removal behavior.
@@ -63,8 +65,8 @@ public class CesGoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAct
             return invalidCode(requestContext);
         }
 
-        var accountId = parseAccountId(requestParameters.get("accountId"));
-        var token = requestParameters.get("token");
+        Long accountId = parseAccountId(requestParameters.get("accountId"));
+        String token = requestParameters.get("token");
         /*
          * Device deletion must always identify the account and prove possession of a current OTP or scratch
          * code. Missing or malformed input stays in the webflow's normal error path.
@@ -73,7 +75,7 @@ public class CesGoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAct
             return invalidCode(requestContext);
         }
 
-        var account = repository.get(accountId);
+        OneTimeTokenAccount account = repository.get(accountId);
         if (account == null || !isTokenValid(requestContext, account, token)) {
             return invalidCode(requestContext);
         }
@@ -84,7 +86,7 @@ public class CesGoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAct
 
     private boolean isTokenValid(final RequestContext requestContext, final OneTimeTokenAccount account, final String token) {
         try {
-            var authentication = WebUtils.getAuthentication(requestContext);
+            Authentication authentication = WebUtils.getAuthentication(requestContext);
             if (authentication == null || authentication.getPrincipal() == null) {
                 return false;
             }
@@ -116,3 +118,4 @@ public class CesGoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAct
         }
     }
 }
+

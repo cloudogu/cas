@@ -3,6 +3,7 @@ package de.triology.cas.gauth;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.junit.jupiter.api.Test;
+import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -33,11 +34,11 @@ class CesGoogleAuthenticatorWebflowConfigurerTest {
         var configurer = new CesGoogleAuthenticatorWebflowConfigurer(null, null, registry, null, casProperties);
         configurer.initialize();
 
-        var errorTransition = deleteDevice.getTransition(CasWebflowConstants.TRANSITION_ID_ERROR);
+        TransitionDefinition errorTransition = deleteDevice.getTransition(CasWebflowConstants.TRANSITION_ID_ERROR);
         assertNotNull(errorTransition);
         assertEquals(confirmRegistration.getId(), errorTransition.getTargetStateId());
 
-        var successTransition = deleteDevice.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        TransitionDefinition successTransition = deleteDevice.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         assertNotNull(successTransition);
         assertEquals(checkRegistration.getId(), successTransition.getTargetStateId());
     }
