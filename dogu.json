@@ -405,13 +405,15 @@
     },
     {
       "Name": "experimental/totp/api_user_name",
-      "Description": "Warning: Experimental Feature. Username for totp administration. Supply the same username to the usermgt dogu.",
-      "Optional": true
+      "Description": "Warning: Experimental Feature. Username for totp administration in encrypted form. Supply the same username to the usermgt dogu.",
+      "Optional": true,
+      "Encrypted": true
     },
     {
       "Name": "experimental/totp/api_user_password",
-      "Description": "Warning: Experimental Feature. API password for totp administration. Supply the same password to the usermgt dogu.",
-      "Optional": true
+      "Description": "Warning: Experimental Feature. API password for totp administration in encrypted form. Supply the same password to the usermgt dogu.",
+      "Optional": true,
+      "Encrypted": true
     },
     {
       "Name": "allow_local_urls",

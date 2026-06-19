@@ -386,9 +386,13 @@ cas.monitor.endpoints.endpoint.gauthCredentialRepository.access=AUTHENTICATED
 management.endpoint.gauthCredentialRepository.enabled=true
 {{ end }}
 
-### TODO Encrypted and only set config if variables are set
-spring.security.user.name={{ .Config.Get "experimental/totp/api_user_name" }}
-spring.security.user.password={{ .Config.Get "experimental/totp/api_user_password" }}
+{{ if and (.Config.Exists "experimental/totp/api_user_name") (.Config.Exists "experimental/totp/api_user_password") }}
+{{ $apiUser := .Config.GetAndDecrypt "experimental/totp/api_user_name" }}
+{{ if ne $apiUser "" }}
+spring.security.user.name={{ $apiUser }}
+spring.security.user.password={{ .Config.GetAndDecrypt "experimental/totp/api_user_password" }}
+{{ end }}
+{{ end }}
 
 ########################################################################################################################
 # URL Validation
