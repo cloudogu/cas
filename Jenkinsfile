@@ -123,24 +123,19 @@ def componentStages = { group ->
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
 
-            echo "[Component k3d] Retag image for local smoke test"
-            sh "docker tag ${componentBuildImageRepository}:${imageTag} local-smoke/cas:${imageTag}"
-
-            echo "[Component k3d] Import previously built image"
-            retry(3) {
-                sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
-                // check if the image is actually there
-                sh "sudo docker exec k3d-${k3d.registryName}-server-0 ctr -n k8s.io images list -q | grep -F 'cas:${imageTag}'"
-            }
+            echo "[Component k3d] Push image to k3d registry"
+            String registryPort = sh(returnStdout: true,
+                script: "docker inspect k3d-${k3d.registryName} --format '{{index .Config.Labels \"k3s.registry.port.internal\"}}' | cut -d/ -f1").trim()
+            sh "docker tag ${componentBuildImageRepository}:${imageTag} localhost:${registryPort}/local-smoke/cas:${imageTag}"
+            sh "docker push localhost:${registryPort}/local-smoke/cas:${imageTag}"
 
             echo "[Component k3d] Deploy component via helm"
             k3d.helm("upgrade --install ${helmTestReleaseName} ${componentChartTargetDir}"
             + " --namespace default --set nameOverride=${helmTestReleaseName}"
             + " --set fullnameOverride=${helmTestReleaseName}"
-            + " --set containers.cas.image.registry=''"
+            + " --set containers.cas.image.registry=k3d-${k3d.registryName}:${registryPort}"
             + " --set containers.cas.image.repository=local-smoke/cas"
             + " --set containers.cas.image.tag=${imageTag}"
-            + " --set containers.cas.imagePullPolicy=Never"
             // use ldap dogu instead of component service
             + " --set configuration.normal.ldap.host=ldap"
             // disable ingress to avoid conflicts with the cas dogu
