@@ -4,3 +4,8 @@
 # Allowed files and directories
 !app
 !resources
+
+# Re-exclude local build artifacts that live under app/ (the Dockerfile only copies app/src,
+# so these are dead weight in the build context — and app/build alone is ~300 MB)
+app/build
+app/.gradle

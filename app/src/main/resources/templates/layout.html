@@ -9,6 +9,15 @@
            th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'Central Authentication Service')}"/>
     </title>
 
+    <!--/*
+        NOTE: we intentionally do NOT load material-components-web CSS. The overlay styles
+        everything with the ces-theme (Tailwind); the gauth views carry inert mdc-* class names
+        but are laid out with Tailwind, and their modals are native <dialog> elements
+        (showModal() + dialog::backdrop in cloudogu-cas.css), not MDC dialogs. Loading the MDC
+        stylesheet would re-skin those views with Material and clash with the theme. The mdc JS
+        bundle is still loaded below only to satisfy CAS's material.js global reference.
+    */-->
+
     <!--/* Core CAS CSS */-->
     <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}"/>
     <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css"

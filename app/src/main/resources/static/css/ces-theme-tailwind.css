@@ -882,15 +882,6 @@ legend {
   margin-bottom: 0.75rem;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -913,10 +904,6 @@ legend {
 
 .me-2 {
   margin-inline-end: 0.5rem;
-}
-
-.mr-3 {
-  margin-right: 0.75rem;
 }
 
 .mr-\[8px\] {
@@ -979,10 +966,6 @@ legend {
   height: 3rem;
 }
 
-.h-\[1lh\] {
-  height: 1lh;
-}
-
 .h-\[24px\] {
   height: 24px;
 }
@@ -993,6 +976,14 @@ legend {
 
 .h-screen {
   height: 100vh;
+}
+
+.max-h-\[90vh\] {
+  max-height: 90vh;
+}
+
+.min-h-10 {
+  min-height: 2.5rem;
 }
 
 .min-h-12 {
@@ -1011,6 +1002,10 @@ legend {
   width: 24px;
 }
 
+.w-\[90vw\] {
+  width: 90vw;
+}
+
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
@@ -1020,12 +1015,16 @@ legend {
   width: 100%;
 }
 
+.min-w-10 {
+  min-width: 2.5rem;
+}
+
 .min-w-\[24px\] {
   min-width: 24px;
 }
 
-.shrink-0 {
-  flex-shrink: 0;
+.max-w-\[480px\] {
+  max-width: 480px;
 }
 
 .flex-grow {
@@ -1064,6 +1063,10 @@ legend {
   flex-wrap: wrap;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
 .items-center {
   align-items: center;
 }
@@ -1092,6 +1095,10 @@ legend {
   overflow-x: auto;
 }
 
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
 .whitespace-nowrap {
   white-space: nowrap;
 }
@@ -1106,6 +1113,10 @@ legend {
 
 .rounded-\[4px\] {
   border-radius: 4px;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .rounded-sm {
@@ -1148,6 +1159,10 @@ legend {
   border-color: var(--ces-color-neutral);
 }
 
+.border-neutral-weak {
+  border-color: var(--ces-color-neutral-weak);
+}
+
 .border-transparent {
   border-color: transparent;
 }
@@ -1162,6 +1177,14 @@ legend {
 
 .bg-danger {
   background-color: var(--ces-color-danger);
+}
+
+.bg-default-background {
+  background-color: var(--ces-color-default-background);
+}
+
+.bg-neutral-weaker {
+  background-color: var(--ces-color-neutral-weaker);
 }
 
 .bg-transparent {
@@ -1207,6 +1230,10 @@ legend {
   padding: 1rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .p-default {
   padding: 0.5rem;
 }
@@ -1250,12 +1277,28 @@ legend {
   padding-bottom: 2rem;
 }
 
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
 .pb-default {
   padding-bottom: 0.5rem;
 }
 
+.pl-4 {
+  padding-left: 1rem;
+}
+
 .pl-\[29px\] {
   padding-left: 29px;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pt-2\.5 {
+  padding-top: 0.625rem;
 }
 
 .text-left {
@@ -1276,6 +1319,10 @@ legend {
 
 .font-bold {
   font-weight: 700;
+}
+
+.font-normal {
+  font-weight: 400;
 }
 
 .text {
@@ -1373,12 +1420,20 @@ legend {
   background-color: var(--ces-color-neutral-weak);
 }
 
+.hover\:bg-neutral-weaker:hover {
+  background-color: var(--ces-color-neutral-weaker);
+}
+
 .hover\:p-1:hover {
   padding: 0.25rem;
 }
 
 .hover\:text-brand-strong:hover {
   color: var(--ces-color-brand-strong);
+}
+
+.hover\:text-default-text:hover {
+  color: var(--ces-color-default-text);
 }
 
 .hover\:text-neutral-strong:hover {
@@ -1708,6 +1763,11 @@ legend {
     margin-bottom: 2rem;
   }
 
+  .desktop\:text-desktop-2xl {
+    font-size: 23px;
+    line-height: 1.3913;
+  }
+
   .desktop\:text-desktop-4xl {
     font-size: 34px;
     line-height: 1.41176;
@@ -1738,6 +1798,11 @@ legend {
   .mobile\:my-6 {
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  .mobile\:text-mobile-2xl {
+    font-size: 20px;
+    line-height: 1.2;
   }
 
   .mobile\:text-mobile-4xl {
