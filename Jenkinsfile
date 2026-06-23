@@ -125,7 +125,7 @@ def componentStages = { group ->
 
             echo "[Component k3d] Push image to k3d registry"
             String registryPort = sh(returnStdout: true,
-                script: "docker inspect k3d-${k3d.registryName} --format '{{index .Config.Labels \"k3s.registry.port.internal\"}}' | cut -d/ -f1").trim()
+                script: "docker inspect k3d-${k3d.registryName} --format '{{(index .NetworkSettings.Ports \"5000/tcp\" 0).HostPort}}'").trim()
             sh "docker tag ${componentBuildImageRepository}:${imageTag} localhost:${registryPort}/local-smoke/cas:${imageTag}"
             sh "docker push localhost:${registryPort}/local-smoke/cas:${imageTag}"
 
