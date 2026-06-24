@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#339] Use the exposition api in kubernetes instead of the ingress api.
+    - Added the exposition-crd as a component dependency
 
 ## [v7.2.7-19] - 2026-06-03
 ### Fixed
