@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib@feature/166-improve-k3d-registry-interaction',
+  'ces-build-lib@5.5.0',
   'dogu-build-lib'
 ]) _
 
