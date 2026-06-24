@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.2.7-20] - 2026-06-24
+### Changed
+- [#339] Use the exposition api in kubernetes instead of the ingress api.
+    - Added the exposition-crd as a component dependency
+
 ## [v7.2.7-19] - 2026-06-03
 ### Fixed
 - [#326] Fixed a problem where the CAS integration test step failed in the multinode Jenkins pipeline because there was no OIDC provider.

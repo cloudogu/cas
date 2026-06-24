@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib',
+  'ces-build-lib@5.5.0',
   'dogu-build-lib'
 ]) _
 
@@ -92,6 +92,7 @@ def componentStages = { group ->
             echo "[Component k3d] Start cluster"
             k3d.startK3d()
             k3d.yqEvalYamlFile("k3d_values.yaml", ".defaultConfig.env.enableFqdnApplier = true")
+            k3d.appendToYamlFile("k3d_values.yaml", ".components.k8s-exposition-crd.version", "1.0.0")
             k3d.setup()
 
             echo "[Component k3d] Prepare prerequisites"
@@ -122,24 +123,16 @@ def componentStages = { group ->
             echo "[Component k3d] Generate helm chart"
             runMakeInGoContainer("helm-generate")
 
-            echo "[Component k3d] Retag image for local smoke test"
-            sh "docker tag ${componentBuildImageRepository}:${imageTag} local-smoke/cas:${imageTag}"
-
-            echo "[Component k3d] Import previously built image"
-            retry(3) {
-                sh "sudo ${WORKSPACE}/k3d/.k3d/bin/k3d image import local-smoke/cas:${imageTag} -c ${k3d.registryName}"
-                // check if the image is actually there
-                sh "sudo docker exec k3d-${k3d.registryName}-server-0 ctr -n k8s.io images list -q | grep -F 'cas:${imageTag}'"
-            }
+            echo "[Component k3d] Push image to k3d registry"
+            k3d.registry.pushToLocalRegistry("${componentBuildImageRepository}:${imageTag}", "local-smoke/cas", imageTag)
 
             echo "[Component k3d] Deploy component via helm"
             k3d.helm("upgrade --install ${helmTestReleaseName} ${componentChartTargetDir}"
             + " --namespace default --set nameOverride=${helmTestReleaseName}"
             + " --set fullnameOverride=${helmTestReleaseName}"
-            + " --set containers.cas.image.registry=''"
+            + " --set containers.cas.image.registry=${k3d.registry.imageRegistryInternalWithPort}"
             + " --set containers.cas.image.repository=local-smoke/cas"
             + " --set containers.cas.image.tag=${imageTag}"
-            + " --set containers.cas.imagePullPolicy=Never"
             // use ldap dogu instead of component service
             + " --set configuration.normal.ldap.host=ldap"
             // disable ingress to avoid conflicts with the cas dogu

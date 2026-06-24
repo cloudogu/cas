@@ -13,3 +13,8 @@ description: A Helm chart for CAS, the LOP's single sign-on provider.
 type: application
 version: 0.0.0-replaceme
 appVersion: "0.0.0-replaceme"
+
+annotations:
+  # Dependency for the Exposition CRD.
+  # Allow all versions up to next major version to avoid breaking changes
+  "k8s.cloudogu.com/ces-dependency/k8s-exposition-crd": "1.x.x-0"
