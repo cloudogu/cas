@@ -1,7 +1,7 @@
 #!groovy
 @Library([
   'pipe-build-lib',
-  'ces-build-lib',
+  'ces-build-lib@feature/166-improve-k3d-registry-interaction',
   'dogu-build-lib'
 ]) _
 
@@ -124,16 +124,13 @@ def componentStages = { group ->
             runMakeInGoContainer("helm-generate")
 
             echo "[Component k3d] Push image to k3d registry"
-            String registryPort = sh(returnStdout: true,
-                script: "docker inspect k3d-${k3d.registryName} --format '{{(index .NetworkSettings.Ports \"5000/tcp\" 0).HostPort}}'").trim()
-            sh "docker tag ${componentBuildImageRepository}:${imageTag} localhost:${registryPort}/local-smoke/cas:${imageTag}"
-            sh "docker push localhost:${registryPort}/local-smoke/cas:${imageTag}"
+            k3d.registry.pushToLocalRegistry("${componentBuildImageRepository}:${imageTag}", "local-smoke/cas", imageTag)
 
             echo "[Component k3d] Deploy component via helm"
             k3d.helm("upgrade --install ${helmTestReleaseName} ${componentChartTargetDir}"
             + " --namespace default --set nameOverride=${helmTestReleaseName}"
             + " --set fullnameOverride=${helmTestReleaseName}"
-            + " --set containers.cas.image.registry=k3d-${k3d.registryName}:${registryPort}"
+            + " --set containers.cas.image.registry=${k3d.registry.imageRegistryInternalWithPort}"
             + " --set containers.cas.image.repository=local-smoke/cas"
             + " --set containers.cas.image.tag=${imageTag}"
             // use ldap dogu instead of component service
