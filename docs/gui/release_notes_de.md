@@ -10,6 +10,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 - Mehrfaktor-Authetifizierung benötigt nun die Eingabe eines Tokens oder Scratch-Codes zur Löschung eines Zweifaktor-Geräts.
   - Hinweis: Eine Falscheingabe von diesem Token führt zu einem Errorlog in Cas
 
+## [v7.2.7-20] - 2026-06-24
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+
 ## [v7.2.7-19] - 2026-06-03
 - Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.
 

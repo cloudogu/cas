@@ -10,6 +10,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - Multi-factor authentication now requires entering a token or scratch code to delete a two-factor device.
   - Note: An incorrect entry of this token leads to an error log in Cas
 
+## [v7.2.7-20] - 2026-06-24
+- Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
+
 ## [v7.2.7-19] - 2026-06-03
 - Fixed an issue where the CAS integration tests failed in multinode environments.
 

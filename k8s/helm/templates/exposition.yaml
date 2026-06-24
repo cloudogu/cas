@@ -1,0 +1,14 @@
+{{- if .Values.exposition.enabled }}
+apiVersion: k8s.cloudogu.com/v1
+kind: Exposition
+metadata:
+  name: {{ include "cas.name" . }}
+  labels:
+    {{- include "cas.labels" . | nindent 4 }}
+spec:
+  http:
+    - name: {{ include "cas.name" . }}
+      service: {{ include "cas.name" . }}
+      port: {{ .Values.service.ports.web.port }}
+      path: /{{ include "cas.name" . }}
+{{- end }}
