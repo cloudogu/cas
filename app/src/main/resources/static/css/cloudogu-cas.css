@@ -21,12 +21,13 @@
 /*
  * Native <dialog> modals (gauth confirmation/delete dialogs). Box geometry (size, border,
  * padding, rounding) is set with Tailwind utilities on the element; the surface colours and the
- * scrim are set here, because (a) ::backdrop is not reachable via a Tailwind utility and (b) the
- * theme's base colour utilities are provided by the runtime ces-theme stylesheet, so we read the
- * --ces-color-* variables directly to guarantee a solid, readable surface over the scrim. The
- * overlay ships no Material Components Web CSS; these rules plus the browser's built-in
+ * scrim are set here, because
+ * (a) ::backdrop is not reachable via a Tailwind utility and
+ * (b) the theme's base colour utilities are provided by the runtime ces-theme stylesheet, so we read the
+ *      --ces-color-* variables directly to guarantee a solid, readable surface over the scrim.
+ * The overlay ships no Material Components Web CSS; these rules plus the browser's built-in
  * showModal() behaviour are what make the dialog a centered modal with a dimmed background.
- */
+*/
 dialog {
     background-color: var(--ces-color-default-background, #fff);
     color: var(--ces-color-default-text, #0d1c26);
