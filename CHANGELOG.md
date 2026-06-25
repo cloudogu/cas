@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.3.7-1] - 2026-06-25
 ### Changed
 - [#334] Upgrade Apereo CAS from 7.2.7 to 7.3.7.
   - Aligned the managed platform with the CAS 7.3.7 baseline: Spring Boot 3.5.6 and Tomcat 11.0.22.
