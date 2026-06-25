@@ -5,6 +5,10 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+- Upgrade CAS zu Version 7.3.7
+- Bei der Aufforderung zum Ändern des Passworts muss zur Sicherheit nun erneut das aktuelle Passwort eingegeben werden.
+- Mehrfaktor-Authetifizierung benötigt nun die Eingabe eines Tokens oder Scratch-Codes zur Löschung eines Zweifaktor-Geräts.
+  - Hinweis: Eine Falscheingabe von diesem Token führt zu einem Errorlog in Cas
 
 ## [v7.2.7-20] - 2026-06-24
 - Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.

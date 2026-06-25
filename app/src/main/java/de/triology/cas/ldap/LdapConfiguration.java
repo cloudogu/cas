@@ -19,7 +19,6 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
@@ -74,15 +73,13 @@ public class LdapConfiguration {
     @Bean
     public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler(CasConfigurationProperties casProperties,
                                                                         ConfigurableApplicationContext applicationContext,
-                                                                        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-                                                                                ServicesManager servicesManager,
                                                                         CombinedGroupResolver combinedGroupResolver) {
         LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().getFirst();
 
         Multimap<String, Object> multiMapAttributes = createPrincipalAttributes(ldapProperties);
         Authenticator authenticator = createAuthenticator(ldapProperties, multiMapAttributes);
 
-        LdapAuthenticationHandler handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator, applicationContext, servicesManager, combinedGroupResolver);
+        LdapAuthenticationHandler handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator, applicationContext, combinedGroupResolver);
         configureLDAPAuthenticationHandler(handler, ldapProperties, multiMapAttributes, authenticator, applicationContext);
 
         handler.initialize();
@@ -109,11 +106,10 @@ public class LdapConfiguration {
     private LdapAuthenticationHandler createCesLDAPAuthenticationHandler(LdapAuthenticationProperties ldapProperties,
                                                                          Authenticator authenticator,
                                                                          ConfigurableApplicationContext applicationContext,
-                                                                         ServicesManager servicesManager,
                                                                          CombinedGroupResolver combinedGroupResolver) {
         AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext> strategy = LdapUtils.createLdapPasswordPolicyHandlingStrategy(ldapProperties, applicationContext);
 
-        return new CesGroupAwareLdapAuthenticationHandler(ldapProperties.getName(), servicesManager, PrincipalFactoryUtils.newPrincipalFactory(),
+        return new CesGroupAwareLdapAuthenticationHandler(ldapProperties.getName(), PrincipalFactoryUtils.newPrincipalFactory(),
                 authenticator, strategy, combinedGroupResolver);
     }
 

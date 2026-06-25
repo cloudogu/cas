@@ -868,6 +868,15 @@ legend {
   margin: 0px;
 }
 
+.m-auto {
+  margin: auto;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .my-3 {
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
@@ -893,8 +902,16 @@ legend {
   margin-bottom: 1rem;
 }
 
+.me-2 {
+  margin-inline-end: 0.5rem;
+}
+
 .mr-\[8px\] {
   margin-right: 8px;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .mt-3 {
@@ -961,6 +978,14 @@ legend {
   height: 100vh;
 }
 
+.max-h-\[90vh\] {
+  max-height: 90vh;
+}
+
+.min-h-10 {
+  min-height: 2.5rem;
+}
+
 .min-h-12 {
   min-height: 3rem;
 }
@@ -977,6 +1002,10 @@ legend {
   width: 24px;
 }
 
+.w-\[90vw\] {
+  width: 90vw;
+}
+
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
@@ -986,8 +1015,16 @@ legend {
   width: 100%;
 }
 
+.min-w-10 {
+  min-width: 2.5rem;
+}
+
 .min-w-\[24px\] {
   min-width: 24px;
+}
+
+.max-w-\[480px\] {
+  max-width: 480px;
 }
 
 .flex-grow {
@@ -1026,12 +1063,12 @@ legend {
   flex-wrap: wrap;
 }
 
-.items-center {
-  align-items: center;
+.items-start {
+  align-items: flex-start;
 }
 
-.items-start {
-  align-items: start;
+.items-center {
+  align-items: center;
 }
 
 .justify-center {
@@ -1046,12 +1083,20 @@ legend {
   gap: 0.5rem;
 }
 
+.gap-4 {
+  gap: 1rem;
+}
+
 .gap-default-2x {
   gap: 1rem;
 }
 
 .overflow-x-auto {
   overflow-x: auto;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .whitespace-nowrap {
@@ -1068,6 +1113,10 @@ legend {
 
 .rounded-\[4px\] {
   border-radius: 4px;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .rounded-sm {
@@ -1110,6 +1159,10 @@ legend {
   border-color: var(--ces-color-neutral);
 }
 
+.border-neutral-weak {
+  border-color: var(--ces-color-neutral-weak);
+}
+
 .border-transparent {
   border-color: transparent;
 }
@@ -1118,16 +1171,20 @@ legend {
   background-color: var(--ces-color-brand);
 }
 
+.bg-cas-logo-bg {
+  background-color: var(--cas-config-logo-background);
+}
+
 .bg-danger {
   background-color: var(--ces-color-danger);
 }
 
-.border-danger {
-  border-color: var(--ces-color-danger);
+.bg-default-background {
+  background-color: var(--ces-color-default-background);
 }
 
-.bg-cas-logo-bg {
-  background-color: var(--cas-config-logo-background);
+.bg-neutral-weaker {
+  background-color: var(--ces-color-neutral-weaker);
 }
 
 .bg-transparent {
@@ -1169,6 +1226,14 @@ legend {
   padding: 0.5rem;
 }
 
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
 .p-default {
   padding: 0.5rem;
 }
@@ -1202,17 +1267,38 @@ legend {
   padding-right: 1rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
 }
 
 .pb-default {
   padding-bottom: 0.5rem;
 }
 
+.pl-4 {
+  padding-left: 1rem;
+}
+
 .pl-\[29px\] {
   padding-left: 29px;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pt-2\.5 {
+  padding-top: 0.625rem;
 }
 
 .text-left {
@@ -1223,12 +1309,20 @@ legend {
   text-align: center;
 }
 
+.text-justify {
+  text-align: justify;
+}
+
 .align-middle {
   vertical-align: middle;
 }
 
 .font-bold {
   font-weight: 700;
+}
+
+.font-normal {
+  font-weight: 400;
 }
 
 .text {
@@ -1318,16 +1412,16 @@ legend {
   background-color: var(--ces-color-brand-weak);
 }
 
-.hover\:bg-neutral-weak:hover {
-  background-color: var(--ces-color-neutral-weak);
-}
-
 .hover\:bg-danger-strong:hover {
   background-color: var(--ces-color-danger-strong);
 }
 
-.hover\:bg-danger-weak:hover {
-  background-color: var(--ces-color-danger-weak);
+.hover\:bg-neutral-weak:hover {
+  background-color: var(--ces-color-neutral-weak);
+}
+
+.hover\:bg-neutral-weaker:hover {
+  background-color: var(--ces-color-neutral-weaker);
 }
 
 .hover\:p-1:hover {
@@ -1336,6 +1430,10 @@ legend {
 
 .hover\:text-brand-strong:hover {
   color: var(--ces-color-brand-strong);
+}
+
+.hover\:text-default-text:hover {
+  color: var(--ces-color-default-text);
 }
 
 .hover\:text-neutral-strong:hover {
@@ -1350,10 +1448,6 @@ legend {
   border-color: var(--ces-color-brand);
 }
 
-.focus\:border-danger:focus {
-  border-color: var(--ces-color-danger);
-}
-
 .focus-visible\:border-3:focus-visible {
   border-width: 3px;
 }
@@ -1366,7 +1460,6 @@ legend {
   border-color: var(--ces-color-danger-strong);
 }
 
-
 .focus-visible\:bg-brand-strong:focus-visible {
   background-color: var(--ces-color-brand-strong);
 }
@@ -1375,16 +1468,12 @@ legend {
   background-color: var(--ces-color-brand-weak);
 }
 
-.focus-visible\:bg-neutral-weak:focus-visible {
-  background-color: var(--ces-color-neutral-weak);
-}
-
 .focus-visible\:bg-danger-strong:focus-visible {
   background-color: var(--ces-color-danger-strong);
 }
 
-.focus-visible\:bg-danger-weak:focus-visible {
-  background-color: var(--ces-color-danger-weak);
+.focus-visible\:bg-neutral-weak:focus-visible {
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .focus-visible\:p-1:focus-visible {
@@ -1424,10 +1513,6 @@ legend {
   border-color: var(--ces-color-brand-stronger);
 }
 
-.active\:border-danger:active {
-  border-color: var(--ces-color-danger);
-}
-
 .active\:border-danger-stronger:active {
   border-color: var(--ces-color-danger-stronger);
 }
@@ -1444,16 +1529,12 @@ legend {
   background-color: var(--ces-color-brand-weak);
 }
 
-.active\:bg-neutral-weak:active {
-  background-color: var(--ces-color-neutral-weak);
-}
-
 .active\:bg-danger-stronger:active {
   background-color: var(--ces-color-danger-stronger);
 }
 
-.active\:bg-danger-weak:active {
-  background-color: var(--ces-color-danger-weak);
+.active\:bg-neutral-weak:active {
+  background-color: var(--ces-color-neutral-weak);
 }
 
 .active\:p-1:active {
@@ -1682,6 +1763,11 @@ legend {
     margin-bottom: 2rem;
   }
 
+  .desktop\:text-desktop-2xl {
+    font-size: 23px;
+    line-height: 1.3913;
+  }
+
   .desktop\:text-desktop-4xl {
     font-size: 34px;
     line-height: 1.41176;
@@ -1712,6 +1798,11 @@ legend {
   .mobile\:my-6 {
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
+  }
+
+  .mobile\:text-mobile-2xl {
+    font-size: 20px;
+    line-height: 1.2;
   }
 
   .mobile\:text-mobile-4xl {
