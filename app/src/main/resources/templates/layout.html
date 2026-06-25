@@ -9,6 +9,15 @@
            th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'Central Authentication Service')}"/>
     </title>
 
+    <!--/*
+        NOTE: we intentionally do NOT load material-components-web CSS. The overlay styles
+        everything with the ces-theme (Tailwind); the gauth views carry inert mdc-* class names
+        but are laid out with Tailwind, and their modals are native <dialog> elements
+        (showModal() + dialog::backdrop in cloudogu-cas.css), not MDC dialogs. Loading the MDC
+        stylesheet would re-skin those views with Material and clash with the theme. The mdc JS
+        bundle is still loaded below only to satisfy CAS's material.js global reference.
+    */-->
+
     <!--/* Core CAS CSS */-->
     <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}"/>
     <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css"
@@ -27,6 +36,16 @@
 </head>
 
 <body class="flex flex-col justify-between h-screen">
+<!--/*
+    CAS 7.3 removed the automatic loading of material-components-web (mdc) from its built-in
+    fragments/includes template. CAS's own material.js (loaded via cas.standard.js.file in
+    cas-theme-default.properties) directly references the global `mdc` object and throws a
+    ReferenceError on every page if it is not defined first.
+    Loading it explicitly here ensures mdc is available before fragments/scripts runs.
+    The #{webjars.material-components.js} key is defined in CAS's cas_common_messages.properties
+    and will automatically point to the correct version when CAS is updated.
+*/-->
+<script type="text/javascript" th:src="@{#{webjars.material-components.js}}"></script>
 <script th:replace="~{fragments/scripts}"></script>
 
 <div class="mdc-drawer-scrim"></div>

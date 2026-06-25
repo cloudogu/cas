@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrateg
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
 
@@ -28,18 +27,17 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
      * Creates a new authentication handler that delegates to the given authenticator.
      *
      * @param name             the name
-     * @param servicesManager  the services manager
      * @param principalFactory the principal factory
      * @param authenticator    Ldaptive authenticator component.
      * @param strategy         the strategy
      * @param groupResolver    the resolver for resolving groups
      */
-    public CesGroupAwareLdapAuthenticationHandler(String name, ServicesManager servicesManager,
+    public CesGroupAwareLdapAuthenticationHandler(String name,
                                                   PrincipalFactory principalFactory,
                                                   Authenticator authenticator,
                                                   AuthenticationPasswordPolicyHandlingStrategy strategy,
                                                   GroupResolver groupResolver) {
-        super(name, servicesManager, principalFactory, 0, authenticator, strategy);
+        super(name, principalFactory, 0, authenticator, strategy);
 
         this.groupResolver = groupResolver;
         LOGGER.trace("{} created with group attribute {} and group resolver {}",
