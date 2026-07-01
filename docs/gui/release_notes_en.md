@@ -7,6 +7,15 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ## [Unreleased]
 - Only technical changes were made
 
+## [v7.3.7-1] - 2026-06-25
+- Upgraded CAS to 7.3.7
+- When prompted to change the password, the current password must now be entered again for security reasons.
+- Multi-factor authentication now requires entering a token or scratch code to delete a two-factor device.
+  - Note: An incorrect entry of this token leads to an error log in Cas
+
+## [v7.2.7-20] - 2026-06-24
+- Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
+
 ## [v7.2.7-19] - 2026-06-03
 - Fixed an issue where the CAS integration tests failed in multinode environments.
 
