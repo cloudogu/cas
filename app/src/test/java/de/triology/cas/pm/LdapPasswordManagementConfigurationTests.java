@@ -5,10 +5,15 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationProp
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.config.CasLdapPasswordManagementAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,5 +52,44 @@ class LdapPasswordManagementConfigurationTests {
 
         assertNotNull(service);
         assertTrue(service instanceof CesLdapPasswordManagementService);
+    }
+
+    /**
+     * Regression guard for #345 / #163: the config must not be gated by the indexed
+     * {@code @ConditionalOnProperty("cas.authn.pm.ldap[0].ldap-url")}, which stopped resolving
+     * after the CAS 6->7 / Spring Boot 2->3 upgrade and silently deactivated the CES override.
+     */
+    @Test
+    void shouldNotBeGatedByConditionalOnProperty() {
+        assertNull(LdapPasswordManagementConfiguration.class.getAnnotation(ConditionalOnProperty.class),
+                "@ConditionalOnProperty must not be present; the indexed [0] property broke registration of the CES override");
+    }
+
+    /**
+     * The CES config must be applied before Apereo's auto-configuration so the CES bean wins
+     * deterministically regardless of auto-configuration ordering.
+     */
+    @Test
+    void shouldBeAppliedBeforeApereoAutoConfiguration() {
+        var autoConfigureBefore = LdapPasswordManagementConfiguration.class.getAnnotation(AutoConfigureBefore.class);
+        assertNotNull(autoConfigureBefore, "@AutoConfigureBefore must be present");
+        assertTrue(List.of(autoConfigureBefore.value()).contains(CasLdapPasswordManagementAutoConfiguration.class),
+                "@AutoConfigureBefore must target CasLdapPasswordManagementAutoConfiguration");
+    }
+
+    /**
+     * The bean must be registered under both names so Apereo's
+     * {@code @ConditionalOnMissingBean(name = "ldapPasswordChangeService")} backs off and the CES
+     * service also becomes the active {@code passwordChangeService}.
+     */
+    @Test
+    void shouldRegisterBeanUnderBothNames() throws NoSuchMethodException {
+        Method method = LdapPasswordManagementConfiguration.class.getDeclaredMethod(
+                "passwordChangeService", CasConfigurationProperties.class, CipherExecutor.class, PasswordHistoryService.class);
+        var bean = method.getAnnotation(Bean.class);
+        assertNotNull(bean, "@Bean must be present on passwordChangeService");
+        var names = List.of(bean.name());
+        assertTrue(names.contains("passwordChangeService"), "bean must be named passwordChangeService");
+        assertTrue(names.contains("ldapPasswordChangeService"), "bean must also be named ldapPasswordChangeService");
     }
 }
