@@ -6,6 +6,18 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.3.7-2] - 2026-07-02
+- Dieses Release behebt ein Problem mit dem Löschdialog eines Multifaktor-Geräts.
+
+## [v7.3.7-1] - 2026-06-25
+- Upgrade CAS zu Version 7.3.7
+- Bei der Aufforderung zum Ändern des Passworts muss zur Sicherheit nun erneut das aktuelle Passwort eingegeben werden.
+- Mehrfaktor-Authetifizierung benötigt nun die Eingabe eines Tokens oder Scratch-Codes zur Löschung eines Zweifaktor-Geräts.
+  - Hinweis: Eine Falscheingabe von diesem Token führt zu einem Errorlog in Cas
+
+## [v7.2.7-20] - 2026-06-24
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+
 ## [v7.2.7-19] - 2026-06-03
 - Es wurde ein Problem behoben, bei dem die Integrationstests in einer Multinode Umgebung fehlschlugen.
 
