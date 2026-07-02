@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.3.7-2] - 2026-07-02
+- Dieses Release behebt ein Problem mit dem Löschdialog eines Multifaktor-Geräts.
+
 ## [v7.3.7-1] - 2026-06-25
 - Upgrade CAS zu Version 7.3.7
 - Bei der Aufforderung zum Ändern des Passworts muss zur Sicherheit nun erneut das aktuelle Passwort eingegeben werden.

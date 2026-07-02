@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.3.7-2] - 2026-07-02
+- This release fixes an issue with the deletion dialog of a multifactor device.
+
 ## [v7.3.7-1] - 2026-06-25
 - Upgraded CAS to 7.3.7
 - When prompted to change the password, the current password must now be entered again for security reasons.

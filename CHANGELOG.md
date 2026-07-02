@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.3.7-2] - 2026-07-02
+### Added
+- [#342] enable multifactor management api
+### Fixed
+- [#347] Fix hidden buttons in the delete multifactor device dialog
+
 ## [v7.3.7-1] - 2026-06-25
 ### Changed
 - [#334] Upgrade Apereo CAS from 7.2.7 to 7.3.7.
