@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [#345] Fixed a regression of [#163] where password-reset mails were silently dropped for e-mail addresses without a real TLD (e.g. `admin@ces.local`), because the CES password-management service was no longer registered after the CAS 7 / Spring Boot 3 upgrade.
 
 ## [v7.2.7-19] - 2026-06-03
 ### Fixed
