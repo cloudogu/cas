@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.3.7-2] - 2026-07-02
 - Dieses Release behebt ein Problem mit dem Löschdialog eines Multifaktor-Geräts.
 
 ## [v7.3.7-1] - 2026-06-25
