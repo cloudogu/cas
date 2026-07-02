@@ -5,7 +5,7 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
-- Only technical changes were made
+- This release fixes an issue with the deletion dialog of a multifactor device.
 
 ## [v7.3.7-1] - 2026-06-25
 - Upgraded CAS to 7.3.7
