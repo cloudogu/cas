@@ -81,6 +81,10 @@ configurations.configureEach {
         cacheChangingModulesFor 0, "seconds"
         cacheDynamicVersionsFor 0, "seconds"
         preferProjectModules()
+        // CVE-2025-14813: forced because the CAS BOM (enforcedPlatform) pins 1.82.
+        force "org.bouncycastle:bcprov-jdk18on:1.84"
+        force "org.bouncycastle:bcpkix-jdk18on:1.84"
+        force "org.bouncycastle:bcutil-jdk18on:1.84"
         def failIfConflict = project.hasProperty("failOnVersionConflict") && Boolean.valueOf(project.getProperty("failOnVersionConflict"))
         if (failIfConflict) {
             failOnVersionConflict()
@@ -221,6 +225,10 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-gauth-core-mfa:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-otp-mfa-core:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-notifications:${project.'cas.version'}"
+
+    // Patched thymeleaf (3.1.5.RELEASE via thymeleaf.version) onto the classpath; see gradle.properties.
+    implementation "org.thymeleaf:thymeleaf"
+    implementation "org.thymeleaf:thymeleaf-spring6"
 }
 
 configurations.all {
