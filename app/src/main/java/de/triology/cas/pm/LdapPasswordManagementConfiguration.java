@@ -30,6 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapPasswordManagementConfiguration {
 
+    /*
+     * Both names belong to Apereo and are guarded by @ConditionalOnMissingBean, so registering our
+     * bean under them makes Apereo's stock beans back off: "passwordChangeService" is the primary
+     * service CAS calls, "ldapPasswordChangeService" is the LDAP one that would otherwise re-enable
+     * the e-mail validation we skip (#163).
+     */
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {"passwordChangeService", "ldapPasswordChangeService"})
     public PasswordManagementService passwordChangeService(

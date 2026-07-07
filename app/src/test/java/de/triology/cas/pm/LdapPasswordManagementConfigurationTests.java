@@ -78,9 +78,8 @@ class LdapPasswordManagementConfigurationTests {
     }
 
     /**
-     * The bean must be registered under both names so Apereo's
-     * {@code @ConditionalOnMissingBean(name = "ldapPasswordChangeService")} backs off and the CES
-     * service also becomes the active {@code passwordChangeService}.
+     * Regression guard: the bean must stay registered under both names (see the wiring rationale on
+     * the {@code @Bean} declaration in {@link LdapPasswordManagementConfiguration}).
      */
     @Test
     void shouldRegisterBeanUnderBothNames() throws NoSuchMethodException {
