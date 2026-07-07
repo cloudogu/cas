@@ -24,6 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Registers {@link CesLdapPasswordManagementService} (which deactivates the e-mail address validation, see #163)
  * as the active {@code passwordChangeService}.
+ * <p>
+ * Do not gate this config with {@code @ConditionalOnProperty("cas.authn.pm.ldap[0].ldap-url")}: the indexed
+ * property stopped resolving after the CAS 6->7 / Spring Boot 2->3 upgrade, which silently deactivated the CES
+ * override (#345).
  */
 @Configuration(value = "LdapPasswordManagementConfiguration", proxyBeanMethods = false)
 @AutoConfigureBefore(CasLdapPasswordManagementAutoConfiguration.class)

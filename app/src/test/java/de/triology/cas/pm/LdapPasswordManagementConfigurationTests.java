@@ -55,9 +55,8 @@ class LdapPasswordManagementConfigurationTests {
     }
 
     /**
-     * Regression guard for #345 / #163: the config must not be gated by the indexed
-     * {@code @ConditionalOnProperty("cas.authn.pm.ldap[0].ldap-url")}, which stopped resolving
-     * after the CAS 6->7 / Spring Boot 2->3 upgrade and silently deactivated the CES override.
+     * Regression guard for #345 / #163: the config must not carry {@code @ConditionalOnProperty}
+     * (see the rationale on {@link LdapPasswordManagementConfiguration}).
      */
     @Test
     void shouldNotBeGatedByConditionalOnProperty() {
