@@ -51,7 +51,7 @@ class LdapPasswordManagementConfigurationTests {
         var service = config.passwordChangeService(casProperties, cipherExecutor, passwordHistoryService);
 
         assertNotNull(service);
-        assertTrue(service instanceof CesLdapPasswordManagementService);
+        assertInstanceOf(CesLdapPasswordManagementService.class, service);
     }
 
     /**
