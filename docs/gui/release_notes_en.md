@@ -5,6 +5,11 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Fixed
+- Fixed an issue where password-reset e-mails were not delivered for internal e-mail addresses without a public top-level domain (e.g. `admin@ces.local`).
+
+### Security
+- Fixed [CVE-2026-22732](https://nvd.nist.gov/vuln/detail/CVE-2026-22732), [CVE-2026-40477](https://nvd.nist.gov/vuln/detail/CVE-2026-40477), [CVE-2026-40478](https://nvd.nist.gov/vuln/detail/CVE-2026-40478), [CVE-2026-41901](https://nvd.nist.gov/vuln/detail/CVE-2026-41901) and [CVE-2025-14813](https://nvd.nist.gov/vuln/detail/CVE-2025-14813).
 
 ## [v7.3.7-2] - 2026-07-02
 - This release fixes an issue with the deletion dialog of a multifactor device.
