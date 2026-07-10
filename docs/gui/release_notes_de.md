@@ -6,6 +6,13 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.3.7-3] - 2026-07-10
+### Fixed
+- Es wurde ein Problem behoben, bei dem Passwort-Zurücksetzen-E-Mails für interne E-Mail-Adressen ohne öffentliche Top-Level-Domain (z. B. `admin@ces.local`) nicht zugestellt wurden.
+
+### Security
+- Sicherheitslücken geschlossen [CVE-2026-22732](https://nvd.nist.gov/vuln/detail/CVE-2026-22732), [CVE-2026-40477](https://nvd.nist.gov/vuln/detail/CVE-2026-40477), [CVE-2026-40478](https://nvd.nist.gov/vuln/detail/CVE-2026-40478), [CVE-2026-41901](https://nvd.nist.gov/vuln/detail/CVE-2026-41901) und [CVE-2025-14813](https://nvd.nist.gov/vuln/detail/CVE-2025-14813).
+
 ## [v7.3.7-2] - 2026-07-02
 - Dieses Release behebt ein Problem mit dem Löschdialog eines Multifaktor-Geräts.
 

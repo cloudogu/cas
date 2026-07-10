@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.3.7-3] - 2026-07-10
+### Changed
+- [#345] Update base image to v3.24.1-1 (Alpine 3.24.1).
+
+### Fixed
+- [#345] Fixed a regression of [#163] where password-reset mails were silently dropped for e-mail addresses without a real TLD (e.g. `admin@ces.local`), because the CES password-management service was no longer registered after the CAS 7 / Spring Boot 3 upgrade.
+
+### Security
+- [#345] Fixed Trivy CRITICAL findings by upgrading vulnerable transitive dependencies bundled in the base CAS webapp WAR:
+  - [CVE-2026-22732](https://nvd.nist.gov/vuln/detail/CVE-2026-22732) – spring-security 6.5.5 → 6.5.9
+  - [CVE-2026-40477](https://nvd.nist.gov/vuln/detail/CVE-2026-40477) / [CVE-2026-40478](https://nvd.nist.gov/vuln/detail/CVE-2026-40478) / [CVE-2026-41901](https://nvd.nist.gov/vuln/detail/CVE-2026-41901) – thymeleaf and thymeleaf-spring6 3.1.3.RELEASE → 3.1.5.RELEASE
+  - [CVE-2025-14813](https://nvd.nist.gov/vuln/detail/CVE-2025-14813) – bouncycastle bcprov/bcpkix/bcutil-jdk18on 1.82 → 1.84
+
 ## [v7.3.7-2] - 2026-07-02
 ### Added
 - [#342] enable multifactor management api
