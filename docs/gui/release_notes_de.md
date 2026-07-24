@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.3.7-4] - 2026-07-24
 ### Fixed
 - Es wurde eine Fehlermeldung hinzugefügt, wenn das Dogu wegen doppelten Schlüsseln im Konfigurationsbereich `config/_global/certificate/additional/toc` gestartet wird.
 
