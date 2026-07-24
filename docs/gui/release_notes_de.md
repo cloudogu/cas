@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.3.7-4] - 2026-07-24
+### Fixed
+- Es wurde eine Fehlermeldung hinzugefügt, wenn das Dogu wegen doppelten Schlüsseln im Konfigurationsbereich `config/_global/certificate/additional/toc` gestartet wird.
+
 ## [v7.3.7-3] - 2026-07-10
 ### Fixed
 - Es wurde ein Problem behoben, bei dem Passwort-Zurücksetzen-E-Mails für interne E-Mail-Adressen ohne öffentliche Top-Level-Domain (z. B. `admin@ces.local`) nicht zugestellt wurden.

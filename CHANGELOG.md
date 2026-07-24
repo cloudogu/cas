@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.3.7-4] - 2026-07-24
+### Fixed
+- [#352] prevent ``config/_global/certificate/additional/toc`` from having multiple identical keys by throwing an error
+
 ## [v7.3.7-3] - 2026-07-10
 ### Changed
 - [#345] Update base image to v3.24.1-1 (Alpine 3.24.1).
