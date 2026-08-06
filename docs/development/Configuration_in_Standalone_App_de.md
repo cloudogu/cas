@@ -1,8 +1,8 @@
-# Verwendung von Werten aus dem etcd in Standalone-App
+# Verwendung von Werten aus der Konfiguration in Standalone-App
 
 Die rechtlichen URLs für das Impressum, die Nutzungsbedingungen und die Datenschutzrichtlinie sowie der Text, der
-bei einem Klick auf den Passwort-Vergessen-Button angezeigt wird, werden im `etcd` des CES definiert. Beim Start des
-Dogus werden die Werte aus dem etcd ausgelesen und entsprechend gesetzt.
+bei einem Klick auf den Passwort-Vergessen-Button angezeigt wird, werden in der konfiguration des CES definiert. Beim Start des
+Dogus werden die Werte aus der Konfiguration ausgelesen und entsprechend gesetzt.
 
 Wenn das CAS als Standalone-App außerhalb des CES gebaut und gestartet wird, können die URLs und der Hinweistext für ein
 vergessenes Passwort in einer Property-Datei angegeben werden. Hierzu muss im Verzeichnis 

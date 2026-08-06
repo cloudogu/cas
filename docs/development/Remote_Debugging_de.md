@@ -102,7 +102,7 @@ folgende Befehl im lokalen Repository des Ecosystems ausgeführt werden:
    ssh -L 5005:127.0.0.1:8000 -p 2222 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR -o IdentitiesOnly=yes -i ./.vagrant/machines/default/virtualbox/private_key vagrant@127.0.0.1
 ```
 
-Der Port 8000 in der VM ist nun über den Port 5000 auf dem Localhost (Entwicklerrechner) erreichbar.
+Der Port 8000 in der VM ist nun über den Port 5005 auf dem Localhost (Entwicklerrechner) erreichbar.
 
 ### Hinzufügen einer Remote Debugging Run Configuration 
 
@@ -110,16 +110,3 @@ Als abschließender Schritt muss in der IDE, hier Intellij, im CAS Projekt nur n
 werden.
 
 ![RunConfiguration fuer Remote Debuggig](figures/Remote_Debugging_RunConfig.png)
-
-## Debug in CES-Multinode
-
-Um den CAS in CES-Multinode zu debuggen muss lediglich ein Port-Forward für Port 8000 auf den CAS-Pod erstellt werden.
-Der Port-Forward kann mit kubectl oder mit k9s erstellt werden.
-
-```shell
-kubectl port-forward cas-6d7b47cd7b-pqprr 8000:8000
-```
-
-Anschließend kann sich der Remote-Debugger auf mit `localhost:8000` verbinden.
-
-
