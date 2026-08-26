@@ -37,7 +37,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @AutoConfiguration(before = FlywayAutoConfiguration.class)
 @EnableConfigurationProperties(PATServiceProperties.class)
-@ConditionalOnProperty(prefix = "custom-token-service", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 public class PATServiceConfiguration {
     private static final int TOKEN_RANDOM_BYTES = 32;
 

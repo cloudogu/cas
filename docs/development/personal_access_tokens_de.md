@@ -89,7 +89,7 @@ SecurePATGenerator + Clock ──────────────┤
 
 Die PAT-spezifischen Infrastruktur-Beans sind benannt und qualifiziert. DataSource, Flyway, JdbcTemplate und Clock sind keine globalen Standardkandidaten. Damit bleibt die PAT-Datenbank von möglichen anderen CAS-Datenquellen getrennt.
 
-Sowohl `PATServiceConfiguration` als auch `PATSQLitePersistenceConfiguration` werden als Spring-Boot-Auto-Configurations registriert. Sie werden nur geladen, wenn `custom-token-service.enabled=true` gesetzt ist. Bei deaktiviertem Feature werden weder Controller und Security-Filterkette noch PAT-DataSource und Migration aufgebaut.
+Sowohl `PATServiceConfiguration` als auch `PATSQLitePersistenceConfiguration` werden als Spring-Boot-Auto-Configurations registriert. Sie werden nur geladen, wenn `personal-acces-token-service.enabled=true` gesetzt ist. Bei deaktiviertem Feature werden weder Controller und Security-Filterkette noch PAT-DataSource und Migration aufgebaut.
 
 ## API-Vertrag
 
@@ -251,16 +251,16 @@ Unerwartete Fehler werden serverseitig mit Stacktrace protokolliert, während de
 Die Spring-Properties lauten:
 
 ```properties
-custom-token-service.enabled=false
-custom-token-service.database-url=jdbc:sqlite:/var/ces/config/pats.db
+personal-acces-token-service.enabled=false
+personal-acces-token-service.database-url=jdbc:sqlite:/var/ces/config/pats.db
 ```
 
 In der Dogu-Konfiguration werden sie aus folgenden Schlüsseln erzeugt:
 
 | Dogu-/Helm-Konfiguration | Spring-Property | Standardwert |
 | --- | --- | --- |
-| `pat/enabled` beziehungsweise `configuration.normal.pat.enabled` | `custom-token-service.enabled` | `false` |
-| `pat/database_url` beziehungsweise `configuration.normal.pat.database_url` | `custom-token-service.database-url` | `jdbc:sqlite:/var/ces/config/pats.db` |
+| `pat/enabled` beziehungsweise `configuration.normal.pat.enabled` | `personal-acces-token-service.enabled` | `false` |
+| `pat/database_url` beziehungsweise `configuration.normal.pat.database_url` | `personal-acces-token-service.database-url` | `jdbc:sqlite:/var/ces/config/pats.db` |
 
 Zusätzlich müssen gültige Werte für `spring.security.user.name` und `spring.security.user.password` aus der jeweiligen Laufzeitkonfiguration vorhanden sein. Fehlen sie bei aktiviertem PAT-Service, bricht der Aufbau der Security-Filterkette mit einem Startfehler ab.
 

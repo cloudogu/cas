@@ -411,8 +411,8 @@ spring.security.user.password={{ .Config.GetAndDecrypt "experimental/totp/api_us
 
 ########################################################################################################################
 # PAT service
-custom-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "false" }}
-custom-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
+personal-acces-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "false" }}
+personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
 ########################################################################################################################
 
 ########################################################################################################################

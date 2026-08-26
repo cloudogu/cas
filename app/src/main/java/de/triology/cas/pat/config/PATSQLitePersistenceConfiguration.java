@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration(before = PATServiceConfiguration.class)
 @ConditionalOnClass(SQLiteDataSource.class)
-@ConditionalOnProperty(prefix = "custom-token-service", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 public class PATSQLitePersistenceConfiguration {
 
     /**
