@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Added
+- The technical requirements for the implementation of personnel access tokens have been established.
 
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed
