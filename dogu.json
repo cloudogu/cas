@@ -416,6 +416,25 @@
       "Encrypted": true
     },
     {
+      "Name": "pat/enabled",
+      "Description": "Enables the Personal Access Token API.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "pat/database_url",
+      "Description": "JDBC URL of the PAT database.",
+      "Default": "jdbc:sqlite:/var/ces/config/pats.db",
+      "Optional": true
+    },
+    {
       "Name": "allow_local_urls",
       "Description": "Determines whether the CAS should allow domains like *.localhost or *.localdomain.",
       "Default": "false",
