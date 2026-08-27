@@ -17,8 +17,6 @@ Die wichtigsten Eigenschaften sind:
 - SQLite ist die aktuell implementierte Datenbank; die Persistenz ist für weitere Datenbankanbieter vorbereitet.
 - Flyway verwaltet das PAT-Schema unabhängig von der übrigen CAS-Konfiguration.
 
-Die Bedienung der API aus Sicht eines Clients ist unter [Personal Access Tokens über die User-Management-API](../operations/personal_access_tokens_de.md) beschrieben. Diese Seite konzentriert sich auf Aufbau, Datenfluss und Erweiterung der Implementierung.
-
 ## Systemkontext und Vertrauensgrenze
 
 Die PAT-API ist nicht als direkte Endbenutzer-API gedacht. Vorgesehen ist ein Backend wie das User Management, das bereits eine Benutzersitzung besitzt und daraus die fachliche Benutzer-ID ermittelt.
@@ -40,18 +38,16 @@ CAS PAT-API
       dedizierte PAT-Datenbank
 ```
 
-Der technische Aufrufer authentifiziert sich über die global konfigurierten Spring-Security-Credentials (`spring.security.user.name` und `spring.security.user.password`). Die `userId` im Pfad bezeichnet dagegen den Eigentümer des PATs. Der Basic-Auth-Principal wird nicht automatisch zum Eigentümer.
+Der technische Aufrufer authentifiziert sich über die global konfigurierten Spring-Security-Credentials (`spring.security.user.name` und `spring.security.user.password`). Die `userId` im Pfad bezeichnet dagegen den Eigentümer des PATs.
 
 Diese Trennung bildet zugleich die wesentliche Vertrauensgrenze: Der CAS prüft, ob der Aufrufer gültig per HTTP Basic authentifiziert ist. Er prüft aber nicht, ob dieser Aufrufer die im Pfad angegebene `userId` verwalten darf. Die korrekte Zuordnung muss daher vom aufrufenden Backend gewährleistet werden. Jeder Account, der von dieser Security-Konfiguration akzeptiert wird, kann grundsätzlich PATs für beliebige Benutzer-IDs verwalten.
 
-Der Controller registriert intern die Pfade ohne CAS-Kontext:
+Die Pfade werden wie folgt registriert
 
 ```text
-/api/users/{userId}/pats
-/api/users/{userId}/pats/{id}
+/cas/api/users/{userId}/pats
+/cas/api/users/{userId}/pats/{id}
 ```
-
-Im ausgelieferten CAS kommt der Kontextpfad `/cas` hinzu, sodass Clients beispielsweise `/cas/api/users/{userId}/pats` aufrufen.
 
 ## Aufbau der Implementierung
 
@@ -87,10 +83,6 @@ SecurePATGenerator + Clock ──────────────┤
                                     PATController
 ```
 
-Die PAT-spezifischen Infrastruktur-Beans sind benannt und qualifiziert. DataSource, Flyway, JdbcTemplate und Clock sind keine globalen Standardkandidaten. Damit bleibt die PAT-Datenbank von möglichen anderen CAS-Datenquellen getrennt.
-
-Sowohl `PATServiceConfiguration` als auch `PATSQLitePersistenceConfiguration` werden als Spring-Boot-Auto-Configurations registriert. Sie werden nur geladen, wenn `personal-acces-token-service.enabled=true` gesetzt ist. Bei deaktiviertem Feature werden weder Controller und Security-Filterkette noch PAT-DataSource und Migration aufgebaut.
-
 ## API-Vertrag
 
 Die API bietet vier Operationen:
@@ -116,13 +108,13 @@ Der Create-Request besteht aus:
 
 Unbekannte JSON-Felder werden abgelehnt. Auch eine leere oder mehr als 255 Zeichen lange `userId` ist ungültig. Der Scope darf maximal 1000 Zeichen lang sein.
 
-`scope` wird von diesem Modul weder interpretiert noch gegen eine Liste erlaubter Werte geprüft. `expiresAt` wird gespeichert und ausgegeben, führt aber weder zu einer automatischen Löschung noch wird es in einer Token-Authentifizierung durchgesetzt. Ein fehlender Ablaufzeitpunkt erzeugt ein nicht ablaufendes PAT.
+`scope` wird von diesem Modul weder interpretiert noch gegen eine Liste erlaubter Werte geprüft. Ein fehlender Ablaufzeitpunkt erzeugt ein nicht ablaufendes PAT.
 
 List- und Einzelantworten enthalten ausschließlich Metadaten. Sie enthalten insbesondere weder das Klartext-Token noch dessen Fingerprint.
 
 ### Fehlerformat
 
-Fehler werden als stabiles JSON-Objekt mit `code`, `message` und `timestamp` ausgegeben. Die wichtigsten Abbildungen sind:
+Fehler werden als JSON-Objekt mit `code`, `message` und `timestamp` ausgegeben. Die wichtigsten Abbildungen sind:
 
 | Status | Code | Typischer Grund |
 | --- | --- | --- |
@@ -164,8 +156,6 @@ Der Generator liest 32 Zufallsbytes aus `SecureRandom` und codiert sie URL-siche
 
 Der Service kombiniert das Ergebnis mit einer zufälligen UUID, der Eigentümer-ID, den Metadaten und einem UTC-Zeitpunkt. Nur der Fingerprint und die Metadaten werden an das Repository übergeben. Nach erfolgreicher Speicherung liefert die Create-Antwort das Klartext-Token zurück. Die Antwort setzt `Cache-Control: no-store` und `Pragma: no-cache`.
 
-Wird die Speicherung abgebrochen, wird kein Token an den Client ausgegeben. Eine erneute Anfrage erzeugt ein neues Token und eine neue ID.
-
 ## Lesen, Ownership und Löschen
 
 Die Eigentümergrenze wird im Repository umgesetzt. Einzelabfrage und Löschung verwenden immer die Kombination aus `user_id` und `id`:
@@ -178,7 +168,7 @@ Dadurch kann eine bekannte PAT-ID nicht über den Pfad eines anderen Benutzers g
 
 Die Listenoperation filtert ebenfalls nach `user_id` und sortiert nach `created_at DESC`. Sie ist aktuell nicht paginiert und filtert abgelaufene PATs nicht heraus.
 
-Ein Delete entfernt den Datensatz direkt aus der Datenbank. Es gibt weder Soft Delete noch einen separaten Status für widerrufene Tokens. Da die aktuelle Umsetzung keine PAT-Validierung anbietet, besteht auch kein Cache, der beim Löschen invalidiert werden müsste.
+Ein Delete entfernt den Datensatz direkt aus der Datenbank. Es gibt weder Soft Delete noch einen separaten Status für widerrufene Tokens.
 
 ## Persistenz und Migrationen
 
@@ -280,4 +270,4 @@ Eine spätere Verwendung der PATs als echte Zugangsdaten benötigt eine eigene A
 4. den Eigentümer und den Scope in eine authentifizierte Identität überführen und
 5. gelöschte oder unbekannte PATs einheitlich ablehnen.
 
-Der dafür bereits persistierte Fingerprint-Index ermöglicht eine Suche, ohne Klartext-Tokens speichern zu müssen. Vergleiche von sicherheitsrelevanten Bytewerten sollten zeitkonstant erfolgen. Tokenwerte dürfen auch in diesem Pfad nicht in Logs, Metriken oder Traces erscheinen.
+Der dafür bereits persistierte Fingerprint-Index ermöglicht eine Suche, ohne Klartext-Tokens speichern zu müssen. Tokenwerte dürfen auch in diesem Pfad nicht in Logs, Metriken oder Traces erscheinen.
