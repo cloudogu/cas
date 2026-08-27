@@ -199,6 +199,7 @@ dependencies {
     // junit-platform-launcher (version-managed by the BOM) keeps launcher and engine aligned.
     testImplementation "org.junit.jupiter:junit-jupiter"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.springframework:spring-test"
 
     testImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation "org.mockito:mockito-junit-jupiter:5.2.0"
