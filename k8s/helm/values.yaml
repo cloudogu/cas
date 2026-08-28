@@ -55,7 +55,7 @@ configuration:
     logging:
       root: "WARN"
     pat:
-      enabled: false
+      enabled: "false"
       database_url: "jdbc:sqlite:/var/ces/config/pats.db"
   secretRefs:
     ldapPassword:
