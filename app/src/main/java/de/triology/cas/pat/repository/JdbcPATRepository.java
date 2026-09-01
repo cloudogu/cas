@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.triology.cas.pat.model.PATFingerprint;
 import de.triology.cas.pat.model.PATMetadata;
 import de.triology.cas.pat.model.StoredPAT;
+import de.triology.cas.pat.service.GeneratedPAT;
 import de.triology.cas.pat.service.PATStorageUnavailableException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -37,7 +39,9 @@ public class JdbcPATRepository implements PATRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insert(StoredPAT pat) {
         try {
@@ -65,7 +69,9 @@ public class JdbcPATRepository implements PATRepository {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<PATMetadata> findAllByUserId(String userId) {
         try {
@@ -78,7 +84,9 @@ public class JdbcPATRepository implements PATRepository {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<PATMetadata> findByUserIdAndId(String userId, UUID id) {
         try {
@@ -93,12 +101,35 @@ public class JdbcPATRepository implements PATRepository {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteByUserIdAndId(String userId, UUID id) {
         try {
             return jdbcTemplate.update(
                     "DELETE FROM personal_access_tokens WHERE user_id = ? AND id = ?", userId, id.toString()) == 1;
+        } catch (DataAccessException e) {
+            throw translate(e);
+        }
+    }
+
+    @Override
+    public Optional<PATMetadata> validate(String userId, PATFingerprint fingerprint, Instant now) {
+        try {
+            List<PATMetadata> matches = jdbcTemplate.query(
+                    """
+                    SELECT id, user_id, display_name, created_at, expires_at, scope
+                    FROM personal_access_tokens
+                    WHERE user_id = ?
+                      AND token_fingerprint = ?
+                    """,
+                    this::mapMetadata,
+                    userId,
+                    fingerprint.bytes());
+
+            return matches.stream()
+                    .findFirst();
         } catch (DataAccessException e) {
             throw translate(e);
         }

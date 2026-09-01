@@ -3,6 +3,7 @@ package de.triology.cas.pat.service;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import de.triology.cas.pat.model.CreatePATRequest;
@@ -123,6 +124,18 @@ public class PATService {
             throw new PATNotFoundException();
         }
         AUDIT.info("event=pat_deleted patId={} userId={} principal={} result=success", id, validatedUserId, actor);
+    }
+
+    /**
+     * Validate that the given pat exists, belongs to the user and is not expired
+     *
+     * @param userId requesting user
+     * @param pat pat that was provided
+     */
+    public boolean validate(String userId, String pat) {
+        GeneratedPAT givenPAT = generator.generate(pat);
+        Optional<PATMetadata> result = repository.validate(userId, givenPAT.fingerprint(), Instant.now());
+        return result.map(patMetadata -> patMetadata.expiresAt().isAfter(Instant.now())).orElse(false);
     }
 
     /**

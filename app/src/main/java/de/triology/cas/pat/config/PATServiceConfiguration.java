@@ -7,6 +7,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.triology.cas.pat.authentication.PATAuthenticationHandler;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
 import de.triology.cas.pat.controller.PATExceptionHandler;
@@ -15,6 +16,8 @@ import de.triology.cas.pat.repository.JdbcPATRepository;
 import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -24,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -218,6 +222,25 @@ public class PATServiceConfiguration {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(handlers))
                 .build();
+    }
+
+    @Bean
+    public PATAuthenticationHandler patAuthenticationHandler(
+            PATService patService) {
+
+        return new PATAuthenticationHandler(
+                "patAuthenticationHandler",
+                PrincipalFactoryUtils.newPrincipalFactory(),
+                Ordered.HIGHEST_PRECEDENCE,
+                patService);
+    }
+
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer
+    patAuthenticationEventExecutionPlanConfigurer(
+            PATAuthenticationHandler handler) {
+
+        return plan -> plan.registerAuthenticationHandler(handler);
     }
 
     private PATDatabaseProvider findDatabaseProvider(
