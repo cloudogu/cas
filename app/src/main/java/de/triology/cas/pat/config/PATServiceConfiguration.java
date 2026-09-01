@@ -243,7 +243,8 @@ public class PATServiceConfiguration {
     private void validateSecurityUser(SecurityProperties securityProperties) {
         SecurityProperties.User user = securityProperties.getUser();
         if (user.getName() == null || user.getName().isBlank()
-                || user.getPassword() == null || user.getPassword().isBlank()) {
+                || user.getPassword() == null || user.getPassword().isBlank()
+                || user.isPasswordGenerated()) {
             throw new IllegalStateException(
                     "spring.security.user.name and spring.security.user.password must be configured when the PAT service is enabled");
         }

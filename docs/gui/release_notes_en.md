@@ -6,7 +6,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 ### Added
-- The technical requirements for the implementation of personnel access tokens have been established.
+- The technical requirements for the implementation of personal access tokens have been established.
 
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed

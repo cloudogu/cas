@@ -78,19 +78,22 @@ class PATServiceConfigurationTest {
     @Test
     void refusesSecurityChainWithoutExplicitBasicCredentials() {
         SecurityProperties securityProperties = new SecurityProperties();
-        securityProperties.getUser().setName(" ");
-        securityProperties.getUser().setPassword(" ");
         HttpSecurity http = mock(HttpSecurity.class);
         PATSecurityHandlers handlers = mock(PATSecurityHandlers.class);
 
-        IllegalStateException missingBoth = assertThrows(IllegalStateException.class,
+        IllegalStateException generatedPassword = assertThrows(IllegalStateException.class,
+                () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
+        securityProperties.getUser().setName(" ");
+        securityProperties.getUser().setPassword("configured-password");
+        IllegalStateException missingName = assertThrows(IllegalStateException.class,
                 () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
         securityProperties.getUser().setName("service");
         securityProperties.getUser().setPassword(" ");
         IllegalStateException missingPassword = assertThrows(IllegalStateException.class,
                 () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
 
-        assertEquals(missingBoth.getMessage(), missingPassword.getMessage());
+        assertEquals(generatedPassword.getMessage(), missingName.getMessage());
+        assertEquals(generatedPassword.getMessage(), missingPassword.getMessage());
     }
 
     @Test
