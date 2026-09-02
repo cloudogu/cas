@@ -8,4 +8,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   de.triology.cas.pm.LdapPasswordManagementConfiguration,\
   de.triology.cas.services.CasCustomTemplateManagerConfiguration,\
   de.triology.cas.services.CesServicesManagerNullGuardAspectConfiguration,\
-  de.triology.cas.web.CustomUrlValidatorConfiguration
+  de.triology.cas.web.CustomUrlValidatorConfiguration,\
+  de.triology.cas.pat.config.PATSQLitePersistenceConfiguration,\
+  de.triology.cas.pat.config.PATServiceConfiguration

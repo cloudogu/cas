@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Added
+- Die technischen Vorraussetzungen für die Anlage von Personal Access Tokens wurden geschaffen.
 
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed

@@ -184,6 +184,11 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core'
     implementation 'org.apache.logging.log4j:log4j-api'
     implementation("org.apache.logging.log4j:log4j-jakarta-web") // has to be jakarta not javax!!
+    implementation "org.springframework:spring-jdbc"
+    implementation "org.springframework.security:spring-security-config"
+    implementation "org.springframework.security:spring-security-web"
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.xerial:sqlite-jdbc:3.53.2.1"
     // Build-time plugin index for Log4j 2
     annotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
     testAnnotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
@@ -194,6 +199,7 @@ dependencies {
     // junit-platform-launcher (version-managed by the BOM) keeps launcher and engine aligned.
     testImplementation "org.junit.jupiter:junit-jupiter"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.springframework:spring-test"
 
     testImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation "org.mockito:mockito-junit-jupiter:5.2.0"
