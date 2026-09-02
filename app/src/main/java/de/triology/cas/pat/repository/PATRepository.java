@@ -48,7 +48,6 @@ public interface PATRepository {
     boolean deleteByUserIdAndId(String userId, UUID id);
 
     Optional<PATMetadata> validate(
-            String userId,
             PATFingerprint fingerprint,
             Instant now);
 }

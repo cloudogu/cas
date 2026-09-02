@@ -168,6 +168,8 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-pm-ldap"
     implementation "org.apereo.cas:cas-server-support-pm-webflow"
 
+    implementation "org.apereo.cas:cas-server-core-rest"
+    implementation "org.apereo.cas:cas-server-core-rest-api"
     implementation "org.apereo.cas:cas-server-support-rest"
     implementation "org.apereo.cas:cas-server-support-swagger"
     implementation "org.apereo.cas:cas-server-support-saml"

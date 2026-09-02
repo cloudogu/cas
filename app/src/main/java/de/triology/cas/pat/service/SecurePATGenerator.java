@@ -43,23 +43,12 @@ public class SecurePATGenerator {
     }
 
     /**
-     * Generates a token consisting of the {@code pat_} prefix and a Base64-URL encoded
-     * random value without padding, together with the SHA-256 fingerprint stored by the service.
+     * Computes the irreversible fingerprint of the complete cleartext token.
      *
-     * @return newly generated token and fingerprint
-     */
-    public GeneratedPAT generate(String pat) {
-        String token = TOKEN_PREFIX + Base64.getUrlEncoder().withoutPadding().encodeToString(pat.getBytes());
-        return new GeneratedPAT(token, fingerprint(token));
-    }
-
-    /**
-     * Computes the irreversible fingerprint reserved for future token validation.
-     *
-     * @param token generated cleartext token
+     * @param token complete cleartext token including its prefix
      * @return SHA-256 digest
      */
-    private PATFingerprint fingerprint(String token) {
+    public PATFingerprint fingerprint(String token) {
         try {
             return new PATFingerprint(MessageDigest.getInstance("SHA-256")
                     .digest(token.getBytes(StandardCharsets.US_ASCII)));

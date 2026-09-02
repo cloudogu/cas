@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 import java.util.UUID;
 
 import de.triology.cas.pat.model.CreatePATRequest;
@@ -127,15 +128,21 @@ public class PATService {
     }
 
     /**
-     * Validate that the given pat exists, belongs to the user and is not expired
+     * Resolves a complete Bearer token to a non-expired PAT.
      *
-     * @param userId requesting user
-     * @param pat pat that was provided
+     * @param token complete cleartext PAT supplied through the Authorization header
+     * @param path current request path
+     * @return matching metadata, or empty for malformed, unknown or expired tokens
      */
-    public boolean validate(String userId, String pat) {
-        GeneratedPAT givenPAT = generator.generate(pat);
-        Optional<PATMetadata> result = repository.validate(userId, givenPAT.fingerprint(), Instant.now());
-        return result.map(patMetadata -> patMetadata.expiresAt().isAfter(Instant.now())).orElse(false);
+    public Optional<PATMetadata> resolve(String token, String path) {
+        if (token == null) {
+            return Optional.empty();
+        }
+
+        Instant now = clock.instant();
+        return repository.validate(generator.fingerprint(token), now)
+                .filter(metadata -> metadata.expiresAt() == null || metadata.expiresAt().isAfter(now))
+                .filter(patMetadata -> validateScope(patMetadata, path));
     }
 
     /**
@@ -170,5 +177,29 @@ public class PATService {
             throw new PATRequestException("expiresAt must be in the future");
         }
         return expiresAt;
+    }
+
+    /**
+     * Checks whether the requested path is covered by at least one comma-separated
+     * scope entry of the PAT. A scope such as { /redmine} covers the base path
+     * and all descendants, while { /*} allows every path.
+     *
+     *  @param pat PAT metadata containing the configured scope entries
+     *  @param path current HTTP request path, without scheme or host
+     *  @return { true} when the request path is authorized by the PAT scope
+     */
+    private boolean validateScope(PATMetadata pat, String path) {
+        if (path == null || path.isBlank()) {
+            return false;
+        }
+        return Arrays.stream(pat.scope().split(","))
+                .map(String::strip)
+                .filter(scope -> !scope.isBlank())
+                .map(scope -> scope.length() > 1 && scope.endsWith("/")
+                        ? scope.substring(0, scope.length() - 1)
+                        : scope)
+                .anyMatch(scope -> scope.equals("/*")
+                        || path.equals(scope)
+                        || path.startsWith(scope + "/"));
     }
 }

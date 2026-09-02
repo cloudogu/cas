@@ -16,10 +16,15 @@ import de.triology.cas.pat.repository.JdbcPATRepository;
 import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
+import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
@@ -33,12 +38,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Conditional Spring Boot auto-configuration for the complete PAT subsystem.
  * It owns a dedicated database data source, migration lifecycle, service graph and security chain.
  */
-@AutoConfiguration(before = FlywayAutoConfiguration.class)
+@AutoConfiguration(before = {FlywayAutoConfiguration.class, CasCoreRestAutoConfiguration.class})
 @EnableConfigurationProperties(PATServiceProperties.class)
 @ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 public class PATServiceConfiguration {
@@ -191,6 +198,13 @@ public class PATServiceConfiguration {
      * @return PAT security handlers
      */
     @Bean
+    public PATRequestPathFilter patRequestPathFilter() {
+        return new PATRequestPathFilter();
+    }
+
+
+
+    @Bean
     public PATSecurityHandlers patSecurityHandlers(
             ObjectMapper objectMapper,
             @Qualifier("patClock") Clock clock) {
@@ -209,10 +223,13 @@ public class PATServiceConfiguration {
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
     public SecurityFilterChain patSecurityFilterChain(
-            HttpSecurity http, PATSecurityHandlers handlers, SecurityProperties securityProperties) throws Exception {
+            HttpSecurity http,
+            PATSecurityHandlers handlers,
+            SecurityProperties securityProperties) throws Exception {
         validateSecurityUser(securityProperties);
         return http
                 .securityMatcher("/api/users/*/pats", "/api/users/*/pats/**")
+                .addFilterBefore(new PATRequestPathFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -226,21 +243,27 @@ public class PATServiceConfiguration {
 
     @Bean
     public PATAuthenticationHandler patAuthenticationHandler(
-            PATService patService) {
+            PATService patService,
+            @Qualifier("cesGroupAwareLdapAuthenticationHandler")
+            CesGroupAwareLdapAuthenticationHandler ldapHandler,
+            ObjectProvider<HttpServletRequest> requests) {
 
         return new PATAuthenticationHandler(
                 "patAuthenticationHandler",
                 PrincipalFactoryUtils.newPrincipalFactory(),
                 Ordered.HIGHEST_PRECEDENCE,
-                patService);
+                patService,
+                ldapHandler,
+                requests);
     }
 
     @Bean
     public AuthenticationEventExecutionPlanConfigurer
     patAuthenticationEventExecutionPlanConfigurer(
-            PATAuthenticationHandler handler) {
-
-        return plan -> plan.registerAuthenticationHandler(handler);
+            @Qualifier("patAuthenticationHandler") AuthenticationHandler handler,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
     }
 
     private PATDatabaseProvider findDatabaseProvider(

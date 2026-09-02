@@ -12,7 +12,6 @@ import java.util.UUID;
 import de.triology.cas.pat.model.PATFingerprint;
 import de.triology.cas.pat.model.PATMetadata;
 import de.triology.cas.pat.model.StoredPAT;
-import de.triology.cas.pat.service.GeneratedPAT;
 import de.triology.cas.pat.service.PATStorageUnavailableException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -115,17 +114,15 @@ public class JdbcPATRepository implements PATRepository {
     }
 
     @Override
-    public Optional<PATMetadata> validate(String userId, PATFingerprint fingerprint, Instant now) {
+    public Optional<PATMetadata> validate(PATFingerprint fingerprint, Instant now) {
         try {
             List<PATMetadata> matches = jdbcTemplate.query(
                     """
                     SELECT id, user_id, display_name, created_at, expires_at, scope
                     FROM personal_access_tokens
-                    WHERE user_id = ?
-                      AND token_fingerprint = ?
+                    WHERE token_fingerprint = ?
                     """,
                     this::mapMetadata,
-                    userId,
                     fingerprint.bytes());
 
             return matches.stream()
