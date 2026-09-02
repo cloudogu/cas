@@ -84,7 +84,7 @@ klickt, wird der unter `forgot_password_text` hinterlegte Text angezeigt.
 
 ## Konfiguration der Passwort-Regeln 
 
-Im der Configmap ``global-config`` können bestimmte Regeln für die Passwörter aktiviert werden. Konkret kann konfiguriert werden, ob ein Passwort
+Im der Configmap `global-config` können bestimmte Regeln für die Passwörter aktiviert werden. Konkret kann konfiguriert werden, ob ein Passwort
 bestimmte Zeichen enthalten muss und welche Länge ein Passwort mindestens haben muss.
 
 Mit dem Wert `true` kann bei den folgenden Einträgen die jeweilige Regel aktiviert werden.

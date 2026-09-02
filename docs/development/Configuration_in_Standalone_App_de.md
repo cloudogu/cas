@@ -1,7 +1,7 @@
 # Verwendung von Werten aus der Konfiguration in Standalone-App
 
 Die rechtlichen URLs für das Impressum, die Nutzungsbedingungen und die Datenschutzrichtlinie sowie der Text, der
-bei einem Klick auf den Passwort-Vergessen-Button angezeigt wird, werden in der konfiguration des CES definiert. Beim Start des
+bei einem Klick auf den Passwort-Vergessen-Button angezeigt wird, werden in der Konfiguration des CES definiert. Beim Start des
 Dogus werden die Werte aus der Konfiguration ausgelesen und entsprechend gesetzt.
 
 Wenn das CAS als Standalone-App außerhalb des CES gebaut und gestartet wird, können die URLs und der Hinweistext für ein

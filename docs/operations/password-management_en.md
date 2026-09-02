@@ -104,4 +104,4 @@ minimum length is 1.
 
 The values are applied after a restart of CAS.
 
-These values can be configured via ``kubectl edit -n ecosystem Configmap global-config``.
+These values can be configured via `kubectl edit -n ecosystem Configmap global-config`.
