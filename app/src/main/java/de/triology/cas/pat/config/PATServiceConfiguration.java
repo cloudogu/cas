@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.authentication.PATAuthenticationHandler;
+import de.triology.cas.pat.authentication.PATServiceTicketFactory;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
 import de.triology.cas.pat.controller.PATExceptionHandler;
@@ -24,7 +25,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
@@ -38,8 +38,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import jakarta.servlet.http.HttpServletRequest;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import java.util.Map;
 
 /**
  * Conditional Spring Boot auto-configuration for the complete PAT subsystem.
@@ -157,6 +162,23 @@ public class PATServiceConfiguration {
         return new PATService(repository, generator, clock);
     }
 
+    @Bean(name = "defaultServiceTicketFactory")
+    public PATServiceTicketFactory defaultServiceTicketFactory(
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier("protocolTicketCipherExecutor")
+            CipherExecutor<String, String> protocolTicketCipherExecutor,
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
+            ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            ServicesManager servicesManager,
+            @Qualifier("uniqueIdGeneratorsMap")
+            Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
+            PATService patService) {
+        return new PATServiceTicketFactory(serviceTicketExpirationPolicy, uniqueIdGeneratorsMap,
+                serviceTicketSessionTrackingPolicy, protocolTicketCipherExecutor, servicesManager, patService);
+    }
+
     /**
      * Creates the PAT HTTP controller.
      *
@@ -194,16 +216,9 @@ public class PATServiceConfiguration {
      * Creates JSON-producing Spring Security failure handlers.
      *
      * @param objectMapper application JSON mapper
-     * @param clock clock used for error timestamps
+     *  clock clock used for error timestamps
      * @return PAT security handlers
      */
-    @Bean
-    public PATRequestPathFilter patRequestPathFilter() {
-        return new PATRequestPathFilter();
-    }
-
-
-
     @Bean
     public PATSecurityHandlers patSecurityHandlers(
             ObjectMapper objectMapper,
@@ -229,7 +244,6 @@ public class PATServiceConfiguration {
         validateSecurityUser(securityProperties);
         return http
                 .securityMatcher("/api/users/*/pats", "/api/users/*/pats/**")
-                .addFilterBefore(new PATRequestPathFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -245,16 +259,14 @@ public class PATServiceConfiguration {
     public PATAuthenticationHandler patAuthenticationHandler(
             PATService patService,
             @Qualifier("cesGroupAwareLdapAuthenticationHandler")
-            CesGroupAwareLdapAuthenticationHandler ldapHandler,
-            ObjectProvider<HttpServletRequest> requests) {
+            CesGroupAwareLdapAuthenticationHandler ldapHandler) {
 
         return new PATAuthenticationHandler(
                 "patAuthenticationHandler",
                 PrincipalFactoryUtils.newPrincipalFactory(),
                 Ordered.HIGHEST_PRECEDENCE,
                 patService,
-                ldapHandler,
-                requests);
+                ldapHandler);
     }
 
     @Bean
