@@ -410,6 +410,12 @@ spring.security.user.password={{ .Config.GetAndDecrypt "experimental/totp/api_us
 {{ end }}
 
 ########################################################################################################################
+# PAT service
+personal-acces-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "false" }}
+personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
+########################################################################################################################
+
+########################################################################################################################
 # URL Validation
 custom.validation.allow-local-urls={{ .Config.GetOrDefault "allow_local_urls" "false"}}
 ########################################################################################################################

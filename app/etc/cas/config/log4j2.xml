@@ -86,6 +86,11 @@
         <AppenderRef ref="R6-DelegatedIdPProducer"/>
         <RequestResponseBodyMethodProcessorRewritePolicy/>
         </Rewrite>
+
+        <Rewrite name="SanitizePATTokens">
+            <AppenderRef ref="SanitizePasswords"/>
+            <PATTokenRewritePolicy/>
+        </Rewrite>
     </Appenders>
     <Loggers>
         <!-- If adding a Logger with level set higher than ${sys:ces.log.level}, make category as selective as possible -->
@@ -129,9 +134,10 @@
         <AsyncLogger name="org.apereo.cas.web.flow.DefaultDelegatedClientIdentityProviderConfigurationProducer" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
             <AppenderRef ref="R6-DelegatedIdPProducer"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
-            <AppenderRef ref="SanitizePasswords"/>
+        <AsyncLogger name="de.triology.cas.pat" level="${sys:ces.log.level}" includeLocation="true" additivity="false">
+            <AppenderRef ref="SanitizePATTokens"/>
         </AsyncLogger>
+        <AsyncLogger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="off" includeLocation="true" additivity="false"/>
 
         <!-- All Loggers inherit appenders specified here, unless additivity="false" on the Logger -->
         <AsyncRoot level="${sys:ces.log.level}">

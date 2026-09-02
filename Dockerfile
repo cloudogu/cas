@@ -57,7 +57,8 @@ RUN set -o errexit \
     wget \
     jq \
     curl \
-    jose
+    jose \
+    sqlite
 
 # configure environment
 ENV TOMCAT_VERSION=${TOMCAT_VERSION} \
