@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v7.3.7-5] - 2026-09-03
 ### Security
 - [#358] Upgrade the standalone Tomcat baked into the image from 11.0.22 to 11.0.25, mitigating 19 CVEs
   fixed in the 11.0.23, 11.0.24 and 11.0.25 releases. The `Important` rated ones are
