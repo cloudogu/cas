@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v7.3.7-5] - 2026-09-03
+### Security
+- [#358] Upgrade the standalone Tomcat baked into the image from 11.0.22 to 11.0.25, mitigating 19 CVEs
+  fixed in the 11.0.23, 11.0.24 and 11.0.25 releases. The `Important` rated ones are
+  [CVE-2026-65182](https://nvd.nist.gov/vuln/detail/CVE-2026-65182) (security constraint bypass),
+  [CVE-2026-65927](https://nvd.nist.gov/vuln/detail/CVE-2026-65927) (`RewriteValve` `[N]` flag may bypass access control),
+  [CVE-2026-68569](https://nvd.nist.gov/vuln/detail/CVE-2026-68569) (principal lookup could fail open) and
+  [CVE-2026-68763](https://nvd.nist.gov/vuln/detail/CVE-2026-68763) (HTTP/2 allocation-leak DoS).
+  Also fixed: [CVE-2026-65637](https://nvd.nist.gov/vuln/detail/CVE-2026-65637),
+  [CVE-2026-55956](https://nvd.nist.gov/vuln/detail/CVE-2026-55956),
+  [CVE-2026-73180](https://nvd.nist.gov/vuln/detail/CVE-2026-73180),
+  [CVE-2026-68525](https://nvd.nist.gov/vuln/detail/CVE-2026-68525),
+  [CVE-2026-66422](https://nvd.nist.gov/vuln/detail/CVE-2026-66422),
+  [CVE-2026-66299](https://nvd.nist.gov/vuln/detail/CVE-2026-66299),
+  [CVE-2026-65905](https://nvd.nist.gov/vuln/detail/CVE-2026-65905),
+  [CVE-2026-65183](https://nvd.nist.gov/vuln/detail/CVE-2026-65183),
+  [CVE-2026-59084](https://nvd.nist.gov/vuln/detail/CVE-2026-59084),
+  [CVE-2026-59083](https://nvd.nist.gov/vuln/detail/CVE-2026-59083),
+  [CVE-2026-55955](https://nvd.nist.gov/vuln/detail/CVE-2026-55955),
+  [CVE-2026-55276](https://nvd.nist.gov/vuln/detail/CVE-2026-55276),
+  [CVE-2026-53434](https://nvd.nist.gov/vuln/detail/CVE-2026-53434),
+  [CVE-2026-53404](https://nvd.nist.gov/vuln/detail/CVE-2026-53404) and
+  [CVE-2026-50229](https://nvd.nist.gov/vuln/detail/CVE-2026-50229).
+
+### Added
+- [#356] Add API and persistence for personal access tokens.
+
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed
 - [#352] prevent ``config/_global/certificate/additional/toc`` from having multiple identical keys by throwing an error

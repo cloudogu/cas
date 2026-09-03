@@ -6,6 +6,13 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v7.3.7-5] - 2026-09-03
+### Security
+- Upgrade von Tomcat 11.0.22 auf 11.0.25, um 19 CVEs zu schließen
+
+### Added
+- Die technischen Vorraussetzungen für die Anlage von Personal Access Tokens wurden geschaffen.
+
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed
 - Es wurde eine Fehlermeldung hinzugefügt, wenn das Dogu wegen doppelten Schlüsseln im Konfigurationsbereich `config/_global/certificate/additional/toc` gestartet wird.

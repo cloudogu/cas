@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "7.3.7-4",
+  "Version": "7.3.7-5",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -414,6 +414,25 @@
       "Description": "Warning: Experimental Feature. API password for totp administration in encrypted form. Supply the same password to the usermgt dogu.",
       "Optional": true,
       "Encrypted": true
+    },
+    {
+      "Name": "pat/enabled",
+      "Description": "Enables the Personal Access Token API.",
+      "Default": "false",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "pat/database_url",
+      "Description": "JDBC URL of the PAT database.",
+      "Default": "jdbc:sqlite:/var/ces/config/pats.db",
+      "Optional": true
     },
     {
       "Name": "allow_local_urls",
