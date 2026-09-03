@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v7.3.7-5] - 2026-09-03
 ### Security
 - Upgrade von Tomcat 11.0.22 auf 11.0.25, um 19 CVEs zu schließen
 
