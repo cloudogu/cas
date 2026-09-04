@@ -19,11 +19,11 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,7 +34,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * Conditional Spring Boot auto-configuration for the complete PAT subsystem.
  * It owns a dedicated database data source, migration lifecycle, service graph and security chain.
  */
-@AutoConfiguration(before = FlywayAutoConfiguration.class)
+@AutoConfiguration
 @EnableConfigurationProperties(PATServiceProperties.class)
 @ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 public class PATServiceConfiguration {
@@ -56,8 +56,7 @@ public class PATServiceConfiguration {
     }
 
     /**
-     * Owns the single migration lifecycle for the PAT database.
-     * It is ordered before global Flyway auto-configuration and is not a default candidate.
+     * Owns the single migration lifecycle for the PAT database. Not a default candidate.
      *
      * @param dataSource PAT data source
      * @param properties validated PAT configuration
@@ -203,7 +202,7 @@ public class PATServiceConfiguration {
      * @throws Exception when Spring Security cannot build the chain
      */
     @Bean
-    @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
+    @Order(Ordered.LOWEST_PRECEDENCE - 15)
     public SecurityFilterChain patSecurityFilterChain(
             HttpSecurity http, PATSecurityHandlers handlers, SecurityProperties securityProperties) throws Exception {
         validateSecurityUser(securityProperties);
