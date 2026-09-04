@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE"
-           th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'Central Authentication Service')}"/>
+           th:text="${#strings.defaultString(@themeProperties.getProperty('cas.theme.name'), 'Central Authentication Service')}"/>
     </title>
 
     <!--/*
@@ -23,9 +23,11 @@
     <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css"
           th:href="@{#{webjars.bootstrap-grid.css}}"/>
     <link rel="stylesheet" type="text/css" href="../static/css/cloudogu-cas.css"
-          th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+          th:with="standardCssFile=${@themeProperties.getProperty('cas.standard.css.file')}"
+          th:href="@{${standardCssFile}}"/>
     <link rel="stylesheet" type="text/css" href="../static/css/ces-theme-tailwind.css"
-          th:href="@{${#themes.code('cas.theme.css.file')}}"/>
+          th:with="themeCssFile=${@themeProperties.getProperty('cas.theme.css.file')}"
+          th:href="@{${themeCssFile}}"/>
 
     <!--/* Favicons */-->
     <link rel="shortcut icon" href="/cas/images/cas-logo.png"/>
