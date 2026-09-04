@@ -18,6 +18,7 @@ import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
 import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -53,6 +54,7 @@ import java.util.Map;
 @AutoConfiguration(before = {FlywayAutoConfiguration.class, CasCoreRestAutoConfiguration.class})
 @EnableConfigurationProperties(PATServiceProperties.class)
 @ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
+@Slf4j
 public class PATServiceConfiguration {
     private static final int TOKEN_RANDOM_BYTES = 32;
 
@@ -281,7 +283,13 @@ public class PATServiceConfiguration {
             @Qualifier("patAuthenticationHandler") AuthenticationHandler handler,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             PrincipalResolver defaultPrincipalResolver) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
+        LOGGER.info("Created PAT authentication event execution plan configurer for handler [{}]",
+                handler.getName());
+        return plan -> {
+            LOGGER.info("Registering PAT authentication handler [{}] with execution plan [{}]",
+                    handler.getName(), plan.getClass().getSimpleName());
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
+        };
     }
 
     private PATDatabaseProvider findDatabaseProvider(

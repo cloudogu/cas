@@ -25,6 +25,7 @@ public class PATService {
     private static final int MAX_SCOPE_LENGTH = 1000;
     private static final String DEFAULT_SCOPE = "/*";
     public static final String PAT_SCOPE_ATTRIBUTE = "patScope";
+    public static final String PAT_AUTH_ATTRIBUTE = "patAuthentication";
 
     private final PATRepository repository;
     private final SecurePATGenerator generator;
