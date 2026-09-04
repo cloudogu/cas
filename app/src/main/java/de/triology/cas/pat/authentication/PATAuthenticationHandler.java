@@ -10,6 +10,9 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import javax.security.auth.login.FailedLoginException;
 
+/**
+ * Authenticates personal access tokens and carries their scopes into CAS ticket state.
+ */
 public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final PATService patService;
     private final CesGroupAwareLdapAuthenticationHandler ldapHandler;
@@ -22,12 +25,28 @@ public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthentica
         this.ldapHandler = ldapHandler;
     }
 
+    /**
+     * Determines whether the credential contains a personal access token.
+     *
+     * @param credential credential presented for authentication
+     * @return whether this handler supports the credential
+     */
+
     @Override
     public boolean supports(Credential credential) {
         return credential instanceof UsernamePasswordCredential userPassword
                 && userPassword.toPassword() != null
                 && userPassword.toPassword().startsWith("pat_");
     }
+
+    /**
+     * Validates the PAT, resolves its LDAP principal, and stores its scope on the principal.
+     *
+     * @param credential transformed username/password credential
+     * @param originalPassword original cleartext PAT
+     * @return successful authentication result
+     * @throws Throwable if PAT or principal resolution fails
+     */
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential, String originalPassword) throws Throwable {

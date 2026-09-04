@@ -162,6 +162,9 @@ public class PATServiceConfiguration {
         return new PATService(repository, generator, clock);
     }
 
+    /**
+     * Executes the defaultServiceTicketFactory operation.
+     */
     @Bean(name = "defaultServiceTicketFactory")
     public PATServiceTicketFactory defaultServiceTicketFactory(
             @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
@@ -255,6 +258,9 @@ public class PATServiceConfiguration {
                 .build();
     }
 
+    /**
+     * Executes the patAuthenticationHandler operation.
+     */
     @Bean
     public PATAuthenticationHandler patAuthenticationHandler(
             PATService patService,

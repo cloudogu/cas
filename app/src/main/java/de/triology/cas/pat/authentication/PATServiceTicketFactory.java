@@ -22,6 +22,16 @@ import java.util.Map;
 public class PATServiceTicketFactory extends DefaultServiceTicketFactory {
     private final PATService patService;
 
+    /**
+     * Creates a service-ticket factory with PAT scope enforcement.
+     *
+     * @param expirationPolicyBuilder service-ticket expiration policy builder
+     * @param uniqueTicketIdGeneratorsForService service-specific ticket ID generators
+     * @param serviceTicketSessionTrackingPolicy service-ticket tracking policy
+     * @param cipherExecutor ticket identifier cipher executor
+     * @param servicesManager CAS services manager
+     * @param patService PAT metadata and scope service
+     */
     public PATServiceTicketFactory(
             ExpirationPolicyBuilder<ServiceTicket> expirationPolicyBuilder,
             Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
@@ -34,6 +44,17 @@ public class PATServiceTicketFactory extends DefaultServiceTicketFactory {
         this.patService = patService;
     }
 
+    /**
+     * Creates a service ticket after checking the PAT scope stored on the TGT.
+     *
+     * @param ticketGrantingTicket authenticated TGT
+     * @param service target CAS service
+     * @param credentialProvided whether credentials were provided for this request
+     * @param clazz requested ticket implementation type
+     * @param <T> ticket type
+     * @return created service ticket
+     * @throws Throwable if ticket creation or scope validation fails
+     */
     @Override
     public <T extends Ticket> T create(
             TicketGrantingTicket ticketGrantingTicket,

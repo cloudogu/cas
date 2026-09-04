@@ -113,6 +113,9 @@ public class JdbcPATRepository implements PATRepository {
         }
     }
 
+    /**
+     * Checks the condition handled by validate.
+     */
     @Override
     public Optional<PATMetadata> validate(PATFingerprint fingerprint, Instant now) {
         try {
