@@ -1,9 +1,11 @@
 package de.triology.cas.pat.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -143,5 +145,41 @@ class PATServiceTest {
 
         service.delete(" user ", existing, "actor");
         assertThrows(PATNotFoundException.class, () -> service.delete("user", missing, "actor"));
+    }
+
+    @Test
+    void resolvesKnownNonExpiredPatByFingerprint() {
+        PATFingerprint fingerprint = new PATFingerprint(new byte[32]);
+        PATMetadata metadata = new PATMetadata(
+                UUID.randomUUID(), "user", "token", NOW.minusSeconds(60), NOW.plusSeconds(60), "/usermgt");
+        when(generator.fingerprint("pat_secret")).thenReturn(fingerprint);
+        when(repository.validate(fingerprint, NOW)).thenReturn(Optional.of(metadata));
+
+        assertSame(metadata, service.resolve("pat_secret").orElseThrow());
+    }
+
+    @Test
+    void rejectsMissingAndExpiredPat() {
+        assertTrue(service.resolve(null).isEmpty());
+        verify(generator, never()).fingerprint(org.mockito.ArgumentMatchers.anyString());
+
+        PATFingerprint fingerprint = new PATFingerprint(new byte[32]);
+        PATMetadata expired = new PATMetadata(
+                UUID.randomUUID(), "user", "token", NOW.minusSeconds(120), NOW, "/usermgt");
+        when(generator.fingerprint("pat_expired")).thenReturn(fingerprint);
+        when(repository.validate(fingerprint, NOW)).thenReturn(Optional.of(expired));
+
+        assertTrue(service.resolve("pat_expired").isEmpty());
+    }
+
+    @Test
+    void matchesScopesAtPathBoundaries() {
+        assertTrue(service.isScopeAllowed("/*", "/any/service"));
+        assertTrue(service.isScopeAllowed(" /redmine/, /usermgt ", "/usermgt/api/users"));
+        assertTrue(service.isScopeAllowed("/usermgt", "/usermgt"));
+        assertFalse(service.isScopeAllowed("/user", "/usermgt"));
+        assertFalse(service.isScopeAllowed("/usermgt", "/usermgt-admin"));
+        assertFalse(service.isScopeAllowed(" ", "/usermgt"));
+        assertFalse(service.isScopeAllowed("/usermgt", null));
     }
 }
