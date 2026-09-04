@@ -60,7 +60,9 @@ class CesLegacyCompatibleTemplatesManagerTests {
     void apply_ShouldFallbackServiceId_WhenServiceIdIsMissing() {
         // given
         CasRegisteredService service = new CasRegisteredService();
-        service.setServiceId(null); // missing serviceId
+        // serviceId intentionally left unset (missing);
+        // BaseRegisteredService#setServiceId now rejects null,
+        // so simulate "missing" by simply never calling the setter.
         service.setProperties(Map.of(
                 "Fqdn", createPropertyWithValue("example.org"),
                 "ServiceName", createPropertyWithValue("myapp")

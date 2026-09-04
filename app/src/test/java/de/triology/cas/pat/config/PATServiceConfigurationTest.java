@@ -25,7 +25,7 @@ import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 

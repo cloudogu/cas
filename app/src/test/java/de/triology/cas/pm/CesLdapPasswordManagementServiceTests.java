@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -89,8 +90,8 @@ public class CesLdapPasswordManagementServiceTests {
         String email = "dustin@cloudogu.com";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(email, foundEMail);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 
     @Test
@@ -98,23 +99,23 @@ public class CesLdapPasswordManagementServiceTests {
         String email = "dustin@ces.local";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(email, foundEMail);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 
     @Test
     public void findEmailReturnsNullWhenEmptyString() {
         cesLdapPasswordManagementService.setEmailToReturn(""); // empty string
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(null, foundEMail);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(), foundEMails);
     }
 
     @Test
     public void findEmailReturnsNullWhenNull() {
         cesLdapPasswordManagementService.setEmailToReturn(null); // real null
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(null, foundEMail);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(), foundEMails);
     }
 }

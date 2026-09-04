@@ -86,20 +86,20 @@ class CesSendPasswordResetInstructionsActionTests {
         when(passwordManagementQuery.getUsername()).thenReturn("testuser");
     
         try {
-            when(passwordManagementService.findEmail(any())).thenReturn(null);
+            when(passwordManagementService.findEmails(any())).thenReturn(java.util.Set.of());
             when(passwordManagementService.findPhone(any())).thenReturn(null);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
-    
+
         when(requestContext.getMessageContext()).thenReturn(mock(MessageContext.class));
-    
+
         Event event = action.doExecuteInternal(requestContext);
-    
+
         assertNotNull(event);
         assertEquals("success", event.getId());
-    }   
-    
+    }
+
     @Test
     void shouldReturnError_WhenUsernameIsBlank() throws Exception {
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
@@ -119,7 +119,7 @@ class CesSendPasswordResetInstructionsActionTests {
         when(passwordManagementQuery.getUsername()).thenReturn("testuser");
     
         try {
-            when(passwordManagementService.findEmail(any())).thenThrow(new RuntimeException("Simulated email failure"));
+            when(passwordManagementService.findEmails(any())).thenThrow(new RuntimeException("Simulated email failure"));
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -144,7 +144,7 @@ class CesSendPasswordResetInstructionsActionTests {
         when(passwordManagementQuery.getUsername()).thenReturn("testuser");
     
         try {
-            when(passwordManagementService.findEmail(any())).thenReturn(null);
+            when(passwordManagementService.findEmails(any())).thenReturn(java.util.Set.of());
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }

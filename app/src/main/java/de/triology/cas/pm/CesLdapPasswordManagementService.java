@@ -13,6 +13,7 @@ import org.ldaptive.ConnectionFactory;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
@@ -48,16 +49,16 @@ public class CesLdapPasswordManagementService extends LdapPasswordManagementServ
     }
 
     @Override
-    public String findEmail(final PasswordManagementQuery query) {
+    public Set<String> findEmails(final PasswordManagementQuery query) {
         val email = findAttribute(query,
                 passwordManagementProperties.getReset().getMail().getAttributeName(),
                 CollectionUtils.wrap(query.getUsername()));
 
         if (StringUtils.isEmpty(email)) {
             LOGGER.warn("Email address [{}] for [{}] is empty", email, query.getUsername());
-            return null;
+            return Set.of();
         }
-        return email;
+        return Set.of(email);
     }
 }
 

@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -106,8 +107,8 @@ public class CesLdapPasswordManagementServiceTest {
         String email = "dustin@cloudogu.com";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(foundEMail, email);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 
     @Test
@@ -115,7 +116,7 @@ public class CesLdapPasswordManagementServiceTest {
         String email = "dustin@ces.local";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(foundEMail, email);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 }

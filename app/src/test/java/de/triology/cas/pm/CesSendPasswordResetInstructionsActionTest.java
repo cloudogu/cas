@@ -137,7 +137,7 @@ public class CesSendPasswordResetInstructionsActionTest {
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
-        when(passwordManagementService.findEmail(any())).thenThrow(new Throwable("Test exception"));
+        when(passwordManagementService.findEmails(any())).thenThrow(new Throwable("Test exception"));
 
         Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
 
@@ -163,7 +163,7 @@ public class CesSendPasswordResetInstructionsActionTest {
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
-        when(passwordManagementService.findEmail(any())).thenReturn("mail@test.com");
+        when(passwordManagementService.findEmails(any())).thenReturn(java.util.Set.of("mail@test.com"));
         when(passwordManagementService.findPhone(any())).thenReturn("01234/56789");
         when(requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         AuthenticationProperties mockAuthProps = mock(AuthenticationProperties.class);
