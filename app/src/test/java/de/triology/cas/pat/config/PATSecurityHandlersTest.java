@@ -6,19 +6,20 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 class PATSecurityHandlersTest {
 
     @Test
     void writesStableJsonAuthenticationError() throws Exception {
         Instant now = Instant.parse("2026-08-27T12:00:00Z");
-        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+        ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
         PATSecurityHandlers handlers = new PATSecurityHandlers(
                 objectMapper, Clock.fixed(now, ZoneOffset.UTC));
         MockHttpServletResponse response = new MockHttpServletResponse();

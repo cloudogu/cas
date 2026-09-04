@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
 import de.triology.cas.pat.controller.PATExceptionHandler;
