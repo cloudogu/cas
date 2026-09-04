@@ -146,7 +146,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-webflow-api"
     implementation "org.apereo.cas:cas-server-support-validation-core"
     implementation "org.apereo.cas:cas-server-core-validation-api"
-    
+
     implementation "org.apereo.cas:cas-server-support-ldap"
     implementation "org.apereo.cas:cas-server-support-ldap-core"
 
@@ -168,7 +168,10 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-pm-ldap"
     implementation "org.apereo.cas:cas-server-support-pm-webflow"
 
-    implementation "org.apereo.cas:cas-server-support-rest"
+    implementation "org.apereo.cas:cas-server-core-rest"
+    implementation "org.apereo.cas:cas-server-core-rest-api"
+    implementation "org.apereo.cas:cas-server-core-tickets-api"
+        implementation "org.apereo.cas:cas-server-support-rest"
     implementation "org.apereo.cas:cas-server-support-swagger"
     implementation "org.apereo.cas:cas-server-support-saml"
     implementation "org.apereo.cas:cas-server-support-swagger"
@@ -180,7 +183,7 @@ dependencies {
 
     implementation 'org.mousio:etcd4j:2.18.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-    
+
     implementation 'org.apache.logging.log4j:log4j-core'
     implementation 'org.apache.logging.log4j:log4j-api'
     implementation("org.apache.logging.log4j:log4j-jakarta-web") // has to be jakarta not javax!!
@@ -192,7 +195,7 @@ dependencies {
     // Build-time plugin index for Log4j 2
     annotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
     testAnnotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
-    
+
     // JUnit versions are governed by the CAS BOM (Spring Boot 3.5.x -> JUnit 5.12+). Do NOT pin an
     // older junit-bom here: it leaves Gradle's bundled junit-platform-launcher older than the engine,
     // which fails test discovery with "OutputDirectoryProvider not available". The explicit

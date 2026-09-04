@@ -3,6 +3,8 @@ package de.triology.cas.pat.service;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
 import java.util.UUID;
 
 import de.triology.cas.pat.model.CreatePATRequest;
@@ -22,6 +24,7 @@ public class PATService {
     private static final int MAX_TEXT_LENGTH = 255;
     private static final int MAX_SCOPE_LENGTH = 1000;
     private static final String DEFAULT_SCOPE = "/*";
+    public static final String PAT_SCOPE_ATTRIBUTE = "patScope";
 
     private final PATRepository repository;
     private final SecurePATGenerator generator;
@@ -126,6 +129,22 @@ public class PATService {
     }
 
     /**
+     * Resolves a complete Bearer token to a non-expired PAT.
+     *
+     * @param token complete cleartext PAT supplied through the Authorization header
+     * @return matching metadata, or empty for malformed, unknown or expired tokens
+     */
+    public Optional<PATMetadata> resolve(String token) {
+        if (token == null) {
+            return Optional.empty();
+        }
+
+        Instant now = clock.instant();
+        return repository.validate(generator.fingerprint(token), now)
+                .filter(metadata -> metadata.expiresAt() == null || metadata.expiresAt().isAfter(now));
+    }
+
+    /**
      * Trims and validates a required API text field.
      *
      * @param field field name used in validation errors
@@ -157,5 +176,29 @@ public class PATService {
             throw new PATRequestException("expiresAt must be in the future");
         }
         return expiresAt;
+    }
+
+    /**
+     * Checks whether a service path is covered by at least one comma-separated PAT scope.
+     * A scope such as { /redmine} covers the base path and all descendants, while
+     * { /*} allows every path. Path boundaries are respected.
+     *
+     * @param scopeValue comma-separated PAT scopes
+     * @param path service path without scheme or host
+     * @return whether the path is authorized by the scope
+     */
+    public boolean isScopeAllowed(String scopeValue, String path) {
+        if (scopeValue == null || scopeValue.isBlank() || path == null || path.isBlank()) {
+            return false;
+        }
+        return Arrays.stream(scopeValue.split(","))
+                .map(String::strip)
+                .filter(entry -> !entry.isBlank())
+                .map(entry -> entry.length() > 1 && entry.endsWith("/")
+                        ? entry.substring(0, entry.length() - 1)
+                        : entry)
+                .anyMatch(entry -> entry.equals("/*")
+                        || path.equals(entry)
+                        || path.startsWith(entry + "/"));
     }
 }

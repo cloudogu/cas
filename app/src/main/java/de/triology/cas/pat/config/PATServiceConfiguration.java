@@ -7,6 +7,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.triology.cas.pat.authentication.PATAuthenticationHandler;
+import de.triology.cas.pat.authentication.PATServiceTicketFactory;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
 import de.triology.cas.pat.controller.PATExceptionHandler;
@@ -15,6 +17,12 @@ import de.triology.cas.pat.repository.JdbcPATRepository;
 import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
+import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -24,17 +32,25 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import java.util.Map;
 
 /**
  * Conditional Spring Boot auto-configuration for the complete PAT subsystem.
  * It owns a dedicated database data source, migration lifecycle, service graph and security chain.
  */
-@AutoConfiguration(before = FlywayAutoConfiguration.class)
+@AutoConfiguration(before = {FlywayAutoConfiguration.class, CasCoreRestAutoConfiguration.class})
 @EnableConfigurationProperties(PATServiceProperties.class)
 @ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 public class PATServiceConfiguration {
@@ -146,6 +162,23 @@ public class PATServiceConfiguration {
         return new PATService(repository, generator, clock);
     }
 
+    @Bean(name = "defaultServiceTicketFactory")
+    public PATServiceTicketFactory defaultServiceTicketFactory(
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+            TicketTrackingPolicy serviceTicketSessionTrackingPolicy,
+            @Qualifier("protocolTicketCipherExecutor")
+            CipherExecutor<String, String> protocolTicketCipherExecutor,
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_SERVICE_TICKET_EXPIRATION_POLICY)
+            ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            ServicesManager servicesManager,
+            @Qualifier("uniqueIdGeneratorsMap")
+            Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap,
+            PATService patService) {
+        return new PATServiceTicketFactory(serviceTicketExpirationPolicy, uniqueIdGeneratorsMap,
+                serviceTicketSessionTrackingPolicy, protocolTicketCipherExecutor, servicesManager, patService);
+    }
+
     /**
      * Creates the PAT HTTP controller.
      *
@@ -183,7 +216,7 @@ public class PATServiceConfiguration {
      * Creates JSON-producing Spring Security failure handlers.
      *
      * @param objectMapper application JSON mapper
-     * @param clock clock used for error timestamps
+     *  clock clock used for error timestamps
      * @return PAT security handlers
      */
     @Bean
@@ -205,7 +238,9 @@ public class PATServiceConfiguration {
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
     public SecurityFilterChain patSecurityFilterChain(
-            HttpSecurity http, PATSecurityHandlers handlers, SecurityProperties securityProperties) throws Exception {
+            HttpSecurity http,
+            PATSecurityHandlers handlers,
+            SecurityProperties securityProperties) throws Exception {
         validateSecurityUser(securityProperties);
         return http
                 .securityMatcher("/api/users/*/pats", "/api/users/*/pats/**")
@@ -218,6 +253,29 @@ public class PATServiceConfiguration {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(handlers))
                 .build();
+    }
+
+    @Bean
+    public PATAuthenticationHandler patAuthenticationHandler(
+            PATService patService,
+            @Qualifier("cesGroupAwareLdapAuthenticationHandler")
+            CesGroupAwareLdapAuthenticationHandler ldapHandler) {
+
+        return new PATAuthenticationHandler(
+                "patAuthenticationHandler",
+                PrincipalFactoryUtils.newPrincipalFactory(),
+                Ordered.HIGHEST_PRECEDENCE,
+                patService,
+                ldapHandler);
+    }
+
+    @Bean
+    public AuthenticationEventExecutionPlanConfigurer
+    patAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("patAuthenticationHandler") AuthenticationHandler handler,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
     }
 
     private PATDatabaseProvider findDatabaseProvider(
