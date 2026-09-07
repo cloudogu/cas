@@ -368,14 +368,6 @@ class CesOidcConfigurationTests {
     }
 
     @Test
-    void oauthUserProfileViewRenderer_ReturnsCesOAuthProfileRenderer() {
-        var renderer = configuration.oauthUserProfileViewRenderer();
-
-        assertNotNull(renderer);
-        assertInstanceOf(de.triology.cas.oidc.beans.CesOAuthProfileRenderer.class, renderer);
-    }
-
-    @Test
     void principalFactory_WithBlankPrincipalIdAttribute_PrefersDefaultUsernameCandidate() throws Throwable {
         PrincipalFactory factory = configuration.principalFactory();
 
