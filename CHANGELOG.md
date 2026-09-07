@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#362] Upgrade CAS to v8.0.1
+  - Aligned the managed platform with CAS baseline: JDK 25 and Spring Boot 4.1.0
+- [#362] Update base image to v3.24.1-3
+- [#362] Update java base image to v25.0.4-1
+- [#362] Rename configuration property from `cas.ticket.tgt.core.only-track-most-recent-session` to `cas.ticket.tgt.core.service-tracking-policy`
 
 ## [v7.3.7-5] - 2026-09-03
 ### Security
