@@ -122,6 +122,8 @@ public class CesAbstractResourceBasedServiceRegistry extends AbstractResourceBas
 
             .filter(Objects::nonNull)
             .flatMap(Collection::stream)
+            // a serializer returning a null element (not a null collection) would otherwise NPE below
+            .filter(Objects::nonNull)
 
             // log each loaded service at WARN so it’s visible
             .peek(svc -> LOGGER.debug("Loaded service [{}] id=[{}] name=[{}]",
