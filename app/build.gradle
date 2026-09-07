@@ -196,7 +196,7 @@ dependencies {
     annotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
     testAnnotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
     
-    // JUnit versions are governed by the CAS BOM (Spring Boot 3.5.x -> JUnit 5.12+). Do NOT pin an
+    // JUnit versions are governed by the CAS BOM. Do NOT pin an
     // older junit-bom here: it leaves Gradle's bundled junit-platform-launcher older than the engine,
     // which fails test discovery with "OutputDirectoryProvider not available". The explicit
     // junit-platform-launcher (version-managed by the BOM) keeps launcher and engine aligned.

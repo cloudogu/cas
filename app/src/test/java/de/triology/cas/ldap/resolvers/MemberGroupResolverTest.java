@@ -1,18 +1,19 @@
 package de.triology.cas.ldap.resolvers;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MemberGroupResolverTest {
 
     @Mock
@@ -21,10 +22,11 @@ public class MemberGroupResolverTest {
     @Mock
     private LdapEntry entry;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(principal.getId()).thenReturn("trillian");
-        when(entry.getDn()).thenReturn("cn=Tricia,ou=People,dc=hitchhiker,dc=com");
+        // lenient: not every test method exercises both stubs
+        lenient().when(principal.getId()).thenReturn("trillian");
+        lenient().when(entry.getDn()).thenReturn("cn=Tricia,ou=People,dc=hitchhiker,dc=com");
     }
 
     @Test

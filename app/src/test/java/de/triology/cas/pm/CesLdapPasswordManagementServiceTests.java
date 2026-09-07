@@ -7,12 +7,12 @@ import org.apereo.cas.configuration.model.support.pm.ResetPasswordManagementProp
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.ConnectionFactory;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -23,7 +23,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CesLdapPasswordManagementServiceTests {
 
     class CesLdapPasswordManagementServiceForUnitTest extends CesLdapPasswordManagementService {
@@ -70,7 +70,7 @@ public class CesLdapPasswordManagementServiceTests {
 
     private CesLdapPasswordManagementServiceForUnitTest cesLdapPasswordManagementService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(
             cipherExecutor,

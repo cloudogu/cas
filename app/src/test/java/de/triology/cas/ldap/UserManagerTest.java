@@ -1,6 +1,6 @@
 package de.triology.cas.ldap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ldaptive.*;
 
 import java.util.List;

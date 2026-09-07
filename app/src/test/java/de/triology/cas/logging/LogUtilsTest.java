@@ -3,8 +3,8 @@ package de.triology.cas.logging;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent.Builder;
 import org.apache.logging.log4j.message.SimpleMessageFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LogUtilsTest {
 
@@ -17,12 +17,12 @@ public class LogUtilsTest {
         LogEvent logEvent = builder.build();
         String formattedMessage = LogUtils.getFormattedMessage(logEvent);
 
-        Assert.assertEquals(formattedMessage, messageText);
+        Assertions.assertEquals(formattedMessage, messageText);
     }
 
     @Test
     public void getFormattedMessageWhenLogEvenIsNull() {
-        Assert.assertNull(LogUtils.getFormattedMessage(null));
+        Assertions.assertNull(LogUtils.getFormattedMessage(null));
     }
 
     @Test
@@ -32,6 +32,6 @@ public class LogUtilsTest {
 
         LogEvent logEvent = builder.build();
 
-        Assert.assertNull(LogUtils.getFormattedMessage(logEvent));
+        Assertions.assertNull(LogUtils.getFormattedMessage(logEvent));
     }
 }

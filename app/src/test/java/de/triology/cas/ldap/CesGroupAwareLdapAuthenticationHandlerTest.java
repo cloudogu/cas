@@ -2,21 +2,21 @@ package de.triology.cas.ldap;
 
 import de.triology.cas.ldap.resolvers.GroupResolver;
 import org.apereo.cas.authentication.principal.Principal;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.Authenticator;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CesGroupAwareLdapAuthenticationHandlerTest {
 
     @Mock
