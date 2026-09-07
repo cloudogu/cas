@@ -66,7 +66,6 @@ class AttributeSelectingPrincipalFactoryTest {
     @Test
     void createPrincipal_StringAttribute_UsesTrimmedValue() {
         var factory = new AttributeSelectingPrincipalFactory("displayName");
-        Map<String, List<Object>> attributes = new HashMap<>();
         // A raw (non-List) String value stored directly under the key.
         Map<String, Object> rawAttributes = new HashMap<>();
         rawAttributes.put("displayName", " Dustin Hoffman ");
