@@ -31,4 +31,16 @@ public class DefaultMappingPasswordRewritePolicyTest {
 
         Assertions.assertSame(logEvent, rewrittenLogEvent);
     }
+
+    @Test
+    public void replacePasswordValueReturnsNullWhenOriginMessageIsNull() {
+        // rewrite() never calls replacePasswordValue() with a null argument (containsPassword()
+        // already guards on non-null), so this defensive branch is only reachable by calling the
+        // protected method directly (same package access).
+        DefaultMappingPasswordRewritePolicy policy = DefaultMappingPasswordRewritePolicy.createPolicy();
+
+        String result = policy.replacePasswordValue(null);
+
+        Assertions.assertNull(result);
+    }
 }

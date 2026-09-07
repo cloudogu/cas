@@ -77,10 +77,10 @@ public class CesLdapPasswordManagementServiceTests {
             casConfigurationProperties,
             passwordManagementProperties,
             passwordHistoryService,
-            null
+            java.util.Map.of()
         );
 
-        when(passwordManagementProperties.getReset()).thenReturn(resetPasswordManagementProperties);
+        passwordManagementProperties.setReset(resetPasswordManagementProperties);
         when(resetPasswordManagementProperties.getMail()).thenReturn(emailProperties);
         when(emailProperties.getAttributeName()).thenReturn(Collections.singletonList("mail"));
     }

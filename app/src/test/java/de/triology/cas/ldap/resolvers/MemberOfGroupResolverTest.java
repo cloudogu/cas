@@ -37,4 +37,28 @@ public class MemberOfGroupResolverTest {
         assertThat(groups, containsInAnyOrder("a", "b", "c", "d"));
     }
 
+    @Test
+    public void resolveGroups_attributeMissing_returnsEmptySet() {
+        when(ldapEntry.getAttribute("member")).thenReturn(null);
+        when(ldapEntry.getDn()).thenReturn("cn=someone,ou=People,dc=example,dc=com");
+
+        MemberOfGroupResolver resolver = new MemberOfGroupResolver("member");
+
+        Set<String> groups = resolver.resolveGroups(principal, ldapEntry);
+        assertThat(groups, org.hamcrest.Matchers.empty());
+    }
+
+    @Test
+    public void resolveGroups_attributeIsBinary_returnsEmptySet() {
+        LdapAttribute attribute = mock(LdapAttribute.class);
+        when(attribute.isBinary()).thenReturn(true);
+        when(ldapEntry.getAttribute("member")).thenReturn(attribute);
+        when(ldapEntry.getDn()).thenReturn("cn=someone,ou=People,dc=example,dc=com");
+
+        MemberOfGroupResolver resolver = new MemberOfGroupResolver("member");
+
+        Set<String> groups = resolver.resolveGroups(principal, ldapEntry);
+        assertThat(groups, org.hamcrest.Matchers.empty());
+    }
+
 }

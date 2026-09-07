@@ -4,6 +4,8 @@ import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -101,6 +103,46 @@ public class CesOAuthSingleLogoutMessageCreatorTests {
 
         // then
         assertEquals("", logoutMessage.getPayload());
+        validateMockitoUsage();
+    }
+
+    @Test
+    public void testCreate_FrontChannel_DeflatesPayload() throws Exception {
+        // given
+        TicketRegistry ticketRegistryMock = mock(TicketRegistry.class);
+        TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
+        when(tgtMock.getId()).thenReturn("TGT");
+
+        List<Ticket> tickets = new ArrayList<>();
+        OAuth20AccessToken oauthTicket = mock(OAuth20AccessToken.class);
+        String ticketId = "AT-1-3WoIpZxO-qzMl7R3N3cOlG0eh9VrY-dn";
+        when(oauthTicket.getId()).thenReturn(ticketId);
+        when(oauthTicket.getTicketGrantingTicket()).thenReturn(tgtMock);
+        tickets.add(oauthTicket);
+        doReturn(tickets).when(ticketRegistryMock).getTickets();
+
+        CesOAuthSingleLogoutMessageCreator builder = new CesOAuthSingleLogoutMessageCreator(ticketRegistryMock);
+
+        OidcRegisteredService service = new OidcRegisteredService();
+        service.setId(1);
+        service.setClientId("testOAuthClient");
+        service.setClientSecret("testClientSecret");
+        service.setLogoutUrl("org/custom/logout");
+
+        SingleLogoutRequestContext contextMock = mock(SingleLogoutRequestContext.class);
+        SingleLogoutExecutionRequest singleLogoutExecutionRequestMock = mock(SingleLogoutExecutionRequest.class);
+
+        when(contextMock.getRegisteredService()).thenReturn(service);
+        when(contextMock.getExecutionRequest()).thenReturn(singleLogoutExecutionRequestMock);
+        when(singleLogoutExecutionRequestMock.getTicketGrantingTicket()).thenReturn(tgtMock);
+        when(contextMock.getLogoutType()).thenReturn(RegisteredServiceLogoutType.FRONT_CHANNEL);
+        when(contextMock.getLogoutUrl()).thenReturn(java.net.URI.create("https://example.org/custom/logout").toURL());
+
+        // when
+        SingleLogoutMessage logoutMessage = builder.create(contextMock);
+
+        // then
+        assertEquals(CompressionUtils.deflate(ticketId), logoutMessage.getPayload());
         validateMockitoUsage();
     }
 }

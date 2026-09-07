@@ -95,9 +95,9 @@ public class CesLdapPasswordManagementServiceTest {
 
     @BeforeEach
     public void setup() {
-        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, casConfigurationProperties, passwordManagementProperties, passwordHistoryService, null);
+        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, casConfigurationProperties, passwordManagementProperties, passwordHistoryService, java.util.Map.of());
 
-        when(passwordManagementProperties.getReset()).thenReturn(resetPasswordManagementProperties);
+        passwordManagementProperties.setReset(resetPasswordManagementProperties);
         when(resetPasswordManagementProperties.getMail()).thenReturn(emailProperties);
         when(emailProperties.getAttributeName()).thenReturn(Collections.singletonList("mail"));
     }

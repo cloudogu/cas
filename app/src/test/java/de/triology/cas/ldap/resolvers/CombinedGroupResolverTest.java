@@ -40,4 +40,17 @@ public class CombinedGroupResolverTest {
         assertThat(resolver.resolveGroups(principal, entry), containsInAnyOrder("a", "b", "c", "d"));
     }
 
+    @Test
+    public void resolveGroups_emptyResolverList_returnsEmptySet() {
+        CombinedGroupResolver resolver = new CombinedGroupResolver(java.util.Collections.emptyList());
+        assertThat(resolver.resolveGroups(principal, entry), org.hamcrest.Matchers.empty());
+    }
+
+    @Test
+    public void resolveGroups_singleResolver_delegatesDirectly() {
+        when(resolverOne.resolveGroups(principal, entry)).thenReturn(new HashSet<>(Arrays.asList("a")));
+        CombinedGroupResolver resolver = new CombinedGroupResolver(Arrays.asList(resolverOne));
+        assertThat(resolver.resolveGroups(principal, entry), containsInAnyOrder("a"));
+    }
+
 }
