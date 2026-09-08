@@ -3,7 +3,7 @@ package de.triology.cas.pat.config;
 import java.io.IOException;
 import java.time.Clock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.model.PATErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

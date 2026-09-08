@@ -37,13 +37,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.View;
 
-
 @Configuration("CasCustomTemplateManagerConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ComponentScan("de.triology.cas.services")
 @Slf4j
 public class CasCustomTemplateManagerConfiguration {
-
 
     private static String proxyUrlFrom(Object v) {
         if (v instanceof String s) return s;
@@ -74,22 +72,13 @@ public class CasCustomTemplateManagerConfiguration {
                 if (model instanceof Map m && !m.containsKey("_proxiesInjected")) {
                     Object assertionObj = m.get("assertion");
                     if (assertionObj instanceof Assertion assertion) {
-                        LOGGER.debug("Assertion found: {}", assertion.getClass().getSimpleName());
-                        LOGGER.debug("Primary authentication principal: {}", assertion.getPrimaryAuthentication().getPrincipal().getId());
-
                         List<String> proxies = assertion.getChainedAuthentications().stream()
-                            // Skip the first element: it's the PRIMARY user authentication at CAS.
-                            // Only the subsequent authentications (index >= 1) represent proxy hops
-                            // and should appear in <cas:proxies>.
+                            // Skip index 0: that's the primary CAS authentication, not a proxy hop.
                             .skip(1)
                             .map(a -> proxyUrlFrom(a.getAttributes().get("pgtUrl")))
                             .filter(Objects::nonNull)
                             .filter(u -> u.startsWith("http://") || u.startsWith("https://"))
                             .toList();
-
-                        if (!proxies.isEmpty()) {
-                            m.put("proxies", proxies);
-                        }
 
                         Object serviceObj = model.get("service");
                         if (serviceObj instanceof WebApplicationService service) {
@@ -98,13 +87,13 @@ public class CasCustomTemplateManagerConfiguration {
 
                             if (principal instanceof Principal p) {
                                 Map<String, Object> principalAttributes = p.getAttributes()
-                                .entrySet()
-                                .stream()
-                                .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    e -> e.getValue().size() == 1 ? e.getValue().get(0) : e.getValue()
-                                ));
-                            
+                                    .entrySet()
+                                    .stream()
+                                    .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        e -> e.getValue().size() == 1 ? e.getValue().get(0) : e.getValue()
+                                    ));
+
                                 Map<String, Object> authnAttributes = assertion.getPrimaryAuthentication()
                                     .getAttributes()
                                     .entrySet()
@@ -127,68 +116,49 @@ public class CasCustomTemplateManagerConfiguration {
                                 mappedAttributes.put("firstname", attributes.get("givenName"));
                                 mappedAttributes.put("lastname", attributes.get("surname"));
 
-                                LOGGER.debug("principal: {}", p);
-                                LOGGER.debug("principalId: {}", p.getId());
-                                LOGGER.debug("principalAttributes: {}", p.getAttributes());                                
-                                LOGGER.debug("attributes: {}", attributes);
-                                LOGGER.debug("authnAttributes: {}", authnAttributes);
-                                LOGGER.debug("mappedAttributes: {}", mappedAttributes);
-
-
                                 Map<String, Object> mergedAttributes = new LinkedHashMap<>();
-
                                 mergedAttributes.putAll(attributes);         // encoded & filtered attributes
                                 mergedAttributes.putAll(p.getAttributes());  // raw principal attributes
                                 mergedAttributes.putAll(mappedAttributes);   // explicitly mapped
 
-
                                 CasProtocolAttributesRenderer attributeRenderer = attributesMap ->
-                                attributesMap.entrySet().stream()
-                                    .flatMap(entry -> {
-                                        String name = CasProtocolAttributesRenderer.sanitizeAttributeName(entry.getKey());
-                                        Object value = entry.getValue();
-                                        if (value instanceof Collection<?> coll) {
-                                            return coll.stream().map(val -> "<cas:" + name + ">" + val + "</cas:" + name + ">");
-                                        }
-                                        return Stream.of("<cas:" + name + ">" + value + "</cas:" + name + ">");
-                                    })
-                                    .collect(Collectors.toList());
-                            
-                            Collection<String> renderedAttributes = attributeRenderer.render(attributes);
-                            List<String> formatted = new ArrayList<>(renderedAttributes);
-                            LOGGER.debug("#### formatted: {}", formatted);     
+                                    attributesMap.entrySet().stream()
+                                        .flatMap(entry -> {
+                                            String name = CasProtocolAttributesRenderer.sanitizeAttributeName(entry.getKey());
+                                            Object value = entry.getValue();
+                                            if (value instanceof Collection<?> coll) {
+                                                return coll.stream().map(val -> "<cas:" + name + ">" + val + "</cas:" + name + ">");
+                                            }
+                                            return Stream.of("<cas:" + name + ">" + value + "</cas:" + name + ">");
+                                        })
+                                        .collect(Collectors.toList());
 
-                            m.put("user", attributes.get("username"));
-                            m.put("principal", p);
-                            m.put("attributes", mergedAttributes);                     
-                            m.put("formattedAttributes", formatted);
-                                                            
-                            } else { 
+                                List<String> formatted = new ArrayList<>(attributeRenderer.render(attributes));
+
+                                m.put("user", attributes.get("username"));
+                                m.put("principal", p);
+                                m.put("attributes", mergedAttributes);
+                                m.put("formattedAttributes", formatted);
+                            } else {
                                 LOGGER.debug("principal is not instanceof Principal");
                             }
-                        }
-                        else {
+                        } else {
                             LOGGER.debug("serviceObj is not instanceof WebApplicationService");
                         }
-             
-                        LOGGER.debug("Injecting proxies into model: {}", proxies);
 
                         m.put("proxies", proxies);
                         m.put("_proxiesInjected", true);
-                    }
-                    else {
+                    } else {
                         LOGGER.debug("assertionObj not instance of Assertion");
                     }
                 }
-                LOGGER.debug("Rendering CAS 3 success view with model: {}", model);
-                LOGGER.debug("render(): Received model with keys: {}", model.keySet());
-                LOGGER.debug("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
+                LOGGER.debug("Rendering CAS 3 success view with model keys: {}", model.keySet());
 
                 mustacheView.render(model, request, response);
             }
         };
     }
-    
+
     @Bean(name = "cas3SuccessViewDelegate")
     public View cas3SuccessViewDelegate(
         @Qualifier("casProtocolMustacheViewFactory") CasProtocolViewFactory factory,
@@ -196,8 +166,9 @@ public class CasCustomTemplateManagerConfiguration {
     ) {
         return factory.create(context, "protocol/3.0/casServiceValidationSuccess");
     }
-    
-    //Fixes: Parameter 1 of method cesDebugServiceRegistry in de.triology.cas.services.CasCustomTemplateManagerConfiguration required a bean of type 'org.apereo.cas.services.util.RegisteredServiceJsonSerializer' that could not be found.
+
+    // RegisteredServiceJsonSerializer isn't provided as a bean by CAS itself;
+    // define it here so cesDebugServiceRegistry below can be autowired.
     @Bean
     @RefreshScope
     public RegisteredServiceJsonSerializer registeredServiceJsonSerializer(

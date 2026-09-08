@@ -1,11 +1,11 @@
 package de.triology.cas.ldap.resolvers;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.LdapEntry;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CombinedGroupResolverTest {
 
     @Mock
@@ -38,6 +38,19 @@ public class CombinedGroupResolverTest {
         when(resolverTwo.resolveGroups(principal, entry)).thenReturn(new HashSet<>(Arrays.asList("c", "d", "b")));
         CombinedGroupResolver resolver = new CombinedGroupResolver(Arrays.asList(resolverOne, resolverTwo, resolverThree));
         assertThat(resolver.resolveGroups(principal, entry), containsInAnyOrder("a", "b", "c", "d"));
+    }
+
+    @Test
+    public void resolveGroups_emptyResolverList_returnsEmptySet() {
+        CombinedGroupResolver resolver = new CombinedGroupResolver(java.util.Collections.emptyList());
+        assertThat(resolver.resolveGroups(principal, entry), org.hamcrest.Matchers.empty());
+    }
+
+    @Test
+    public void resolveGroups_singleResolver_delegatesDirectly() {
+        when(resolverOne.resolveGroups(principal, entry)).thenReturn(new HashSet<>(Arrays.asList("a")));
+        CombinedGroupResolver resolver = new CombinedGroupResolver(Arrays.asList(resolverOne));
+        assertThat(resolver.resolveGroups(principal, entry), containsInAnyOrder("a"));
     }
 
 }

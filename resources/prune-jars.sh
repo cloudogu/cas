@@ -120,7 +120,11 @@ choose_highest() {
 plan="$(list_candidates | choose_highest)"
 
 # keep a tiny safety: never delete when base starts with e.g. "jakarta.servlet" etc.
-ALLOW_BASE_PREFIXES=""
+# "jackson" is excluded because CAS 8 deliberately ships two coexisting Jackson generations
+# (com.fasterxml.jackson.core:* 2.x alongside tools.jackson.core:* 3.x) whose jars share the same filename base
+# (jackson-databind-2.22.1.jar vs jackson-databind-3.2.1.jar) despite being different
+# artifacts from different groupIds - version-based pruning would wrongly drop the 2.x one.
+ALLOW_BASE_PREFIXES="jackson"
 
 echo "$plan" | while IFS='|' read -r action base ver file; do
   [ -n "$action" ] || continue
