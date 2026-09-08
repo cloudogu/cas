@@ -255,9 +255,9 @@ cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_
 # Configuration guide: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#ticket-granting-ticket-policies
 # Properties: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#default
 # ----------------------------------------------------------------------------------------------------------------------
-# only-track-most-recent-session means only most recent STs and PTs are stored so there is only one valid ST / PT
-# per service
-cas.ticket.tgt.core.only-track-most-recent-session=false
+# service-tracking-policy=ALL means all STs and PTs are stored, not just the most recent one, so
+# there can be more than one valid ST / PT per service
+cas.ticket.tgt.core.service-tracking-policy=ALL
 ########################################################################################################################
 
 ########################################################################################################################

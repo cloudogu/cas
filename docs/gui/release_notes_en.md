@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.1-1] - 2026-09-08
+### Changed
+- Upgrade CAS to v8.0.1
+
 ## [v7.3.7-5] - 2026-09-03
 ### Security
 - Upgrade Tomcat from 11.0.22 to 11.0.25, mitigating 19 CVEs
@@ -28,7 +32,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - This release fixes an issue with the deletion dialog of a multifactor device.
 
 ## [v7.3.7-1] - 2026-06-25
-- Upgraded CAS to 7.3.7
+- Upgrade CAS to v7.3.7
 - When prompted to change the password, the current password must now be entered again for security reasons.
 - Multi-factor authentication now requires entering a token or scratch code to delete a two-factor device.
   - Note: An incorrect entry of this token leads to an error log in Cas

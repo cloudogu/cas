@@ -2,18 +2,13 @@ package de.triology.cas.authentication;
 
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
@@ -27,8 +22,6 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 
 @Slf4j
 public class LegacyDefaultAuthenticationEventExecutionPlan extends DefaultAuthenticationEventExecutionPlan {
-
-    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>(0);
 
     public LegacyDefaultAuthenticationEventExecutionPlan(
             AuthenticationHandlerResolver defaultAuthenticationHandlerResolver, TenantExtractor tenantExtractor) {
@@ -81,12 +74,5 @@ public class LegacyDefaultAuthenticationEventExecutionPlan extends DefaultAuthen
         }
         LOGGER.debug("Resolved and finalized authentication handlers for this transaction are [{}]", resolvedHandlers);
         return resolvedHandlers;
-    }
-
-    @Override
-    public Set<AuthenticationHandler> getAuthenticationHandlers() {
-        val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(AuthenticationHandler[]::new);
-        AnnotationAwareOrderComparator.sortIfNecessary(handlers);
-        return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
     }
 }

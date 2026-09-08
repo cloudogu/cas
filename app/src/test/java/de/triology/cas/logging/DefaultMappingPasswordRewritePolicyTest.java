@@ -3,8 +3,8 @@ package de.triology.cas.logging;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent.Builder;
 import org.apache.logging.log4j.message.SimpleMessageFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DefaultMappingPasswordRewritePolicyTest {
 
@@ -17,7 +17,7 @@ public class DefaultMappingPasswordRewritePolicyTest {
 
         LogEvent rewrittenLogEvent = DefaultMappingPasswordRewritePolicy.createPolicy().rewrite(builder.build());
 
-        Assert.assertEquals("this log line contained sensitive data and was removed",
+        Assertions.assertEquals("this log line contained sensitive data and was removed",
                 rewrittenLogEvent.getMessage().getFormattedMessage());
     }
 
@@ -29,6 +29,18 @@ public class DefaultMappingPasswordRewritePolicyTest {
         LogEvent logEvent = builder.build();
         LogEvent rewrittenLogEvent = DefaultMappingPasswordRewritePolicy.createPolicy().rewrite(logEvent);
 
-        Assert.assertSame(logEvent, rewrittenLogEvent);
+        Assertions.assertSame(logEvent, rewrittenLogEvent);
+    }
+
+    @Test
+    public void replacePasswordValueReturnsNullWhenOriginMessageIsNull() {
+        // rewrite() never calls replacePasswordValue() with a null argument (containsPassword()
+        // already guards on non-null), so this defensive branch is only reachable by calling the
+        // protected method directly (same package access).
+        DefaultMappingPasswordRewritePolicy policy = DefaultMappingPasswordRewritePolicy.createPolicy();
+
+        String result = policy.replacePasswordValue(null);
+
+        Assertions.assertNull(result);
     }
 }

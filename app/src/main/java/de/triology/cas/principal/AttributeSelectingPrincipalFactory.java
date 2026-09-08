@@ -59,7 +59,7 @@ public class AttributeSelectingPrincipalFactory extends DefaultPrincipalFactory 
         try {
             return super.createPrincipal(
                 (chosen != null && !chosen.isBlank()) ? chosen : originalId,
-                attributes
+                attributes != null ? attributes : Map.of()
             );
         } catch (Throwable t) {
             throw new RuntimeException("Failed to create principal", t);

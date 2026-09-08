@@ -5,7 +5,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
-import de.triology.cas.oidc.beans.CesOAuthProfileRenderer;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
 import de.triology.cas.oidc.beans.delegation.*;
 import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
@@ -26,7 +25,6 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.pac4j.core.client.BaseClient;
@@ -147,12 +145,6 @@ public class CesOidcConfiguration {
         }
 
         return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
-    }
-
-    @Bean
-    @RefreshScope
-    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
-        return new CesOAuthProfileRenderer();
     }
 
     @Bean
