@@ -143,12 +143,6 @@ public class CesOidcConfiguration {
         return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
     }
 
-    @Bean
-    @RefreshScope
-    public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
-        return new CesOAuthProfileRenderer();
-    }
-
     /**
      * Provides the Caffeine cache used by {@link #customDelegatedClientFactory} to store and retrieve
      * delegated OIDC clients by key.

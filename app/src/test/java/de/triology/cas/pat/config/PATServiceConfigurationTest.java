@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
