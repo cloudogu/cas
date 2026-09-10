@@ -128,4 +128,65 @@ class LdapConfigurationTest {
         org.junit.jupiter.api.Assertions.assertEquals(1, attributes.size());
         org.junit.jupiter.api.Assertions.assertTrue(attributes.containsEntry("mail", "test@example.com"));
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void createsAndInitializesHandlerWithConfiguredAttributes(boolean policyEnabled) {
+        var properties = new org.apereo.cas.configuration.CasConfigurationProperties();
+        var ldap = new LdapAuthenticationProperties();
+        ldap.setName("test-ldap");
+        ldap.setPrincipalAttributeList(java.util.List.of("mail"));
+        ldap.setAdditionalAttributes(java.util.List.of("cn"));
+        ldap.setPrincipalAttributeId("uid");
+        ldap.setPrincipalDnAttributeName("dn");
+        ldap.setCollectDnAttribute(true);
+        ldap.setCredentialCriteria(".+");
+        ldap.getPasswordPolicy().setEnabled(policyEnabled);
+        properties.getAuthn().setLdap(java.util.List.of(ldap));
+        var context = mock(org.springframework.context.ConfigurableApplicationContext.class);
+        var resolver = mock(de.triology.cas.ldap.resolvers.CombinedGroupResolver.class);
+        var authenticator = mock(Authenticator.class);
+        var connections = mock(org.ldaptive.PooledConnectionFactory.class);
+        var policy = mock(org.apereo.cas.authentication.support.password.PasswordPolicyContext.class);
+        try (var utils = org.mockito.Mockito.mockStatic(org.apereo.cas.util.LdapUtils.class);
+             var handlers = org.mockito.Mockito.mockConstruction(CesGroupAwareLdapAuthenticationHandler.class)) {
+            utils.when(() -> org.apereo.cas.util.LdapUtils.newLdaptiveAuthenticator(ldap)).thenReturn(authenticator);
+            utils.when(() -> org.apereo.cas.util.LdapUtils.newLdaptivePooledConnectionFactory(ldap)).thenReturn(connections);
+            utils.when(() -> org.apereo.cas.util.LdapUtils.createLdapPasswordPolicyConfiguration(
+                    org.mockito.ArgumentMatchers.eq(ldap.getPasswordPolicy()),
+                    org.mockito.ArgumentMatchers.same(authenticator), org.mockito.ArgumentMatchers.any()))
+                    .thenReturn(policy);
+
+            var handler = new LdapConfiguration().cesGroupAwareLdapAuthenticationHandler(properties, context, resolver);
+
+            org.junit.jupiter.api.Assertions.assertSame(handlers.constructed().getFirst(), handler);
+            verify(handler).initialize();
+            verify(handler).setPrincipalIdAttribute("uid");
+            verify(handler).setPrincipalDnAttributeName("dn");
+            verify(handler).setCollectDnAttribute(true);
+            verify(handler).setCredentialSelectionPredicate(org.mockito.ArgumentMatchers.any());
+            verify(handler).setPrincipalAttributeMap(org.mockito.ArgumentMatchers.argThat(
+                    attributes -> attributes.containsKey("mail") && attributes.containsKey("cn")));
+            if (policyEnabled) verify(handler).setPasswordPolicyConfiguration(policy);
+            else verify(handler, never()).setPasswordPolicyConfiguration(org.mockito.ArgumentMatchers.any());
+        }
+    }
+
+    @Test
+    void createsCombinedResolverWithConfiguredConnectionFactory() {
+        var properties = new org.apereo.cas.configuration.CasConfigurationProperties();
+        var ldap = new LdapAuthenticationProperties();
+        properties.getAuthn().setLdap(java.util.List.of(ldap));
+        var connections = mock(org.ldaptive.PooledConnectionFactory.class);
+        var configuration = new LdapConfiguration();
+        org.springframework.test.util.ReflectionTestUtils.setField(configuration, "baseDN", "dc=example");
+        org.springframework.test.util.ReflectionTestUtils.setField(configuration, "searchFilter", "(uid={user})");
+        org.springframework.test.util.ReflectionTestUtils.setField(configuration, "groupAttribute", "memberOf");
+        try (var utils = org.mockito.Mockito.mockStatic(org.apereo.cas.util.LdapUtils.class)) {
+            utils.when(() -> org.apereo.cas.util.LdapUtils.newLdaptivePooledConnectionFactory(ldap)).thenReturn(connections);
+            org.junit.jupiter.api.Assertions.assertNotNull(configuration.combinedGroupResolver(properties));
+            utils.verify(() -> org.apereo.cas.util.LdapUtils.newLdaptivePooledConnectionFactory(ldap));
+        }
+    }
+
 }

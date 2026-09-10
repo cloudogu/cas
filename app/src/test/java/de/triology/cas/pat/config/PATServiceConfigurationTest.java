@@ -137,4 +137,39 @@ class PATServiceConfigurationTest {
         properties.setDatabaseUrl(url);
         return properties;
     }
+
+    @Test
+    void configuresFlywayForSelectedProvider() {
+        var dataSource = mock(DataSource.class);
+        var provider = provider(true, dataSource);
+        when(provider.migrationLocation()).thenReturn("classpath:db/pat/migration/sqlite");
+        var flyway = configuration.patFlyway(dataSource, properties("jdbc:test"), List.of(provider));
+        assertSame(dataSource, flyway.getConfiguration().getDataSource());
+        assertEquals("classpath:db/pat/migration/sqlite",
+                flyway.getConfiguration().getLocations()[0].getDescriptor());
+    }
+
+    @Test
+    void createsServiceTicketFactory() {
+        assertInstanceOf(de.triology.cas.pat.authentication.PATServiceTicketFactory.class,
+                configuration.defaultServiceTicketFactory(
+                        mock(org.apereo.cas.ticket.tracking.TicketTrackingPolicy.class),
+                        mock(org.apereo.cas.util.crypto.CipherExecutor.class),
+                        mock(org.apereo.cas.ticket.ExpirationPolicyBuilder.class),
+                        mock(org.apereo.cas.services.ServicesManager.class), java.util.Map.of(), mock(PATService.class)));
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void refusesNullBasicCredentials(boolean missingUsername) {
+        var properties = mock(SecurityProperties.class);
+        var user = mock(SecurityProperties.User.class);
+        when(properties.getUser()).thenReturn(user);
+        if (!missingUsername) when(user.getName()).thenReturn("service");
+        var http = mock(HttpSecurity.class);
+        assertThrows(IllegalStateException.class,
+                () -> configuration.patSecurityFilterChain(http, mock(PATSecurityHandlers.class), properties));
+        org.mockito.Mockito.verifyNoInteractions(http);
+    }
+
 }

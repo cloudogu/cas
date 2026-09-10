@@ -103,4 +103,25 @@ class PATExceptionHandlerTest {
         assertEquals(status, response.getStatusCode());
         assertEquals(new PATErrorResponse(code, message, NOW), response.getBody());
     }
+
+    @Test
+    void skipsNullValidationMessages() {
+        var bindingResult = new BeanPropertyBindingResult(new Object(), "request");
+        bindingResult.addError(new FieldError("request", "displayName", null));
+        bindingResult.addError(new FieldError("request", "scope", "scope is invalid"));
+        var exception = new MethodArgumentNotValidException(mock(MethodParameter.class), bindingResult);
+        assertResponse(handler.malformedRequest(exception, null),
+                HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "scope is invalid");
+    }
+
+    @Test
+    void hidesNullCauseMessagesAndNonIdConversionErrors() {
+        assertResponse(handler.malformedRequest(unreadable(new IllegalArgumentException()), null),
+                HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "Malformed JSON request");
+        var exception = mock(MethodArgumentTypeMismatchException.class);
+        when(exception.getName()).thenReturn("userId");
+        assertResponse(handler.malformedRequest(exception, null),
+                HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "Malformed JSON request");
+    }
+
 }

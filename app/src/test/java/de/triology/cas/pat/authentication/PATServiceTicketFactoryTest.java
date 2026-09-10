@@ -124,4 +124,38 @@ class PATServiceTicketFactoryTest {
         when(authentication.getPrincipal()).thenReturn(principal);
         when(principal.getAttributes()).thenReturn(attributes);
     }
+
+    @Test
+    void rejectsServiceWithoutIdForPatAuthentication() {
+        authenticationWithScope(SCOPE);
+        var exception = assertThrows(FailedLoginException.class,
+                () -> factory.create(ticketGrantingTicket, service, true, ServiceTicket.class));
+        assertEquals("Service is required for PAT authorization", exception.getMessage());
+        org.mockito.Mockito.verifyNoInteractions(patService);
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.MethodSource("nonStringScopes")
+    void delegatesTicketsWithoutStringScopeToCas(List<Object> scope) throws Throwable {
+        Authentication authentication = mock(Authentication.class);
+        Principal principal = mock(Principal.class);
+        Map<String, List<Object>> attributes = new HashMap<>();
+        attributes.put(PATService.PAT_SCOPE_ATTRIBUTE, scope);
+        when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(principal.getAttributes()).thenReturn(attributes);
+        var expiration = mock(ExpirationPolicy.class);
+        when(expirationPolicyBuilder.buildTicketExpirationPolicy()).thenReturn(expiration);
+        var ticket = mock(ServiceTicket.class);
+        when(ticketGrantingTicket.grantServiceTicket(anyString(), eq(service), eq(expiration),
+                eq(false), eq(ticketTrackingPolicy))).thenReturn(ticket);
+
+        assertSame(ticket, factory.create(ticketGrantingTicket, service, false, ServiceTicket.class));
+        org.mockito.Mockito.verifyNoInteractions(patService);
+    }
+
+    private static java.util.stream.Stream<List<Object>> nonStringScopes() {
+        return java.util.stream.Stream.of(null, List.of(), List.of(42), java.util.Arrays.asList((Object) null));
+    }
+
 }

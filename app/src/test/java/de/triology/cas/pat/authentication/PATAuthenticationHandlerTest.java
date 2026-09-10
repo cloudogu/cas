@@ -118,4 +118,12 @@ class PATAuthenticationHandlerTest {
     private static PATMetadata metadata(String userId, String scope) {
         return new PATMetadata(UUID.randomUUID(), userId, "token", Instant.EPOCH, null, scope);
     }
+
+    @Test
+    void rejectsCredentialWhosePasswordIsAbsent() {
+        var credential = org.mockito.Mockito.mock(UsernamePasswordCredential.class);
+        when(credential.toPassword()).thenReturn(null);
+        assertFalse(handler.supports(credential));
+    }
+
 }

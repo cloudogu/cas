@@ -33,4 +33,18 @@ class SecurePATGeneratorTest {
                 generated.fingerprint().bytes());
         assertEquals("GeneratedPAT[token=******, fingerprint=******]", generated.toString());
     }
+
+    @org.junit.jupiter.api.Test
+    void reportsUnavailableDigestAlgorithmWithOriginalCause() {
+        var cause = new java.security.NoSuchAlgorithmException("unavailable");
+        try (var digest = org.mockito.Mockito.mockStatic(java.security.MessageDigest.class)) {
+            digest.when(() -> java.security.MessageDigest.getInstance("SHA-256")).thenThrow(cause);
+            var generator = new SecurePATGenerator(new java.security.SecureRandom(), 32);
+            var exception = org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                    () -> generator.fingerprint("pat_secret"));
+            org.junit.jupiter.api.Assertions.assertEquals("SHA-256 is not available", exception.getMessage());
+            org.junit.jupiter.api.Assertions.assertSame(cause, exception.getCause());
+        }
+    }
+
 }

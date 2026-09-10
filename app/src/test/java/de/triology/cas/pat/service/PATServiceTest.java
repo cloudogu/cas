@@ -182,4 +182,30 @@ class PATServiceTest {
         assertFalse(service.isScopeAllowed(" ", "/usermgt"));
         assertFalse(service.isScopeAllowed("/usermgt", null));
     }
+
+    @Test
+    void rejectsNullOwnerBeforeAccessingStorage() {
+        assertThrows(PATRequestException.class, () -> service.findAll(null));
+        org.mockito.Mockito.verifyNoInteractions(repository, generator);
+    }
+
+    @Test
+    void resolvesNonExpiringTokenAndReturnsEmptyForUnknownFingerprint() {
+        var metadata = new PATMetadata(UUID.randomUUID(), "user", "name", NOW, null, "/*");
+        when(generator.fingerprint("pat_secret")).thenReturn(FINGERPRINT);
+        when(repository.validate(FINGERPRINT, NOW)).thenReturn(Optional.of(metadata), Optional.empty());
+        assertSame(metadata, service.resolve("pat_secret").orElseThrow());
+        assertTrue(service.resolve("pat_secret").isEmpty());
+    }
+
+    @Test
+    void handlesEmptyScopeEntriesAndRootPath() {
+        assertFalse(service.isScopeAllowed(null, "/service"));
+        assertFalse(service.isScopeAllowed("/*", " "));
+        assertFalse(service.isScopeAllowed(", ,", "/service"));
+        assertTrue(service.isScopeAllowed(", , /service", "/service"));
+        assertTrue(service.isScopeAllowed("/", "/"));
+        assertFalse(service.isScopeAllowed("/", "/service"));
+    }
+
 }
