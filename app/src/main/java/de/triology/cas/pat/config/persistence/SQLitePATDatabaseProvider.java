@@ -12,6 +12,7 @@ import org.sqlite.SQLiteDataSource;
 public final class SQLitePATDatabaseProvider implements PATDatabaseProvider {
     private static final String JDBC_PREFIX = "jdbc:sqlite:";
     private static final int BUSY_TIMEOUT_MILLIS = 5_000;
+    private static final String migrationLocation = "classpath:db/pat/migration/sqlite";
 
     /**
      * Checks the condition handled by supports.
@@ -46,6 +47,6 @@ public final class SQLitePATDatabaseProvider implements PATDatabaseProvider {
      */
     @Override
     public String migrationLocation() {
-        return "classpath:db/pat/migration/sqlite";
+        return migrationLocation;
     }
 }

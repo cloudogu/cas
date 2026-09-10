@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.authentication.PATAuthenticationHandler;
 import de.triology.cas.pat.authentication.PATServiceTicketFactory;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
@@ -28,9 +28,8 @@ import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
@@ -51,7 +50,7 @@ import java.util.Map;
  * Conditional Spring Boot auto-configuration for the complete PAT subsystem.
  * It owns a dedicated database data source, migration lifecycle, service graph and security chain.
  */
-@AutoConfiguration(before = {FlywayAutoConfiguration.class, CasCoreRestAutoConfiguration.class})
+@AutoConfiguration
 @EnableConfigurationProperties(PATServiceProperties.class)
 @ConditionalOnProperty(prefix = "personal-acces-token-service", name = "enabled", havingValue = "true")
 @Slf4j
@@ -74,8 +73,7 @@ public class PATServiceConfiguration {
     }
 
     /**
-     * Owns the single migration lifecycle for the PAT database.
-     * It is ordered before global Flyway auto-configuration and is not a default candidate.
+     * Owns the single migration lifecycle for the PAT database. Not a default candidate.
      *
      * @param dataSource PAT data source
      * @param properties validated PAT configuration
@@ -221,7 +219,7 @@ public class PATServiceConfiguration {
      * Creates JSON-producing Spring Security failure handlers.
      *
      * @param objectMapper application JSON mapper
-     *  clock clock used for error timestamps
+     * @param clock clock used for error timestamps
      * @return PAT security handlers
      */
     @Bean
@@ -241,7 +239,7 @@ public class PATServiceConfiguration {
      * @throws Exception when Spring Security cannot build the chain
      */
     @Bean
-    @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
+    @Order(Ordered.LOWEST_PRECEDENCE - 15)
     public SecurityFilterChain patSecurityFilterChain(
             HttpSecurity http,
             PATSecurityHandlers handlers,
@@ -315,7 +313,8 @@ public class PATServiceConfiguration {
     private void validateSecurityUser(SecurityProperties securityProperties) {
         SecurityProperties.User user = securityProperties.getUser();
         if (user.getName() == null || user.getName().isBlank()
-                || user.getPassword() == null || user.getPassword().isBlank()) {
+                || user.getPassword() == null || user.getPassword().isBlank()
+                || user.isPasswordGenerated()) {
             throw new IllegalStateException(
                     "spring.security.user.name and spring.security.user.password must be configured when the PAT service is enabled");
         }

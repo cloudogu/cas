@@ -1,6 +1,7 @@
 package de.triology.cas.oidc.beans.delegation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -13,8 +14,6 @@ import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,8 +32,8 @@ import java.util.Optional;
  * make sure the user profile is present.
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CesCustomDelegatedAuthenticationClientLogoutAction extends AbstractAction {
-    protected static final Logger LOG = LoggerFactory.getLogger(CesCustomDelegatedAuthenticationClientLogoutAction.class);
     private final Clients clients;
     private final SessionStore sessionStore;
     private final String redirectUri;
@@ -64,18 +63,18 @@ public class CesCustomDelegatedAuthenticationClientLogoutAction extends Abstract
                     : clients.findClient(currentProfile.getClientName());
             if (clientResult.isPresent()) {
                 val client = clientResult.get();
-                LOG.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
+                LOGGER.debug("Located client [{}] with redirect-uri [{}]", client, redirectUri);
                 val actionResult = client.getLogoutAction(new CallContext(context, this.sessionStore), currentProfile, redirectUri);
                 if (actionResult.isPresent()) {
                     val action = (HttpAction) actionResult.get();
-                    LOG.debug("Adapting logout action [{}] for client [{}]", action, client);
+                    LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
                     JEEHttpActionAdapter.INSTANCE.adapt(action, context);
                 }
             } else {
-                LOG.debug("The current client cannot be found and no logout action will be executed.");
+                LOGGER.debug("The current client cannot be found and no logout action will be executed.");
             }
         } catch (final Exception e) {
-            LoggingUtils.warn(LOG, e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return null;
     }

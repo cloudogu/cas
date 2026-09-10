@@ -3,8 +3,8 @@ package de.triology.cas.logging;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent.Builder;
 import org.apache.logging.log4j.message.SimpleMessageFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LoggingHandlerPasswordRewritePolicyTest {
 
@@ -21,7 +21,7 @@ public class LoggingHandlerPasswordRewritePolicyTest {
 
         LogEvent rewrittenLogEvent = LoggingHandlerPasswordRewritePolicy.createPolicy().rewrite(builder.build());
 
-        Assert.assertEquals(firstLineContent, rewrittenLogEvent.getMessage().getFormattedMessage());
+        Assertions.assertEquals(firstLineContent, rewrittenLogEvent.getMessage().getFormattedMessage());
     }
 
     @Test
@@ -32,6 +32,6 @@ public class LoggingHandlerPasswordRewritePolicyTest {
         LogEvent logEvent = builder.build();
         LogEvent rewrittenLogEvent = LoggingHandlerPasswordRewritePolicy.createPolicy().rewrite(logEvent);
 
-        Assert.assertSame(logEvent, rewrittenLogEvent);
+        Assertions.assertSame(logEvent, rewrittenLogEvent);
     }
 }

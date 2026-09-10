@@ -4,7 +4,7 @@ import de.triology.cas.ldap.CesInternalLdapUser;
 import de.triology.cas.ldap.UserManager;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 

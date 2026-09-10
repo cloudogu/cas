@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
 import de.triology.cas.pat.authentication.PATAuthenticationHandler;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
@@ -27,6 +27,7 @@ import de.triology.cas.pat.repository.PATRepository;
 import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -82,19 +83,22 @@ class PATServiceConfigurationTest {
     @Test
     void refusesSecurityChainWithoutExplicitBasicCredentials() {
         SecurityProperties securityProperties = new SecurityProperties();
-        securityProperties.getUser().setName(" ");
-        securityProperties.getUser().setPassword(" ");
         HttpSecurity http = mock(HttpSecurity.class);
         PATSecurityHandlers handlers = mock(PATSecurityHandlers.class);
 
-        IllegalStateException missingBoth = assertThrows(IllegalStateException.class,
+        IllegalStateException generatedPassword = assertThrows(IllegalStateException.class,
+                () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
+        securityProperties.getUser().setName(" ");
+        securityProperties.getUser().setPassword("configured-password");
+        IllegalStateException missingName = assertThrows(IllegalStateException.class,
                 () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
         securityProperties.getUser().setName("service");
         securityProperties.getUser().setPassword(" ");
         IllegalStateException missingPassword = assertThrows(IllegalStateException.class,
                 () -> configuration.patSecurityFilterChain(http, handlers, securityProperties));
 
-        assertEquals(missingBoth.getMessage(), missingPassword.getMessage());
+        assertEquals(generatedPassword.getMessage(), missingName.getMessage());
+        assertEquals(generatedPassword.getMessage(), missingPassword.getMessage());
     }
 
     @Test

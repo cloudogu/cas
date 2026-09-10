@@ -4,6 +4,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
+import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -33,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,7 +52,7 @@ class CesOidcConfigurationTests {
         try {
             setField(configuration, "casServerPrefix", "https://cas.cloudogu.org");
             setField(configuration, "redirectUri", "");
-            setField(configuration, "attributesMappingsString", "email=mail");
+            setField(configuration, "attributesMappingsString", "email:mail");
             setField(configuration, "allowedGroupsConfigString", "users,admins");
             setField(configuration, "initialAadminUsernamesConfigString", "admin");
             setField(configuration, "adminGroupsConfigString", "admins");
@@ -361,5 +365,79 @@ class CesOidcConfigurationTests {
         factory.destroy();
         // After destroy() the internal cache is reset and build() must repopulate it without error.
         assertNotNull(factory.build());
+    }
+
+    @Test
+    void principalFactory_WithBlankPrincipalIdAttribute_PrefersDefaultUsernameCandidate() throws Throwable {
+        PrincipalFactory factory = configuration.principalFactory();
+
+        Map<String, java.util.List<Object>> attributes = new java.util.HashMap<>();
+        attributes.put("username", java.util.List.of("dhoffman"));
+        attributes.put("mail", java.util.List.of("dustin@cloudogu.com"));
+
+        Principal principal = factory.createPrincipal("original-id", attributes);
+
+        assertEquals("dhoffman", principal.getId());
+    }
+
+    @Test
+    void principalFactory_WithConfiguredPrincipalIdAttribute_TakesPriorityOverDefaults() throws Throwable {
+        setField(configuration, "principalIdAttribute", "preferred_username");
+        PrincipalFactory factory = configuration.principalFactory();
+
+        Map<String, java.util.List<Object>> attributes = new java.util.HashMap<>();
+        attributes.put("username", java.util.List.of("dhoffman"));
+        attributes.put("preferred_username", java.util.List.of("dustin.hoffman"));
+
+        Principal principal = factory.createPrincipal("original-id", attributes);
+
+        assertEquals("dustin.hoffman", principal.getId());
+    }
+
+    @Test
+    void principalFactory_ConfiguredAttributeDuplicatesDefault_IsNotAddedTwice() throws Throwable {
+        // "username" is already the first entry of the built-in defaults; configuring it explicitly
+        // must not add it a second time (covers the candidates.contains(attr) branch).
+        setField(configuration, "principalIdAttribute", "username");
+        PrincipalFactory factory = configuration.principalFactory();
+
+        Map<String, java.util.List<Object>> attributes = new java.util.HashMap<>();
+        attributes.put("username", java.util.List.of("dhoffman"));
+
+        Principal principal = factory.createPrincipal("original-id", attributes);
+
+        assertEquals("dhoffman", principal.getId());
+    }
+
+    @Test
+    void delegatedAuthenticationPreProcessor_ThrowsWhenNoLdapConfigured() {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var authnProps = mock(AuthenticationProperties.class);
+        when(casProperties.getAuthn()).thenReturn(authnProps);
+        when(authnProps.getLdap()).thenReturn(java.util.List.of());
+
+        assertThrows(IllegalStateException.class,
+                () -> configuration.delegatedAuthenticationPreProcessor(casProperties));
+    }
+
+    @Test
+    void delegatedAuthenticationPreProcessor_BuildsProcessor_WhenLdapConfigured() {
+        var casProperties = mock(CasConfigurationProperties.class);
+        var authnProps = mock(AuthenticationProperties.class);
+        var ldapProps = mock(LdapAuthenticationProperties.class);
+
+        when(casProperties.getAuthn()).thenReturn(authnProps);
+        when(authnProps.getLdap()).thenReturn(java.util.List.of(ldapProps));
+        when(ldapProps.getBaseDn()).thenReturn("dc=example,dc=org");
+
+        try (MockedStatic<LdapUtils> mocked = mockStatic(LdapUtils.class)) {
+            mocked.when(() -> LdapUtils.newLdaptivePooledConnectionFactory(any()))
+                    .thenReturn(mock(PooledConnectionFactory.class));
+
+            DelegatedAuthenticationPreProcessor processor =
+                    configuration.delegatedAuthenticationPreProcessor(casProperties);
+
+            assertNotNull(processor);
+        }
     }
 }

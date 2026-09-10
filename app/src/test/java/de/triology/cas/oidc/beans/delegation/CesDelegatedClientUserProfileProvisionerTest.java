@@ -4,7 +4,7 @@ import de.triology.cas.ldap.CesInternalLdapUser;
 import de.triology.cas.ldap.CesLdapException;
 import de.triology.cas.ldap.UserManager;
 import org.apereo.cas.authentication.principal.Principal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
@@ -41,6 +41,28 @@ public class CesDelegatedClientUserProfileProvisionerTest {
         provisioner.execute(null, profile, null, null);
 
         verify(userManagerMock, times(1)).updateUser(expectedCesUser);
+    }
+
+    @Test
+    public void testExecute_withExistingUserFoundByMail() throws Throwable {
+        OidcProfile profile = new OidcProfile();
+        profile.addAttribute(OidcProfileDefinition.PREFERRED_USERNAME, "test_user");
+        profile.addAttribute(OidcProfileDefinition.GIVEN_NAME, "Test");
+        profile.addAttribute(OidcProfileDefinition.FAMILY_NAME, "User");
+        profile.addAttribute(OidcProfileDefinition.NAME, "Test User");
+        profile.addAttribute(OidcProfileDefinition.EMAIL, "test@user.de");
+
+        UserManager userManagerMock = mock(UserManager.class);
+        when(userManagerMock.getUserByUid("test_user")).thenReturn(null);
+        when(userManagerMock.getUidByMail("test@user.de")).thenReturn("existing_uid");
+
+        CesInternalLdapUser expectedCesUser = new CesInternalLdapUser("existing_uid", "Test", "User", "Test User", "test@user.de", true);
+
+        CesDelegatedClientUserProfileProvisioner provisioner = new CesDelegatedClientUserProfileProvisioner(userManagerMock, null, null);
+        provisioner.execute(null, profile, null, null);
+
+        verify(userManagerMock, times(1)).updateUser(expectedCesUser);
+        verify(userManagerMock, times(0)).createUser(any());
     }
 
     @Test

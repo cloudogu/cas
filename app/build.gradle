@@ -120,6 +120,9 @@ java {
 
 test {
     useJUnitPlatform()
+    // JDK 25 blocks dynamic agent self-attach (JEP 451) by default;
+    // Mockito's inline mock maker relies on it
+    jvmArgs "-XX:+EnableDynamicAgentLoading"
 }
 
 dependencies {
@@ -195,8 +198,8 @@ dependencies {
     // Build-time plugin index for Log4j 2
     annotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
     testAnnotationProcessor "org.apache.logging.log4j:log4j-core:2.24.3"
-
-    // JUnit versions are governed by the CAS BOM (Spring Boot 3.5.x -> JUnit 5.12+). Do NOT pin an
+    
+    // JUnit versions are governed by the CAS BOM. Do NOT pin an
     // older junit-bom here: it leaves Gradle's bundled junit-platform-launcher older than the engine,
     // which fails test discovery with "OutputDirectoryProvider not available". The explicit
     // junit-platform-launcher (version-managed by the BOM) keeps launcher and engine aligned.
@@ -204,12 +207,11 @@ dependencies {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation "org.springframework:spring-test"
 
-    testImplementation "org.mockito:mockito-core:5.2.0"
-    testImplementation "org.mockito:mockito-junit-jupiter:5.2.0"
-    testImplementation "org.mockito:mockito-inline:5.2.0"
+    testImplementation "org.mockito:mockito-core:5.23.0"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.23.0"
 
     testImplementation "org.hamcrest:hamcrest-all:1.3"
-    testImplementation "org.wiremock:wiremock-standalone:3.5.4"
+    testImplementation "org.wiremock:wiremock-standalone:3.13.2"
     testImplementation "com.fasterxml.jackson.core:jackson-databind:2.17.0"
 
     developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
@@ -219,7 +221,6 @@ dependencies {
 
     implementation "org.pac4j:pac4j-cas"
     implementation "org.pac4j:pac4j-oidc"
-    implementation "org.pac4j:pac4j-config"
     implementation "org.apereo.cas:cas-server-core-multitenancy"
 
     compileOnly("jakarta.servlet:jakarta.servlet-api:6.1.0")

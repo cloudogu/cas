@@ -5,12 +5,22 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.1-1] - 2026-09-08
+### Changed
+- Upgrade CAS to v8.0.1
+
+## [v7.3.7-5] - 2026-09-03
+### Security
+- Upgrade Tomcat from 11.0.22 to 11.0.25, mitigating 19 CVEs
+
 ### Added
-- The technical requirements for the implementation of personnel access tokens have been established.
+- The technical requirements for the implementation of personal access tokens have been established.
 
 ## [v7.3.7-4] - 2026-07-24
 ### Fixed
 - Added an error message when the Dogu is started with duplicate keys in the `config/_global/certificate/additional/toc` configuration
+
 ## [v7.3.7-3] - 2026-07-10
 ### Fixed
 - Fixed an issue where password-reset e-mails were not delivered for internal e-mail addresses without a public top-level domain (e.g. `admin@ces.local`).
@@ -22,7 +32,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 - This release fixes an issue with the deletion dialog of a multifactor device.
 
 ## [v7.3.7-1] - 2026-06-25
-- Upgraded CAS to 7.3.7
+- Upgrade CAS to v7.3.7
 - When prompted to change the password, the current password must now be entered again for security reasons.
 - Multi-factor authentication now requires entering a token or scratch code to delete a two-factor device.
   - Note: An incorrect entry of this token leads to an error log in Cas
