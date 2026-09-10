@@ -53,11 +53,17 @@ public class PATController {
                 .body(response);
     }
 
+    /**
+     * Returns the value provided by findAll.
+     */
     @GetMapping
     public List<PATMetadata> findAll(@PathVariable String userId) {
         return service.findAll(userId);
     }
 
+    /**
+     * Returns the value provided by findOne.
+     */
     @GetMapping("/{id}")
     public PATMetadata findOne(@PathVariable String userId, @PathVariable UUID id) {
         return service.findOne(userId, id);

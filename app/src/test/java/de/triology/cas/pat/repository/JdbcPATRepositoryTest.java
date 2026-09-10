@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.sqlite.SQLiteDataSource;
@@ -122,6 +124,75 @@ class JdbcPATRepositoryTest {
                 () -> failingRepository.findAllByUserId("owner"));
 
         assertEquals(cause, exception);
+    }
+
+    @Test
+    void validatesMatchingFingerprintAndMapsCompleteMetadata() {
+        StoredPAT stored = pat(UUID.randomUUID(), "owner", "name", NOW, NOW.plusSeconds(3600));
+        repository.insert(stored);
+
+        var metadata = repository.validate(stored.tokenFingerprint(), NOW).orElseThrow();
+
+        assertEquals(stored.id(), metadata.id());
+        assertEquals(stored.userId(), metadata.userId());
+        assertEquals(stored.displayName(), metadata.displayName());
+        assertEquals(stored.createdAt(), metadata.createdAt());
+        assertEquals(stored.expiresAt(), metadata.expiresAt());
+        assertEquals(stored.scope(), metadata.scope());
+
+        byte[] unknownFingerprint = stored.tokenFingerprint().bytes().clone();
+        unknownFingerprint[1] = 1;
+        assertTrue(repository.validate(new PATFingerprint(unknownFingerprint), NOW).isEmpty());
+    }
+
+    @Test
+    void translatesTransientInsertFailures() {
+        var cause = new TransientDataAccessResourceException("temporarily unavailable");
+        when(failingTemplate.update(any(PreparedStatementCreator.class))).thenThrow(cause);
+        var failingRepository = new JdbcPATRepository(failingTemplate);
+
+        var exception = assertThrows(PATStorageUnavailableException.class,
+                () -> failingRepository.insert(pat(UUID.randomUUID(), "owner", "name", NOW, null)));
+
+        assertSame(cause, exception.getCause());
+    }
+
+    @Test
+    void translatesLookupFailures() {
+        var cause = new DataAccessResourceFailureException("offline");
+        when(failingTemplate.query(anyString(), any(org.springframework.jdbc.core.RowMapper.class), any(Object[].class)))
+                .thenThrow(cause);
+        var failingRepository = new JdbcPATRepository(failingTemplate);
+
+        var exception = assertThrows(PATStorageUnavailableException.class,
+                () -> failingRepository.findByUserIdAndId("owner", UUID.randomUUID()));
+
+        assertSame(cause, exception.getCause());
+    }
+
+    @Test
+    void translatesDeleteFailures() {
+        var cause = new DataAccessResourceFailureException("offline");
+        when(failingTemplate.update(anyString(), any(Object[].class))).thenThrow(cause);
+        var failingRepository = new JdbcPATRepository(failingTemplate);
+
+        var exception = assertThrows(PATStorageUnavailableException.class,
+                () -> failingRepository.deleteByUserIdAndId("owner", UUID.randomUUID()));
+
+        assertSame(cause, exception.getCause());
+    }
+
+    @Test
+    void translatesValidationFailures() {
+        var cause = new DataAccessResourceFailureException("offline");
+        when(failingTemplate.query(anyString(), any(org.springframework.jdbc.core.RowMapper.class), any(Object[].class)))
+                .thenThrow(cause);
+        var failingRepository = new JdbcPATRepository(failingTemplate);
+
+        var exception = assertThrows(PATStorageUnavailableException.class,
+                () -> failingRepository.validate(new PATFingerprint(new byte[32]), NOW));
+
+        assertSame(cause, exception.getCause());
     }
 
     private static StoredPAT pat(UUID id, String userId, String name, Instant createdAt, Instant expiresAt) {

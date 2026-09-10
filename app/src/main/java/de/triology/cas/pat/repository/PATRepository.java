@@ -1,9 +1,11 @@
 package de.triology.cas.pat.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.triology.cas.pat.model.PATFingerprint;
 import de.triology.cas.pat.model.PATMetadata;
 import de.triology.cas.pat.model.StoredPAT;
 
@@ -31,7 +33,7 @@ public interface PATRepository {
      * Finds one PAT only when both owner and record identifier match.
      *
      * @param userId owner identifier
-     * @param id token record identifier
+     * @param id     token record identifier
      * @return matching record or an empty optional
      */
     Optional<PATMetadata> findByUserIdAndId(String userId, UUID id);
@@ -40,8 +42,12 @@ public interface PATRepository {
      * Physically deletes one PAT only when it belongs to the requested owner.
      *
      * @param userId owner identifier
-     * @param id token record identifier
+     * @param id     token record identifier
      * @return {@code true} when exactly one record was deleted
      */
     boolean deleteByUserIdAndId(String userId, UUID id);
+
+    Optional<PATMetadata> validate(
+            PATFingerprint fingerprint,
+            Instant now);
 }

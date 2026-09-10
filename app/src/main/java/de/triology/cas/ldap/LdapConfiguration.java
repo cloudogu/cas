@@ -71,7 +71,7 @@ public class LdapConfiguration {
      */
     @RefreshScope
     @Bean
-    public AuthenticationHandler cesGroupAwareLdapAuthenticationHandler(CasConfigurationProperties casProperties,
+    public CesGroupAwareLdapAuthenticationHandler cesGroupAwareLdapAuthenticationHandler(CasConfigurationProperties casProperties,
                                                                         ConfigurableApplicationContext applicationContext,
                                                                         CombinedGroupResolver combinedGroupResolver) {
         LdapAuthenticationProperties ldapProperties = casProperties.getAuthn().getLdap().getFirst();
@@ -79,7 +79,7 @@ public class LdapConfiguration {
         Multimap<String, Object> multiMapAttributes = createPrincipalAttributes(ldapProperties);
         Authenticator authenticator = createAuthenticator(ldapProperties, multiMapAttributes);
 
-        LdapAuthenticationHandler handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator, applicationContext, combinedGroupResolver);
+        CesGroupAwareLdapAuthenticationHandler handler = createCesLDAPAuthenticationHandler(ldapProperties, authenticator, applicationContext, combinedGroupResolver);
         configureLDAPAuthenticationHandler(handler, ldapProperties, multiMapAttributes, authenticator, applicationContext);
 
         handler.initialize();
@@ -103,14 +103,15 @@ public class LdapConfiguration {
         return authenticator;
     }
 
-    private LdapAuthenticationHandler createCesLDAPAuthenticationHandler(LdapAuthenticationProperties ldapProperties,
+    private CesGroupAwareLdapAuthenticationHandler createCesLDAPAuthenticationHandler(LdapAuthenticationProperties ldapProperties,
                                                                          Authenticator authenticator,
                                                                          ConfigurableApplicationContext applicationContext,
                                                                          CombinedGroupResolver combinedGroupResolver) {
         AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext> strategy = LdapUtils.createLdapPasswordPolicyHandlingStrategy(ldapProperties, applicationContext);
 
         return new CesGroupAwareLdapAuthenticationHandler(ldapProperties.getName(), PrincipalFactoryUtils.newPrincipalFactory(),
-                authenticator, strategy, combinedGroupResolver);
+                authenticator, strategy, combinedGroupResolver,
+                LdapUtils.newLdaptivePooledConnectionFactory(ldapProperties));
     }
 
     private void configureLDAPAuthenticationHandler(LdapAuthenticationHandler handler,
