@@ -5,7 +5,7 @@ set -euo pipefail
 CAS_URL="${CAS_URL:-https://34.185.221.93/cas}"
 SA_USER="${SA_USER:-pat-api}"
 SA_PASSWORD="${SA_PASSWORD:-securePassword}"
-USER_ID="${USER_ID:-mbergen}"
+USER_ID="${USER_ID:-adminname}"
 PAT_ID="${PAT_ID:-}"
 SCOPE="/redmine,/usermgt"
 DISPLAY_NAME="PAT API Test"
