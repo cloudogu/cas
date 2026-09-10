@@ -33,6 +33,9 @@ public final class PATFingerprint {
         return bytes.clone();
     }
 
+    /**
+     * Provides the equals implementation for this value.
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -41,11 +44,17 @@ public final class PATFingerprint {
         return other instanceof PATFingerprint that && Arrays.equals(bytes, that.bytes);
     }
 
+    /**
+     * Returns the value provided by hashCode.
+     */
     @Override
     public int hashCode() {
         return Arrays.hashCode(bytes);
     }
 
+    /**
+     * Provides the toString implementation for this value.
+     */
     @Override
     public String toString() {
         return "PATFingerprint[******]";

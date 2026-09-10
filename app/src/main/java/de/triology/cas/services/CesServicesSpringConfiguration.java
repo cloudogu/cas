@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class CesServicesSpringConfiguration {
 
     @Bean
     @Primary
+    @RefreshScope
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
         @Qualifier("defaultAuthenticationHandlerResolver")
         AuthenticationHandlerResolver defaultResolver,

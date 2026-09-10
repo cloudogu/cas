@@ -394,6 +394,8 @@ cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scrat
 cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
+cas.authn.mfa.gauth.bypass.principal-attribute-name=patAuthentication
+cas.authn.mfa.gauth.bypass.principal-attribute-value=true
 
 ### api ###
 management.endpoints.web.exposure.include=health,gauthCredentialRepository
