@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-1] - 2026-09-10
+### Added
+- PAT API und Authentifizierung
+
 ## [v8.0.1-1] - 2026-09-08
 ### Changed
 - CAS auf v8.0.1 aktualisiert

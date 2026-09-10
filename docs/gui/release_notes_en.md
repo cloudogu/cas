@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.2-1] - 2026-09-10
+### Added
+- PAT API and Authentication
+
 ## [v8.0.1-1] - 2026-09-08
 ### Changed
 - Upgrade CAS to v8.0.1

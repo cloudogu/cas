@@ -16,6 +16,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import tools.jackson.databind.ObjectMapper;
+import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
+import de.triology.cas.pat.authentication.PATAuthenticationHandler;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
 import de.triology.cas.pat.controller.PATExceptionHandler;
@@ -26,6 +28,8 @@ import de.triology.cas.pat.service.PATService;
 import de.triology.cas.pat.service.SecurePATGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
@@ -103,6 +107,23 @@ class PATServiceConfigurationTest {
         assertEquals("jdbc:sqlite:test.db", properties.getDatabaseUrl());
     }
 
+    @Test
+    void createsAndRegistersPatAuthenticationHandler() throws Exception {
+        PATService service = mock(PATService.class);
+        CesGroupAwareLdapAuthenticationHandler ldapHandler =
+                mock(CesGroupAwareLdapAuthenticationHandler.class);
+        PrincipalResolver principalResolver = mock(PrincipalResolver.class);
+        AuthenticationEventExecutionPlan plan = mock(AuthenticationEventExecutionPlan.class);
+
+        PATAuthenticationHandler handler = configuration.patAuthenticationHandler(service, ldapHandler);
+        var configurer = configuration.patAuthenticationEventExecutionPlanConfigurer(
+                handler, principalResolver);
+        configurer.configureAuthenticationExecutionPlan(plan);
+
+        assertEquals("patAuthenticationHandler", handler.getName());
+        verify(plan).registerAuthenticationHandlerWithPrincipalResolver(handler, principalResolver);
+    }
+
     private static PATDatabaseProvider provider(boolean supports, DataSource dataSource) {
         PATDatabaseProvider provider = mock(PATDatabaseProvider.class);
         when(provider.supports("jdbc:test")).thenReturn(supports);
@@ -116,4 +137,39 @@ class PATServiceConfigurationTest {
         properties.setDatabaseUrl(url);
         return properties;
     }
+
+    @Test
+    void configuresFlywayForSelectedProvider() {
+        var dataSource = mock(DataSource.class);
+        var provider = provider(true, dataSource);
+        when(provider.migrationLocation()).thenReturn("classpath:db/pat/migration/sqlite");
+        var flyway = configuration.patFlyway(dataSource, properties("jdbc:test"), List.of(provider));
+        assertSame(dataSource, flyway.getConfiguration().getDataSource());
+        assertEquals("classpath:db/pat/migration/sqlite",
+                flyway.getConfiguration().getLocations()[0].getDescriptor());
+    }
+
+    @Test
+    void createsServiceTicketFactory() {
+        assertInstanceOf(de.triology.cas.pat.authentication.PATServiceTicketFactory.class,
+                configuration.defaultServiceTicketFactory(
+                        mock(org.apereo.cas.ticket.tracking.TicketTrackingPolicy.class),
+                        mock(org.apereo.cas.util.crypto.CipherExecutor.class),
+                        mock(org.apereo.cas.ticket.ExpirationPolicyBuilder.class),
+                        mock(org.apereo.cas.services.ServicesManager.class), java.util.Map.of(), mock(PATService.class)));
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+    void refusesNullBasicCredentials(boolean missingUsername) {
+        var properties = mock(SecurityProperties.class);
+        var user = mock(SecurityProperties.User.class);
+        when(properties.getUser()).thenReturn(user);
+        if (!missingUsername) when(user.getName()).thenReturn("service");
+        var http = mock(HttpSecurity.class);
+        assertThrows(IllegalStateException.class,
+                () -> configuration.patSecurityFilterChain(http, mock(PATSecurityHandlers.class), properties));
+        org.mockito.Mockito.verifyNoInteractions(http);
+    }
+
 }

@@ -43,12 +43,12 @@ public class SecurePATGenerator {
     }
 
     /**
-     * Computes the irreversible fingerprint reserved for future token validation.
+     * Computes the irreversible fingerprint of the complete cleartext token.
      *
-     * @param token generated cleartext token
+     * @param token complete cleartext token including its prefix
      * @return SHA-256 digest
      */
-    private PATFingerprint fingerprint(String token) {
+    public PATFingerprint fingerprint(String token) {
         try {
             return new PATFingerprint(MessageDigest.getInstance("SHA-256")
                     .digest(token.getBytes(StandardCharsets.US_ASCII)));

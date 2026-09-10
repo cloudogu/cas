@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.2-1] - 2026-09-10
+### Added
+- [#359] Authenticate via personal access token
+
+### Fixed
+- [#365] Fix Jackson dependency pruning
+
 ## [v8.0.1-1] - 2026-09-08
 ### Changed
 - [#362] Upgrade CAS to v8.0.1

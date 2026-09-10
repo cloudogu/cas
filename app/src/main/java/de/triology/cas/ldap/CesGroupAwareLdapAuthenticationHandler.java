@@ -7,7 +7,11 @@ import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrateg
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.auth.User;
 import org.ldaptive.auth.Authenticator;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
     private static final String GROUP_ATTRIBUTE = "groups";
 
     private GroupResolver groupResolver;
+    private final ConnectionFactory connectionFactory;
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -36,13 +41,26 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
                                                   PrincipalFactory principalFactory,
                                                   Authenticator authenticator,
                                                   AuthenticationPasswordPolicyHandlingStrategy strategy,
-                                                  GroupResolver groupResolver) {
+                                                  GroupResolver groupResolver,
+                                                  ConnectionFactory connectionFactory) {
         super(name, principalFactory, 0, authenticator, strategy);
 
         this.groupResolver = groupResolver;
+        this.connectionFactory = connectionFactory;
         LOGGER.trace("{} created with group attribute {} and group resolver {}",
                 CesGroupAwareLdapAuthenticationHandler.class.getSimpleName(), GROUP_ATTRIBUTE, groupResolver);
     }
+
+    public Principal resolvePrincipal(String username) throws Throwable {
+        String dn = getAuthenticator().resolveDn(new User(username));
+        SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, getAuthenticatedEntryAttributes());
+        var response = new SearchOperation(connectionFactory).execute(request);
+        if (response.getEntries().isEmpty()) {
+            throw new IllegalStateException("No LDAP entry found for " + username);
+        }
+        return createPrincipal(username, response.getEntries().iterator().next());
+    }
+
 
     @Override
     protected Principal createPrincipal(String username, LdapEntry ldapEntry) throws Throwable {

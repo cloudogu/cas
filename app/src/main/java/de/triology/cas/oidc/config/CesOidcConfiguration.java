@@ -2,7 +2,6 @@ package de.triology.cas.oidc.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import de.triology.cas.authentication.LegacyDefaultAuthenticationEventExecutionPlan;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
@@ -10,8 +9,6 @@ import de.triology.cas.oidc.beans.delegation.*;
 import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -21,7 +18,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -145,16 +141,6 @@ public class CesOidcConfiguration {
         }
 
         return new AttributeSelectingPrincipalFactory(candidates.toArray(String[]::new));
-    }
-
-    @Bean
-    @Primary
-    @RefreshScope
-    public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
-            @Qualifier("defaultAuthenticationHandlerResolver")
-            AuthenticationHandlerResolver authenticationHandlerResolver,
-            TenantExtractor tenantExtractor) {
-        return new LegacyDefaultAuthenticationEventExecutionPlan(authenticationHandlerResolver, tenantExtractor);
     }
 
     /**
