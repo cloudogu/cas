@@ -25,6 +25,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -61,7 +64,7 @@ class PATAuthenticationHandlerTest {
 
     @Test
     void resolvesPatOwnerAndAddsPatAttributesToLdapPrincipal() throws Throwable {
-        UsernamePasswordCredential credential = new UsernamePasswordCredential("request-user", TOKEN);
+        UsernamePasswordCredential credential = new UsernamePasswordCredential("owner", TOKEN);
         PATMetadata metadata = metadata("owner", "/usermgt");
         Principal ldapPrincipal = org.mockito.Mockito.mock(Principal.class);
         Principal authenticatedPrincipal = org.mockito.Mockito.mock(Principal.class);
@@ -84,6 +87,20 @@ class PATAuthenticationHandlerTest {
         assertEquals(ldapAttributes.get("mail"), attributes.getValue().get("mail"));
         assertEquals(List.of("/usermgt"), attributes.getValue().get(PATService.PAT_SCOPE_ATTRIBUTE));
         assertEquals(List.of("true"), attributes.getValue().get(PATService.PAT_AUTH_ATTRIBUTE));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"request-user", "OWNER", " owner "})
+    void rejectsMismatchedUsernameBeforeLdapLookup(String username) {
+        UsernamePasswordCredential credential = new UsernamePasswordCredential(username, TOKEN);
+        when(patService.resolve(TOKEN)).thenReturn(Optional.of(metadata("owner", "/usermgt")));
+
+        FailedLoginException exception = assertThrows(FailedLoginException.class,
+                () -> handler.authenticateUsernamePasswordInternal(credential, TOKEN));
+
+        assertEquals("PAT does not belong to the supplied username", exception.getMessage());
+        org.mockito.Mockito.verifyNoInteractions(ldapHandler, principalFactory);
     }
 
     @Test

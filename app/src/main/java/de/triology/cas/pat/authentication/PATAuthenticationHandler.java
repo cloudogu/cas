@@ -46,7 +46,7 @@ public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     }
 
     /**
-     * Validates the PAT, resolves its LDAP principal, and stores its scope on the principal.
+     * Validates the PAT and its owner, resolves its LDAP principal, and stores its scope on the principal.
      *
      * @param credential transformed username/password credential
      * @param originalPassword original cleartext PAT
@@ -58,6 +58,10 @@ public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential, String originalPassword) throws Throwable {
         PATMetadata metadata = patService.resolve(originalPassword)
                 .orElseThrow(() -> new FailedLoginException("Invalid or expired PAT"));
+
+        if (!metadata.userId().equals(credential.getUsername())) {
+            throw new FailedLoginException("PAT does not belong to the supplied username");
+        }
 
         var principal = ldapHandler.resolvePrincipal(metadata.userId());
         var attributes = new java.util.LinkedHashMap<>(principal.getAttributes());
