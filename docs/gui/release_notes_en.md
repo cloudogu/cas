@@ -6,7 +6,7 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 ### Added
-- PAT API and Authntication
+- PAT API and Authentication
 
 ## [v8.0.1-1] - 2026-09-08
 ### Changed
