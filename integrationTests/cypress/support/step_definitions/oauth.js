@@ -93,6 +93,14 @@ When("a registered service requests the OAuth profile endpoint", function () {
 });
 
 Then("a service ticket is returned", function () {
+    // Check for null first — if CAS returned an error page instead of issuing a code,
+    // latestOAuthCode is null and .toString() would throw a cryptic TypeError.
+    // The cy.log("###### HREF ######") above this in serviceRequestsAuthorizationEndpoint
+    // shows the actual URL CAS redirected to, which points to the real CAS-side error.
+    assert(latestOAuthCode !== null && latestOAuthCode !== undefined,
+        "No OAuth authorization code (OC-... pattern) found in the redirect URL. " +
+        "CAS did not issue a code — look for '### HREF ###' in the Cypress log to see " +
+        "the actual redirect URL, then check CAS container logs for OAuth errors.")
     assert(latestOAuthCode.toString() !== "", "Service Ticket should not be empty")
     assert(latestOAuthCode.toString().match(CasServiceTicketPattern), "Service Ticket should match OC-Pattern")
     resetData()

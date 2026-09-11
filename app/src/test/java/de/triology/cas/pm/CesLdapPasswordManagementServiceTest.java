@@ -7,23 +7,24 @@ import org.apereo.cas.configuration.model.support.pm.ResetPasswordManagementProp
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.ConnectionFactory;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CesLdapPasswordManagementServiceTest {
 
     /**
@@ -92,11 +93,11 @@ public class CesLdapPasswordManagementServiceTest {
 
     private CesLdapPasswordManagementServiceForUnitTest cesLdapPasswordManagementService;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, casConfigurationProperties, passwordManagementProperties, passwordHistoryService, null);
+        cesLdapPasswordManagementService = new CesLdapPasswordManagementServiceForUnitTest(cipherExecutor, casConfigurationProperties, passwordManagementProperties, passwordHistoryService, java.util.Map.of());
 
-        when(passwordManagementProperties.getReset()).thenReturn(resetPasswordManagementProperties);
+        passwordManagementProperties.setReset(resetPasswordManagementProperties);
         when(resetPasswordManagementProperties.getMail()).thenReturn(emailProperties);
         when(emailProperties.getAttributeName()).thenReturn(Collections.singletonList("mail"));
     }
@@ -106,8 +107,8 @@ public class CesLdapPasswordManagementServiceTest {
         String email = "dustin@cloudogu.com";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(foundEMail, email);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 
     @Test
@@ -115,7 +116,7 @@ public class CesLdapPasswordManagementServiceTest {
         String email = "dustin@ces.local";
         cesLdapPasswordManagementService.setEmailToReturn(email);
 
-        String foundEMail = cesLdapPasswordManagementService.findEmail(passwordManagementQuery);
-        assertEquals(foundEMail, email);
+        Set<String> foundEMails = cesLdapPasswordManagementService.findEmails(passwordManagementQuery);
+        assertEquals(Set.of(email), foundEMails);
     }
 }

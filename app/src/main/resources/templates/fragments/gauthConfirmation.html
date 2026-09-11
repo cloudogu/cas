@@ -13,168 +13,189 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div th:fragment="gauthConfirmation">
-        <div class="mdc-dialog" th:id="${dialogId}" role="alertdialog"
-             aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
-            <h2>3. Registrierung abschließen</h2>
-            <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
-                <div class="mdc-dialog__container">
-                    <div class="mdc-dialog__surface">
-                        <div class="mdc-dialog__content" id="notif-dialog-content">
-                            <div class="mdc-typography--body1">
-                                <p th:utext="#{${description}}"></p>
+    <!--/*
+        Confirmation dialog for the gauth (TOTP) flows, rendered as a native <dialog> element
+        (opened with element.showModal(), not CAS's MDC-based cas.openDialog). The overlay
+        deliberately ships no Material Components Web CSS, so the modal/scrim/focus-trap come from
+        the browser; the box look comes from Tailwind classes + a dialog::backdrop rule in
+        cloudogu-cas.css. See docs/development/cas-7.3-upgrade-notes.md.
 
-                                <input type="hidden" th:name="${'_eventId_' + eventId}" value="Confirm"/>
-                                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                                <input type="hidden" name="geolocation"/>
+        Used by:
+        - casGoogleAuthenticatorRegistrationView  -> confirmationType='create' (enrol new device: token + name)
+        - casGoogleAuthenticatorConfirmRegistrationView -> confirmationType='delete' (remove a device: token only)
 
-                                <section class="cas-field form-group my-3 mdc-input-group">
-                                    <div class="mdc-input-group-field mdc-input-group-field-append">
-                                        <div class="d-flex caps-check">
-                                            <label style="max-width: 320px;" for="token"
-                                                   class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
-                                                <span class="mdc-notched-outline">
-                                                    <span class="mdc-notched-outline__leading"></span>
-                                                    <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label"
-                                                              th:utext="'Token'"></span>
-                                                    </span>
-                                                    <span class="mdc-notched-outline__trailing"></span>
-                                                </span>
-                                                <span>Tragen Sie einen Token aus der Authenticator-App ein, um Ihre Registrierung zu bestätigen.</span>
-                                                <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                                     role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                                    <a href="#" class="close" onclick="$(this).parent().hide();"
-                                                       th:aria-label="#{screen.pm.button.close}">
-                                                        <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                                    </a>
-                                                    <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
-                                                </div>
-                                                <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
-                                                       type="password"
-                                                       name="token"
-                                                       id="token"
-                                                       size="25"
-                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                       required
-                                                       autocomplete="off"/>
-                                            </label>
-                                        </div>
-                                        <section id="passwordRevealSection">
-                                            <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
-                                                <button type="button" role="checkbox" data-state="unchecked"
-                                                        value="on"
-                                                        data-testid="password-reveal-checkbox"
-                                                        id="password-reveal-checkbox" aria-controls="password"
-                                                        class="border rounded-sm outline-none focus-visible:ces-focused data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=checked]:hover:bg-brand-strong data-[state=checked]:hover:border-brand-strong data-[state=checked]:focus-visible:bg-brand-strong data-[state=checked]:focus-visible:border-brand-strong data-[state=checked]:disabled:bg-neutral-weak data-[state=checked]:disabled:border-neutral data-[state=indeterminate]:bg-brand data-[state=indeterminate]:border-brand data-[state=indeterminate]:hover:bg-brand-strong data-[state=indeterminate]:hover:border-brand-strong data-[state=indeterminate]:focus-visible:bg-brand-strong data-[state=indeterminate]:focus-visible:border-brand-strong data-[state=indeterminate]:disabled:bg-neutral-weak data-[state=indeterminate]:disabled:border-neutral data-[state=unchecked]:border-neutral data-[state=unchecked]:bg-default-background data-[state=unchecked]:hover:border-2 data-[state=unchecked]:hover:border-neutral-strong data-[state=unchecked]:focus-visible:border-2 data-[state=unchecked]:focus-visible:border-neutral-strong data-[state=unchecked]:disabled:bg-neutral-weak data-[state=unchecked]:disabled:border-neutral data-[state=unchecked]:disabled:border min-w-[24px] w-[24px] min-h-[24px] h-[24px] flex items-center justify-center">
-                                                    <span data-state="checked" style="pointer-events: none;" id="reveal-checkbox">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                                                             viewBox="0 0 256 256" class="text-inverted-text">
-                                                            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
-                                                            </path>
-                                                        </svg>
-                                                    </span>
-                                                </button>
-                                                <span>Token anzeigen</span>
-                                            </label>
+        The action button does the CAS two-phase exchange that 7.3 expects:
+        1. AJAX POST with validate=true   -> server validates the OTP (no state change for 'create';
+           stamps removalVerified for 'delete'); on success
+        2. real form submit (no validate) -> server performs the create/delete.
+        For 'delete' this is mandatory: GoogleAuthenticatorDeleteAccountAction rejects a one-shot
+        delete ("Unauthorized account removal attempt") unless the OTP was validated first.
+    */-->
+    <!--/*
+        Layout follows the cloudogu design-system modal: a titled header with an × close button
+        (top border-less), a padded body, and a neutral-weaker footer carrying a primary action
+        button and an outlined secondary "cancel". The dark backdrop (neutral-1000 @ 50% opacity)
+        comes from the dialog::backdrop rule in cloudogu-cas.css. Region/edge colours use the
+        semantic ces-theme utilities (brand / neutral / neutral-weaker / default-* / inverted-text).
+    */-->
+    <dialog th:fragment="gauthConfirmation" th:id="${dialogId}"
+            role="alertdialog" aria-modal="true"
+            th:aria-labelledby="${dialogId + '-title'}"
+            class="m-auto w-[90vw] max-w-[480px] max-h-[90vh] overflow-y-auto rounded-lg border border-neutral-weak text-default-text">
+        <form th:id="${'fm-' + dialogId}" method="post" class="flex flex-col">
+            <!--/* Header: title + close (×) */-->
+            <header class="flex items-center justify-between gap-4 border-b border-neutral pl-4 pr-2 pt-2.5 pb-4">
+                <span th:id="${dialogId + '-title'}"
+                    class="font-normal desktop:text-desktop-2xl mobile:text-mobile-2xl text-default-text"
+                    th:utext="#{${title}}">Title</span>
+                <button type="button"
+                        onclick="this.closest('dialog').close()"
+                        th:aria-label="#{screen.pm.button.close}"
+                        class="flex items-center justify-center min-w-10 min-h-10 rounded-sm text-neutral hover:text-default-text focus-visible:ces-focused outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                         viewBox="0 0 256 256" aria-hidden="true">
+                        <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+                    </svg>
+                </button>
+            </header>
 
-                                            <script>
-                                                document.getElementById("password-reveal-checkbox").onclick = () => {
-                                                    const checkbox = document.getElementById("password-reveal-checkbox");
-                                                    const span = document.getElementById("reveal-checkbox");
-                                                    const pwInput = document.getElementById("token");
-                                                    if (pwInput.type === "password") {
-                                                        pwInput.type = "text";
-                                                        checkbox.setAttribute('data-state', 'checked');
-                                                        if (!span) {
-                                                            const newSpan = document.createElement('span');
-                                                            newSpan.id = "reveal-checkbox";
-                                                            newSpan.style.pointerEvents = 'none';
-                                                            newSpan.setAttribute('data-state', 'checked');
-                                                            newSpan.innerHTML = `
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="text-inverted-text">
-                                                <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
-                                                </path>
-                                            </svg>`;
-                                                            checkbox.appendChild(newSpan);
-                                                        }
-                                                    } else {
-                                                        pwInput.type = "password";
-                                                        checkbox.setAttribute('data-state', 'unchecked');
-                                                        if (span) {
-                                                            span.parentNode.removeChild(span);
-                                                        }
-                                                    }
-                                                };
-                                            </script>
-                                        </section>
-                                        <br>
-                                        <div class="d-flex">
-                                            <label  for="accountName" style="max-width: 320px"
-                                                   class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
-                                                <span class="mdc-notched-outline">
-                                                    <span class="mdc-notched-outline__leading"></span>
-                                                    <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label">Name des zweiten Faktors</span>
-                                                    </span>
-                                                    <span class="mdc-notched-outline__trailing"></span>
-                                                </span>
-                                                <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
-                                                       type="text"
-                                                       name="accountName"
-                                                       id="accountName"
-                                                       size="50"
-                                                       value="Mein-Smartphone"
-                                                       autocomplete="off"/>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </section>
-                            </div>
-                        </div>
-                        <footer class="mdc-dialog__actions">
-                            <button class="mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
-                                    th:name="${actionButton}" th:id="${actionButton}">
-                                <span class="mdc-button__label"
-                                      th:text="#{${actionButtonLabel}}"></span>
-                            </button>
-                            <button type="button"
-                                    class="mt-default-2x text-brand underline decoration-brand decoration-dashed decoration-1 hover:decoration-solid active:decoration-2 active:decoration-solid focus-visible:ces-focused focus-visible:outline-none focus-visible:text-default-text focus-visible:no-underline"
-                                    data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
-                                <span class="mdc-button__label"></span>
-                            </button>
-                        </footer>
-                    </div>
+            <!--/* Body */-->
+            <div class="flex flex-col gap-4 p-6">
+                <p th:utext="#{${description}}">Description</p>
+
+                <input type="hidden" th:name="${'_eventId_' + eventId}" value="Confirm"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input th:if="${confirmationType == 'create'}" type="hidden" name="geolocation"/>
+                <!--/* 'delete': accountId is filled in by the opener (confirmDelete) before showModal */-->
+                <input th:if="${confirmationType == 'delete'}" type="hidden" id="confirmAccountId" name="accountId"/>
+
+                <div class="text-danger" role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
+                    <strong th:utext="#{screen.authentication.gauth.invalidtoken}">Invalid token</strong>
                 </div>
-                <div class="mdc-dialog__scrim"></div>
-            </form>
 
-            <script type="text/javascript" th:inline="javascript">
-                /*<![CDATA[*/
+                <!--/* Token (OTP or scratch code) */-->
+                <section>
+                <label for="token"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                    <span th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                    <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                           type="password"
+                           name="token"
+                           id="token"
+                           size="25"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                           required
+                           autocomplete="off"/>
+                </label>
 
-                document.getElementById(/*[[${actionButton}]]*/).addEventListener('click', event => {
-                    if (document.getElementById("fm-" + /*[[${dialogId}]]*/).reportValidity()) {
-                        let endpoint = $('#fm-' + /*[[${dialogId}]]*/).attr('action');
-                        event.preventDefault();
-                        $('#errorPanel-' + /*[[${dialogId}]]*/).hide();
+                <label class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-row gap-2 mt-2">
+                    <button type="button" role="checkbox" data-state="unchecked"
+                            value="on"
+                            data-testid="token-reveal-checkbox"
+                            id="token-reveal-checkbox" aria-controls="token"
+                            class="border rounded-sm outline-none focus-visible:ces-focused data-[state=checked]:bg-brand data-[state=checked]:border-brand data-[state=unchecked]:border-neutral data-[state=unchecked]:bg-default-background min-w-[24px] w-[24px] min-h-[24px] h-[24px] flex items-center justify-center">
+                        <span data-state="checked" style="pointer-events: none; display: none;" id="token-reveal-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                 viewBox="0 0 256 256" class="text-inverted-text">
+                                <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <span th:text="#{screen.tokenfield.toggle}">Show token</span>
+                </label>
+            </section>
 
-                        let formData = $('#fm-' + /*[[${dialogId}]]*/).serializeArray();
-                        formData.push({
-                            name: "validate",
-                            value: true
-                        });
-                        $.post(endpoint, formData)
-                            .done((data, status, jqxhr) => {
-                                $('#errorPanel-' + /*[[${dialogId}]]*/).hide();
-                                $('#fm-' + /*[[${dialogId}]]*/).submit();
-                            })
-                            .fail((data, status, jqxhr) => $('#errorPanel-' + /*[[${dialogId}]]*/).show("fast", "swing"));
+            <!--/* Device name (enrolment only) */-->
+            <section th:if="${confirmationType == 'create'}">
+                <label for="accountName"
+                       class="bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular text-neutral flex flex-col">
+                    <span th:utext="#{screen.authentication.gauth.name}">Name</span>
+                    <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
+                           type="text"
+                           name="accountName"
+                           id="accountName"
+                           size="50"
+                           value="Mein-Smartphone"
+                           autocomplete="off"/>
+                    </label>
+                </section>
+            </div>
+
+            <!--/* Footer: primary action + outlined secondary cancel */-->
+            <footer class="flex flex-row flex-wrap items-center gap-4 px-6 py-4 bg-neutral-weaker">
+                <!--/* type=submit so the two-phase exchange is driven by the form's submit event,
+                       which also fires on an Enter keypress (see the submit handler below). */-->
+                <button type="submit"
+                        th:name="${actionButton}" th:id="${actionButton}"
+                        class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-brand hover:bg-brand-strong focus-visible:bg-brand-strong active:bg-brand-stronger disabled:bg-brand-weak aria-disabled:bg-brand-weak rounded border-2 border-brand hover:border-brand-strong focus-visible:border-brand-strong active:border-brand-stronger disabled:border-brand-weak aria-disabled:border-brand-weak text-inverted-text disabled:text-inverted-text aria-disabled:text-inverted-text outline-0">
+                    <span th:text="#{${actionButtonLabel}}">Confirm</span>
+                </button>
+                <button type="button"
+                        onclick="this.closest('dialog').close()"
+                        class="focus-visible:ces-focused whitespace-nowrap px-[14px] font-bold h-10 desktop:text-desktop-regular mobile:text-mobile-regular bg-default-background hover:bg-neutral-weaker rounded border-2 border-neutral hover:border-neutral-strong text-neutral hover:text-neutral-strong outline-0">
+                    <span th:text="#{screen.pm.button.cancel}">Cancel</span>
+                </button>
+            </footer>
+        </form>
+
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            (function () {
+                const dialogId = /*[[${dialogId}]]*/ 'dialog';
+
+                const dialog = document.getElementById(dialogId);
+                const form = document.getElementById('fm-' + dialogId);
+                const errorPanel = document.getElementById('errorPanel-' + dialogId);
+
+                // Reveal-token toggle
+                const revealBtn = document.getElementById('token-reveal-checkbox');
+                const revealIcon = document.getElementById('token-reveal-icon');
+                const tokenInput = document.getElementById('token');
+                revealBtn.addEventListener('click', () => {
+                    const reveal = tokenInput.type === 'password';
+                    tokenInput.type = reveal ? 'text' : 'password';
+                    revealBtn.setAttribute('data-state', reveal ? 'checked' : 'unchecked');
+                    revealIcon.style.display = reveal ? 'inline' : 'none';
+                });
+
+                // Reset the dialog to a clean state on every close (× button, Cancel, or ESC all
+                // fire the native 'close' event). Stock CAS leaves the entered token and any error
+                // visible until the page is re-rendered; we clear them so a re-opened dialog is fresh.
+                dialog.addEventListener('close', () => {
+                    form.reset();                       // clears the token (and resets accountName to its default)
+                    errorPanel.style.display = 'none';  // drop the "invalid token" message
+                    tokenInput.type = 'password';       // undo a left-on reveal toggle
+                    revealBtn.setAttribute('data-state', 'unchecked');
+                    revealIcon.style.display = 'none';
+                });
+
+                // Two-phase submit: validate (AJAX) then real submit.
+                // Bound to the form's 'submit' event, so it covers BOTH the action button and an
+                // Enter keypress in the token field. A native submit (e.g. Enter) would otherwise
+                // skip validate=true and hit phase 2 directly, which the server rejects with
+                // "Unauthorized account removal attempt" (HTTP 500) for the delete flow.
+                form.addEventListener('submit', event => {
+                    event.preventDefault();
+                    if (!form.reportValidity()) {
+                        return;
                     }
+                    errorPanel.style.display = 'none';
+                    const endpoint = form.getAttribute('action') || window.location.href;
+                    const formData = $(form).serializeArray();
+                    formData.push({name: 'validate', value: true});
+                    $.post(endpoint, formData)
+                        .done(() => {
+                            errorPanel.style.display = 'none';
+                            form.submit();   // native submit() bypasses this listener -> phase 2 (real delete/create)
+                        })
+                        .fail(() => {
+                            errorPanel.style.display = 'block';
+                        });
                 }, false);
-                // /*]]>*/
-            </script>
-        </div>
-    </div>
+            })();
+            /*]]>*/
+        </script>
+    </dialog>
 </main>
 </body>
 </html>

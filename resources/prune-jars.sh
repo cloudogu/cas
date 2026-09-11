@@ -39,7 +39,6 @@ list_candidates() {
     case "$vers" in
       [0-9]*)
         # looks like a version at the end -> ok
-        printf '%s|%s|%s\n' "$base" "$vers" "$j"
         ;;
       *)
         # maybe we have "...-<version>-<classifier>"
@@ -48,14 +47,23 @@ list_candidates() {
         maybe_ver=${pre##*-}
         case "$maybe_ver" in
           [0-9]*)
-            printf '%s|%s|%s\n' "${pre%-*}" "$maybe_ver" "$j"
+            base=${pre%-*}
+            vers=$maybe_ver
             ;;
           *)
             # not in expected pattern, skip
+            continue
             ;;
         esac
         ;;
     esac
+
+    # CAS 8 needs Jackson 2 and 3 side by side. Treat their major versions
+    # as separate artifacts while still pruning duplicates within each one.
+    case "$base" in
+      jackson-*) base="${base}@${vers%%.*}" ;;
+    esac
+    printf '%s|%s|%s\n' "$base" "$vers" "$j"
   done
 }
 
@@ -119,9 +127,6 @@ choose_highest() {
 
 plan="$(list_candidates | choose_highest)"
 
-# keep a tiny safety: never delete when base starts with e.g. "jakarta.servlet" etc.
-ALLOW_BASE_PREFIXES=""
-
 echo "$plan" | while IFS='|' read -r action base ver file; do
   [ -n "$action" ] || continue
   case "$action" in
@@ -130,12 +135,6 @@ echo "$plan" | while IFS='|' read -r action base ver file; do
       # echo "keep: $file"
       ;;
     DROP)
-      # skip allowlist
-      for p in $ALLOW_BASE_PREFIXES; do
-        case "$base" in
-          $p*) continue 2 ;;
-        esac
-      done
       if [ $DRYRUN -eq 1 ]; then
         echo "[dry-run] rm -f $file"
       else

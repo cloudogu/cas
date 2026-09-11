@@ -9,6 +9,7 @@ Then("CAS prompts the test user to change his password", function () {
 
 When("the test user changes his password", function () {
     cy.fixture("testuser_data").then(function (testUser) {
+        cy.get('input[data-testid="currentPassword-input"]').type(testUser.password)
         cy.get('input[data-testid="password-input"]').type(testUser.newPassword)
         cy.get('input[data-testid="confirmedPassword-input"]').type(testUser.newPassword)
         cy.get('button[id="submit"]').click()
@@ -26,6 +27,9 @@ Then("the test user can login with new credentials", function () {
 });
 
 When("the user enters an invalid password", function () {
+    cy.fixture("testuser_data").then(function (testUser) {
+        cy.get('input[data-testid="currentPassword-input"]').type(testUser.password)
+    })
     cy.get('input[data-testid="password-input"]').type("invalid_pwd")
     cy.get('input[data-testid="confirmedPassword-input"]').type("invalid_pwd")
 });

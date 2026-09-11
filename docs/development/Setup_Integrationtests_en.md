@@ -5,6 +5,7 @@ This section describes the steps required to run the integration tests correctly
 ## Prerequisites
 
 * It is necessary to install the program `yarn`
+* run `yarn install` and `npm install` to actually use the needed dogu-intefration-lib-version.
 
 ## Configuration
 
@@ -35,7 +36,7 @@ module.exports = defineConfig({
         "baseUrl": "https://192.168.56.2",
         "env": {
             "DoguName": "cas/login",
-            "MaxLoginRetries": 3,
+            "MaxLoginRetries": -1,
             "AdminUsername": "ces-admin",
             "AdminPassword": "Ecosystem2016!",
             "AdminGroup": "CesAdministrators",
@@ -66,10 +67,10 @@ In order for the integration tests for CAS to run successfully, the following st
 A registered service for CAS must be created so that the tests can communicate with the CAS endpoints. This can be easily simulated by writing the following keys into the etcd:
 ```bash
 etcdctl mkdir /dogu/inttest
-etcdctl set /dogu/inttest/0.0.1 '{“Name”: “official/inttest”, “Dependencies”:[“cas”]}'
-etcdctl set /dogu/inttest/current “0.0.1”
+etcdctl set /dogu/inttest/0.0.1 '{"Name": "official/inttest", "Dependencies":["cas"]}'
+etcdctl set /dogu/inttest/current "0.0.1"
 ```
-There is now an “empty” dogu for which the CAS registers a service. This is used by the integration tests to communicate with the necessary endpoints. The name of the empty dogu must match the value for the `clientID` from the `cypress.json`.
+There is now an "empty" dogu for which the CAS registers a service. This is used by the integration tests to communicate with the necessary endpoints. The name of the empty dogu must match the value for the `clientID` from the `cypress.json`.
 
 **Step 2:**
 
@@ -77,7 +78,16 @@ In order for our OAuth tests to be successful, we need to create a service accou
 ```bash
 etcdctl set /config/cas/service_accounts/oauth/inttest/secret "fda8e031d07de22bf14e552ab12be4bc70b94a1fb61cb7605833765cb74f2dea"
 ```
-Here `inttest` must correspond to the name of the “empty” dogus from the first step. The value is the configured client secret from the `cypress.json` as SHA-256 hash.
+Here `inttest` must correspond to the name of the "empty" dogus from the first step. The value is the configured client secret from the `cypress.json` as SHA-256 hash.
+
+If this is not working out of the box, look into the cas container, if the service was actually registered:
+```bash
+docker exec -it cas bash
+less /etc/cas/services/production/inttest-xy.json # xy is any number
+# if it exists modify the secret to the one above. If not run the following script and then set the secret into the file 
+/create-sa.sh oauth inttest
+# double check, that the etcd entry is still correct.
+```
 
 **Step 3:**
 
@@ -116,20 +126,24 @@ The URLs expected by the tests are defined in `cypress.json` under the attribute
 
 **Step 1:** Start Keycloak on the host machine and import realm (**Attention: The path to the JSON must be adjusted!**)
 
+Adjust the volume path to your folder structure. Using pwd inside the repo works, for example, too: `-v "$(pwd)"/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json`
+
 ```bash
-docker run --rm -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile.feature. upload_scripts=enabled” -v /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json quay.io/keycloak/keycloak:15.0.2
+docker run --rm -d --name kc -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin -p 9000:8080 -e KEYCLOAK_IMPORT="/realm-cloudogu.json -Dkeycloak.profile.feature. upload_scripts=enabled" -v /vagrant/containers/cas/integrationTests/keycloak-realm/realm-cloudogu.json:/realm-cloudogu.json quay.io/keycloak/keycloak:15.0.2
 ```
+
+Additionally, the user "tester" has to be created in Keycloak-Realm "Cloudogu". You can use the scripts under /keycloak: `./keycloak/kc-add-user.sh -u tester -r Cloudogu`
 
 **Step 2:** Configuration for the CAS in the CES:
 
 ```bash
-etcdctl set /config/cas/oidc/enabled “true”
-etcdctl set /config/cas/oidc/discovery_uri “http://192.168.56.1:9000/auth/realms/Cloudogu/.well-known/openid-configuration”
-etcdctl set /config/cas/oidc/client_id “casClient”
-etcdctl set /config/cas/oidc/display_name “MyProvider”
-etcdctl set /config/cas/oidc/optional “true”
-etcdctl set /config/cas/oidc/scopes “openid email profile groups”
-etcdctl set /config/cas/oidc/attribute_mapping “email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName”
+etcdctl set /config/cas/oidc/enabled "true"
+etcdctl set /config/cas/oidc/discovery_uri "http://192.168.56.1:9000/auth/realms/Cloudogu/.well-known/openid-configuration"
+etcdctl set /config/cas/oidc/client_id "casClient"
+etcdctl set /config/cas/oidc/display_name "MyProvider"
+etcdctl set /config/cas/oidc/optional "true"
+etcdctl set /config/cas/oidc/scopes "openid email profile groups"
+etcdctl set /config/cas/oidc/attribute_mapping "email:mail,family_name:surname,given_name:givenName,preferred_username:username,name:displayName"
 ```
 
 **Step 3:** Use `cesapp edit-config cas` to set the oidc/client_secret to `c21a7690-1ca3-4cf9-bef3-22f37faf5144`. This will then be stored correctly encrypted.
@@ -142,5 +156,5 @@ The integration tests can be started in two ways:
    This mode is helpful if the focus is on execution.
    For example, with a Jenkins pipeline.
 
-1. yarn cypress open` starts an interactive window where you can execute, visually observe and debug the tests.
+2. `yarn cypress open` starts an interactive window where you can execute, visually observe and debug the tests.
    This mode is particularly helpful when developing new tests and finding errors.

@@ -22,6 +22,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Set;
 
 /**
  * Extends the class {@link SendPasswordResetInstructionsAction}.
@@ -76,9 +77,9 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
-        String email = "";
+        Set<String> emails = Set.of();
         try {
-            email = passwordManagementService.findEmail(query);
+            emails = passwordManagementService.findEmails(query);
         } catch (Throwable e) {
             LOGGER.error("Could not find email for {}", query, e);
         }
@@ -90,7 +91,7 @@ public class CesSendPasswordResetInstructionsAction extends SendPasswordResetIns
             LOGGER.error("Could not find phone number for {}", query, e);
         }
 
-        if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
+        if (emails.isEmpty() && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
             // In the original code, an error event is returned here.
             // However, no error should occur if no e-mail address is set, since it can otherwise be determined whether

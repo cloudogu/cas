@@ -22,6 +22,8 @@ if [[ ${sourcingExitCode} -ne 0 ]]; then
   echo "ERROR: An error occurred while sourcing ${STARTUP_DIR}/util.sh."
 fi
 
+validateAdditionalTOCEntries
+
 # convert fqdn to lowercase to avoid case sensitivity problems with oidc auth
 # do this before the upgrade-wait-loop, since the fqdn is needed in the upgrade scripts, too
 fqdn="$(doguctl config -g fqdn)"

@@ -41,7 +41,7 @@ class CesOAuthProfileRendererTests {
 
         // then
         assertNotNull(entity, "ResponseEntity should not be null");
-        assertEquals(200, entity.getStatusCodeValue(), "ResponseEntity should return 200 OK");
+        assertEquals(200, entity.getStatusCode().value(), "ResponseEntity should return 200 OK");
         assertTrue(entity.getBody().contains("admin"), "Response JSON should contain 'admin'");
         assertTrue(entity.getBody().contains("user"), "Response JSON should contain 'user'");
     }
@@ -61,8 +61,9 @@ class CesOAuthProfileRendererTests {
 
         // then
         assertNotNull(entity, "ResponseEntity should not be null");
-        assertEquals(200, entity.getStatusCodeValue(), "ResponseEntity should return 200 OK");
-        assertTrue(entity.getBody().contains("\"groups\":[]"), "Response JSON should contain empty groups array");
+        assertEquals(200, entity.getStatusCode().value(), "ResponseEntity should return 200 OK");
+        assertTrue(entity.getBody().replaceAll("\\s+", "").contains("\"groups\":[]"),
+                "Response JSON should contain empty groups array");
     }
 
     @Test
@@ -77,7 +78,7 @@ class CesOAuthProfileRendererTests {
 
         // then
         assertNotNull(entity, "ResponseEntity should not be null");
-        assertEquals(200, entity.getStatusCodeValue(), "Should still return 200 OK for empty model");
+        assertEquals(200, entity.getStatusCode().value(), "Should still return 200 OK for empty model");
     }
 
     @Test

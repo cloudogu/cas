@@ -123,7 +123,21 @@ bootWar {
                     "WEB-INF/lib/servlet-api-6*.jar",
                     "WEB-INF/lib/jakarta.servlet-api-*.jar",
                     "WEB-INF/lib/tomcat-servlet-api-*.jar",
-                    "WEB-INF/lib/jaxws-rt-*.jar"
+                    "WEB-INF/lib/jaxws-rt-*.jar",
+                    // Trivy CRITICAL fixes: drop the base WAR's vulnerable jars, keeping the patched
+                    // versions from this overlay's classpath (see gradle.properties / build.gradle).
+                    // CVE-2026-22732
+                    "WEB-INF/lib/spring-security-config-*.jar",
+                    "WEB-INF/lib/spring-security-core-*.jar",
+                    "WEB-INF/lib/spring-security-crypto-*.jar",
+                    "WEB-INF/lib/spring-security-web-*.jar",
+                    // CVE-2026-40477/40478/41901
+                    "WEB-INF/lib/thymeleaf-3*.jar",
+                    "WEB-INF/lib/thymeleaf-spring6-*.jar",
+                    // CVE-2025-14813
+                    "WEB-INF/lib/bcprov-jdk18on-*.jar",
+                    "WEB-INF/lib/bcpkix-jdk18on-*.jar",
+                    "WEB-INF/lib/bcutil-jdk18on-*.jar"
             ]
         }
     }

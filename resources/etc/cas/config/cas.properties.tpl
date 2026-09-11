@@ -39,7 +39,7 @@ spring.mail.protocol=smtp
 {{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
 management.endpoints.web.exposure.include=health,registeredServices
 {{ else }}
-management.endpoints.web.exposure.include=health
+### management.endpoints.web.exposure.include=health
 {{ end }}
 management.endpoint.health.probes.enabled=true
 management.endpoint.health.show-details=ALWAYS
@@ -255,9 +255,9 @@ cas.ticket.tgt.primary.time-to-kill-in-seconds={{ .Config.GetOrDefault "session_
 # Configuration guide: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#ticket-granting-ticket-policies
 # Properties: https://apereo.github.io/cas/6.6.x/ticketing/Configuring-Ticket-Expiration-Policy.html#default
 # ----------------------------------------------------------------------------------------------------------------------
-# only-track-most-recent-session means only most recent STs and PTs are stored so there is only one valid ST / PT
-# per service
-cas.ticket.tgt.core.only-track-most-recent-session=false
+# service-tracking-policy=ALL means all STs and PTs are stored, not just the most recent one, so
+# there can be more than one valid ST / PT per service
+cas.ticket.tgt.core.service-tracking-policy=ALL
 ########################################################################################################################
 
 ########################################################################################################################
@@ -347,6 +347,21 @@ cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=86000
 
 # https://apereo.github.io/cas/7.0.x/authentication/OIDC-Authentication-TokenExpirationPolicy.html#id-tokens
 cas.authn.oidc.id-token.include-id-token-claims=false
+
+# Store pac4j session data (OAuth server: pac4jRequestedUrl; delegated OIDC client: state/nonce) in the
+# local HTTP session instead of the ticket-registry-backed distributed session store.
+# CAS 7.3 enables distributed session replication by default (replicate-sessions=true). The distributed
+# store writes a cookie ("DISSESSIONOauthOidcServerSupport" for the OAuth/OIDC server, "DISSESSIONAuthnDelegation"
+# for delegated authentication) whose value is the compound "TST-<id>@<clientIP>@<userAgent>". The user-agent
+# contains spaces/parentheses, making it an illegal (RFC 6265) cookie value that Tomcat truncates/drops -> the
+# transient session ticket is lost across the redirect -> OAuth /authorize returns no code, and delegated OIDC
+# login fails with "OidcMissingSessionStateException: State cannot be determined".
+# This CAS dogu runs as a single pod, so cross-instance replication is unnecessary; the in-pod HTTP session
+# survives all redirects (including the round-trip to the external IdP). If CAS is ever scaled beyond one pod,
+# enable sticky sessions at the ingress or re-enable replication with a properly encrypted session cookie.
+# Two independent subsystems, two independent settings -> both must be disabled. Also these are deprecated with no alternative.
+cas.authn.oauth.session-replication.replicate-sessions=false
+cas.authn.pac4j.core.session-replication.replicate-sessions=false
 ########################################################################################################################
 
 ########################################################################################################################
@@ -379,8 +394,28 @@ cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scrat
 cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
 cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
+cas.authn.mfa.gauth.bypass.principal-attribute-name=patAuthentication
+cas.authn.mfa.gauth.bypass.principal-attribute-value=true
+
+### api ###
+management.endpoints.web.exposure.include=health,gauthCredentialRepository
+cas.monitor.endpoints.endpoint.gauthCredentialRepository.access=AUTHENTICATED
+management.endpoint.gauthCredentialRepository.enabled=true
 {{ end }}
 
+{{ if and (.Config.Exists "experimental/totp/api_user_name") (.Config.Exists "experimental/totp/api_user_password") }}
+{{ $apiUser := .Config.GetAndDecrypt "experimental/totp/api_user_name" }}
+{{ if ne $apiUser "" }}
+spring.security.user.name={{ $apiUser }}
+spring.security.user.password={{ .Config.GetAndDecrypt "experimental/totp/api_user_password" }}
+{{ end }}
+{{ end }}
+
+########################################################################################################################
+# PAT service
+personal-acces-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "false" }}
+personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
+########################################################################################################################
 
 ########################################################################################################################
 # URL Validation

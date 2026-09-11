@@ -7,6 +7,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.2-1] - 2026-09-10
+### Added
+- [#359] Authenticate via personal access token
+
+### Fixed
+- [#365] Fix Jackson dependency pruning
+
+## [v8.0.1-1] - 2026-09-08
+### Changed
+- [#362] Upgrade CAS to v8.0.1
+  - Aligned the managed platform with CAS baseline: JDK 25 and Spring Boot 4.1.0
+- [#362] Update base image to v3.24.1-3
+- [#362] Update java base image to v25.0.4-1
+- [#362] Rename configuration property from `cas.ticket.tgt.core.only-track-most-recent-session` to `cas.ticket.tgt.core.service-tracking-policy`
+
+## [v7.3.7-5] - 2026-09-03
+### Security
+- [#358] Upgrade the standalone Tomcat baked into the image from 11.0.22 to 11.0.25, mitigating 19 CVEs
+  fixed in the 11.0.23, 11.0.24 and 11.0.25 releases. The `Important` rated ones are
+  [CVE-2026-65182](https://nvd.nist.gov/vuln/detail/CVE-2026-65182) (security constraint bypass),
+  [CVE-2026-65927](https://nvd.nist.gov/vuln/detail/CVE-2026-65927) (`RewriteValve` `[N]` flag may bypass access control),
+  [CVE-2026-68569](https://nvd.nist.gov/vuln/detail/CVE-2026-68569) (principal lookup could fail open) and
+  [CVE-2026-68763](https://nvd.nist.gov/vuln/detail/CVE-2026-68763) (HTTP/2 allocation-leak DoS).
+  Also fixed: [CVE-2026-65637](https://nvd.nist.gov/vuln/detail/CVE-2026-65637),
+  [CVE-2026-55956](https://nvd.nist.gov/vuln/detail/CVE-2026-55956),
+  [CVE-2026-73180](https://nvd.nist.gov/vuln/detail/CVE-2026-73180),
+  [CVE-2026-68525](https://nvd.nist.gov/vuln/detail/CVE-2026-68525),
+  [CVE-2026-66422](https://nvd.nist.gov/vuln/detail/CVE-2026-66422),
+  [CVE-2026-66299](https://nvd.nist.gov/vuln/detail/CVE-2026-66299),
+  [CVE-2026-65905](https://nvd.nist.gov/vuln/detail/CVE-2026-65905),
+  [CVE-2026-65183](https://nvd.nist.gov/vuln/detail/CVE-2026-65183),
+  [CVE-2026-59084](https://nvd.nist.gov/vuln/detail/CVE-2026-59084),
+  [CVE-2026-59083](https://nvd.nist.gov/vuln/detail/CVE-2026-59083),
+  [CVE-2026-55955](https://nvd.nist.gov/vuln/detail/CVE-2026-55955),
+  [CVE-2026-55276](https://nvd.nist.gov/vuln/detail/CVE-2026-55276),
+  [CVE-2026-53434](https://nvd.nist.gov/vuln/detail/CVE-2026-53434),
+  [CVE-2026-53404](https://nvd.nist.gov/vuln/detail/CVE-2026-53404) and
+  [CVE-2026-50229](https://nvd.nist.gov/vuln/detail/CVE-2026-50229).
+
+### Added
+- [#356] Add API and persistence for personal access tokens.
+
+## [v7.3.7-4] - 2026-07-24
+### Fixed
+- [#352] prevent ``config/_global/certificate/additional/toc`` from having multiple identical keys by throwing an error
+
+## [v7.3.7-3] - 2026-07-10
+### Changed
+- [#345] Update base image to v3.24.1-1 (Alpine 3.24.1).
+
+### Fixed
+- [#345] Fixed a regression of [#163] where password-reset mails were silently dropped for e-mail addresses without a real TLD (e.g. `admin@ces.local`), because the CES password-management service was no longer registered after the CAS 7 / Spring Boot 3 upgrade.
+
+### Security
+- [#345] Fixed Trivy CRITICAL findings by upgrading vulnerable transitive dependencies bundled in the base CAS webapp WAR:
+  - [CVE-2026-22732](https://nvd.nist.gov/vuln/detail/CVE-2026-22732) – spring-security 6.5.5 → 6.5.9
+  - [CVE-2026-40477](https://nvd.nist.gov/vuln/detail/CVE-2026-40477) / [CVE-2026-40478](https://nvd.nist.gov/vuln/detail/CVE-2026-40478) / [CVE-2026-41901](https://nvd.nist.gov/vuln/detail/CVE-2026-41901) – thymeleaf and thymeleaf-spring6 3.1.3.RELEASE → 3.1.5.RELEASE
+  - [CVE-2025-14813](https://nvd.nist.gov/vuln/detail/CVE-2025-14813) – bouncycastle bcprov/bcpkix/bcutil-jdk18on 1.82 → 1.84
+
+## [v7.3.7-2] - 2026-07-02
+### Added
+- [#342] enable multifactor management api
+### Fixed
+- [#347] Fix hidden buttons in the delete multifactor device dialog
+
+## [v7.3.7-1] - 2026-06-25
+### Changed
+- [#334] Upgrade Apereo CAS from 7.2.7 to 7.3.7.
+  - Aligned the managed platform with the CAS 7.3.7 baseline: Spring Boot 3.5.6 and Tomcat 11.0.22.
+- [#334] Disabled pac4j distributed session replication, since this dogu runs as a single pod.
+  - Set `cas.authn.oauth.session-replication.replicate-sessions=false` (OAuth/OIDC server) and
+    `cas.authn.pac4j.core.session-replication.replicate-sessions=false` (delegated authentication).
+  - CAS 7.3 enables replication by default, which stores the session reference in a cookie whose
+    value contains the user-agent (spaces/parentheses) and is therefore dropped by Tomcat as an
+    invalid cookie; the in-pod HTTP session is used instead.
+- [#334] The forced password-change screen (expired / must-change at login) now requires the user
+  to enter their current password, as mandated by CAS 7.3.
+
 ## [v7.2.7-20] - 2026-06-24
 ### Changed
 - [#339] Use the exposition api in kubernetes instead of the ingress api.

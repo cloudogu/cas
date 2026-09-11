@@ -266,3 +266,26 @@ function updateFqdnInServices() {
 
   echo "Successfully finished fqdn update."
 }
+
+# duplicate entries in `certificate/additional/toc` cause crashes and other problems
+function validateAdditionalTOCEntries() {
+  local additionalTOC
+  local defaultAdditionalTOC="EMPTY"
+
+  additionalTOC="$(doguctl config --global --default "${defaultAdditionalTOC}" "certificate/additional/toc")"
+
+  if [[ "${additionalTOC}" == "${defaultAdditionalTOC}" ]]; then
+    return 0
+  fi
+
+  local -A seenEntries=()
+  local entry
+  for entry in ${additionalTOC}; do
+    if [[ -n "${seenEntries[${entry}]:-}" ]]; then
+      echo "ERROR: The doguctl config key certificate/additional/toc must not contain duplicates. Duplicate entry: ${entry}"
+      exit 1
+    fi
+
+    seenEntries["${entry}"]=1
+  done
+}

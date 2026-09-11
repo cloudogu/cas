@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.pm.ResetPasswordManagementProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -13,11 +14,11 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -29,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CesSendPasswordResetInstructionsActionTest {
 
     /**
@@ -87,7 +88,7 @@ public class CesSendPasswordResetInstructionsActionTest {
 
     private CesSendPasswordResetInstructionsActionExtensionForUnitTest cesSendPasswordResetInstructionsAction;
 
-    @Before
+    @BeforeEach
     public void setup() {
         cesSendPasswordResetInstructionsAction = new CesSendPasswordResetInstructionsActionExtensionForUnitTest(casProperties, communicationsManager, passwordManagementService, ticketRegistry, ticketFactory, principalResolver, passwordResetUrlBuilder, multifactorAuthenticationProviderSelector, authenticationSystemSupport, servicesManager);
     }
@@ -137,7 +138,7 @@ public class CesSendPasswordResetInstructionsActionTest {
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
-        when(passwordManagementService.findEmail(any())).thenThrow(new Throwable("Test exception"));
+        when(passwordManagementService.findEmails(any())).thenThrow(new Throwable("Test exception"));
 
         Event result = cesSendPasswordResetInstructionsAction.doExecuteInternal(requestContext);
 
@@ -163,7 +164,7 @@ public class CesSendPasswordResetInstructionsActionTest {
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(communicationsManager.isMailSenderDefined()).thenReturn(true);
         when(passwordManagementQuery.getUsername()).thenReturn("Dustin");
-        when(passwordManagementService.findEmail(any())).thenReturn("mail@test.com");
+        when(passwordManagementService.findEmails(any())).thenReturn(java.util.Set.of("mail@test.com"));
         when(passwordManagementService.findPhone(any())).thenReturn("01234/56789");
         when(requestContext.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         AuthenticationProperties mockAuthProps = mock(AuthenticationProperties.class);
@@ -173,6 +174,26 @@ public class CesSendPasswordResetInstructionsActionTest {
         ResetPasswordManagementProperties mockResetProps = mock(ResetPasswordManagementProperties.class);
         when(mockPmProperties.getReset()).thenReturn(mockResetProps);
         when(mockResetProps.isMultifactorAuthenticationEnabled()).thenReturn(false);
+        EmailProperties mockEmailProps = mock(EmailProperties.class);
+        when(mockResetProps.getMail()).thenReturn(mockEmailProps);
+        when(mockEmailProps.getAttributeName()).thenReturn(java.util.List.of("mail"));
+        org.apereo.cas.configuration.model.support.sms.SmsProperties mockSmsProps =
+                mock(org.apereo.cas.configuration.model.support.sms.SmsProperties.class);
+        when(mockResetProps.getSms()).thenReturn(mockSmsProps);
+        when(mockSmsProps.getAttributeName()).thenReturn(java.util.List.of("phone"));
+        when(authenticationSystemSupport.getPrincipalResolver()).thenReturn(principalResolver);
+        org.apereo.cas.authentication.principal.Principal mockPrincipal =
+                mock(org.apereo.cas.authentication.principal.Principal.class);
+        when(mockPrincipal.getAttributes()).thenReturn(java.util.Map.of());
+        when(principalResolver.resolve(any())).thenReturn(mockPrincipal);
+        org.springframework.webflow.definition.FlowDefinition mockFlowDefinition =
+                mock(org.springframework.webflow.definition.FlowDefinition.class);
+        when(requestContext.getActiveFlow()).thenReturn(mockFlowDefinition);
+        org.springframework.context.ApplicationContext mockApplicationContext =
+                mock(org.springframework.context.ApplicationContext.class);
+        when(mockFlowDefinition.getApplicationContext()).thenReturn(mockApplicationContext);
+        when(mockApplicationContext.getBeansOfType(org.apereo.cas.authentication.MultifactorAuthenticationProvider.class))
+                .thenReturn(java.util.Map.of());
         MessageContext mockMsgCtx = mock(MessageContext.class);
         when(requestContext.getMessageContext()).thenReturn(mockMsgCtx);
 

@@ -53,7 +53,7 @@ const getOAuth20AccessToken = (clientID, accessToken, exitOnFail = false) => {
  * @returns The response of the request.
  */
 const getOAuth20Profile = (ticketGrantingTicket, exitOnFail = false) => {
-    cy.request({
+    return cy.request({
         method: "GET",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/profile",
         headers: {
