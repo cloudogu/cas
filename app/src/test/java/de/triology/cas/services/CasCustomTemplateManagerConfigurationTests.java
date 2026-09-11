@@ -134,7 +134,7 @@ class CasCustomTemplateManagerConfigurationTests {
 
         var serializer = mock(RegisteredServiceJsonSerializer.class);
 
-        try (var logs = TestLogCapture.start(CasCustomTemplateManagerConfiguration.class)) {
+        try (var logs = TestLogCapture.start()) {
             var manager = configuration.registeredServicesTemplatesManager(casProperties, serializer);
 
             assertNotNull(manager);

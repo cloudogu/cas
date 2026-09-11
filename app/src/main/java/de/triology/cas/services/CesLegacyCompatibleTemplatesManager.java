@@ -54,7 +54,8 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
         }
 
         val concreteService = (CasRegisteredService) merged;
-        val props = concreteService.getProperties();
+        val props = Optional.ofNullable(concreteService.getProperties())
+                .orElseGet(Collections::emptyMap);
 
         LOGGER.debug("[apply()] After merge: id={}, name={}, serviceId={}, template={}, MatchingStrategy={}",
                 concreteService.getId(),
@@ -64,7 +65,7 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
                 concreteService.getMatchingStrategy());
 
         // Dump all properties for debugging
-        if (props == null || props.isEmpty()) {
+        if (props.isEmpty()) {
             LOGGER.debug("[apply()] No properties present for service id={}", concreteService.getId());
         } else {
             props.forEach((k, v) -> LOGGER.debug("[apply()] Property {} -> {}", k, v));

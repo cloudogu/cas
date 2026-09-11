@@ -138,7 +138,7 @@ class CesLegacyCompatibleTemplatesManagerTests {
                 "Fqdn", createPropertyWithValue("example.org")
         ));
 
-        try (var logs = TestLogCapture.start(CesLegacyCompatibleTemplatesManager.class)) {
+        try (var logs = TestLogCapture.start()) {
             IllegalStateException result = assertThrows(
                     IllegalStateException.class,
                     () -> manager.apply(service)
