@@ -137,16 +137,13 @@ class CesLegacyCompatibleTemplatesManagerTests {
     }
 
     @Test
-    void apply_ShouldExposeNullPropertiesFailure() {
+    void apply_ShouldHandleNullPropertiesGracefully() {
         CasRegisteredService service = new CasRegisteredService();
         service.setProperties(null);
 
-        NullPointerException failure = assertThrows(
-                NullPointerException.class,
-                () -> templatesManager.apply(service)
-        );
+        RegisteredService result = assertDoesNotThrow(() -> templatesManager.apply(service));
 
-        assertNotNull(failure, "Null properties currently cause the custom fallback to fail");
+        assertSame(service, result);
     }
 
     // Helper to create a RegisteredServiceProperty with a single value

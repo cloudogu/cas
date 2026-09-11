@@ -5,9 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,21 +15,23 @@ class CesServicesManagerNullGuardAspectConfigurationTests {
             new CesServicesManagerNullGuardAspectConfiguration();
 
     @Test
-    void servicesManagerLoadNpeIsConvertedToEmptyCollection() throws Throwable {
+    void servicesManagerLoadDoesNotSwallowNpe() throws Throwable {
         ProceedingJoinPoint joinPoint = failingJoinPoint(mock(ServicesManager.class));
 
-        Object result = aspect.guardServicesManagerLoad(joinPoint);
-
-        assertTrue(((Collection<?>) result).isEmpty());
+        assertThrows(
+                NullPointerException.class,
+                () -> aspect.guardServicesManagerLoad(joinPoint)
+        );
     }
 
     @Test
-    void serviceRegistryLoadNpeIsConvertedToEmptyCollection() throws Throwable {
+    void serviceRegistryLoadDoesNotSwallowNpe() throws Throwable {
         ProceedingJoinPoint joinPoint = failingJoinPoint(mock(ServiceRegistry.class));
 
-        Object result = aspect.guardServiceRegistryLoad(joinPoint);
-
-        assertTrue(((Collection<?>) result).isEmpty());
+        assertThrows(
+                NullPointerException.class,
+                () -> aspect.guardServiceRegistryLoad(joinPoint)
+        );
     }
 
     private static ProceedingJoinPoint failingJoinPoint(Object target) throws Throwable {
