@@ -469,21 +469,25 @@ pipe.insertStageBefore('MN-Run Integration Tests', 'Setup Configs and Keycloak')
 }
 
 pipe.overrideStage('Integration Tests') {
-        echo "Create custom dogu to access OAuth endpoints for the integration tests"
-        ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
-        ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
-        // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
-        sleep time: 30, unit: 'SECONDS'
+    echo "Create custom dogu to access OAuth endpoints for the integration tests"
+    ecoSystem.vagrant.ssh "sudo docker cp /dogu/integrationTests/services/ cas:/etc/cas/services/production/"
+    ecoSystem.vagrant.sshOut "sudo docker exec cas ls /etc/cas/services/production"
+    // Wait for Service-Watch start delay (see: cas.service-registry.schedule.start-delay)
+    sleep time: 30, unit: 'SECONDS'
 
-        ecoSystem.runCypressIntegrationTests([
-                cypressImage     : "cypress/included:13.13.2",
-                enableVideo      : params.EnableVideoRecording,
-                enableScreenshots: params.EnableScreenshotRecording])
-        // run special non-encrypted password test
-        echo "Run unencrypted password test script"
-        ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
-        def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
-        echo "${testreport}"
+    ecoSystem.runCypressIntegrationTests([
+        // Default cypress/included:13.17.0 bundles Node 22.13, too old for
+        // cosmiconfig@10 (pulled in by @badeball/cypress-cucumber-preprocessor@28,
+        // required for cypress@16 compatibility). Override to an image with a
+        // newer bundled Node until the shared pipeline lib's own default catches up.
+        cypressImage        : "cypress/included:16.0.0",
+        enableVideo      : params.EnableVideoRecording,
+        enableScreenshots: params.EnableScreenshotRecording])
+    // run special non-encrypted password test
+    echo "Run unencrypted password test script"
+    ecoSystem.vagrant.sshOut 'chmod +x /dogu/resources/test-password-logging.sh'
+    def testreport = ecoSystem.vagrant.sshOut "sudo /dogu/resources/test-password-logging.sh ${ecoSystem.externalIP}"
+    echo "${testreport}"
 }
 
 pipe.run()
