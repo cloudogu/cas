@@ -15,37 +15,24 @@ import java.util.Collections;
 @Slf4j
 public class CesServicesManagerNullGuardAspectConfiguration {
   
-  /** Guard all ServicesManager.load(..) calls (any impl, any args) */
+  /** Normalize null results from ServicesManager.load(..) while preserving thrown failures. */
   @Around("execution(java.util.Collection *..ServicesManager+.load(..))")
   public Object guardServicesManagerLoad(final ProceedingJoinPoint pjp) throws Throwable {
-    try {
-      Object out = pjp.proceed();
-      if (out == null) {
-        LOGGER.debug("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
-        return Collections.emptyList();
-      }
-      return out;
-    } catch (NullPointerException npe) {
-        LOGGER.debug("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
-            pjp.getTarget().getClass().getName(), npe.getMessage());
-      return Collections.emptyList();
-    }
+    return normalizeNullResult(pjp);
   }
 
-  /** Guard all ServiceRegistry.load(..) calls as well (common root cause) */
+  /** Normalize null results from ServiceRegistry.load(..) while preserving thrown failures. */
   @Around("execution(java.util.Collection *..ServiceRegistry+.load(..))")
   public Object guardServiceRegistryLoad(final ProceedingJoinPoint pjp) throws Throwable {
-    try {
-      Object out = pjp.proceed();
-      if (out == null) {
-        LOGGER.debug("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
-        return Collections.emptyList();
-      }
-      return out;
-    } catch (NullPointerException npe) {
-        LOGGER.debug("Guard: {}.load(..) threw NPE (treat as empty). Cause: {}",
-            pjp.getTarget().getClass().getName(), npe.getMessage());
+    return normalizeNullResult(pjp);
+  }
+
+  private Object normalizeNullResult(final ProceedingJoinPoint pjp) throws Throwable {
+    Object out = pjp.proceed();
+    if (out == null) {
+      LOGGER.debug("Guard: {}.load(..) returned null → using empty list", pjp.getTarget().getClass().getName());
       return Collections.emptyList();
     }
+    return out;
   }
 }

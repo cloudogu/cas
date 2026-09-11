@@ -1,6 +1,8 @@
 {
   "@class" : "{{SERVICE_CLASS}}",
   "id" : {{SERVICE_ID}},
+  "name" : "{{SERVICE}}",
+  "serviceId" : "^https://((?i){{FQDN}})(:443)?/{{SERVICE}}(/.*)?",
   "templateName": "{{TEMPLATES}}",
   "clientId": "{{SERVICE}}",
   "clientSecret": "{{CLIENT_SECRET_HASH}}",

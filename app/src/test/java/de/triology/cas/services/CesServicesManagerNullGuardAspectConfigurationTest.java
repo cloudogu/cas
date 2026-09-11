@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,14 +65,22 @@ class CesServicesManagerNullGuardAspectConfigurationTest {
         assertEquals(List.of(), result);
     }
 
-    @ParameterizedTest(name = "{0}: returns empty list when NullPointerException thrown")
+    /**
+     * Reproduces the load failure that the old advice converted into an empty collection. The
+     * original exception instance must escape so its complete stack identifies the root cause.
+     */
+    @ParameterizedTest(name = "{0}: propagates NullPointerException")
     @MethodSource("guardMethods")
-    void returnsEmptyList_WhenNullPointerExceptionThrown(String name, GuardMethod guardMethod) throws Throwable {
-        when(pjp.proceed()).thenThrow(new NullPointerException("boom"));
+    void propagatesNullPointerException(String name, GuardMethod guardMethod) throws Throwable {
+        NullPointerException failure = new NullPointerException("boom");
+        when(pjp.proceed()).thenThrow(failure);
 
-        Object result = guardMethod.invoke(aspect, pjp);
+        NullPointerException result = assertThrows(
+                NullPointerException.class,
+                () -> guardMethod.invoke(aspect, pjp)
+        );
 
-        assertEquals(List.of(), result);
+        assertSame(failure, result);
     }
 
     @ParameterizedTest(name = "{0}: propagates other Throwables")
