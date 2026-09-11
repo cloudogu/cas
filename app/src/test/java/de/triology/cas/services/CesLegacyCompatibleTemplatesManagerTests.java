@@ -111,6 +111,11 @@ class CesLegacyCompatibleTemplatesManagerTests {
         assertNotNull(result, "Service should still be returned without crashing even if properties are missing");
     }
 
+    /**
+     * Uses a real template file and a serializer that fails while reading the rendered template.
+     * The assertion checks that {@code super.apply(...)} and the custom manager preserve the exact
+     * originating exception, which is needed to diagnose template failures during startup.
+     */
     @Test
     void apply_ShouldPropagateTemplateSerializerFailure() throws IOException {
         @SuppressWarnings("unchecked")
@@ -138,6 +143,11 @@ class CesLegacyCompatibleTemplatesManagerTests {
         assertSame(templateFailure, result, "The original template failure should remain observable");
     }
 
+    /**
+     * Sends a CAS service with a null property map through the empty-template fallback path. The
+     * manager must return the service without dereferencing the missing map, since otherwise this
+     * recovery path can create the same hidden load failure seen in production.
+     */
     @Test
     void apply_ShouldHandleNullPropertiesGracefully() {
         CasRegisteredService service = new CasRegisteredService();

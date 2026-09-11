@@ -14,6 +14,11 @@ class CesServicesManagerNullGuardAspectConfigurationTests {
     private final CesServicesManagerNullGuardAspectConfiguration aspect =
             new CesServicesManagerNullGuardAspectConfiguration();
 
+    /**
+     * Simulates a {@link ServicesManager#load()} invocation that throws an NPE. The safety contract
+     * requires the advice to let the original failure escape so startup cannot continue with an
+     * apparently valid but empty service collection.
+     */
     @Test
     void servicesManagerLoadDoesNotSwallowNpe() throws Throwable {
         ProceedingJoinPoint joinPoint = failingJoinPoint(mock(ServicesManager.class));
@@ -24,6 +29,10 @@ class CesServicesManagerNullGuardAspectConfigurationTests {
         );
     }
 
+    /**
+     * Exercises the equivalent guard around a service-registry load. This verifies that registry
+     * failures also remain visible instead of being converted into an empty collection.
+     */
     @Test
     void serviceRegistryLoadDoesNotSwallowNpe() throws Throwable {
         ProceedingJoinPoint joinPoint = failingJoinPoint(mock(ServiceRegistry.class));
