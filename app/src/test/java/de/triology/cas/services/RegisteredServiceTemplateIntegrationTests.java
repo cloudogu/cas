@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,11 +42,11 @@ class RegisteredServiceTemplateIntegrationTests {
     /**
      * Renders four registry records from the production generator templates and loads them through
      * the real serializer, template manager, registry, and CAS services manager. Manager loading
-     * must return resolved identities, while direct registry lookup demonstrates that the registry
-     * still retains the raw pre-template objects.
+     * and direct registry lookups must return resolved identities. Required matching fields are
+     * present in the generated records even before CAS applies its internal templates.
      */
     @Test
-    void productionGeneratedServicesResolveInManagerButRegistryLookupsRemainUnresolved() throws IOException {
+    void productionGeneratedServicesHaveResolvedIdentitiesInManagerAndRegistry() throws IOException {
         TestFixture fixture = createFixture("example[.]org");
 
         Collection<RegisteredService> loadedServices = fixture.servicesManager().load();
@@ -55,26 +54,25 @@ class RegisteredServiceTemplateIntegrationTests {
         assertEquals(4, loadedServices.size());
         loadedServices.forEach(RegisteredServiceTemplateIntegrationTests::assertResolvedIdentity);
 
-        assertUnresolvedIdentity(fixture.registry().findServiceById(CAS_SERVICE_ID));
-        assertUnresolvedIdentity(fixture.registry().findServiceById(OAUTH_SERVICE_ID));
-        assertUnresolvedIdentity(fixture.registry().findServiceById(OIDC_SERVICE_ID));
-        assertUnresolvedIdentity(fixture.registry().findServiceById(SECOND_OAUTH_SERVICE_ID));
+        assertResolvedIdentity(fixture.registry().findServiceById(CAS_SERVICE_ID));
+        assertResolvedIdentity(fixture.registry().findServiceById(OAUTH_SERVICE_ID));
+        assertResolvedIdentity(fixture.registry().findServiceById(OIDC_SERVICE_ID));
+        assertResolvedIdentity(fixture.registry().findServiceById(SECOND_OAUTH_SERVICE_ID));
 
     }
 
     /**
-     * Loads the raw generated records directly from the registry and places them in the CAS cache
-     * to simulate a path that bypasses template expansion. Two OAuth records make their earlier
-     * comparator fields equal, forcing candidate sorting to inspect the null service ID. Public
-     * service matching must handle this invalid state without throwing.
+     * Loads generated records directly from the registry and places them in the CAS cache to
+     * simulate a path that bypasses template expansion. The generated records must remain valid
+     * candidates and public service matching must not throw.
      */
     @Test
-    void unresolvedRegistryServicesDoNotBreakCasCandidateMatching() throws IOException {
+    void productionGeneratedRegistryServicesDoNotBreakCasCandidateMatching() throws IOException {
         TestFixture fixture = createFixture("example[.]org");
 
         Collection<RegisteredService> loadedServices = fixture.registry().load();
         assertEquals(4, loadedServices.size());
-        loadedServices.forEach(RegisteredServiceTemplateIntegrationTests::assertUnresolvedIdentity);
+        loadedServices.forEach(RegisteredServiceTemplateIntegrationTests::assertResolvedIdentity);
         loadedServices.forEach(service -> fixture.servicesCache().put(service.getId(), service));
 
         Service requestedService = mock(Service.class);
@@ -208,12 +206,6 @@ class RegisteredServiceTemplateIntegrationTests {
         assertFalse(service.getName().isBlank());
         assertNotNull(service.getServiceId());
         assertFalse(service.getServiceId().isBlank());
-    }
-
-    private static void assertUnresolvedIdentity(RegisteredService service) {
-        assertNotNull(service);
-        assertNull(service.getName());
-        assertNull(service.getServiceId());
     }
 
     private record TestFixture(

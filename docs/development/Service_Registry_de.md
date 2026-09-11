@@ -17,5 +17,6 @@ Eingabeparametern sowie dem Typ des genutzten Protokolls werden verschiedene [Pr
 referenziert und dienen als Vorlage für die im Speicher erzeugten Services des CAS. Sie sind unter `/etc/cas/services/templates` zu finden. Die final erzeugten JSON-Dateien in der Service-Registry folgen
 dabei stets der Namenskonvention `<Applikation>-<ServiceID>.json`.
 
+Die Generator-Templates für den Produktionsbetrieb müssen `name` und `serviceId` als Felder auf der obersten Ebene jedes erzeugten Service-Eintrags schreiben. CAS setzt diese Felder beim regulären Laden über den Services-Manager zusätzlich durch das interne Template `BaseService`. Registry-Einträge können jedoch bereits vor dieser Template-Anwendung gelesen werden. Die Felder in der erzeugten JSON-Datei stellen sicher, dass solche Einträge für Service-Matching und Sortierung gültig bleiben. `serviceId` ist ein regulärer Ausdruck; die Produktionsgeneratoren leiten ihn mit demselben Ausdruck wie `BaseService.json` aus `FQDN` und `ServiceName` ab.
 
 
