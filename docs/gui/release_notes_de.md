@@ -7,6 +7,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ## [Unreleased]
 ### Security
 - Sicherheitslücke [CVE-2026-56854](https://nvd.nist.gov/vuln/detail/CVE-2026-56854) geschlossen
+- Sicherheitslücke [CVE-2026-75595](https://nvd.nist.gov/vuln/detail/CVE-2026-75595) geschlossen
 
 ## [v7.3.7-5] - 2026-09-03
 ### Security

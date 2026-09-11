@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#369] Update java base image to v21.0.12-1
 ### Security
 - [#369] Fix [CVE-2026-56854](https://nvd.nist.gov/vuln/detail/CVE-2026-56854)
+- [#369] Fix [CVE-2026-75595](https://nvd.nist.gov/vuln/detail/CVE-2026-75595)
 
 ## [v7.3.7-5] - 2026-09-03
 ### Security
