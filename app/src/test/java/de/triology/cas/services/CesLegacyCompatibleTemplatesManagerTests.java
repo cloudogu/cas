@@ -6,7 +6,11 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +20,9 @@ import static org.mockito.Mockito.*;
  * Unit tests for {@link CesLegacyCompatibleTemplatesManager}.
  */
 class CesLegacyCompatibleTemplatesManagerTests {
+
+    @TempDir
+    Path tempDirectory;
 
     private CesLegacyCompatibleTemplatesManager templatesManager;
 
@@ -100,6 +107,46 @@ class CesLegacyCompatibleTemplatesManagerTests {
 
         // then
         assertNotNull(result, "Service should still be returned without crashing even if properties are missing");
+    }
+
+    @Test
+    void apply_ShouldPropagateTemplateSerializerFailure() throws IOException {
+        @SuppressWarnings("unchecked")
+        StringSerializer<RegisteredService> serializer = mock(StringSerializer.class);
+        Path template = tempDirectory.resolve("BaseService.json");
+        Files.writeString(template, "{}");
+        IllegalStateException templateFailure = new IllegalStateException("template deserialization failed");
+
+        when(serializer.supports(template.toFile())).thenReturn(true);
+        when(serializer.from(anyString())).thenThrow(templateFailure);
+
+        var manager = new CesLegacyCompatibleTemplatesManager(List.of(template.toFile()), serializer);
+        CasRegisteredService service = new CasRegisteredService();
+        service.setTemplateName("BaseService");
+        service.setProperties(Map.of(
+                "ServiceName", createPropertyWithValue("test-service"),
+                "Fqdn", createPropertyWithValue("example.org")
+        ));
+
+        IllegalStateException result = assertThrows(
+                IllegalStateException.class,
+                () -> manager.apply(service)
+        );
+
+        assertSame(templateFailure, result, "The original template failure should remain observable");
+    }
+
+    @Test
+    void apply_ShouldExposeNullPropertiesFailure() {
+        CasRegisteredService service = new CasRegisteredService();
+        service.setProperties(null);
+
+        NullPointerException failure = assertThrows(
+                NullPointerException.class,
+                () -> templatesManager.apply(service)
+        );
+
+        assertNotNull(failure, "Null properties currently cause the custom fallback to fail");
     }
 
     // Helper to create a RegisteredServiceProperty with a single value
