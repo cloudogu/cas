@@ -21,12 +21,16 @@ Given("the browser shows the CAS login page and the browser language is set to G
 
 When("the user logs into the CES with the admin credentials", function () {
     cy.clickWarpMenuCheckboxIfPossible()
-    cy.login(env.GetAdminUsername(), env.GetAdminPassword());
+    env.GetAdminCredentials().then(({AdminUsername, AdminPassword}) => {
+        cy.login(AdminUsername, AdminPassword)
+    })
 });
 
 When("the user logs into the CES with the admin credentials, writing the username in capital letters", function () {
     cy.clickWarpMenuCheckboxIfPossible()
-    cy.login(env.GetAdminUsername().toUpperCase(), env.GetAdminPassword());
+    env.GetAdminCredentials().then(({AdminUsername, AdminPassword}) => {
+        cy.login(AdminUsername.toUpperCase(), AdminPassword)
+    })
 });
 
 Then("CAS shows the profile page of the user {string} with the user ID from LDAP entry", function (username) {
