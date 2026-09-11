@@ -1,5 +1,7 @@
 package de.triology.cas.services;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -113,8 +115,9 @@ class CesLegacyCompatibleTemplatesManagerTests {
 
     /**
      * Uses a real template file and a serializer that fails while reading the rendered template.
-     * The assertion checks that {@code super.apply(...)} and the custom manager preserve the exact
-     * originating exception, which is needed to diagnose template failures during startup.
+     * A list appender captures the diagnostic emitted around {@code super.apply(...)}. The
+     * assertions require the original exception and stack to be logged and then propagated, along
+     * with the affected service, requested template, and discovered template file.
      */
     @Test
     void apply_ShouldPropagateTemplateSerializerFailure() throws IOException {
@@ -135,12 +138,24 @@ class CesLegacyCompatibleTemplatesManagerTests {
                 "Fqdn", createPropertyWithValue("example.org")
         ));
 
-        IllegalStateException result = assertThrows(
-                IllegalStateException.class,
-                () -> manager.apply(service)
-        );
+        try (var logs = TestLogCapture.start(CesLegacyCompatibleTemplatesManager.class)) {
+            IllegalStateException result = assertThrows(
+                    IllegalStateException.class,
+                    () -> manager.apply(service)
+            );
 
-        assertSame(templateFailure, result, "The original template failure should remain observable");
+            assertSame(templateFailure, result, "The original template failure should remain observable");
+            LogEvent failureLog = logs.events().stream()
+                    .filter(event -> event.getLevel() == Level.ERROR)
+                    .filter(event -> event.getMessage().getFormattedMessage()
+                            .contains("Failed to apply registered-service template"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expected the template application failure log"));
+            String message = failureLog.getMessage().getFormattedMessage();
+            assertTrue(message.contains("template=BaseService"));
+            assertTrue(message.contains(template.toFile().getAbsolutePath()));
+            assertSame(templateFailure, failureLog.getThrown());
+        }
     }
 
     /**

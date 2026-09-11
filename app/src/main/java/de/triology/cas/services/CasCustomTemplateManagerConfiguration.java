@@ -192,8 +192,14 @@ public class CasCustomTemplateManagerConfiguration {
             File directory = serviceRegistryProperties.getTemplates().getDirectory().getLocation().getFile();
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
             serviceTemplateResources = files != null ? Arrays.asList(files) : Collections.emptyList();
+            List<String> templatePaths = serviceTemplateResources.stream()
+                    .map(File::getAbsolutePath)
+                    .sorted()
+                    .toList();
+            LOGGER.info("Discovered {} registered-service template definition file(s) in [{}]: {}",
+                    templatePaths.size(), directory.getAbsolutePath(), templatePaths);
         } catch (Exception e) {
-            LOGGER.debug("Could not load template directory: {}", e.getMessage(), e);
+            LOGGER.warn("Could not discover registered-service template definition files", e);
             serviceTemplateResources = Collections.emptyList();
         }
 

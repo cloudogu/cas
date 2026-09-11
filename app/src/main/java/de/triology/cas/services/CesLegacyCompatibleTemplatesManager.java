@@ -14,9 +14,15 @@ import java.util.*;
 @Slf4j
 public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServicesTemplatesManager {
 
+    private final List<String> templateDefinitionPaths;
+
     public CesLegacyCompatibleTemplatesManager(Collection<File> templateDefinitionFiles,
                                                StringSerializer<RegisteredService> registeredServiceSerializer) {
         super(templateDefinitionFiles, registeredServiceSerializer);
+        templateDefinitionPaths = templateDefinitionFiles.stream()
+                .map(File::getAbsolutePath)
+                .sorted()
+                .toList();
     }
     
     @Override
@@ -27,7 +33,20 @@ public class CesLegacyCompatibleTemplatesManager extends DefaultRegisteredServic
                 registeredService.getServiceId(),
                 registeredService.getTemplateName());
 
-        val merged = super.apply(registeredService);
+        final RegisteredService merged;
+        try {
+            merged = super.apply(registeredService);
+        } catch (RuntimeException exception) {
+            LOGGER.error("[apply()] Failed to apply registered-service template: "
+                            + "id={}, name={}, serviceId={}, template={}, templateFiles={}",
+                    registeredService.getId(),
+                    registeredService.getName(),
+                    registeredService.getServiceId(),
+                    registeredService.getTemplateName(),
+                    templateDefinitionPaths,
+                    exception);
+            throw exception;
+        }
 
         if (!(merged instanceof CasRegisteredService)) {
             LOGGER.debug("[apply()] Merged service [{}] is NOT of type CasRegisteredService", merged.getClass().getSimpleName());
