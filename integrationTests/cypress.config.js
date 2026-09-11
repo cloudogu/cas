@@ -16,6 +16,13 @@ async function setupNodeEvents(on, config) {
 
   config = doguTestLibrary.configure(config);
 
+  // Cypress 16 removed Cypress.env() for browser access; non-sensitive values must be
+  // exposed explicitly and read back via Cypress.expose() (see cypress-env-migration).
+  config.expose = config.expose || {};
+  for (const key of ["ClientID", "TermsOfServiceURL", "ImprintURL", "PrivacyPolicyURL"]) {
+    config.expose[key] = config.env[key];
+  }
+
   if (!config.env.TAGS) {
     // "team-ces" is from https://github.com/cloudogu/dogu-build-lib/blob/0f2b2b2b8ff6be4ffdfd61c660008e575d721195/src/com/cloudogu/ces/dogubuildlib/MultiNodeEcoSystem.groovy#L265
     config.env.TAGS = config.env.AdminUsername == "team-ces"

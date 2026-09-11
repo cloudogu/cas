@@ -13,7 +13,9 @@ Then("the user is taken to a password reset page", function () {
 })
 
 When("the user enters his username on the password reset page", function () {
-    cy.get('input[data-testid="password-reset-username-input"]').type(env.GetAdminUsername())
+    env.GetAdminCredentials().then(({AdminUsername}) => {
+        cy.get('input[data-testid="password-reset-username-input"]').type(AdminUsername)
+    })
 });
 
 When("the user submits his input on the password reset page", function () {
