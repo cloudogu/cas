@@ -49,8 +49,10 @@ function casAdminLogin() {
     cy.visit("/cas/login")
     cy.clickWarpMenuCheckboxIfPossible()
 
-    cy.get('input[data-testid=login-username-input-field]').type(env.GetAdminUsername())
-    cy.get('input[data-testid=login-password-input-field]').type(env.GetAdminPassword())
+    env.GetAdminCredentials().then(({AdminUsername, AdminPassword}) => {
+        cy.get('input[data-testid=login-username-input-field]').type(AdminUsername)
+        cy.get('input[data-testid=login-password-input-field]').type(AdminPassword)
+    })
     cy.get('div[data-testid=login-form-login-button-container]').children('button').click()
 }
 
@@ -112,12 +114,14 @@ Then("a ticket granting ticket is returned", function () {
 });
 
 Then("a profile is returned", function () {
-    assert(latestProfile.toString() !== "", "Profile should not be empty")
-    assert(latestProfile.id === env.GetAdminUsername(), "Profile should contain the correct username")
-    assert(latestProfile.attributes.username === env.GetAdminUsername(), "Profile should contain the correct username")
-    assert(JSON.stringify(latestProfile.attributes.groups).includes("cesManager"), "Profile should contain the cesManager group")
-    assert(JSON.stringify(latestProfile.attributes.groups).includes(env.GetAdminGroup()), "Profile should contain the admin group")
-    resetData()
+    env.GetAdminCredentials().then(({AdminUsername}) => {
+        assert(latestProfile.toString() !== "", "Profile should not be empty")
+        assert(latestProfile.id === AdminUsername, "Profile should contain the correct username")
+        assert(latestProfile.attributes.username === AdminUsername, "Profile should contain the correct username")
+        assert(JSON.stringify(latestProfile.attributes.groups).includes("cesManager"), "Profile should contain the cesManager group")
+        assert(JSON.stringify(latestProfile.attributes.groups).includes(env.GetAdminGroup()), "Profile should contain the admin group")
+        resetData()
+    })
 });
 
 Then("cas shows that the service is not authorized to access this endpoint", function () {
