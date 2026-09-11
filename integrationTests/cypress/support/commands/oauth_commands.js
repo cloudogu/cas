@@ -29,7 +29,7 @@ const getOAuth20Authorize = (clientID, exitOnFail = false) => {
  * @returns The response of the request.
  */
 const getOAuth20AccessToken = (clientID, accessToken, exitOnFail = false) => {
-    return cy.request({
+    return cy.env(["ClientSecret"]).then(({ClientSecret}) => cy.request({
         method: "POST",
         url: Cypress.config().baseUrl + "/cas/oauth2.0/accessToken",
         headers: {
@@ -39,11 +39,11 @@ const getOAuth20AccessToken = (clientID, accessToken, exitOnFail = false) => {
             grant_type: 'authorization_code',
             code: accessToken.toString(),
             client_id: clientID,
-            redirect_uri: Cypress.config().baseUrl + "/" + Cypress.env("ClientID"),
-            client_secret: Cypress.env("ClientSecret"),
+            redirect_uri: Cypress.config().baseUrl + "/" + Cypress.expose("ClientID"),
+            client_secret: ClientSecret,
         },
         failOnStatusCode: exitOnFail
-    })
+    }))
 }
 
 /**
