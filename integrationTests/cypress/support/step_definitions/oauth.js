@@ -60,20 +60,20 @@ Given("the admin logs into the ces", function () {
 
 Given("a valid service ticket is currently available", function () {
     casAdminLogin()
-    serviceRequestsAuthorizationEndpoint(Cypress.env("ClientID"))
+    serviceRequestsAuthorizationEndpoint(Cypress.expose("ClientID"))
 });
 
 Given("a valid ticket granting ticket is currently available", function () {
     casAdminLogin()
-    cy.getOAuth20Authorize(Cypress.env("ClientID"), false).then(function (response) {
+    cy.getOAuth20Authorize(Cypress.expose("ClientID"), false).then(function (response) {
         let href = response.location.href
         latestOAuthCode = href.match(CasServiceTicketPattern)
-        serviceRequestsAccessTokenEndpoint(Cypress.env("ClientID"), latestOAuthCode, true)
+        serviceRequestsAccessTokenEndpoint(Cypress.expose("ClientID"), latestOAuthCode, true)
     })
 });
 
 When("a registered service requests the OAuth authorization endpoint", function () {
-    serviceRequestsAuthorizationEndpoint(Cypress.env("ClientID"))
+    serviceRequestsAuthorizationEndpoint(Cypress.expose("ClientID"))
 });
 
 When("an unregistered service requests the OAuth authorization endpoint", function () {
@@ -81,7 +81,7 @@ When("an unregistered service requests the OAuth authorization endpoint", functi
 });
 
 When("a registered service requests the OAuth accessToken endpoint", function () {
-    serviceRequestsAccessTokenEndpoint(Cypress.env("ClientID"), latestOAuthCode, false)
+    serviceRequestsAccessTokenEndpoint(Cypress.expose("ClientID"), latestOAuthCode, false)
 });
 
 When("a unregistered service requests the OAuth accessToken endpoint", function () {
