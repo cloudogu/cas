@@ -43,6 +43,7 @@ Then("CAS displays a notice of an invalid password", function () {
 })
 
 Then("CAS displays the password policy criteria", function () {
+    cy.get('summary[data-testid=pwd-rule-summary]').click()
     cy.get('li[data-testid=pwd-rule-capital-letter-li').should('be.visible')
     cy.get('li[data-testid=pwd-rule-lower-case-letter-li').should('be.visible')
     cy.get('li[data-testid=pwd-rule-digit-li').should('be.visible')
