@@ -1,6 +1,8 @@
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",
   "id" : "{{SERVICE_ID}}",
+  "name" : "{{SERVICE}}",
+  "serviceId" : "^https://((?i){{FQDN}})(:443)?/{{SERVICE}}(/.*)?",
   "templateName": "{{TEMPLATES}}",
   "properties" : {
     "@class" : "java.util.HashMap",
