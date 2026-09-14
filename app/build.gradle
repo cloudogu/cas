@@ -85,6 +85,20 @@ configurations.configureEach {
         force "org.bouncycastle:bcprov-jdk18on:1.84"
         force "org.bouncycastle:bcpkix-jdk18on:1.84"
         force "org.bouncycastle:bcutil-jdk18on:1.84"
+        // CVE-2026-75595: forced because the CAS BOM pins the whole netty family to 4.1.127.Final
+        force "io.netty:netty-handler:4.1.137.Final"
+        force "io.netty:netty-buffer:4.1.137.Final"
+        force "io.netty:netty-codec:4.1.137.Final"
+        force "io.netty:netty-codec-dns:4.1.137.Final"
+        force "io.netty:netty-codec-http:4.1.137.Final"
+        force "io.netty:netty-codec-http2:4.1.137.Final"
+        force "io.netty:netty-common:4.1.137.Final"
+        force "io.netty:netty-resolver:4.1.137.Final"
+        force "io.netty:netty-resolver-dns:4.1.137.Final"
+        force "io.netty:netty-transport:4.1.137.Final"
+        force "io.netty:netty-transport-classes-epoll:4.1.137.Final"
+        force "io.netty:netty-transport-native-epoll:4.1.137.Final"
+        force "io.netty:netty-transport-native-unix-common:4.1.137.Final"
         def failIfConflict = project.hasProperty("failOnVersionConflict") && Boolean.valueOf(project.getProperty("failOnVersionConflict"))
         if (failIfConflict) {
             failOnVersionConflict()
@@ -120,6 +134,25 @@ java {
 
 test {
     useJUnitPlatform()
+}
+
+// CVE-2026-75595: the CAS BOM below is an enforcedPlatform pinning the whole netty family to 4.1.127.Final
+dependencyManagement {
+    dependencies {
+        dependency "io.netty:netty-handler:4.1.137.Final"
+        dependency "io.netty:netty-buffer:4.1.137.Final"
+        dependency "io.netty:netty-codec:4.1.137.Final"
+        dependency "io.netty:netty-codec-dns:4.1.137.Final"
+        dependency "io.netty:netty-codec-http:4.1.137.Final"
+        dependency "io.netty:netty-codec-http2:4.1.137.Final"
+        dependency "io.netty:netty-common:4.1.137.Final"
+        dependency "io.netty:netty-resolver:4.1.137.Final"
+        dependency "io.netty:netty-resolver-dns:4.1.137.Final"
+        dependency "io.netty:netty-transport:4.1.137.Final"
+        dependency "io.netty:netty-transport-classes-epoll:4.1.137.Final"
+        dependency "io.netty:netty-transport-native-epoll:4.1.137.Final"
+        dependency "io.netty:netty-transport-native-unix-common:4.1.137.Final"
+    }
 }
 
 dependencies {

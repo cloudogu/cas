@@ -6,6 +6,11 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v7.3.7-6] - 2026-09-14
+### Security
+- Fix vulnerability [CVE-2026-56854](https://nvd.nist.gov/vuln/detail/CVE-2026-56854)
+- Fix vulnerability [CVE-2026-75595](https://nvd.nist.gov/vuln/detail/CVE-2026-75595)
+
 ## [v7.3.7-5] - 2026-09-03
 ### Security
 - Upgrade Tomcat from 11.0.22 to 11.0.25, mitigating 19 CVEs
