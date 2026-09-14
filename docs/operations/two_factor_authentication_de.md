@@ -9,30 +9,28 @@ alle Mitarbeitenden eine Authenticator-App wie z.B. Google Authenticator oder Mi
 
 ## Aktivierung
 
-Der zugehörige Dogu-Konfigurationsschlüssel muss auf `true` gesetzt werden.
+Der zugehörige Dogu-Konfigurationsschlüssel muss auf `true` gesetzt werden. Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
 
-```shell
-etcdctl set config/cas/experimental/totp/activate "true"
-```
-
-Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
-
-```shell
-cesapp restart cas
-```
+``kubectl edit -n ecosystem configmap cas-config``
+`````yaml
+  data:
+    config.yaml: |
+      experimental:
+        totp:
+          activate:
+  `````
 
 ## Deaktivierung
 
 Bei Problemen mit der Zwei-Faktor-Authentifizierung kann die Funktion deaktiviert werden. Dafür muss der zugehörige 
 Dogu-Konfigurationsschlüssel auf `false` gesetzt werden. Durch eine Deaktivierung werden die internen Verschlüsselungscodes
-nicht neu generiert.
+nicht neu generiert. Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
 
-```shell
-etcdctl set config/cas/experimental/totp/activate "false"
-```
-
-Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
-
-```shell
-cesapp restart cas
+``kubectl edit -n ecosystem configmap cas-config``
+```yaml
+  data:
+    config.yaml: |
+      experimental:
+        totp:
+          activate: false
 ```
