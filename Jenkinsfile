@@ -241,12 +241,14 @@ def mergeSecretYaml = { String secretName, String overrideConfig ->
 
 pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     String gradleDockerImage = 'eclipse-temurin:25-jdk-alpine'
-    com.cloudogu.ces.cesbuildlib.Gradle gradlew = new com.cloudogu.ces.cesbuildlib.GradleWrapperInDocker(this, gradleDockerImage)
-    dir('app') {
-        gradlew "clean build"
-        gradlew 'test'
-        junit allowEmptyResults: true, testResults: '**/build/test-results/test/TEST-*.xml'
-    }
+    new com.cloudogu.ces.cesbuildlib.Docker(this)
+        .image(gradleDockerImage)
+        .mountJenkinsUser()
+        .inside("--volume ${WORKSPACE}:/workdir -w /workdir/app") {
+            sh "./gradlew clean build"
+            sh "./gradlew test"
+        }
+    junit allowEmptyResults: true, testResults: 'app/build/test-results/test/TEST-*.xml'
 }
 
 pipe.insertStageBefore('Setup', 'Start OIDC-Provider') {
