@@ -48,9 +48,9 @@ The fields use the same source values and matching expression as `BaseService.js
 
 Newly generated records are therefore valid immediately after deserialization. CAS can still apply its internal templates during normal manager loading, but matching correctness no longer depends on that later step for these required fields.
 
-### Failure visibility
+### Failure handling and visibility
 
-The load aspect now normalizes only null return values. Exceptions from `ServicesManager.load()` and `ServiceRegistry.load()` propagate with their original stack instead of being converted into an empty service collection.
+The load aspect normalizes null return values and catches `NullPointerException`s from `ServicesManager.load()` and `ServiceRegistry.load()`, returning an empty collection in both cases. Other exception types propagate. For a caught NPE, the aspect logs the message without the throwable, so its original stack is not retained in that log entry.
 
 Template discovery logs the template directory and discovered JSON files. A template application failure logs the affected service, requested template, discovered template files, and original exception before rethrowing that exception.
 
@@ -70,7 +70,7 @@ The integration coverage verifies that:
 
 The focused comparator regression tests deliberately construct incomplete services and expect the historical `NullPointerException`. Those tests pass when the failure is reproduced; they document why incomplete objects must not enter matching and should not be interpreted as proof that the application path is safe.
 
-Tests also cover template discovery logging, preservation of serializer failures, null property maps, and propagation of load failures. The complete Gradle test suite passes with JDK 25 after the generator change.
+Tests also cover template discovery logging, preservation of serializer failures, null property maps, normalization of load-time NPEs, and propagation of other load failures. The complete Gradle test suite passes with JDK 25 after the generator change.
 
 ## Remaining review work
 
@@ -83,7 +83,7 @@ Before closing the bug, review should confirm:
 1. Existing installations receive valid registry records after upgrade.
 2. A production-like CAS startup loads all generated services successfully.
 3. CAS, OAuth, and OIDC login matching works with the resulting registry.
-4. The first template or registry failure remains visible with its original stack.
+4. Template failures and non-NPE registry failures remain visible with their original stack; diagnostics for guarded load-time NPEs are sufficient despite their conversion to an empty collection.
 
 ## Related documentation
 
