@@ -244,9 +244,9 @@ pipe.insertStageAfter('Bats Tests', 'Gradle Build & Test') {
     new com.cloudogu.ces.cesbuildlib.Docker(this)
         .image(gradleDockerImage)
         .mountJenkinsUser()
-        .inside("--volume ${WORKSPACE}:/workdir -w /workdir/app") {
-            sh "./gradlew clean build"
-            sh "./gradlew test"
+        .inside("--volume ${WORKSPACE}:/workdir") {
+            sh "cd /workdir/app && ./gradlew clean build"
+            sh "cd /workdir/app && ./gradlew test"
         }
     junit allowEmptyResults: true, testResults: 'app/build/test-results/test/TEST-*.xml'
 }
