@@ -26,7 +26,9 @@ generated JSON without name/serviceId
 
 Normal template expansion can complete these records. If expansion fails, is bypassed, or a raw registry object reaches the cache directly, CAS sorts a service with a null `serviceId`. The CAS comparator uses natural ordering for that field and is not null-safe.
 
-The historical logs show template application starting without a corresponding successful completion, but the original internal exception was hidden by a load guard that converted `NullPointerException` failures into empty collections. The available evidence establishes the incomplete input and final comparator failure, but not the precise reason template application failed in that deployment.
+The historical logs show template application starting without a corresponding successful-completion message. Several seconds later, the load guard caught a `NullPointerException` in `DefaultChainingServicesManager.load()`: a nested `ServicesManager.load()` had returned null, and the chaining manager attempted to call `stream()` on that result. The guard logged only the exception message and substituted an empty collection, so the stack trace needed to identify the nested manager and the reason for its null result was lost.
+
+The logs do not establish that this later load failure originated in the earlier template application. The available evidence establishes the incomplete input and final comparator failure, but not why template application lacked a completion message or whether it was connected to the guarded load failure.
 
 ## Changes already implemented
 
