@@ -1,12 +1,18 @@
 package de.triology.cas.services;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +22,9 @@ import static org.mockito.Mockito.*;
  * Unit tests for {@link CesLegacyCompatibleTemplatesManager}.
  */
 class CesLegacyCompatibleTemplatesManagerTests {
+
+    @TempDir
+    Path tempDirectory;
 
     private CesLegacyCompatibleTemplatesManager templatesManager;
 
@@ -102,6 +111,66 @@ class CesLegacyCompatibleTemplatesManagerTests {
 
         // then
         assertNotNull(result, "Service should still be returned without crashing even if properties are missing");
+    }
+
+    /**
+     * Uses a real template file and a serializer that fails while reading the rendered template.
+     * A list appender captures the diagnostic emitted around {@code super.apply(...)}. The
+     * assertions require the original exception and stack to be logged and then propagated, along
+     * with the affected service, requested template, and discovered template file.
+     */
+    @Test
+    void apply_ShouldPropagateTemplateSerializerFailure() throws IOException {
+        @SuppressWarnings("unchecked")
+        StringSerializer<RegisteredService> serializer = mock(StringSerializer.class);
+        Path template = tempDirectory.resolve("BaseService.json");
+        Files.writeString(template, "{}");
+        IllegalStateException templateFailure = new IllegalStateException("template deserialization failed");
+
+        when(serializer.supports(template.toFile())).thenReturn(true);
+        when(serializer.from(anyString())).thenThrow(templateFailure);
+
+        var manager = new CesLegacyCompatibleTemplatesManager(List.of(template.toFile()), serializer);
+        CasRegisteredService service = new CasRegisteredService();
+        service.setTemplateName("BaseService");
+        service.setProperties(Map.of(
+                "ServiceName", createPropertyWithValue("test-service"),
+                "Fqdn", createPropertyWithValue("example.org")
+        ));
+
+        try (var logs = TestLogCapture.start()) {
+            IllegalStateException result = assertThrows(
+                    IllegalStateException.class,
+                    () -> manager.apply(service)
+            );
+
+            assertSame(templateFailure, result, "The original template failure should remain observable");
+            LogEvent failureLog = logs.events().stream()
+                    .filter(event -> event.getLevel() == Level.ERROR)
+                    .filter(event -> event.getMessage().getFormattedMessage()
+                            .contains("Failed to apply registered-service template"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expected the template application failure log"));
+            String message = failureLog.getMessage().getFormattedMessage();
+            assertTrue(message.contains("template=BaseService"));
+            assertTrue(message.contains(template.toFile().getAbsolutePath()));
+            assertSame(templateFailure, failureLog.getThrown());
+        }
+    }
+
+    /**
+     * Sends a CAS service with a null property map through the empty-template fallback path. The
+     * manager must return the service without dereferencing the missing map, since otherwise this
+     * recovery path can create the same hidden load failure seen in production.
+     */
+    @Test
+    void apply_ShouldHandleNullPropertiesGracefully() {
+        CasRegisteredService service = new CasRegisteredService();
+        service.setProperties(null);
+
+        RegisteredService result = assertDoesNotThrow(() -> templatesManager.apply(service));
+
+        assertSame(service, result);
     }
 
     // Helper to create a RegisteredServiceProperty with a single value

@@ -64,10 +64,11 @@ class CesServicesManagerNullGuardAspectConfigurationTest {
         assertEquals(List.of(), result);
     }
 
-    @ParameterizedTest(name = "{0}: returns empty list when NullPointerException thrown")
+    @ParameterizedTest(name = "{0}: returns empty list when load throws NullPointerException")
     @MethodSource("guardMethods")
-    void returnsEmptyList_WhenNullPointerExceptionThrown(String name, GuardMethod guardMethod) throws Throwable {
-        when(pjp.proceed()).thenThrow(new NullPointerException("boom"));
+    void returnsEmptyList_WhenLoadThrowsNullPointerException(String name, GuardMethod guardMethod) throws Throwable {
+        NullPointerException failure = new NullPointerException("boom");
+        when(pjp.proceed()).thenThrow(failure);
 
         Object result = guardMethod.invoke(aspect, pjp);
 
