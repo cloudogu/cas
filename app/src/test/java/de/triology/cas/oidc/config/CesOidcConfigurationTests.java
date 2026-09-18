@@ -2,6 +2,8 @@ package de.triology.cas.oidc.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import de.triology.cas.oidc.beans.CesOidcIdTokenSigningAndEncryptionService;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientProperties;
 import de.triology.cas.oidc.beans.delegation.CesDelegatedOidcClientsProperties;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
@@ -15,10 +17,14 @@ import org.apereo.cas.configuration.model.core.authentication.AuthenticationProp
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.util.LdapUtils;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.PooledConnectionFactory;
@@ -28,6 +34,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oidc.client.OidcClient;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
@@ -37,6 +44,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -439,5 +447,27 @@ class CesOidcConfigurationTests {
 
             assertNotNull(processor);
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void oidcTokenSigningAndEncryptionService_ProducesSignerWithoutJwkHeaderSupport() throws Exception {
+        var discoverySettings = mock(OidcServerDiscoverySettings.class);
+        var discoverySettingsFactory = (FactoryBean<OidcServerDiscoverySettings>) mock(FactoryBean.class);
+        when(discoverySettingsFactory.getObject()).thenReturn(discoverySettings);
+        var defaultKeystoreCache =
+                (LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet>) mock(LoadingCache.class);
+        var serviceKeystoreCache =
+                (LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>) mock(LoadingCache.class);
+        var issuerService = mock(OidcIssuerService.class);
+
+        var service = configuration.oidcTokenSigningAndEncryptionService(
+                new CasConfigurationProperties(),
+                discoverySettingsFactory,
+                serviceKeystoreCache,
+                issuerService,
+                defaultKeystoreCache);
+
+        assertInstanceOf(CesOidcIdTokenSigningAndEncryptionService.class, service);
     }
 }
