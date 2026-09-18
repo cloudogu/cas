@@ -9,7 +9,14 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import de.triology.cas.oidc.beans.CesOidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.beans.factory.FactoryBean;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
@@ -37,6 +44,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -439,5 +447,27 @@ class CesOidcConfigurationTests {
 
             assertNotNull(processor);
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void oidcTokenSigningAndEncryptionService_ProducesSignerWithoutJwkHeaderSupport() throws Exception {
+        var discoverySettings = mock(OidcServerDiscoverySettings.class);
+        var discoverySettingsFactory = (FactoryBean<OidcServerDiscoverySettings>) mock(FactoryBean.class);
+        when(discoverySettingsFactory.getObject()).thenReturn(discoverySettings);
+        var defaultKeystoreCache =
+                (LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet>) mock(LoadingCache.class);
+        var serviceKeystoreCache =
+                (LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>) mock(LoadingCache.class);
+        var issuerService = mock(OidcIssuerService.class);
+
+        var service = configuration.oidcTokenSigningAndEncryptionService(
+                new CasConfigurationProperties(),
+                discoverySettingsFactory,
+                serviceKeystoreCache,
+                issuerService,
+                defaultKeystoreCache);
+
+        assertInstanceOf(CesOidcIdTokenSigningAndEncryptionService.class, service);
     }
 }

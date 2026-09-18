@@ -57,6 +57,18 @@ class CesOidcIdTokenSigningAndEncryptionServiceTest {
                 "id token must keep the kid header, got: " + header);
     }
 
+    @Test
+    void signToken_KeyWithoutKeyId_FallsBackToARandomKid() {
+        jsonWebKey.setKeyId(null);
+        var service = new CesOidcIdTokenSigningAndEncryptionService(null, null, null,
+                discoverySettings, new CasConfigurationProperties());
+
+        var header = headerOf(service.signToken(registeredService, claims(), jsonWebKey));
+
+        assertTrue(header.contains("\"kid\""), "a random kid must be generated, got: " + header);
+        assertFalse(header.contains("\"jwk\""), header);
+    }
+
     /**
      * Documents the upstream behaviour this class works around. If this test ever fails, CAS has
      * stopped embedding the jwk header on its own — at which point

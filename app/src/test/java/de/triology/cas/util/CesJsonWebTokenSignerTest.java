@@ -5,6 +5,8 @@ import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
+import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +17,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link CesJsonWebTokenSigner}.
@@ -85,5 +91,84 @@ class CesJsonWebTokenSignerTest {
     private static String headerOf(final String token) {
         var encodedHeader = token.split("\\.")[0];
         return new String(Base64.getUrlDecoder().decode(encodedHeader), StandardCharsets.UTF_8);
+    }
+
+    @Test
+    void sign_WithIdentifiableKey_TakesKeyAndKeyIdFromIt() {
+        var identifiableKey = mock(IdentifiableKey.class);
+        when(identifiableKey.getKey()).thenReturn(jsonWebKey.getPrivateKey());
+        when(identifiableKey.getId()).thenReturn("identifiable-kid");
+
+        var header = headerOf(CesJsonWebTokenSigner.builder()
+                .key(identifiableKey)
+                .keyId("ignored-because-key-is-identifiable")
+                .algorithm(AlgorithmIdentifiers.RSA_USING_SHA256)
+                .allowedAlgorithms(Set.of(AlgorithmIdentifiers.RSA_USING_SHA256))
+                .build()
+                .sign(claims()));
+
+        assertTrue(header.contains("\"kid\":\"identifiable-kid\""), header);
+        assertFalse(header.contains("\"jwk\""), header);
+    }
+
+    @Test
+    void sign_WithoutKeyId_OmitsKidHeader() {
+        var header = headerOf(CesJsonWebTokenSigner.builder()
+                .key(jsonWebKey.getPrivateKey())
+                .keyId(null)
+                .algorithm(AlgorithmIdentifiers.RSA_USING_SHA256)
+                .allowedAlgorithms(Set.of(AlgorithmIdentifiers.RSA_USING_SHA256))
+                .build()
+                .sign(claims()));
+
+        assertFalse(header.contains("\"kid\""), header);
+    }
+
+    @Test
+    void sign_WithoutAllowedAlgorithms_PermitsAnythingButNone() {
+        var header = headerOf(CesJsonWebTokenSigner.builder()
+                .key(jsonWebKey.getPrivateKey())
+                .keyId(jsonWebKey.getKeyId())
+                .algorithm(AlgorithmIdentifiers.RSA_USING_SHA256)
+                .build()
+                .sign(claims()));
+
+        assertTrue(header.contains("\"alg\":\"RS256\""), header);
+    }
+
+    @Test
+    void sign_WithWildcardAlgorithm_PermitsAnythingButNone() {
+        var header = headerOf(CesJsonWebTokenSigner.builder()
+                .key(jsonWebKey.getPrivateKey())
+                .keyId(jsonWebKey.getKeyId())
+                .algorithm(AlgorithmIdentifiers.RSA_USING_SHA256)
+                .allowedAlgorithms(Set.of("*"))
+                .build()
+                .sign(claims()));
+
+        assertTrue(header.contains("\"alg\":\"RS256\""), header);
+    }
+
+    @Test
+    void sign_WithKeyNotMatchingTheAlgorithm_WrapsJoseException() {
+        var signer = CesJsonWebTokenSigner.builder()
+                .key(jsonWebKey.getPrivateKey())
+                .keyId(jsonWebKey.getKeyId())
+                .algorithm(AlgorithmIdentifiers.HMAC_SHA256)
+                .allowedAlgorithms(Set.of("*"))
+                .build();
+        var jwtClaims = claims();
+
+        var thrown = assertThrows(IllegalStateException.class, () -> signer.sign(jwtClaims));
+
+        assertEquals("Unable to sign token", thrown.getMessage());
+        assertInstanceOf(JoseException.class, thrown.getCause());
+    }
+
+    private static JwtClaims claims() {
+        var jwtClaims = new JwtClaims();
+        jwtClaims.setSubject("admin");
+        jwtClaims.setIssuer("https://cas.example.com/cas/oidc");
+        return jwtClaims;
     }
 }
