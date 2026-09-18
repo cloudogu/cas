@@ -2,9 +2,11 @@ package de.triology.cas.oidc.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
 import de.triology.cas.oidc.beans.CesOidcClientRedirectActionBuilder;
+import de.triology.cas.oidc.beans.CesOidcIdTokenSigningAndEncryptionService;
 import de.triology.cas.oidc.beans.delegation.*;
 import de.triology.cas.principal.AttributeSelectingPrincipalFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +20,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.util.LdapUtils;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.ldaptive.PooledConnectionFactory;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
@@ -30,6 +37,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration("CesOidcConfiguration")
 @AutoConfigureAfter(CasOidcAutoConfiguration.class)
@@ -346,5 +355,30 @@ public class CesOidcConfiguration {
         String[] allowedGroups = splitAndTrim(allowedGroupsConfigString);
 
         return new CesDelegatedAuthenticationPreProcessor(userManager, attributeMappings, allowedGroups);
+    }
+
+    /**
+     * Replaces the CAS-supplied {@code oidcTokenSigningAndEncryptionService} with one that signs id tokens without a {@code jwk} JOSE header.
+     *
+     * @see CesOidcIdTokenSigningAndEncryptionService
+     */
+    @Bean
+    @RefreshScope
+    public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
+            final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
+            @Qualifier("oidcServiceJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
+            @Qualifier(OidcIssuerService.BEAN_NAME)
+            final OidcIssuerService oidcIssuerService,
+            @Qualifier("oidcDefaultJsonWebKeystoreCache")
+            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) throws Exception {
+        LOGGER.debug("Creating id token signing service without jwk header support...");
+        return new CesOidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache,
+                oidcServiceJsonWebKeystoreCache,
+                oidcIssuerService,
+                oidcServerDiscoverySettingsFactory.getObject(),
+                casProperties);
     }
 }
