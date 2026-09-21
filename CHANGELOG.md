@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.2-2] - 2026-09-21
+### Fixed
+- [#373] Sign OIDC id tokens without an embedded `jwk` JOSE header
+  - CAS 8 adds the public signing key as a `jwk` header to every signed token, which strict OIDC clients (like Bluespice) reject
+
 ## [v8.0.2-1] - 2026-09-10
 ### Added
 - [#359] Authenticate via personal access token

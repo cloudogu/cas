@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-2] - 2026-09-21
+### Fixed
+- Es wurde ein Problem behoben, bei dem OIDC-Clients mit strenger Token-Prüfung die Anmeldung mit „Self signed JWK header is not valid" abgelehnt haben.
+
 ## [v8.0.2-1] - 2026-09-10
 ### Added
 - PAT API und Authentifizierung
