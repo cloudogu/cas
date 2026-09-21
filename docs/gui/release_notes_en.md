@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-2] - 2026-09-21
 ### Fixed
 - Fixed an issue where OIDC clients with strict token validation rejected the login with "Self signed JWK header is not valid".
 
