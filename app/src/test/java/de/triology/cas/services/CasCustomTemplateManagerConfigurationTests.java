@@ -112,8 +112,6 @@ class CasCustomTemplateManagerConfigurationTests {
 
     @Test
     void registeredServicesTemplatesManager_ShouldFindJsonFiles_WhenDirectoryHasFiles() throws Exception {
-        // Capture configuration logs while a directory containing one template and one unrelated
-        // file is scanned. The log must list the discovered JSON template and omit the ignored file.
         var casProperties = mock(CasConfigurationProperties.class);
         var serviceRegistryProperties = mock(ServiceRegistryProperties.class);
         var templates = mock(org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties.class);
@@ -134,6 +132,8 @@ class CasCustomTemplateManagerConfigurationTests {
 
         var serializer = mock(RegisteredServiceJsonSerializer.class);
 
+        // Capture configuration logs while a directory containing one template and one unrelated
+        // file is scanned. The log must list the discovered JSON template and omit the ignored file.
         try (var logs = TestLogCapture.start()) {
             var manager = configuration.registeredServicesTemplatesManager(casProperties, serializer);
 
