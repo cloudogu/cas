@@ -199,7 +199,7 @@ public class CasCustomTemplateManagerConfiguration {
             LOGGER.info("Discovered {} registered-service template definition file(s) in [{}]: {}",
                     templatePaths.size(), directory.getAbsolutePath(), templatePaths);
         } catch (Exception e) {
-            LOGGER.warn("Could not discover registered-service template definition files", e);
+            LOGGER.error("Could not discover registered-service template definition files", e);
             serviceTemplateResources = Collections.emptyList();
         }
 
