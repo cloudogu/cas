@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Changed
+- The documentation of old version was removed. References to Classic CES were replaced by MN CES.
 
 ## [v8.0.2-3] - 2026-09-24
 - We have only made technical changes. You can find more details in the changelogs.

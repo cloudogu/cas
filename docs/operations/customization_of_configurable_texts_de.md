@@ -6,11 +6,18 @@ Zu den konfigurierbaren Schlüsseln gehören die URLs für **Nutzungsbedingungen
 
 ## Konfiguration von rechtlichen Links
 In der Standardkonfiguration des CAS Dogus werden auf der Login-Seite keine rechtlichen Links angezeigt. Es können allerdings Links für **Nutzungsbedingungen**, **Impressum** und **Datenschutzerklärung** hinterlegt werden.
-* **Nutzungsbedingungen** - setzen des etcd Schlüssels `etcdctl set /config/cas/legal_urls/terms_of_service "https://.../tos..."`
-* **Impressum** - setzen des etcd Schlüssels `etcdctl set /config/cas/legal_urls/imprint "https://.../imprint..."`
-* **Datenschutzerklärung** - setzen des etcd Schlüssels `etcdctl set /config/cas/legal_urls/privacy_policy "https://.../privacy_policy..."`
-Das Setzten der etcd-Schlüssel aktiviert auch die entsprechenden UI Elemente in der Fußleiste der Login Maske.
+Das Setzen der etcd-Schlüssel aktiviert auch die entsprechenden UI Elemente in der Fußleiste der Login Maske.
 
+* ``kubectl edit -n ecosystem configmap cas-config``
+* ```yaml
+    data:
+      config.yaml: |
+        legal_urls:
+          terms_of_service: "https://.../tos..."
+          imprint: "https://.../imprint..."
+          privacy_policy: "https://.../privacy_policy..."
+  ```
+  
 **Achtung**
 Wird eine URL ohne Protokoll (z.B. www.test.de) als legal_url gesetzt, dann ergänzt CAS den Link automatisch um den FQDN. Die URL wird dann wie folgt gesetzt:
 ```https://{fqdn}/cas/www.test.de```.
@@ -25,10 +32,17 @@ Es kann eine Benutzerdefinierte Nachricht angezeigt werden, die erscheint,
 wenn auf `Passwort vergessen?` geklickt wird. Dort können Informationen hinterlegt 
 werden, wie ein Nutzer damit umgehen soll, wenn dieser sein Passwort vergessen hat.
 
-Dafür muss nur der etcd key `config/cas/forgot_password_text` auf den gewünschten Wert
+Dafür muss nur der Konfigurationsschlüssel auf den gewünschten Wert
 gesetzt werden und das CAS Dogu neu gestartet werden. Der Text kann nun in der Login Maske
 durch einen Klick auf "Passwort vergessen?" ein- und ausgeblendet werden.
 
 Beachte, dass der `Passwort vergessen`-Button nur angezeigt wird, wenn die Passwort-Zurücksetzen-Funktion deaktiviert ist 
 (s. [Deaktivierung der Passwort-Zurücksetzen-Funktion](password-management_de.md#deaktivierung-der-passwort-zurücksetzen-funktion))
-und dem etcd key `config/cas/forgot_password_text` ein Wert zugewiesen worden ist.
+und dem Konfigurationsschlüssel ein Wert zugewiesen worden ist.
+
+* ``kubectl edit -n ecosystem configmap cas-config``
+* ```yaml
+    data:
+      config.yaml:
+        forgot_password_text: "Ihr Text..."
+  ```
