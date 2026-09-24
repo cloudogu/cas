@@ -132,14 +132,25 @@ class CasCustomTemplateManagerConfigurationTests {
 
         var serializer = mock(RegisteredServiceJsonSerializer.class);
 
-        var manager = configuration.registeredServicesTemplatesManager(casProperties, serializer);
+        // Capture configuration logs while a directory containing one template and one unrelated
+        // file is scanned. The log must list the discovered JSON template and omit the ignored file.
+        try (var logs = TestLogCapture.start()) {
+            var manager = configuration.registeredServicesTemplatesManager(casProperties, serializer);
 
-        assertNotNull(manager);
-        assertTrue(manager instanceof CesLegacyCompatibleTemplatesManager);
-
-        jsonFile.delete();
-        notJsonFile.delete();
-        tempDir.delete();
+            assertNotNull(manager);
+            assertTrue(manager instanceof CesLegacyCompatibleTemplatesManager);
+            String discoveryLog = logs.events().stream()
+                    .map(event -> event.getMessage().getFormattedMessage())
+                    .filter(message -> message.startsWith("Discovered 1 registered-service template definition file"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expected the template discovery log"));
+            assertTrue(discoveryLog.contains(jsonFile.getAbsolutePath()));
+            assertFalse(discoveryLog.contains(notJsonFile.getAbsolutePath()));
+        } finally {
+            jsonFile.delete();
+            notJsonFile.delete();
+            tempDir.delete();
+        }
     }
 
     @Test
