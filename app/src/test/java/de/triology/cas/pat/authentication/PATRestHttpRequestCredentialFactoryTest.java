@@ -43,6 +43,32 @@ class PATRestHttpRequestCredentialFactoryTest {
         assertTrue(credentials.isEmpty());
     }
 
+
+    @Test
+    void returnsEmptyForMissingRequestData() throws Throwable {
+        assertTrue(factory.fromRequest(request("POST", "/cas/v1/tickets"), null).isEmpty());
+
+        assertTrue(factory.fromRequest(request("POST", "/cas/v1/tickets"), body("", "pat_secret")).isEmpty());
+        assertTrue(factory.fromRequest(request("POST", "/cas/v1/tickets"), body("alice", "")).isEmpty());
+    }
+
+
+    @Test
+    void rejectsPatForNonPostRequests() throws Throwable {
+        assertTrue(factory.fromRequest(request("GET", "/cas/v1/tickets"), body("alice", "pat_secret")).isEmpty());
+    }
+
+
+    @Test
+    void acceptsPatWhenEndpointIsAvailableThroughRequestUri() throws Throwable {
+        MockHttpServletRequest request = request("POST", "/cas/v1/tickets");
+        request.setServletPath("/other");
+
+        List<Credential> credentials = factory.fromRequest(request, body("alice", "pat_secret"));
+
+        assertInstanceOf(PATCredential.class, credentials.getFirst());
+    }
+
     private static MockHttpServletRequest request(String method, String uri) {
         MockHttpServletRequest request = new MockHttpServletRequest(method, uri);
         request.setContextPath("/cas");

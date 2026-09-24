@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -33,6 +35,67 @@ class LegacyDefaultAuthenticationEventExecutionPlanTest {
         var plan = new LegacyDefaultAuthenticationEventExecutionPlan(defaultResolver, tenantExtractor);
 
         assertThrows(AuthenticationException.class, () -> plan.resolveAuthenticationHandlers(transaction));
+    }
+
+    @Test
+    void rejectsPatFromLoginPathIncludingProxyPrefix() throws Throwable {
+        var request = new org.springframework.mock.web.MockHttpServletRequest("POST", "/auth/login");
+        request.setServletPath("/auth/login");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        try {
+            AuthenticationTransaction transaction = mock(AuthenticationTransaction.class);
+            when(transaction.getCredentials()).thenReturn(List.of(
+                    new org.apereo.cas.authentication.credential.UsernamePasswordCredential("alice", "pat_secret")));
+
+            var plan = new LegacyDefaultAuthenticationEventExecutionPlan(
+                    mock(AuthenticationHandlerResolver.class), mock(TenantExtractor.class));
+
+            var exception = assertThrows(AuthenticationException.class,
+                    () -> plan.resolveAuthenticationHandlers(transaction));
+            assertEquals("Personal access tokens are not allowed for web login", exception.getMessage());
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    @Test
+    void allowsNormalPasswordAtLoginToContinueWithRegularResolution() throws Throwable {
+        var request = new org.springframework.mock.web.MockHttpServletRequest("POST", "/login");
+        request.setServletPath("/login");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        try {
+            AuthenticationTransaction transaction = mock(AuthenticationTransaction.class);
+            when(transaction.getCredentials()).thenReturn(List.of(
+                    new org.apereo.cas.authentication.credential.UsernamePasswordCredential("alice", "normal-password")));
+
+            var plan = new LegacyDefaultAuthenticationEventExecutionPlan(
+                    mock(AuthenticationHandlerResolver.class), mock(TenantExtractor.class));
+
+            assertThrows(AuthenticationException.class, () -> plan.resolveAuthenticationHandlers(transaction));
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
+    }
+
+    @Test
+    void ignoresNonUsernamePasswordCredentialsAtLogin() throws Throwable {
+        var request = new org.springframework.mock.web.MockHttpServletRequest("POST", "/login");
+        request.setServletPath("/login");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        try {
+            AuthenticationTransaction transaction = mock(AuthenticationTransaction.class);
+            when(transaction.getCredentials()).thenReturn(List.of(mock(org.apereo.cas.authentication.Credential.class)));
+
+            var plan = new LegacyDefaultAuthenticationEventExecutionPlan(
+                    mock(AuthenticationHandlerResolver.class), mock(TenantExtractor.class));
+
+            assertThrows(AuthenticationException.class, () -> plan.resolveAuthenticationHandlers(transaction));
+        } finally {
+            RequestContextHolder.resetRequestAttributes();
+        }
     }
 
     @Test
