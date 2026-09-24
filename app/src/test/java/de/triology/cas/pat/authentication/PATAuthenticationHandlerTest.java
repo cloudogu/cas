@@ -54,8 +54,9 @@ class PATAuthenticationHandlerTest {
     }
 
     @Test
-    void supportsOnlyUsernamePasswordCredentialsContainingAPat() {
-        assertTrue(handler.supports(new UsernamePasswordCredential("user", TOKEN)));
+    void supportsOnlyPATCredentials() {
+        assertTrue(handler.supports(new PATCredential("user", TOKEN)));
+        assertFalse(handler.supports(new UsernamePasswordCredential("user", TOKEN)));
         assertFalse(handler.supports(new UsernamePasswordCredential("user", "password")));
         assertFalse(handler.supports(new UsernamePasswordCredential("user", (String) null)));
         assertFalse(handler.supports(org.mockito.Mockito.mock(Credential.class)));
@@ -120,9 +121,13 @@ class PATAuthenticationHandlerTest {
     }
 
     @Test
+    void rejectsNormalUsernamePasswordCredentialEvenWhenItContainsAPat() {
+        assertFalse(handler.supports(new UsernamePasswordCredential("user", TOKEN)));
+    }
+
+    @Test
     void rejectsCredentialWhosePasswordIsAbsent() {
-        var credential = org.mockito.Mockito.mock(UsernamePasswordCredential.class);
-        when(credential.toPassword()).thenReturn(null);
+        var credential = new PATCredential("user", null);
         assertFalse(handler.supports(credential));
     }
 

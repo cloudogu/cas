@@ -37,10 +37,10 @@ public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthentica
 
     @Override
     public boolean supports(Credential credential) {
-        boolean supported = credential instanceof UsernamePasswordCredential userPassword
-                && userPassword.toPassword() != null
-                && userPassword.toPassword().startsWith("pat_");
-        LOGGER.info("PATAuthenticationHandler.supports was called; credential type: [{}], supported: [{}]",
+        boolean supported = credential instanceof PATCredential patCredential
+                && patCredential.toPassword() != null
+                && patCredential.toPassword().startsWith("pat_");
+        LOGGER.debug("PATAuthenticationHandler.supports was called; credential type: [{}], supported: [{}]",
                 credential == null ? null : credential.getClass().getSimpleName(), supported);
         return supported;
     }
