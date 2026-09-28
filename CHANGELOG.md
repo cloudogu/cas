@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- [#379] The password-change from no longer requires the current password
 - [#377] prevent ui login with pats
 
 ## [v8.0.2-3] - 2026-09-24
