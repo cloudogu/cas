@@ -1,38 +1,36 @@
-Two-factor authentication
+# Two-Factor Authentication
 
 > ️⚠ **Warning**
 >
-> This feature is **experimental** and may cause problems when accessing other Dogus or the Dogus API, especially when using Basic Auth.
+> This feature is **experimental** and may cause problems when accessing other Dogus or Dogu APIs, especially when Basic Auth is used.
 
-CAS supports two-factor authentication with TOTP (Time-based One-Time Password). Once activated,
-all employees will need an authenticator app such as Google Authenticator or Microsoft Authenticator to log in.
+CAS supports two-factor authentication with TOTP (Time-based One-Time Password). After activation,
+all employees need an authenticator app such as Google Authenticator or Microsoft Authenticator to log in.
 
 ## Activation
 
-The corresponding Dogu configuration key must be set to `true`. 
+The corresponding Dogu configuration key must be set to `true`. The Dogu must be restarted for the configuration to take effect.
 
-```shell
-etcdctl set config/cas/experimental/totp/activate "true"
-```
-
-Restart the Dogu to activate the configuration.
-
-```shell
-cesapp restart cas
-```
+``kubectl edit -n ecosystem configmap cas-config``
+`````yaml
+  data:
+    config.yaml: |
+      experimental:
+        totp:
+          activate:
+  `````
 
 ## Deactivation
 
-If you encounter problems with two-factor authentication, you can deactivate the function. To do so, set the corresponding
-Dogu configuration key to `false`. Deactivation means that the internal encryption codes
-will not be regenerated.
+If there are problems with two-factor authentication, the feature can be disabled. To do this, the corresponding
+Dogu configuration key must be set to `false`. Disabling it does not regenerate the internal encryption codes.
+The Dogu must be restarted for the configuration to take effect.
 
-```shell
-etcdctl set config/cas/experimental/totp/activate "false"
-```
-
-Restart the Dogu to activate the configuration.
-
-```shell
-cesapp restart cas
+``kubectl edit -n ecosystem configmap cas-config``
+```yaml
+  data:
+    config.yaml: |
+      experimental:
+        totp:
+          activate: false
 ```
