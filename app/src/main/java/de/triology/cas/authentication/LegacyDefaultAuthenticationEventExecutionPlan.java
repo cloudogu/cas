@@ -17,6 +17,10 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
 
@@ -33,6 +37,7 @@ public class LegacyDefaultAuthenticationEventExecutionPlan extends DefaultAuthen
      */
     @Override
     public @NonNull Set<AuthenticationHandler> resolveAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
+        rejectPatCredentialsFromWebLogin(transaction);
         // Use the public API of the parent
         val handlers = super.getAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction [{}] are [{}]", transaction, handlers);
@@ -74,5 +79,33 @@ public class LegacyDefaultAuthenticationEventExecutionPlan extends DefaultAuthen
         }
         LOGGER.debug("Resolved and finalized authentication handlers for this transaction are [{}]", resolvedHandlers);
         return resolvedHandlers;
+    }
+
+    /**
+     * Credentials that qualify as PATs are rejected in the login flow
+     *
+     * @throws AuthenticationException if a PAT was submitted instead of a password
+     */
+    private void rejectPatCredentialsFromWebLogin(AuthenticationTransaction transaction) throws AuthenticationException {
+        if (!isWebLoginRequest()) {
+            return;
+        }
+        for (Credential credential : transaction.getCredentials()) {
+            if (credential instanceof UsernamePasswordCredential usernamePassword
+                    && usernamePassword.toPassword() != null
+                    && usernamePassword.toPassword().startsWith("pat_")) {
+                throw new AuthenticationException("Personal access tokens are not allowed for web login");
+            }
+        }
+    }
+
+    private boolean isWebLoginRequest() {
+        var requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (!(requestAttributes instanceof ServletRequestAttributes servletRequestAttributes)) {
+            return false;
+        }
+
+        var servletPath = servletRequestAttributes.getRequest().getServletPath();
+        return servletPath != null && servletPath.endsWith("/login");
     }
 }

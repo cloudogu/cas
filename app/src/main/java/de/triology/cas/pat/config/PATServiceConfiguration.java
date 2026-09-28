@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.authentication.PATAuthenticationHandler;
+import de.triology.cas.pat.authentication.PATRestHttpRequestCredentialFactory;
 import de.triology.cas.pat.authentication.PATServiceTicketFactory;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
 import de.triology.cas.pat.controller.PATController;
@@ -23,6 +24,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -273,6 +275,16 @@ public class PATServiceConfiguration {
                 Ordered.HIGHEST_PRECEDENCE,
                 patService,
                 ldapHandler);
+    }
+
+    @Bean
+    @Order(Ordered.LOWEST_PRECEDENCE)
+    public RestHttpRequestCredentialFactoryConfigurer patRestHttpRequestCredentialFactoryConfigurer() {
+        return factory -> {
+            factory.getChain().removeIf(credentialFactory ->
+                    credentialFactory.getClass().getSimpleName().equals("UsernamePasswordRestHttpRequestCredentialFactory"));
+            factory.registerCredentialFactory(new PATRestHttpRequestCredentialFactory());
+        };
     }
 
     @Bean
