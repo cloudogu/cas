@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-4] - 2026-09-28
+### Fixed
+- Benutzer können generierte PATs nicht mehr zur Anmeldung in der UI benutzen.
+
 ## [v8.0.2-3] - 2026-09-24
 - Wir haben nur technische Änderungen vorgenommen. Näheres finden Sie in den Changelogs.
 

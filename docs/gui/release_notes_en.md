@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.2-4] - 2026-09-28
+### Fixed
+- Prevent users from logging into the ui with their generated pats.
+
 ## [v8.0.2-3] - 2026-09-24
 - We have only made technical changes. You can find more details in the changelogs.
 

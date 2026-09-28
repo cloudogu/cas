@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.2-4] - 2026-09-28
+### Fixed
+- [#379] The password-change from no longer requires the current password
+- [#377] prevent ui login with pats
+
 ## [v8.0.2-3] - 2026-09-24
 ### Added
 - [375] Added some logging for error cases related to template expansion in CAS
