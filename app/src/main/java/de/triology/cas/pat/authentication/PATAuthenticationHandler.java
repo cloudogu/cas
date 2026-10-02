@@ -59,7 +59,7 @@ public class PATAuthenticationHandler extends AbstractUsernamePasswordAuthentica
         PATMetadata metadata = patService.resolve(originalPassword)
                 .orElseThrow(() -> new FailedLoginException("Invalid or expired PAT"));
 
-        if (!metadata.userId().equals(credential.getUsername())) {
+        if (!metadata.userId().equalsIgnoreCase(credential.getUsername())) {
             throw new FailedLoginException("PAT does not belong to the supplied username");
         }
 
