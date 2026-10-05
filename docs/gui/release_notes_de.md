@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-5] - 2026-10-05
+### Changed
+- CAS auf v8.0.2 aktualisiert
+
 ## [v8.0.2-4] - 2026-09-28
 ### Fixed
 - Benutzer können generierte PATs nicht mehr zur Anmeldung in der UI benutzen.

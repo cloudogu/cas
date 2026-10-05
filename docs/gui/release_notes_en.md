@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.2-5] - 2026-10-05
+### Changed
+- CAS has been updated to version v8.0.2
+
 ## [v8.0.2-4] - 2026-09-28
 ### Fixed
 - Prevent users from logging into the ui with their generated pats.
