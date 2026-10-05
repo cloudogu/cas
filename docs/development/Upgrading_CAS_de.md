@@ -119,7 +119,12 @@ Der Multinode-Lauf ist **durch den Build-Parameter `PipelineMode`** gesteuert, d
 
 ---
 
-## 6. Smoke-Test (manuell — die Dinge, die CI nicht abdecken kann)
+## 6. Integrationstests - Usermgt
+
+Die Integrationstests im Usermgt hängen zum Teil von der UI des CAS ab. Da sich die UI mit einem Update der Version
+ändern kann, müssen die Usermgt-Integrationstests mit der neuen CAS-Version ausgeführt werden.
+
+## 7. Smoke-Test (manuell — die Dinge, die CI nicht abdecken kann)
 
 Nachdem die automatisierten Suites durchlaufen, mache einen kurzen manuellen Durchgang gegen eine laufende
 Instanz. Minimum:
@@ -144,7 +149,7 @@ Instanz. Minimum:
 
 ---
 
-## 7. Anpassungs-Inventar — Dateien, auf die zu achten ist
+## 8. Anpassungs-Inventar — Dateien, auf die zu achten ist
 
 - Eigener Java-Code (`app/src/main/java/de/triology/cas/`)
 - Eigene Templates & Properties (`app/src/main/resources/`)
@@ -154,7 +159,7 @@ Instanz. Minimum:
 
 ---
 
-## 8. Tipps — wie man tatsächlich findet, was sich geändert hat
+## 9. Tipps — wie man tatsächlich findet, was sich geändert hat
 
 Der schwierige Teil eines CAS-Upgrades ist nicht das Anheben der Version; es ist das Finden der **stillen**
 Breakages, bei denen CAS eine Bean umbenannt, einen Webflow-State verschoben, einen Property-Default geändert
@@ -162,7 +167,7 @@ oder ein Standard-Template/eine Standard-Action bearbeitet hat, das/die wir kopi
 Keine davon lässt den Compile fehlschlagen. Die obigen Tests sollten diese Probleme aufdecken. Zum Analysieren können 
 folgende Tipps und Techniken helfen:
 
-### 8.1 Zuerst das upstream `cas-overlay-template` zwischen den beiden Linien diffen
+### 9.1 Zuerst das upstream `cas-overlay-template` zwischen den beiden Linien diffen
 
 Das ist der günstigste Schritt mit dem höchsten Signal. Das Overlay-Template ist klein und zeigt genau, was
 das *Projekt-Gerüst* geändert hat (Gradle, Plugins, Dockerfile, Base-Config).
@@ -189,7 +194,7 @@ git --no-pager diff --no-index ../ovl-old ../ovl-new
 die relevante Menge ist klein.) Alles, was sich verschoben hat (ein neuer Exclude, ein geändertes Plugin,
 eine neue Property, ein Tomcat-Bump), musst du fast sicher nachziehen.
 
-### 8.2 Die CAS-„Release Notes" / „What's New"-Seiten lesen, Minor für Minor
+### 9.2 Die CAS-„Release Notes" / „What's New"-Seiten lesen, Minor für Minor
 
 CAS dokumentiert Breaking Changes pro **Minor**-Release. Wenn du mehr als ein Minor überspringst, lies
 **jede** dazwischenliegende Seite, nicht nur das Ziel — Breaking Changes akkumulieren sich.
@@ -199,7 +204,7 @@ CAS dokumentiert Breaking Changes pro **Minor**-Release. Wenn du mehr als ein Mi
   der Flip des pac4j-Session-Replication-Defaults und die Current-Password-Anforderung der
   `PasswordChangeAction` gefunden).
 
-### 8.3 Anpassung gegen die CAS-Quellen, an die sie gekoppelt ist, erneut prüfen
+### 9.3 Anpassung gegen die CAS-Quellen, an die sie gekoppelt ist, erneut prüfen
 
 Um den CAS-Standard-Quellcode zu lesen, auf den ein Kommentar zeigt, ziehe ihn aus den
 Dependency-Jars, die du bereits heruntergeladen hast (bevorzuge das `-sources`-Jar — es enthält das echte
@@ -223,7 +228,7 @@ Du kannst denselben Quellcode auch auf GitHub am Tag durchstöbern: `https://git
 3. Diffe **alt-Standard vs. unsere** → unsere Anpassung.
 4. Wende unser Delta erneut auf die neue Standard-Datei an.
 
-### 8.4 Die laufende App über tote Properties berichten lassen
+### 9.4 Die laufende App über tote Properties berichten lassen
 
 Dieses Overlay hängt bereits von `spring-boot-properties-migrator` ab (`app/build.gradle`). Beim **Start**
 loggt es jede Property in deiner Config, die das neue Spring Boot/CAS **umbenannt oder entfernt** hat, mit dem
