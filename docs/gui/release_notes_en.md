@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-5] - 2026-10-05
 ### Changed
 - CAS has been updated to version v8.0.2
 
