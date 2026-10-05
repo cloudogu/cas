@@ -115,7 +115,12 @@ The multinode run is **gated by the `PipelineMode` build parameter** supplied by
 
 ---
 
-## 6. Smoke test (manual — the things CI can't cover)
+## 6. Integration tests - Usermgt
+
+The Usermgt integration tests partly depend on the CAS UI. Since the UI can change with a version update,
+the Usermgt integration tests must be run with the new CAS version.
+
+## 7. Smoke test (manual — the things CI can't cover)
 
 After the automated suites pass, do a quick manual pass against a running instance. Minimum:
 
@@ -133,7 +138,7 @@ After the automated suites pass, do a quick manual pass against a running instan
 
 ---
 
-## 7. Customization inventory — files to watch out for
+## 8. Customization inventory — files to watch out for
 
 - Custom Java (`app/src/main/java/de/triology/cas/`)
 - Custom templates & properties (`app/src/main/resources/`)
@@ -143,7 +148,7 @@ After the automated suites pass, do a quick manual pass against a running instan
 
 ---
 
-## 8. Tips — how to actually find what changed
+## 9. Tips — how to actually find what changed
 
 The hard part of a CAS upgrade is not bumping the version; it is finding the **silent** breakages where CAS
 renamed a bean, moved a webflow state, changed a property default, or edited a stock template/action that we
