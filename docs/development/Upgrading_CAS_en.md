@@ -155,7 +155,7 @@ renamed a bean, moved a webflow state, changed a property default, or edited a s
 copied and customized. None of these fail the compile. The tests above should uncover the problems. The following tips 
 and techniques can help you analyze these problems.
 
-### 8.1 Diff the upstream `cas-overlay-template` between the two lines first
+### 9.1 Diff the upstream `cas-overlay-template` between the two lines first
 
 This is the cheapest, highest-signal step. The overlay template is small and shows exactly what the *project
 scaffold* changed (Gradle, plugins, Dockerfile, base config).
@@ -181,7 +181,7 @@ git --no-pager diff --no-index ../ovl-old ../ovl-new
 checking is small.) Anything that moved (a new exclude, a changed plugin, a new property, a Tomcat bump) you
 almost certainly need to mirror.
 
-### 8.2 Read the CAS "Release Notes" / "What's New" pages, minor by minor
+### 9.2 Read the CAS "Release Notes" / "What's New" pages, minor by minor
 
 CAS documents breaking changes per **minor** release. If you cross more than one minor, read **each** page in
 between, not just the target — breaking changes accumulate.
@@ -190,7 +190,7 @@ between, not just the target — breaking changes accumulate.
 - These call out removed/renamed properties, dropped modules, and behavior changes (this is how the pac4j
   session-replication default flip and the `PasswordChangeAction` current-password requirement were found).
 
-### 8.3 Re-verify customization against the CAS sources it couples to
+### 9.3 Re-verify customization against the CAS sources it couples to
 
 To read the stock CAS source a comment points at, pull it out of the dependency jars you already downloaded
 (prefer the `-sources` jar — it has the real Java/templates, no decompile needed):
@@ -212,7 +212,7 @@ You can also browse the same source on GitHub at the tag: `https://github.com/ap
 3. Diff **old-stock vs ours** → our customization.
 4. Re-apply our delta onto the new stock file.
 
-### 8.4 Let the running app tell you about dead properties
+### 9.4 Let the running app tell you about dead properties
 
 This overlay already depends on `spring-boot-properties-migrator` (`app/build.gradle`). On **startup** it
 logs every property in your config that the new Spring Boot/CAS has **renamed or removed**, with the
