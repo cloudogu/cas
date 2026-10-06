@@ -421,3 +421,27 @@ personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_
 # URL Validation
 custom.validation.allow-local-urls={{ .Config.GetOrDefault "allow_local_urls" "false"}}
 ########################################################################################################################
+
+# OIDC/LDAP synchronization
+oidc.ldap-sync.enabled={{ .Config.GetOrDefault "oidc/enabled" "false" }}
+oidc.ldap-sync.interval={{ .Config.Get "oidc/ldap_sync/interval" }}
+oidc.ldap-sync.timeout={{ .Config.Get "oidc/ldap_sync/timeout" }}
+oidc.ldap-sync.scim.base-url={{ .Config.GetOrDefault "oidc/ldap_sync/scim_base_url" "" }}
+oidc.ldap-sync.scim.group-ids={{ .Config.GetOrDefault "oidc/allowed_groups" "" }}
+oidc.ldap-sync.scim.authentication-method={{ .Config.Get "oidc/ldap_sync/authentication_method" }}
+oidc.ldap-sync.scim.token-uri={{ .Config.GetOrDefault "oidc/ldap_sync/token_uri" "" }}
+oidc.ldap-sync.scim.username={{ .Config.GetOrDefault "oidc/ldap_sync/scim_username" (.Config.GetOrDefault "oidc/client_id" "") }}
+{{ if eq (.Env.Get "RUNTIME_MODE") "component" }}
+oidc.ldap-sync.scim.password={{ .Env.Get "OIDC_CLIENT_SECRET" }}
+{{ else if .Config.Exists "oidc/ldap_sync/scim_password" -}}
+oidc.ldap-sync.scim.password={{ .Config.GetAndDecrypt "oidc/ldap_sync/scim_password" }}
+{{ else if .Config.Exists "oidc/client_secret" -}}
+oidc.ldap-sync.scim.password={{ .Config.GetAndDecrypt "oidc/client_secret" }}
+{{- else -}}
+oidc.ldap-sync.scim.password=
+{{- end }}
+oidc.ldap-sync.scim.page-size={{ .Config.Get "oidc/ldap_sync/scim_page_size" }}
+oidc.ldap-sync.mapping.scim-identity-attribute={{ .Config.Get "oidc/ldap_sync/scim_identity_attribute" }}
+oidc.ldap-sync.mapping.ldap-identity-attribute={{ .Config.Get "oidc/ldap_sync/ldap_identity_attribute" }}
+oidc.ldap-sync.ldap.external-attribute={{ .Config.Get "oidc/ldap_sync/ldap_external_attribute" }}
+oidc.ldap-sync.ldap.external-value={{ .Config.Get "oidc/ldap_sync/ldap_external_value" }}

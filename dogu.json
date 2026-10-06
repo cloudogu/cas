@@ -1,6 +1,6 @@
 {
   "Name": "official/cas",
-  "Version": "8.0.2-4",
+  "Version": "8.0.2-52",
   "DisplayName": "Central Authentication Service",
   "Description": "The Central Authentication Service (CAS) is a single sign-on protocol for the web.",
   "Url": "https://apereo.github.io/cas",
@@ -153,6 +153,82 @@
       "Description": "The password for connection to ldap in encrypted form. This value is only used when using an external LDAP.",
       "Optional": true,
       "Encrypted": true
+    },
+    {
+      "Name": "oidc/ldap_sync/interval",
+      "Description": "Interval between OIDC/LDAP synchronization runs as an ISO-8601 duration. The first run starts immediately.",
+      "Optional": true,
+      "Default": "PT1H"
+    },
+    {
+      "Name": "oidc/ldap_sync/timeout",
+      "Description": "Maximum duration of one OIDC/LDAP synchronization run as an ISO-8601 duration.",
+      "Optional": true,
+      "Default": "PT5M"
+    },
+    {
+      "Name": "oidc/ldap_sync/authentication_method",
+      "Description": "Authentication method for the SCIM API: basic or bearer.",
+      "Optional": true,
+      "Default": "basic",
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "basic",
+          "bearer"
+        ]
+      }
+    },
+    {
+      "Name": "oidc/ldap_sync/token_uri",
+      "Description": "OAuth2 token endpoint used for bearer authentication.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/ldap_sync/scim_username",
+      "Description": "Username or OAuth2 client ID used for the SCIM API. Defaults to oidc/client_id.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/ldap_sync/scim_password",
+      "Description": "Password or OAuth2 client secret used for the SCIM API. Defaults to oidc/client_secret.",
+      "Optional": true,
+      "Encrypted": true
+    },
+    {
+      "Name": "oidc/ldap_sync/scim_base_url",
+      "Description": "Base URL of the SCIM API.",
+      "Optional": true
+    },
+    {
+      "Name": "oidc/ldap_sync/scim_page_size",
+      "Description": "Page size used when reading SCIM group members.",
+      "Optional": true,
+      "Default": "100"
+    },
+    {
+      "Name": "oidc/ldap_sync/scim_identity_attribute",
+      "Description": "SCIM group-member attribute used as identity for the OIDC/LDAP synchronization, for example value or display.",
+      "Optional": true,
+      "Default": "value"
+    },
+    {
+      "Name": "oidc/ldap_sync/ldap_identity_attribute",
+      "Description": "LDAP attribute compared with the configured SCIM member identity used by the OIDC/LDAP synchronization.",
+      "Optional": true,
+      "Default": "uid"
+    },
+    {
+      "Name": "oidc/ldap_sync/ldap_external_attribute",
+      "Description": "LDAP attribute marking users managed by the OIDC/LDAP synchronization.",
+      "Optional": true,
+      "Default": "external"
+    },
+    {
+      "Name": "oidc/ldap_sync/ldap_external_value",
+      "Description": "Required value of the LDAP external attribute.",
+      "Optional": true,
+      "Default": "TRUE"
     },
     {
       "Name": "ldap/search_filter",

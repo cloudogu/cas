@@ -11,3 +11,4 @@
   de.triology.cas.web.CesThemePropertiesConfiguration
   de.triology.cas.pat.config.PATSQLitePersistenceConfiguration
   de.triology.cas.pat.config.PATServiceConfiguration
+  de.triology.cas.sync.OidcLdapSyncConfiguration

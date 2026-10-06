@@ -2,12 +2,18 @@ package de.triology.cas.ldap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.*;
+import org.ldaptive.filter.EqualityFilter;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UserManager can load, create and update {@link CesInternalLdapUser}s.
  */
 @Slf4j
 public class UserManager {
+    private static final int EXTERNAL_USER_SEARCH_PAGE_SIZE = 500;
     public static final String LDAP_TRUE = "TRUE";
     public static final String LDAP_FALSE = "FALSE";
 
@@ -238,6 +244,49 @@ public class UserManager {
 
         final LdapEntry entry = response.getEntry();
         return entry == null ? null : CesInternalLdapUser.UserFromEntry(entry);
+    }
+
+    public List<LdapUserReference> getExternalUsers(String externalAttribute, String externalValue,
+                                                    String identityAttribute, long deadlineNanos)
+            throws CesLdapException {
+        try {
+            SearchRequest request = new SearchRequest();
+            request.setBaseDn(this.userBaseDN);
+            request.setFilter(new EqualityFilter(externalAttribute, externalValue));
+            request.setReturnAttributes(identityAttribute, externalAttribute);
+            request.setSearchScope(SearchScope.SUBTREE);
+            long remainingMillis = Math.max(1L, Duration.ofNanos(deadlineNanos - System.nanoTime()).toMillis());
+            request.setTimeLimit(Duration.ofMillis(remainingMillis));
+            SearchResponse response = operationFactory.pagedResultsClient(EXTERNAL_USER_SEARCH_PAGE_SIZE)
+                    .executeToCompletion(request);
+            if (!response.isSuccess()) {
+                throw new CesLdapException(response.getDiagnosticMessage());
+            }
+
+            List<LdapUserReference> users = new ArrayList<>();
+            for (LdapEntry entry : response.getEntries()) {
+                LdapAttribute identity = entry.getAttribute(identityAttribute);
+                if (identity == null || identity.getStringValue() == null) {
+                    throw new CesLdapException("LDAP entry has no identity attribute "
+                            + identityAttribute + ": " + entry.getDn());
+                }
+                users.add(new LdapUserReference(entry.getDn(), identity.getStringValue()));
+            }
+            return users;
+        } catch (LdapException e) {
+            throw new CesLdapException("Failed executing LDAP external-user query", e);
+        }
+    }
+
+    public void deleteUser(String dn) throws CesLdapException {
+        try {
+            DeleteResponse response = operationFactory.deleteOperation().execute(new DeleteRequest(dn));
+            if (!response.isSuccess()) {
+                throw new CesLdapException(response.getDiagnosticMessage());
+            }
+        } catch (LdapException e) {
+            throw new CesLdapException("Failed deleting LDAP user " + dn, e);
+        }
     }
 
     private SearchRequest createGetUserByMailRequest(String mail, boolean externalOnly) {
