@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 /** Returns the principal authenticated by the PAT supplied with this request. */
 @RestController
+@lombok.extern.slf4j.Slf4j
 public class PATPrincipalController {
     private final PATService patService;
 
@@ -33,6 +34,7 @@ public class PATPrincipalController {
         var scopes = principal.getAttributes().get(PATService.PAT_SCOPE_ATTRIBUTE);
         if (scopes == null || scopes.size() != 1 || !(scopes.getFirst() instanceof String patScope)
                 || !patService.isScopeAllowed(patScope, scope)) {
+            LOGGER.warn("event=pat_validate result=unauthorized reason=scope_denied principal={} requestedScope={} patScopes={}", principal.getId(), scope, scopes);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "PAT does not allow the requested scope");
         }
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
