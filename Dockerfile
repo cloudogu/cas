@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=11
-ARG TOMCAT_VERSION=11.0.25
-ARG TOMCAT_TARGZ_SHA512=81339c046dff1b363a80a3bccf80cb391660a6828dd8ae042180ceb11c8b1614317143e60b311b9e791dab585bb046b777234667acce7dca2203a74b37bf20f2
+ARG TOMCAT_VERSION=11.0.26
+ARG TOMCAT_TARGZ_SHA512=e77e080d9d8d7e052544d0d21b0c738169f9ecf284fe5a68d0c7e2da97dd93e0f0f3b2aa178507ad8552583c355d8e2b193fdb76b3e4c2c12ebfd458c43ced24
 
 FROM eclipse-temurin:25-jdk-alpine AS builder
 
@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.24.1-3 AS tomcat
+FROM registry.cloudogu.com/official/base:3.24.2-1 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
@@ -38,9 +38,9 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
   && rm "apache-tomcat-${TOMCAT_VERSION}.tar"
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:25.0.4-1 AS cas
+FROM registry.cloudogu.com/official/java:25.0.4-2 AS cas
 LABEL NAME="official/cas" \
-      VERSION="8.0.2-4" \
+      VERSION="8.0.2-5" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION

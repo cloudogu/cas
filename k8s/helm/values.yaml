@@ -80,7 +80,7 @@ containers:
     image:
       registry: registry.cloudogu.com
       repository: official/cas
-      tag: 8.0.2-4
+      tag: 8.0.2-5
     imagePullPolicy: IfNotPresent
     securityContext:
       capabilities:
