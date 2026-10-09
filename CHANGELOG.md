@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.2-6] - 2026-10-09
+### Added
+- [#384] Add API to validate PAT without actual CAS login
+
 ## [v8.0.2-5] - 2026-10-05
 ### Changed
 - [#383] Update CAS to v8.0.2
 - [#383] Update base image to v3.24.2-1
 - [#383] Update java base image to v25.0.4-2
+### Added
+- [#386] add usermgt tests to CAS upgrade guide
 
 ## [v8.0.2-4] - 2026-09-28
 ### Fixed

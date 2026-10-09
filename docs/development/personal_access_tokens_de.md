@@ -19,7 +19,7 @@ Die wichtigsten Eigenschaften sind:
 
 ## Systemkontext und Vertrauensgrenze
 
-Die PAT-API ist nicht als direkte Endbenutzer-API gedacht. Vorgesehen ist ein Backend wie das User Management, das bereits eine Benutzersitzung besitzt und daraus die fachliche Benutzer-ID ermittelt.
+Die PAT-Verwaltungs-API ist nicht als direkte Endbenutzer-API gedacht. Vorgesehen ist ein Backend wie das User Management, das bereits eine Benutzersitzung besitzt und daraus die fachliche Benutzer-ID ermittelt.
 
 ```text
 Endbenutzer
@@ -336,3 +336,15 @@ Eine neue Datenbank wird über einen weiteren `PATDatabaseProvider` ergänzt. De
 `PATAuthenticationHandler` löst den Fingerprint auf, prüft den Ablaufzeitpunkt und den angegebenen Eigentümer und lädt den Principal über LDAP. Er setzt `patScope` und `patAuthentication=true`. `PATServiceTicketFactory` prüft den Service-URL-Pfad gegen den Scope im TGT. Tokenwerte dürfen auch in diesem Pfad nicht in Logs, Metriken oder Traces erscheinen.
 
 Bei Anpassungen an der Principal-Auflösung müssen die PAT-Attribute erhalten bleiben: Ohne `patScope` als Liste mit einem String an erster Stelle delegiert die Ticket-Factory ohne PAT-Scope-Prüfung an CAS. Löschen oder Ablauf verhindert neue PAT-Anmeldungen, widerruft aber keine bestehenden Tickets oder Dogu-Sitzungen. Bei der Service-Ticket-Ausstellung wird die Gültigkeit des Tokens nicht erneut in der Datenbank geprüft.
+
+## Principal mit einem PAT abfragen
+
+`GET /api/pats/validate` akzeptiert HTTP Basic mit `username:pat_token`. Eine vorherige CAS-Anmeldung, ein Ticket oder eine Session ist nicht erforderlich. Der PAT-Service muss aktiviert sein. Beispiel:
+
+```bash
+curl --user 'alice:pat_...' 'https://example.org/cas/api/pats/validate?scope=/redmine'
+```
+
+Der Endpunkt prüft bei jeder Anfrage Token, Ablaufdatum und Eigentümer und löst den Principal über LDAP auf. `200 OK` liefert `{ "id": "alice", "attributes": { ... } }`, einschließlich `patScope` und `patAuthentication`, mit `Cache-Control: no-store`. Fehlende oder ungültige Zugangsdaten ergeben `401` ohne Login-Weiterleitung. Normale Passwörter und vorhandene Login-Sessions reichen nicht aus. Der Endpunkt erstellt keine CAS-Tickets. Der Query-Parameter `scope` ist Pflicht: Fehlende oder leere Angaben ergeben `400`; ein vom PAT nicht abgedeckter Scope ergibt `401`. Es gelten dieselben Pfadregeln wie bei Service-Tickets: `/redmine` erlaubt `/redmine` und Unterpfade, aber nicht `/redmine-admin`; `/*` erlaubt alle Pfade. Bei mehreren gespeicherten, durch Kommas getrennten Scopes genügt ein passender Eintrag. Aufrufende Dienste müssen den Scope ihres tatsächlichen Zieldienstes übergeben.
+
+Die technische HTTP-Basic-Anmeldung der Verwaltungsendpunkte bleibt davon unabhängig.

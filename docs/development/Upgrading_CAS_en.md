@@ -115,7 +115,12 @@ The multinode run is **gated by the `PipelineMode` build parameter** supplied by
 
 ---
 
-## 6. Smoke test (manual — the things CI can't cover)
+## 6. Integration tests - Usermgt
+
+The Usermgt integration tests partly depend on the CAS UI. Since the UI can change with a version update,
+the Usermgt integration tests must be run with the new CAS version.
+
+## 7. Smoke test (manual — the things CI can't cover)
 
 After the automated suites pass, do a quick manual pass against a running instance. Minimum:
 
@@ -133,7 +138,7 @@ After the automated suites pass, do a quick manual pass against a running instan
 
 ---
 
-## 7. Customization inventory — files to watch out for
+## 8. Customization inventory — files to watch out for
 
 - Custom Java (`app/src/main/java/de/triology/cas/`)
 - Custom templates & properties (`app/src/main/resources/`)
@@ -143,14 +148,14 @@ After the automated suites pass, do a quick manual pass against a running instan
 
 ---
 
-## 8. Tips — how to actually find what changed
+## 9. Tips — how to actually find what changed
 
 The hard part of a CAS upgrade is not bumping the version; it is finding the **silent** breakages where CAS
 renamed a bean, moved a webflow state, changed a property default, or edited a stock template/action that we
 copied and customized. None of these fail the compile. The tests above should uncover the problems. The following tips 
 and techniques can help you analyze these problems.
 
-### 8.1 Diff the upstream `cas-overlay-template` between the two lines first
+### 9.1 Diff the upstream `cas-overlay-template` between the two lines first
 
 This is the cheapest, highest-signal step. The overlay template is small and shows exactly what the *project
 scaffold* changed (Gradle, plugins, Dockerfile, base config).
@@ -176,7 +181,7 @@ git --no-pager diff --no-index ../ovl-old ../ovl-new
 checking is small.) Anything that moved (a new exclude, a changed plugin, a new property, a Tomcat bump) you
 almost certainly need to mirror.
 
-### 8.2 Read the CAS "Release Notes" / "What's New" pages, minor by minor
+### 9.2 Read the CAS "Release Notes" / "What's New" pages, minor by minor
 
 CAS documents breaking changes per **minor** release. If you cross more than one minor, read **each** page in
 between, not just the target — breaking changes accumulate.
@@ -185,7 +190,7 @@ between, not just the target — breaking changes accumulate.
 - These call out removed/renamed properties, dropped modules, and behavior changes (this is how the pac4j
   session-replication default flip and the `PasswordChangeAction` current-password requirement were found).
 
-### 8.3 Re-verify customization against the CAS sources it couples to
+### 9.3 Re-verify customization against the CAS sources it couples to
 
 To read the stock CAS source a comment points at, pull it out of the dependency jars you already downloaded
 (prefer the `-sources` jar — it has the real Java/templates, no decompile needed):
@@ -207,7 +212,7 @@ You can also browse the same source on GitHub at the tag: `https://github.com/ap
 3. Diff **old-stock vs ours** → our customization.
 4. Re-apply our delta onto the new stock file.
 
-### 8.4 Let the running app tell you about dead properties
+### 9.4 Let the running app tell you about dead properties
 
 This overlay already depends on `spring-boot-properties-migrator` (`app/build.gradle`). On **startup** it
 logs every property in your config that the new Spring Boot/CAS has **renamed or removed**, with the

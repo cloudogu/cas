@@ -46,7 +46,7 @@ public class PATSecurityHandlers implements AuthenticationEntryPoint {
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException authException) throws IOException {
-        AUDIT.warn("event=pat_access result=unauthorized");
+        AUDIT.warn("event=pat_access result=unauthorized method={} path={} exceptionType={}", request.getMethod(), request.getRequestURI(), authException.getClass().getSimpleName());
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Basic realm=\"PAT API\"");
         write(response, HttpServletResponse.SC_UNAUTHORIZED, "UNAUTHORIZED", "Authentication is required");
     }

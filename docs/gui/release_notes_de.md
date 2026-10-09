@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-6] - 2026-10-09
+### Added
+- API zum Validieren von persönlichen Zugriffsschlüsseln ohne eigentlichen CAS Login
+
 ## [v8.0.2-5] - 2026-10-05
 ### Changed
 - CAS auf v8.0.2 aktualisiert

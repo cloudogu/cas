@@ -5,6 +5,9 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Added
+## [v8.0.2-6] - 2026-10-09
+- Added API to validate personal access tokens without actual CAS login
 
 ## [v8.0.2-5] - 2026-10-05
 ### Changed
