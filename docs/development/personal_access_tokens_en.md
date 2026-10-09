@@ -254,3 +254,15 @@ Deletion returns `204`. The new login must fail; deletion does not actively revo
 - [PATServiceTicketFactory](../../app/src/main/java/de/triology/cas/pat/authentication/PATServiceTicketFactory.java): Scope validation before ticket issuance.
 - [cas.properties.tpl](../../resources/etc/cas/config/cas.properties.tpl): Mapping of Dogu configuration and TOTP bypass.
 - [PAT tests](../../app/src/test/java/de/triology/cas/pat): Unit and security tests for the components involved.
+
+## Resolve a principal using a PAT
+
+`GET /api/pats/validate` accepts HTTP Basic with `username:pat_token`. No prior CAS login, ticket, or session is required. The PAT service must be enabled. Example:
+
+```bash
+curl --user 'alice:pat_...' 'https://example.org/cas/api/pats/validate?scope=/redmine'
+```
+
+Every request validates the token, expiration, and owner and resolves the LDAP principal. `200 OK` returns `{ "id": "alice", "attributes": { ... } }`, including `patScope` and `patAuthentication`, with `Cache-Control: no-store`. Missing or invalid credentials receive `401` without a login redirect. Regular passwords and existing login sessions are insufficient. No CAS tickets are created. The `scope` query parameter is mandatory: missing or blank values receive `400`; a scope not covered by the PAT receives `401`. Matching follows the service-ticket path rules: `/redmine` allows `/redmine` and its descendants, but not `/redmine-admin`; `/*` allows every path. For comma-separated stored scopes, one matching entry is sufficient. Callers must supply the scope of their actual target service.
+
+The technical HTTP Basic credentials used by the management endpoints remain independent.

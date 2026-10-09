@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 
 import tools.jackson.databind.ObjectMapper;
 import de.triology.cas.pat.authentication.PATAuthenticationHandler;
+import de.triology.cas.pat.authentication.PATApiAuthenticationManager;
+import de.triology.cas.pat.controller.PATPrincipalController;
 import de.triology.cas.pat.authentication.PATRestHttpRequestCredentialFactory;
 import de.triology.cas.pat.authentication.PATServiceTicketFactory;
 import de.triology.cas.pat.config.persistence.PATDatabaseProvider;
@@ -257,6 +259,30 @@ public class PATServiceConfiguration {
                         .authenticationEntryPoint(handlers))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(handlers))
+                .build();
+    }
+
+    @Bean
+    public PATPrincipalController patPrincipalController(PATService service) {
+        return new PATPrincipalController(service);
+    }
+
+    /** Accepts username:PAT on every request, independently of CAS login sessions. */
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain patPrincipalSecurityFilterChain(
+            HttpSecurity http,
+            PATSecurityHandlers handlers,
+            @Qualifier("patAuthenticationHandler") AuthenticationHandler handler) throws Exception {
+        return http
+                .securityMatcher("/api/pats/validate")
+                .authenticationManager(new PATApiAuthenticationManager(handler))
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .requestCache(cache -> cache.disable())
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(basic -> basic.authenticationEntryPoint(handlers))
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(handlers))
                 .build();
     }
 
