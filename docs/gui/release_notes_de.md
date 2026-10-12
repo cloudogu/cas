@@ -10,6 +10,10 @@ Benutzer aus föderierten Logins werden nun regelmäßig mit dem jeweiligen Logi
 dass sie nach ihrer Löschung weiterhin PATs verwenden.
 - API zum Validieren von persönlichen Zugriffsschlüsseln ohne eigentlich CAS Login
 
+## [v8.0.2-6] - 2026-10-09
+### Added
+- API zum Validieren von persönlichen Zugriffsschlüsseln ohne eigentlichen CAS Login
+
 ## [v8.0.2-5] - 2026-10-05
 ### Changed
 - CAS auf v8.0.2 aktualisiert
