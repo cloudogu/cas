@@ -114,6 +114,19 @@ public class JdbcPATRepository implements PATRepository {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByUserId(String userId) {
+        try {
+            jdbcTemplate.update(
+                    "DELETE FROM personal_access_tokens WHERE user_id = ?", userId);
+        } catch (DataAccessException e) {
+            throw translate(e);
+        }
+    }
+
+    /**
      * Checks the condition handled by validate.
      */
     @Override

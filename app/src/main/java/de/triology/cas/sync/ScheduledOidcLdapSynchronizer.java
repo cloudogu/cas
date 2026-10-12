@@ -1,6 +1,7 @@
 package de.triology.cas.sync;
 
 import de.triology.cas.ldap.UserManager;
+import de.triology.cas.pat.service.PATService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -11,8 +12,8 @@ public class ScheduledOidcLdapSynchronizer {
 
     /** Creates a scheduled synchronizer using the configured SCIM and LDAP clients. */
     public ScheduledOidcLdapSynchronizer(ScimClient scimClient, UserManager userManager,
-                                         OidcLdapSyncProperties properties) {
-        this.synchronizer = new OidcLdapSynchronizer(scimClient, userManager, properties);
+                                         OidcLdapSyncProperties properties, PATService patService) {
+        this.synchronizer = new OidcLdapSynchronizer(scimClient, userManager, properties, patService);
     }
 
     /** Runs one synchronization and logs failures without stopping future scheduled runs. */

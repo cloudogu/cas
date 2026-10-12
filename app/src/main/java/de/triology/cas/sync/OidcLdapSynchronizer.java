@@ -3,6 +3,8 @@ package de.triology.cas.sync;
 import de.triology.cas.ldap.CesLdapException;
 import de.triology.cas.ldap.LdapUserReference;
 import de.triology.cas.ldap.UserManager;
+import de.triology.cas.pat.service.PATOperationException;
+import de.triology.cas.pat.service.PATService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
@@ -17,13 +19,15 @@ public class OidcLdapSynchronizer {
     private final ScimClient scimClient;
     private final UserManager userManager;
     private final OidcLdapSyncProperties properties;
+    private final PATService patService;
 
     /** Creates a synchronizer with the SCIM client, LDAP manager, and runtime settings. */
     public OidcLdapSynchronizer(ScimClient scimClient, UserManager userManager,
-                                OidcLdapSyncProperties properties) {
+                                OidcLdapSyncProperties properties, PATService patService) {
         this.scimClient = scimClient;
         this.userManager = userManager;
         this.properties = properties;
+        this.patService = patService;
     }
 
     /** Loads allowed identities and deletes managed LDAP users absent from those identities. */
@@ -57,6 +61,14 @@ public class OidcLdapSynchronizer {
                 userManager.deleteUser(user.dn());
                 deleted++;
                 LOGGER.warn("{}", deletionAuditMessage(user.identity(), user.dn(), Instant.now()));
+
+                if (patService != null) {
+                    try {
+                        patService.deleteAllForUser(user.identity());
+                    } catch (PATOperationException e) {
+                        LOGGER.warn("Failed to remove PATs for deleted federated user {}", user.dn());
+                    }
+                }
             }
         }
         LOGGER.info("OIDC/LDAP synchronization completed: allowedGroupMembers={}, ldapUsers={}, deleted={}",
