@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /** Retrieves identities of members in configured SCIM groups. */
 @Slf4j
@@ -27,7 +28,7 @@ public class ScimClient {
     private final RestClient tokenClient;
     private final OidcLdapSyncProperties.Scim properties;
     private final String memberIdentityAttribute;
-    private volatile AccessToken accessToken;
+    private final AtomicReference<AccessToken> accessToken = new AtomicReference<>();
 
     /** Builds an SCIM client and validates the configured authentication method. */
     public ScimClient(RestClient.Builder restClientBuilder,
@@ -175,13 +176,13 @@ public class ScimClient {
 
     /** Fetches and caches an OAuth access token for bearer authentication. */
     private String getAccessToken(long deadlineNanos) {
-        AccessToken current = accessToken;
+        AccessToken current = accessToken.get();
         if (current != null && !current.expired()) {
             return current.value();
         }
 
         synchronized (this) {
-            current = accessToken;
+            current = accessToken.get();
             if (current != null && !current.expired()) {
                 return current.value();
             }
@@ -213,9 +214,10 @@ public class ScimClient {
             }
 
             long expiresIn = response.path("expires_in").asLong(300);
-            accessToken = new AccessToken(response.path("access_token").asString(),
+            current = new AccessToken(response.path("access_token").asString(),
                     System.currentTimeMillis() + Math.max(1, expiresIn - TOKEN_REFRESH_SKEW_SECONDS) * 1000);
-            return accessToken.value();
+            accessToken.set(current);
+            return current.value();
         }
     }
 

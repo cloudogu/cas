@@ -4,6 +4,7 @@ import de.triology.cas.ldap.CesLdapException;
 import de.triology.cas.ldap.LdapUserReference;
 import de.triology.cas.ldap.UserManager;
 import de.triology.cas.pat.service.PATService;
+import de.triology.cas.pat.service.PATOperationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,6 +86,76 @@ class OidcLdapSynchronizerTest {
         assertThrows(IllegalStateException.class, () -> synchronizer.synchronize());
 
         verifyNoInteractions(scimClient, userManager);
+    }
+
+    @Test
+    void rejectsNullAndBlankGroupIdsBeforeLdapDeletion() {
+        for (String invalid : Arrays.asList(null, "", " ")) {
+            properties.getScim().setGroupIds(Arrays.asList(invalid));
+            assertThrows(IllegalStateException.class, synchronizer::synchronize);
+        }
+        verifyNoInteractions(scimClient, userManager, patService);
+    }
+
+    @Test
+    void stopsBeforeLdapWhenLoadingGroupsExceedsDeadline() {
+        properties.setTimeout(Duration.ZERO);
+        assertThrows(IllegalStateException.class, synchronizer::synchronize);
+        verifyNoInteractions(userManager, patService);
+    }
+
+    @Test
+    void stopsBeforeDeletingUsersWhenLdapSearchExceedsDeadline() throws Exception {
+        when(userManager.getExternalUsers(any(), any(), any(), anyLong())).thenAnswer(invocation -> {
+            long deadline = invocation.getArgument(3);
+            while (System.nanoTime() < deadline) {
+                Thread.onSpinWait();
+            }
+            return List.of(new LdapUserReference("uid=remove,ou=People", "remove"));
+        });
+        properties.setTimeout(Duration.ofMillis(20));
+
+        assertThrows(IllegalStateException.class, synchronizer::synchronize);
+
+        verify(userManager, never()).deleteUser(any());
+        verifyNoInteractions(patService);
+    }
+
+    @Test
+    void deletesUsersWithPatServiceDisabled() throws Exception {
+        when(userManager.getExternalUsers(any(), any(), any(), anyLong()))
+                .thenReturn(List.of(new LdapUserReference("uid=remove,ou=People", "remove")));
+        var withoutPats = new OidcLdapSynchronizer(scimClient, userManager, properties, null);
+
+        withoutPats.synchronize();
+
+        verify(userManager).deleteUser("uid=remove,ou=People");
+        verifyNoInteractions(patService);
+    }
+
+    @Test
+    void continuesAfterPatOperationFailureForDeletedUser() throws Exception {
+        when(userManager.getExternalUsers(any(), any(), any(), anyLong()))
+                .thenReturn(List.of(new LdapUserReference("uid=first,ou=People", "first"),
+                        new LdapUserReference("uid=second,ou=People", "second")));
+        doThrow(new PATOperationException()).when(patService).deleteAllForUser("first");
+
+        synchronizer.synchronize();
+
+        verify(userManager).deleteUser("uid=first,ou=People");
+        verify(userManager).deleteUser("uid=second,ou=People");
+        verify(patService).deleteAllForUser("second");
+    }
+
+    @Test
+    void stopsAndDoesNotRemovePatsWhenLdapDeletionFails() throws Exception {
+        when(userManager.getExternalUsers(any(), any(), any(), anyLong()))
+                .thenReturn(List.of(new LdapUserReference("uid=remove,ou=People", "remove")));
+        doThrow(new CesLdapException("LDAP unavailable")).when(userManager).deleteUser(any());
+
+        assertThrows(CesLdapException.class, synchronizer::synchronize);
+
+        verifyNoInteractions(patService);
     }
 
     @Test

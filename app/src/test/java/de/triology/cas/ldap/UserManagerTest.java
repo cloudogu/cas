@@ -164,6 +164,88 @@ public class UserManagerTest {
     }
 
     @Test
+    void rejectsUnsuccessfulExternalUserSearch() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var search = mock(PagedResultsClient.class);
+        when(factory.pagedResultsClient(500)).thenReturn(search);
+        var response = mock(SearchResponse.class);
+        when(response.getDiagnosticMessage()).thenReturn("search denied");
+        when(search.executeToCompletion(any(SearchRequest.class))).thenReturn(response);
+
+        var failure = assertThrows(CesLdapException.class, () -> new UserManager("base", factory)
+                .getExternalUsers("external", "TRUE", "uid", System.nanoTime() + 60_000_000_000L));
+
+        assertEquals("search denied", failure.getMessage());
+    }
+
+    @Test
+    void rejectsExternalUsersWithoutIdentity() throws Exception {
+        for (boolean missingAttribute : List.of(true, false)) {
+            var factory = mock(LdapOperationFactory.class);
+            var search = mock(PagedResultsClient.class);
+            when(factory.pagedResultsClient(500)).thenReturn(search);
+            var response = mock(SearchResponse.class);
+            when(response.isSuccess()).thenReturn(true);
+            var entry = new LdapEntry();
+            entry.setDn("uid=unknown,ou=People");
+            if (!missingAttribute) {
+                entry.addAttributes(new LdapAttribute("uid"));
+            }
+            when(response.getEntries()).thenReturn(List.of(entry));
+            when(search.executeToCompletion(any(SearchRequest.class))).thenReturn(response);
+
+            var failure = assertThrows(CesLdapException.class, () -> new UserManager("base", factory)
+                    .getExternalUsers("external", "TRUE", "uid", System.nanoTime() + 60_000_000_000L));
+
+            assertEquals("LDAP entry has no identity attribute uid: uid=unknown,ou=People", failure.getMessage());
+        }
+    }
+
+    @Test
+    void deletesUserByExactDn() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var response = mock(DeleteResponse.class);
+        when(response.isSuccess()).thenReturn(true);
+        when(deletion.execute(any(DeleteRequest.class))).thenReturn(response);
+
+        new UserManager("base", factory).deleteUser("uid=external,ou=People");
+
+        verify(deletion).execute(argThat(request -> request.getDn().equals("uid=external,ou=People")));
+    }
+
+    @Test
+    void propagatesUnsuccessfulLdapDeletion() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var response = mock(DeleteResponse.class);
+        when(response.getDiagnosticMessage()).thenReturn("delete denied");
+        when(deletion.execute(any(DeleteRequest.class))).thenReturn(response);
+
+        var failure = assertThrows(CesLdapException.class,
+                () -> new UserManager("base", factory).deleteUser("uid=external,ou=People"));
+
+        assertEquals("delete denied", failure.getMessage());
+    }
+
+    @Test
+    void wrapsLdapDeletionExceptionWithOriginalCause() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var cause = new LdapException("connection closed");
+        when(deletion.execute(any(DeleteRequest.class))).thenThrow(cause);
+
+        var failure = assertThrows(CesLdapException.class,
+                () -> new UserManager("base", factory).deleteUser("uid=external,ou=People"));
+
+        assertEquals("Failed deleting LDAP user uid=external,ou=People", failure.getMessage());
+        assertSame(cause, failure.getCause());
+    }
+
+    @Test
     public void testCreateUser() throws Throwable {
         LdapOperationFactory ofMock = mock(LdapOperationFactory.class);
         AddOperation addOperation = mock(AddOperation.class);
