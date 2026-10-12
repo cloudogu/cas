@@ -3,6 +3,7 @@ package de.triology.cas.sync;
 import de.triology.cas.ldap.CesLdapException;
 import de.triology.cas.ldap.LdapUserReference;
 import de.triology.cas.ldap.UserManager;
+import de.triology.cas.pat.service.PATService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,15 +22,17 @@ class OidcLdapSynchronizerTest {
     private UserManager userManager;
     private OidcLdapSyncProperties properties;
     private OidcLdapSynchronizer synchronizer;
+    private PATService patService;
 
     @BeforeEach
     void setUp() {
         scimClient = mock(ScimClient.class);
         userManager = mock(UserManager.class);
+        patService = mock(PATService.class);
         properties = new OidcLdapSyncProperties();
         properties.setTimeout(Duration.ofMinutes(5));
         properties.getScim().setGroupIds(List.of("group-a", "group-b"));
-        synchronizer = new OidcLdapSynchronizer(scimClient, userManager, properties);
+        synchronizer = new OidcLdapSynchronizer(scimClient, userManager, properties, patService);
     }
 
     @Test
@@ -47,6 +50,8 @@ class OidcLdapSynchronizerTest {
 
         verify(userManager).deleteUser("uid=remove,ou=People");
         verify(userManager, never()).deleteUser("uid=keep,ou=People");
+        verify(patService).deleteAllForUser("remove");
+        verifyNoMoreInteractions(patService);
     }
 
     @Test
@@ -59,6 +64,7 @@ class OidcLdapSynchronizerTest {
         synchronizer.synchronize();
 
         verify(userManager).deleteUser("uid=remove,ou=People");
+        verify(patService).deleteAllForUser("remove");
     }
 
     @Test

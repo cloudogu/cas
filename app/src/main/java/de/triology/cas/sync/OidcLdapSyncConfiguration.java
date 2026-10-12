@@ -3,10 +3,12 @@ package de.triology.cas.sync;
 import de.triology.cas.ldap.LdapConfiguration;
 import de.triology.cas.ldap.LdapOperationFactory;
 import de.triology.cas.ldap.UserManager;
+import de.triology.cas.pat.service.PATService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,8 +42,10 @@ public class OidcLdapSyncConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "oidc.ldap-sync", name = "enabled", havingValue = "true")
     ScheduledOidcLdapSynchronizer scheduledOidcLdapSynchronizer(ScimClient scimClient, UserManager userManager,
-                                                                 OidcLdapSyncProperties properties) {
-        return new ScheduledOidcLdapSynchronizer(scimClient, userManager, properties);
+                                                                OidcLdapSyncProperties properties,
+                                                                ObjectProvider<PATService> patServiceProvider) {
+        return new ScheduledOidcLdapSynchronizer(scimClient, userManager, properties,
+                patServiceProvider.getIfAvailable());
     }
 
 }
