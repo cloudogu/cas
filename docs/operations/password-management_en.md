@@ -1,108 +1,107 @@
-# Password management in CAS
+# Password Management in CAS
 
-Password management is activated in the CAS. If a password has expired, users can assign a new password directly within
-the CAS. Users can also have a link to reset their password sent to them by e-mail if they have forgotten their
-password.
+Password management is enabled in CAS. This allows users with an expired password to set
+a new password directly within CAS. Users can also have a link for resetting their password sent
+to them by email if they have forgotten their password.
 
-These features are only active if an `embedded` LDAP (i.e. the LDAP dogu) is used.
+These features are only active when an `embedded` LDAP (that is, the LDAP Dogu) is used.
 
-## Password management features
+## Features of Password Management
 
-### Password change in case of expired password
+### Password Change for Expired Passwords
 
-If a user logs in with an expired password, they are redirected to a page where they can change his or her password. The
-password is changed directly in the configured LDAP. This is possible because the service account used for the LDAP has
-write permissions in the LDAP.
+If a user logs in with an expired password, they are redirected to a page where
+they can change their password. The password is changed directly in the configured LDAP. This is possible because
+the service account used for LDAP has write permissions in LDAP.
 
-After changing the password, the user is redirected to a confirmation page and must then log in again with the changed
-password.
+After changing the password, the user is redirected to a confirmation page and must then log in again
+with the newly changed password.
 
-### Reset password via link sent by e-mail
+### Reset Password via a Link Sent by Email
 
-Using the `Reset your password` function, a user can have a link sent to him by e-mail to reset his password. After
-entering his user name, the link is sent to the user's e-mail address stored in the LDAP. This link takes the user to a
-page in CAS where they can set a new password.
+Using the `Reset password` function, a user can have a link for resetting their password
+sent to them by email. After entering their username, the link is sent to the email address stored in LDAP
+for that user. Using this link, the user is taken to a page in CAS where they can set a new password.
 
-## Configuration of the password management in CAS
+## Configuration of Password Management in CAS
 
-Password management is activated via certain CAS properties. For the general activation of the Password Management, both
-of the following properties are required.
+Password management is enabled via specific CAS properties. The following two properties
+are required for the general activation of password management.
 
-* `cas.authn.pm.core.enabled=true` - indicates with the value `true` that password management is enabled.
+* `cas.authn.pm.core.enabled=true` - with the value `true`, indicates that password management is enabled.
 * `cas.authn.pm.core.password-policy-pattern` - the password policy is defined here in the form of a regular expression.
-  is defined here. The regular expression is assembled by the CAS when it is started. The individual rules, which
-  characters and which length the password must have can be configured via etcd entries. Details
-  see section [Configuration of password rules in etcd](#configuration-of-password-rules-in-etcd).
+  The regular expression is assembled by CAS at startup. The individual rules, which characters
+  must be included and what length the password must have, can be configured via etcd entries. For details,
+  see the section [Configuration of Password Rules in etcd](#configuration-of-password-rules).
 
-Translated with www.DeepL.com/Translator (free version)
+For the user to be able to change their password directly in LDAP via CAS, the corresponding LDAP properties
+for password management must be set. These properties can reference the values of the general LDAP properties.
 
-In order for the user to be able to change his password in the LDAP directly via the CAS, the corresponding LDAP
-property must be set for password management. These properties can reference the values of the general LDAP property
-reference.
-
-* cas.authn.pm.ldap[0].type - the variant of the LDAP. For the LDAP dogu this is `GENERIC`.
+* cas.authn.pm.ldap[0].type - the LDAP variant. For the LDAP Dogu this is `GENERIC`.
 * cas.authn.pm.ldap[0].ldap-url - the URL of the LDAP.
 * cas.authn.pm.ldap[0].base-dn - the base DN (Distinguish Name) of the LDAP to be used. The base DN specifies the LDAP
-  entry under which the users to be authenticated can be found. Example: `ou=People,o=ces.local,dc=cloudogu,dc=com`.
-  Here, the entries that are assigned to the organisational unit (OU) `people` are taken into account.
-* cas.authn.pm.ldap[0].search-filter - the filter for searching for users.
-  Example: `(&(objectClass=person)(uid={user}))`. This search filter searches for entries with the object class Person
-  based on the user ID.
-* cas.authn.pm.ldap[0].bind-dn - the Bind DN of the user to be used when connecting to LDAP. This user makes the changes
-  in LDAP.
-* cas.authn.pm.ldap[0].bind-credential - the credentials (password) to be used when connecting to the LDAP and are to be
-  used.
+  entry under which the users to be authenticated can be found.
+  Example: `ou=People,o=ces.local,dc=cloudogu,dc=com`. Here, the entries assigned to the organizational unit
+  (OU) `people` are taken into account.
+* cas.authn.pm.ldap[0].search-filter - the filter for searching users.
+  Example: `(&(objectClass=person)(uid={user}))`. This search filter looks for entries with the object class Person
+  using the user ID.
+* cas.authn.pm.ldap[0].bind-dn - the bind DN of the user that is to be used for the connection with LDAP. This
+  user performs the changes in LDAP.
+* cas.authn.pm.ldap[0].bind-credential - the login information (the password) that is to be used for the connection to LDAP.
 
-To send the password reset link, in addition to the general email send setup, the following properties must be set:
+In addition to the general email setup, the following properties must be set
+for sending the password reset link:
 
-* cas.authn.pm.reset.mail.attribute-name - specifies the name of the mail attribute in LDAP. This value is taken from
-  the etcd entry `ldap/attribute_mail`.
-* cas.authn.pm.reset.mail.from - specifies the email address that is displayed as the sender of the email. This value
-  can be configured via the etcd entry `mail_sender`. If no value is specified, a default value is used.
-* cas.authn.pm.reset.mail.subject - specifies the subject of the emails. This value can be configured via the etcd
-  entry `password_management/reset_password_subject`. If no value is specified, a default value is used.
-* cas.authn.pm.reset.mail.text - specifies the text of the email. This value can be configured via the etcd
-  entry `password_management/reset_password_text`. It is mandatory that the text contains a `${url}` as a placeholder for
-  the password reset link. Note that umlauts must be encoded. If no value is specified in the etcd a default value is
-  used.
-* cas.authn.pm.reset.expiration - defines the duration for the validity of the password reset link. The specification is
-  done in the `java.time.Duration` syntax.
-* cas.authn.pm.reset.security-questions-enabled - specifies with `false` that no security questions have to be answered
-  to reset the password. security questions need to be answered to reset the password
+* cas.authn.pm.reset.mail.attribute-name - specifies the name of the mail attribute in LDAP. This value is read from the
+  etcd entry `ldap/attribute_mail`.
+* cas.authn.pm.reset.mail.from - specifies the email address displayed as the sender of the email. This value
+  can be configured via the etcd entry `mail_sender`. If no value is specified, a default value
+  is used.
+* cas.authn.pm.reset.mail.subject - specifies the subject of the emails. This value can be configured via the
+  etcd entry `password_management/reset_password_subject`. If no value is specified, a
+  default value is used.
+* cas.authn.pm.reset.mail.text - specifies the text of the email. This value can be configured via the
+  etcd entry `password_management/reset_password_text`. It is mandatory that the
+  text contains a `${url}` placeholder for the password reset link. Umlauts must be specified in encoded form.
+  If no value is specified in etcd, a default value is used.
+* cas.authn.pm.reset.expiration - defines the validity period of the password reset link. The value
+  is specified using the `java.time.Duration` syntax.
+* cas.authn.pm.reset.security-questions-enabled - with `false`, indicates that no
+  security questions must be answered in order to reset the password.
 
-### Deactivating the password reset function
+### Disabling the Password Reset Function
 
-It is possible to deactivate the password reset function by setting a corresponding etcd entry. To disable the password
-reset function, the value `password_management/enable_password_reset_via_email` must be set to `false`.
+It is possible to disable the password reset function by setting a corresponding etcd entry.
+To disable the password reset function, the
+value `password_management/enable_password_reset_via_email` must be set to `false`.
 
-Instead of the link `reset password`, the button `forgotten password` is displayed instead - provided that in the etcd a
-value for the entry `forgot_password_text` is stored. If a user clicks on the `forgot password` button, the text stored
-under `forgot_password_text` is displayed.
+Instead of the `Reset password` link, the `Forgot password` button is shown instead, provided
+that a value for the `forgot_password_text` entry is stored in the configuration. When a user clicks the `Forgot password` button,
+the text stored under `forgot_password_text` is displayed.
 
-## Configuration of password rules in etcd
+## Configuration of Password Rules
 
-In etcd, certain rules for passwords can be activated. Specifically, it can be configured whether a password must
-contain certain characters and what the minimum length of a password must be.
+Certain rules for passwords can be activated in the ``global-config`` config map. Specifically, it can be configured whether a password
+must contain certain characters and what minimum length a password must have.
 
-With the value `true` the respective rule can be activated for the following entries.
+The respective rule can be activated for the following entries with the value `true`.
 
-* `/config/_global/password-policy/must_contain_capital_letter` - specifies whether the password must contain at least
-  one capital letter.
-* `/config/_global/password-policy/must_contain_lower_case_letter` - specifies whether the password must contain at
-  least one lowercase letter.
-* `/config/_global/password-policy/must_contain_digit` - specifies if the password must contain at least one digit
-* `/config/_global/password-policy/must_contain_special_character` - indicates whether the password must contain at
-  least one
+* `password-policy/must_contain_capital_letter` - specifies whether the password must contain at least one
+  uppercase letter
+* `password-policy/must_contain_lower_case_letter` - specifies whether the password must contain at least one
+  lowercase letter
+* `password-policy/must_contain_digit` - specifies whether the password must contain at least one digit
+* `password-policy/must_contain_special_character` - specifies whether the password must contain at least one
+  special character
 
-For uppercase letters this includes the umlauts `Ä`, `Ö` and `Ü`, for lowercase letters it includes the umlauts `ä`, `ö`
-and `ü` and the `ß`. Special characters are all characters that are neither uppercase letters, lowercase letters nor
-numbers.
+For uppercase letters, the umlauts `Ä`, `Ö`, and `Ü` are included; for lowercase letters, the umlauts `ä`, `ö`, and `u`
+as well as `ß` are included. All characters that are neither uppercase letters, lowercase letters, nor digits count as special characters.
 
-The minimum length of the password can be configured via the entry `/config/_global/password-policy/min_length`. A
-numeric integer value must be entered here. If no value is entered or a non-integer value is set, the minimum length is
-1 .
+The minimum length of the password can be configured via the `password-policy/min_length` entry.
+A numeric integer value must be entered here. If no value is specified or a non-integer value is set, the
+minimum length is 1.
 
-The values are used by the CAS after a restart.
+The values are applied after a restart of CAS.
 
-It should be noted that these values cannot be configured via `cesapp edit-config cas`, as they are global values. These
-values are valid for the entire CES and are therefore not Dogu-specific.
+These values can be configured via `kubectl edit -n ecosystem Configmap global-config`.
