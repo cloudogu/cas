@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-7] - 2026-10-13
 ### Changed
 - Users that are created from federated logins are now regularly synced with the federated login provider to prevent
   them from using PATs after their deletion.
