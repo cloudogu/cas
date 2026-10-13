@@ -130,6 +130,16 @@ public class PATService {
     }
 
     /**
+     * Deletes all PATs for the given user
+     *
+     * @param userId owner identifier
+     */
+    public void deleteAllForUser(String userId) {
+        String validatedUserId = requiredText("userId", userId);
+        repository.deleteByUserId(validatedUserId);
+    }
+
+    /**
      * Resolves a complete Bearer token to a non-expired PAT.
      *
      * @param token complete cleartext PAT supplied through the Authorization header

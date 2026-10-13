@@ -90,6 +90,34 @@ class JdbcPATRepositoryTest {
     }
 
     @Test
+    void deletesAllOwnerPatsAndLeavesOtherOwnersUntouched() {
+        repository.insert(pat(UUID.randomUUID(), "owner", "first", NOW, null));
+        repository.insert(pat(UUID.randomUUID(), "owner", "second", NOW, null));
+        StoredPAT foreign = pat(UUID.randomUUID(), "other", "foreign", NOW, null);
+        repository.insert(foreign);
+
+        repository.deleteByUserId("owner");
+        repository.deleteByUserId("owner");
+        repository.deleteByUserId("missing");
+
+        assertTrue(repository.findAllByUserId("owner").isEmpty());
+        assertEquals(List.of(foreign.id()), repository.findAllByUserId("other").stream()
+                .map(metadata -> metadata.id()).toList());
+    }
+
+    @Test
+    void translatesStorageFailureDuringOwnerDeletion() {
+        var cause = new DataAccessResourceFailureException("offline");
+        when(failingTemplate.update(anyString(), any(Object[].class))).thenThrow(cause);
+        var failingRepository = new JdbcPATRepository(failingTemplate);
+
+        var failure = assertThrows(PATStorageUnavailableException.class,
+                () -> failingRepository.deleteByUserId("owner"));
+
+        assertSame(cause, failure.getCause());
+    }
+
+    @Test
     void reportsInvalidStoredMetadataAsIntegrityViolation() {
         jdbcTemplate.update("""
                 INSERT INTO personal_access_tokens

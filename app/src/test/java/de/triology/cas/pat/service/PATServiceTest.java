@@ -70,6 +70,32 @@ class PATServiceTest {
     }
 
     @Test
+    void deletesAllPatsUsingNormalizedOwnerId() {
+        service.deleteAllForUser(" user-1 ");
+
+        verify(repository).deleteByUserId("user-1");
+    }
+
+    @Test
+    void rejectsMissingOwnerBeforeDeletingPats() {
+        assertThrows(PATRequestException.class, () -> service.deleteAllForUser(null));
+        assertThrows(PATRequestException.class, () -> service.deleteAllForUser(" "));
+
+        org.mockito.Mockito.verifyNoInteractions(repository);
+    }
+
+    @Test
+    void propagatesStorageFailureDuringBulkDeletion() {
+        var expected = new PATStorageUnavailableException(new RuntimeException("offline"));
+        org.mockito.Mockito.doThrow(expected).when(repository).deleteByUserId("user");
+
+        var actual = assertThrows(PATStorageUnavailableException.class,
+                () -> service.deleteAllForUser("user"));
+
+        assertSame(expected, actual);
+    }
+
+    @Test
     void usesDefaultScopeAndAllowsNoExpiration() {
         when(generator.generate()).thenReturn(new GeneratedPAT("pat_secret", FINGERPRINT));
 
