@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-7] - 2026-10-13
 ### Changed
 Benutzer aus föderierten Logins werden nun regelmäßig mit dem jeweiligen Login-Anbieter abgeglichen. So wird verhindert, 
 dass sie nach ihrer Löschung weiterhin PATs verwenden.
