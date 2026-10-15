@@ -162,20 +162,65 @@ function renderCustomMessagesTpl() {
   fi
 }
 
+# Earlier versions stored the totp keys in plain text. Encrypt such a value in place without
+# changing it: the keys protect existing authenticator registrations and scratch codes, so a
+# new value would invalidate them. '||' keeps errexit from aborting on the expected error.
+function encryptPlainTextTOTPKey() {
+  local key="${1}"
+  local readExitCode=0
+  local readOutput
+  readOutput="$(doguctl config --encrypted "${key}" 2>&1)" || readExitCode=$?
+
+  if [[ ${readExitCode} -eq 0 ]]; then
+    # already encrypted
+    return
+  fi
+  # doguctl exits with 1 on every error. Only a decryption error proves plain text; a missing
+  # key is the normal case before the keys are generated below.
+  if [[ "${readOutput}" != *"error decrypting registry value"* ]]; then
+    return
+  fi
+
+  echo "Found plain-text ${key}! Encrypt it..."
+  local plainValue
+  plainValue="$(doguctl config "${key}")"
+  doguctl config --encrypted "${key}" "${plainValue}"
+}
+
+# Makes sure one totp key exists and is stored encrypted. Each key is checked on its own: a
+# single key as the marker for all three leaves the others missing forever once it is set, and
+# cas.properties cannot be rendered without them.
+function ensureTOTPKey() {
+  local key="${1}"
+
+  encryptPlainTextTOTPKey "${key}"
+
+  # A readable encrypted key is the marker that generation already happened. Using the key
+  # value itself as the marker would put the secret into a variable that does not look like one.
+  if doguctl config --encrypted "${key}" > /dev/null 2>&1; then
+    return
+  fi
+
+  echo "generating ${key}"
+  # cas wants a particular jar for jwk generation
+  # but we use jose instead, because the cas jar is from 2017 and has critical vulnerabilities
+  # jq is used for saving the generated key in the dogu config
+  local generatedKey
+  generatedKey="$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k')"
+  doguctl config --encrypted "${key}" "${generatedKey}"
+}
+
 # create totp signing and encrpytion codes
 # these codes are generated once
 function createTOTPEncryptionCodes() {
   ACTIVATE_TOTP=$(doguctl config --default "false" "experimental/totp/activate")
-  ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "totp/encryption_key")
-  if [[ "$ACTIVATE_TOTP" == "true" && "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
-    echo "generating totp encryption and signing keys"
-    # cas wants a particular jar for jwk generation
-    # but we use jose instead, because the cas jar is from 2017 and has critical vulnerabilities
-    # jq is used for saving the generated key in the dogu config
-    SIGNING_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/signing_key" "$SIGNING_KEY"
-    ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/encryption_key" "$ENCRYPTION_KEY"
-    SCRATCH_CODES_ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "totp/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
+  if [[ "$ACTIVATE_TOTP" != "true" ]]; then
+    return
   fi
+
+  ensureTOTPKey "totp/signing_key"
+  ensureTOTPKey "totp/encryption_key"
+  ensureTOTPKey "totp/scratch_codes/encryption_key"
 }
 
 # Sets general configuration option for the CAS server
