@@ -63,9 +63,10 @@ class PATAuthenticationHandlerTest {
         assertFalse(handler.supports((Credential) null));
     }
 
-    @Test
-    void resolvesPatOwnerAndAddsPatAttributesToLdapPrincipal() throws Throwable {
-        UsernamePasswordCredential credential = new UsernamePasswordCredential("owner", TOKEN);
+    @ParameterizedTest
+    @ValueSource(strings = {"owner", "OWNER", "Owner"})
+    void resolvesPatOwnerAndAddsPatAttributesToLdapPrincipal(String username) throws Throwable {
+        UsernamePasswordCredential credential = new UsernamePasswordCredential(username, TOKEN);
         PATMetadata metadata = metadata("owner", "/usermgt");
         Principal ldapPrincipal = org.mockito.Mockito.mock(Principal.class);
         Principal authenticatedPrincipal = org.mockito.Mockito.mock(Principal.class);
@@ -88,11 +89,12 @@ class PATAuthenticationHandlerTest {
         assertEquals(ldapAttributes.get("mail"), attributes.getValue().get("mail"));
         assertEquals(List.of("/usermgt"), attributes.getValue().get(PATService.PAT_SCOPE_ATTRIBUTE));
         assertEquals(List.of("true"), attributes.getValue().get(PATService.PAT_AUTH_ATTRIBUTE));
+        verify(ldapHandler).resolvePrincipal("owner");
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    @ValueSource(strings = {"request-user", "OWNER", " owner "})
+    @ValueSource(strings = {"request-user", " owner "})
     void rejectsMismatchedUsernameBeforeLdapLookup(String username) {
         UsernamePasswordCredential credential = new UsernamePasswordCredential(username, TOKEN);
         when(patService.resolve(TOKEN)).thenReturn(Optional.of(metadata("owner", "/usermgt")));

@@ -47,6 +47,14 @@ public interface PATRepository {
      */
     boolean deleteByUserIdAndId(String userId, UUID id);
 
+    /**
+     * Physically deletes all PATs belonging to a user.
+     * Deleting a user with no PATs is a successful no-op.
+     *
+     * @param userId owner identifier
+     */
+    void deleteByUserId(String userId);
+
     Optional<PATMetadata> validate(
             PATFingerprint fingerprint,
             Instant now);

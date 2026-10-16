@@ -2,6 +2,7 @@ package de.triology.cas.ldap;
 
 import org.junit.jupiter.api.Test;
 import org.ldaptive.*;
+import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.filter.AndFilter;
 import org.ldaptive.filter.EqualityFilter;
 
@@ -116,6 +117,132 @@ public class UserManagerTest {
 
         assertEquals("Failed executing LDAP query", e.getMessage());
         assertEquals("test error", e.getCause().getMessage());
+    }
+
+    @Test
+    public void getExternalUsersReadsAllPagedResults() throws Throwable {
+        LdapOperationFactory factory = mock(LdapOperationFactory.class);
+        PagedResultsClient pagedResultsClient = mock(PagedResultsClient.class);
+        when(factory.pagedResultsClient(500)).thenReturn(pagedResultsClient);
+
+        LdapEntry ldapEntry = new LdapEntry();
+        ldapEntry.setDn("uid=external,ou=People,dc=example,dc=com");
+        ldapEntry.addAttributes(new LdapAttribute("uid", "external"));
+        SearchResponse response = mock(SearchResponse.class);
+        when(response.isSuccess()).thenReturn(true);
+        when(response.getEntries()).thenReturn(List.of(ldapEntry));
+        when(pagedResultsClient.executeToCompletion(any(SearchRequest.class))).thenReturn(response);
+
+        UserManager userManager = new UserManager("ou=People,dc=example,dc=com", factory);
+        List<LdapUserReference> users = userManager.getExternalUsers("external", "TRUE", "uid",
+                System.nanoTime() + 60_000_000_000L);
+
+        assertEquals(List.of(new LdapUserReference("uid=external,ou=People,dc=example,dc=com", "external")), users);
+        verify(factory).pagedResultsClient(500);
+        verify(pagedResultsClient).executeToCompletion(argThat(request ->
+                request.getBaseDn().equals("ou=People,dc=example,dc=com")
+                        && request.getSearchScope() == SearchScope.SUBTREE
+                        && request.getReturnAttributes().length == 2));
+    }
+
+    @Test
+    public void getExternalUsersDoesNotReturnIncompletePagedResults() throws Throwable {
+        LdapOperationFactory factory = mock(LdapOperationFactory.class);
+        PagedResultsClient pagedResultsClient = mock(PagedResultsClient.class);
+        when(factory.pagedResultsClient(500)).thenReturn(pagedResultsClient);
+        when(pagedResultsClient.executeToCompletion(any(SearchRequest.class)))
+                .thenThrow(new LdapException("paged search failed"));
+
+        UserManager userManager = new UserManager("ou=People,dc=example,dc=com", factory);
+
+        CesLdapException exception = assertThrows(CesLdapException.class,
+                () -> userManager.getExternalUsers("external", "TRUE", "uid",
+                        System.nanoTime() + 60_000_000_000L));
+
+        assertEquals("Failed executing LDAP external-user query", exception.getMessage());
+        assertEquals("paged search failed", exception.getCause().getMessage());
+    }
+
+    @Test
+    void rejectsUnsuccessfulExternalUserSearch() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var search = mock(PagedResultsClient.class);
+        when(factory.pagedResultsClient(500)).thenReturn(search);
+        var response = mock(SearchResponse.class);
+        when(response.getDiagnosticMessage()).thenReturn("search denied");
+        when(search.executeToCompletion(any(SearchRequest.class))).thenReturn(response);
+
+        var failure = assertThrows(CesLdapException.class, () -> new UserManager("base", factory)
+                .getExternalUsers("external", "TRUE", "uid", System.nanoTime() + 60_000_000_000L));
+
+        assertEquals("search denied", failure.getMessage());
+    }
+
+    @Test
+    void rejectsExternalUsersWithoutIdentity() throws Exception {
+        for (boolean missingAttribute : List.of(true, false)) {
+            var factory = mock(LdapOperationFactory.class);
+            var search = mock(PagedResultsClient.class);
+            when(factory.pagedResultsClient(500)).thenReturn(search);
+            var response = mock(SearchResponse.class);
+            when(response.isSuccess()).thenReturn(true);
+            var entry = new LdapEntry();
+            entry.setDn("uid=unknown,ou=People");
+            if (!missingAttribute) {
+                entry.addAttributes(new LdapAttribute("uid"));
+            }
+            when(response.getEntries()).thenReturn(List.of(entry));
+            when(search.executeToCompletion(any(SearchRequest.class))).thenReturn(response);
+
+            var failure = assertThrows(CesLdapException.class, () -> new UserManager("base", factory)
+                    .getExternalUsers("external", "TRUE", "uid", System.nanoTime() + 60_000_000_000L));
+
+            assertEquals("LDAP entry has no identity attribute uid: uid=unknown,ou=People", failure.getMessage());
+        }
+    }
+
+    @Test
+    void deletesUserByExactDn() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var response = mock(DeleteResponse.class);
+        when(response.isSuccess()).thenReturn(true);
+        when(deletion.execute(any(DeleteRequest.class))).thenReturn(response);
+
+        new UserManager("base", factory).deleteUser("uid=external,ou=People");
+
+        verify(deletion).execute(argThat(request -> request.getDn().equals("uid=external,ou=People")));
+    }
+
+    @Test
+    void propagatesUnsuccessfulLdapDeletion() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var response = mock(DeleteResponse.class);
+        when(response.getDiagnosticMessage()).thenReturn("delete denied");
+        when(deletion.execute(any(DeleteRequest.class))).thenReturn(response);
+
+        var failure = assertThrows(CesLdapException.class,
+                () -> new UserManager("base", factory).deleteUser("uid=external,ou=People"));
+
+        assertEquals("delete denied", failure.getMessage());
+    }
+
+    @Test
+    void wrapsLdapDeletionExceptionWithOriginalCause() throws Exception {
+        var factory = mock(LdapOperationFactory.class);
+        var deletion = mock(DeleteOperation.class);
+        when(factory.deleteOperation()).thenReturn(deletion);
+        var cause = new LdapException("connection closed");
+        when(deletion.execute(any(DeleteRequest.class))).thenThrow(cause);
+
+        var failure = assertThrows(CesLdapException.class,
+                () -> new UserManager("base", factory).deleteUser("uid=external,ou=People"));
+
+        assertEquals("Failed deleting LDAP user uid=external,ou=People", failure.getMessage());
+        assertSame(cause, failure.getCause());
     }
 
     @Test

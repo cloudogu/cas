@@ -10,6 +10,23 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ### Fixed
 - [#390] Fehlt einem CAS mit aktivierter Zwei-Faktor-Anmeldung einer der Schlüssel, wird er beim Start ergänzt.
+
+## [v8.0.2-7] - 2026-10-13
+### Changed
+Benutzer aus föderierten Logins werden nun regelmäßig mit dem jeweiligen Login-Anbieter abgeglichen. So wird verhindert, 
+dass sie nach ihrer Löschung weiterhin PATs verwenden.
+- API zum Validieren von persönlichen Zugriffsschlüsseln ohne eigentlich CAS Login
+
+## [v8.0.2-6] - 2026-10-09
+### Added
+- API zum Validieren von persönlichen Zugriffsschlüsseln ohne eigentlichen CAS Login
+
+## [v8.0.2-5] - 2026-10-05
+### Changed
+- CAS auf v8.0.2 aktualisiert
+
+## [v8.0.2-4] - 2026-09-28
+### Fixed
 - Benutzer können generierte PATs nicht mehr zur Anmeldung in der UI benutzen.
 
 ## [v8.0.2-3] - 2026-09-24

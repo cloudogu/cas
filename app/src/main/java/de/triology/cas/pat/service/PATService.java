@@ -130,6 +130,16 @@ public class PATService {
     }
 
     /**
+     * Deletes all PATs for the given user
+     *
+     * @param userId owner identifier
+     */
+    public void deleteAllForUser(String userId) {
+        String validatedUserId = requiredText("userId", userId);
+        repository.deleteByUserId(validatedUserId);
+    }
+
+    /**
      * Resolves a complete Bearer token to a non-expired PAT.
      *
      * @param token complete cleartext PAT supplied through the Authorization header
@@ -137,12 +147,22 @@ public class PATService {
      */
     public Optional<PATMetadata> resolve(String token) {
         if (token == null) {
+            AUDIT.warn("event=pat_resolve result=unauthorized reason=missing_token");
             return Optional.empty();
         }
 
         Instant now = clock.instant();
-        return repository.validate(generator.fingerprint(token), now)
-                .filter(metadata -> metadata.expiresAt() == null || metadata.expiresAt().isAfter(now));
+        var resolved = repository.validate(generator.fingerprint(token), now);
+        if (resolved.isEmpty()) {
+            AUDIT.warn("event=pat_resolve result=unauthorized reason=unknown_token");
+            return Optional.empty();
+        }
+        var metadata = resolved.get();
+        if (metadata.expiresAt() != null && !metadata.expiresAt().isAfter(now)) {
+            AUDIT.warn("event=pat_resolve result=unauthorized reason=expired_token patId={} expiresAt={}", metadata.id(), metadata.expiresAt());
+            return Optional.empty();
+        }
+        return resolved;
     }
 
     /**
