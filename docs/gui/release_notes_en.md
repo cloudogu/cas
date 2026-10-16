@@ -5,6 +5,11 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Security
+- [#390] The keys that secure two-factor authentication are no longer kept in plain text in the dogu configuration. Existing instances convert them on their next start; already registered authenticator apps and scratch codes stay valid.
+
+### Fixed
+- [#390] If a CAS with two-factor authentication enabled is missing one of its keys, it is now generated at start.
 
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
