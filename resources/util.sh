@@ -175,10 +175,12 @@ function encryptPlainTextTOTPKey() {
     # already encrypted
     return
   fi
-  # doguctl exits with 1 on every error. Only a decryption error proves plain text; a missing
-  # key is the normal case before the keys are generated below.
-  if [[ "${readOutput}" != *"error decrypting registry value"* ]]; then
-    return
+  # doguctl exits with 2 only if the value cannot be decrypted.
+  # Only a decryption error proves plain text; a missing key
+  # is the normal case before the keys are generated below.
+  if [[ ${readExitCode} -ne 2 ]]; then
+    echo "ERROR: Could not read ${key}: ${readOutput}"
+    exit 1
   fi
 
   echo "Found plain-text ${key}! Encrypt it..."
