@@ -176,17 +176,14 @@ function encryptPlainTextTOTPKey() {
     return
   fi
   # doguctl exits with 2 only if the value cannot be decrypted.
-  # Only a decryption error proves plain text; a missing key
-  # is the normal case before the keys are generated below.
-  if [[ ${readExitCode} -ne 2 ]]; then
-    echo "ERROR: Could not read ${key}: ${readOutput}"
-    exit 1
+  # Only a decryption error proves plain text
+  if [[ ${readExitCode} -eq 2 ]]; then
+    echo "Found plain-text ${key}! Encrypting it..."
+    local plainValue
+    plainValue="$(doguctl config "${key}")"
+    doguctl config --encrypted "${key}" "${plainValue}"
   fi
 
-  echo "Found plain-text ${key}! Encrypt it..."
-  local plainValue
-  plainValue="$(doguctl config "${key}")"
-  doguctl config --encrypted "${key}" "${plainValue}"
 }
 
 # Makes sure one totp key exists and is stored encrypted. Each key is checked on its own: a
