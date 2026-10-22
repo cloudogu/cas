@@ -12,7 +12,7 @@ all employees will need an authenticator app such as Google Authenticator or Mic
 The corresponding Dogu configuration key must be set to `true`. 
 
 ```shell
-etcdctl set config/cas/experimental/totp/activate "true"
+etcdctl set config/cas/2fa/activate "true"
 ```
 
 Restart the Dogu to activate the configuration.
@@ -28,7 +28,7 @@ Dogu configuration key to `false`. Deactivation means that the internal encrypti
 will not be regenerated.
 
 ```shell
-etcdctl set config/cas/experimental/totp/activate "false"
+etcdctl set config/cas/2fa/activate "false"
 ```
 
 Restart the Dogu to activate the configuration.

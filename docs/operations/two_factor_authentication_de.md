@@ -12,7 +12,7 @@ alle Mitarbeitenden eine Authenticator-App wie z.B. Google Authenticator oder Mi
 Der zugehörige Dogu-Konfigurationsschlüssel muss auf `true` gesetzt werden.
 
 ```shell
-etcdctl set config/cas/experimental/totp/activate "true"
+etcdctl set config/cas/2fa/activate "true"
 ```
 
 Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
@@ -28,7 +28,7 @@ Dogu-Konfigurationsschlüssel auf `false` gesetzt werden. Durch eine Deaktivieru
 nicht neu generiert.
 
 ```shell
-etcdctl set config/cas/experimental/totp/activate "false"
+etcdctl set config/cas/2fa/activate "false"
 ```
 
 Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
