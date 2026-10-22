@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+### Changed
+- Two-factor authentication (2FA) using an authenticator app is now available as a fully supported feature.
+
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
 - Users that are created from federated logins are now regularly synced with the federated login provider to prevent

@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+### Changed
+- Die Zwei-Faktor-Authentifizierung (2FA) mit einer Authenticator-App steht jetzt als vollständig unterstützte Funktion zur Verfügung.
+
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
 Benutzer aus föderierten Logins werden nun regelmäßig mit dem jeweiligen Login-Anbieter abgeglichen. So wird verhindert, 
