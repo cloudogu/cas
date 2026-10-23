@@ -3,10 +3,6 @@ global:
     - name: "ces-container-registries"
 networkPolicies:
   enabled: true
-  gateway:
-    enabled: true
-    matchLabels:
-      k8s.cloudogu.com/component.name: k8s-ces-gateway
   authRegistrationOperator:
     enabled: true
     matchLabels:
@@ -80,7 +76,7 @@ containers:
     image:
       registry: registry.cloudogu.com
       repository: official/cas
-      tag: 8.0.2-7
+      tag: 8.0.2-8
     imagePullPolicy: IfNotPresent
     securityContext:
       capabilities:

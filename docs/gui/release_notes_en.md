@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.2-8] - 2026-10-23
+- Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
+
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
 - Users that are created from federated logins are now regularly synced with the federated login provider to prevent

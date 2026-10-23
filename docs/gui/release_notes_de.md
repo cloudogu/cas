@@ -6,6 +6,9 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-8] - 2026-10-23
+- Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
+
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
 Benutzer aus föderierten Logins werden nun regelmäßig mit dem jeweiligen Login-Anbieter abgeglichen. So wird verhindert, 
