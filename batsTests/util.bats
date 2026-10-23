@@ -57,3 +57,49 @@ teardown() {
   assert_line "ERROR: The doguctl config key certificate/additional/toc must not contain duplicates. Duplicate entry: alpha"
   assert_equal "$(mock_get_call_num "${doguctl}")" "1"
 }
+
+@test "encryptPlainTextTOTPKey should re-encrypt a plain text key with its value unchanged" {
+  source /workspace/resources/util.sh
+
+  mock_set_output "${doguctl}" "error decrypting registry value" 1
+  mock_set_status "${doguctl}" 1 1
+  mock_set_output "${doguctl}" "plain-text-key" 2
+  mock_set_status "${doguctl}" 0 3
+
+  run encryptPlainTextTOTPKey "totp/signing_key"
+
+  assert_success
+  assert_equal "$(mock_get_call_args "${doguctl}" "2")" "config totp/signing_key"
+  assert_equal "$(mock_get_call_args "${doguctl}" "3")" "config --encrypted totp/signing_key plain-text-key"
+  assert_line "Found plain-text totp/signing_key! Encrypt it..."
+}
+
+@test "ensureTOTPKey should generate a key that is missing" {
+  source /workspace/resources/util.sh
+
+  mock_set_output "${doguctl}" "no value provided for key" 1
+  mock_set_status "${doguctl}" 1 1
+  mock_set_status "${doguctl}" 1 2
+
+  run ensureTOTPKey "totp/scratch_codes/encryption_key"
+
+  assert_success
+  assert_line "generating totp/scratch_codes/encryption_key"
+  # the third call writes the generated key back, encrypted
+  assert_equal "$(mock_get_call_num "${doguctl}")" "3"
+}
+
+@test "ensureTOTPKey should keep an existing encrypted key" {
+  source /workspace/resources/util.sh
+
+  # call 1: migration check, call 2: generation marker -- both report a readable key
+  mock_set_status "${doguctl}" 0 1
+  mock_set_status "${doguctl}" 0 2
+
+  run ensureTOTPKey "totp/encryption_key"
+
+  assert_success
+  assert_equal "$(mock_get_call_num "${doguctl}")" "2"
+  # no output at all proves that neither the migration nor the generation branch ran
+  assert_output ""
+}

@@ -5,6 +5,11 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Security
+- [#390] Die Schlüssel, mit denen die Zwei-Faktor-Anmeldung abgesichert wird, liegen nicht mehr im Klartext in der Dogu-Konfiguration. Bestehende Instanzen stellen sie beim nächsten Start selbsttätig um; bereits eingerichtete Authenticator-Apps und Wiederherstellungscodes bleiben gültig.
+
+### Fixed
+- [#390] Fehlt einem CAS mit aktivierter Zwei-Faktor-Anmeldung einer der Schlüssel, wird er beim Start ergänzt.
 
 ## [v8.0.2-8] - 2026-10-23
 - Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.

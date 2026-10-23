@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Security
+- [#390] The totp keys are now stored encrypted in the dogu config. Existing plain text values are
+  encrypted in place at dogu start, with the value unchanged.
+
+### Fixed
+- [#390] Each totp key is now checked on its own.
 
 ## [v8.0.2-8] - 2026-10-23
 ### Removed
