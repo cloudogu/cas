@@ -7,7 +7,7 @@ set -o pipefail
 update_versions_modify_files() {
   newReleaseVersion="${1}"
   valuesYAML=k8s/helm/values.yaml
-  componentPatchTplYAML=k8s/helm/component-patch-tpl.yaml
+  componentPatchTplYAML=k8s/helm/mirror-patch-tpl.yaml
 
   ./.bin/yq -i ".containers.cas.image.tag = \"${newReleaseVersion}\"" "${valuesYAML}"
   ./.bin/yq -i ".values.images.cas |= sub(\":(([0-9]+)\.([0-9]+)\.([0-9]+)((?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))|(?:\+[0-9A-Za-z-]+))?)\", \":${newReleaseVersion}\")" "${componentPatchTplYAML}"
@@ -23,7 +23,7 @@ update_versions_modify_files() {
 
 update_versions_stage_modified_files() {
   valuesYAML=k8s/helm/values.yaml
-  componentPatchTplYAML=k8s/helm/component-patch-tpl.yaml
+  componentPatchTplYAML=k8s/helm/mirror-patch-tpl.yaml
 
   git add "${valuesYAML}" "${componentPatchTplYAML}"
 }

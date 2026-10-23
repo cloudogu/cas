@@ -3,10 +3,6 @@ global:
     - name: "ces-container-registries"
 networkPolicies:
   enabled: true
-  gateway:
-    enabled: true
-    matchLabels:
-      k8s.cloudogu.com/component.name: k8s-ces-gateway
   authRegistrationOperator:
     enabled: true
     matchLabels:
