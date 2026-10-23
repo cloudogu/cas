@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Removed
+- [#395] Networkpolicies for ingress traffic from gateway because the exposition api generates it.
 
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
