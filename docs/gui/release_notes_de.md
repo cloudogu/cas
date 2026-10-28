@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-9] - 2026-10-28
 ### Security
 - [#390] Die Schlüssel, mit denen die Zwei-Faktor-Anmeldung abgesichert wird, werden nun verschlüsselt in der Dogu-Konfiguration abgelegt.
 
