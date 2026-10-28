@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.2-9] - 2026-10-28
+### Security
+- [#390] The keys used to secure two-factor authentication are now stored encrypted in the Dogu configuration.
+
 ## [v8.0.2-8] - 2026-10-23
 - Only technical changes were made in preparation for integrating CAS into the LOP-IdP component.
 

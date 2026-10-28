@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-9] - 2026-10-28
+### Security
+- [#390] Die Schlüssel, mit denen die Zwei-Faktor-Anmeldung abgesichert wird, werden nun verschlüsselt in der Dogu-Konfiguration abgelegt.
+
 ## [v8.0.2-8] - 2026-10-23
 - Es wurden nur technische Änderungen durchgeführt in Vorbereitung für die Integration des CAS in die LOP-IdP-Komponente.
 
