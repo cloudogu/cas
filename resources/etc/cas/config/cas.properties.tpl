@@ -384,15 +384,15 @@ cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
-cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
-cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
+cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.GetAndDecrypt "totp/encryption_key" }}
+cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.GetAndDecrypt "totp/signing_key" }}
 
 ### gauth ###
 cas.authn.mfa.gauth.core.issuer=CASIssuer
 cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
-cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.Get "totp/scratch_codes/encryption_key" }}
-cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.Get "totp/encryption_key" }}
-cas.authn.mfa.gauth.crypto.signing.key={{ .Config.Get "totp/signing_key" }}
+cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.GetAndDecrypt "totp/scratch_codes/encryption_key" }}
+cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.GetAndDecrypt "totp/encryption_key" }}
+cas.authn.mfa.gauth.crypto.signing.key={{ .Config.GetAndDecrypt "totp/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
 cas.authn.mfa.gauth.bypass.principal-attribute-name=patAuthentication
 cas.authn.mfa.gauth.bypass.principal-attribute-value=true
