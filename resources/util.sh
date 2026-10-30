@@ -172,9 +172,9 @@ function createTOTPEncryptionCodes() {
     # cas wants a particular jar for jwk generation
     # but we use jose instead, because the cas jar is from 2017 and has critical vulnerabilities
     # jq is used for saving the generated key in the dogu config
-    SIGNING_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "2fa/signing_key" "$SIGNING_KEY"
-    ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "2fa/encryption_key" "$ENCRYPTION_KEY"
-    SCRATCH_CODES_ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config "2fa/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
+    SIGNING_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config --encrypted "totp/signing_key" "$SIGNING_KEY"
+    ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config --encrypted "totp/encryption_key" "$ENCRYPTION_KEY"
+    SCRATCH_CODES_ENCRYPTION_KEY=$(jose jwk gen -i '{"kty":"oct","bytes":64}' | jq -r '.k'); doguctl config --encrypted "totp/scratch_codes/encryption_key" "$SCRATCH_CODES_ENCRYPTION_KEY"
   fi
 }
 

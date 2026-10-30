@@ -6,10 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Changed
 - Promote two-factor authentication (2FA) from experimental to a fully supported feature.
   - Move all 2FA configuration keys to the `2fa/` namespace
+  - 
+## [v8.0.2-9] - 2026-10-28
+### Security
+- [#390] The totp keys are now stored encrypted in the dogu config
+
+## [v8.0.2-8] - 2026-10-23
+### Removed
+- [#395] Networkpolicies for ingress traffic from gateway because the exposition api generates it.
 
 ## [v8.0.2-7] - 2026-10-13
 ### Changed
