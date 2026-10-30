@@ -6,6 +6,9 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+### Changed
+- Two-factor authentication (2FA) using an authenticator app is now available as a fully supported feature.
+
 ## [v8.0.2-9] - 2026-10-28
 ### Security
 - [#390] The keys used to secure two-factor authentication are now stored encrypted in the Dogu configuration.

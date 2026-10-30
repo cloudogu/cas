@@ -378,21 +378,21 @@ cas.service-registry.schedule.start-delay=PT1M
 # always enable password reset
 cas.authn.pm.reset.multifactor-authentication-enabled=false
 
-{{ if eq (.Config.Get "experimental/totp/activate") "true"}}
+{{ if eq (.Config.Get "2fa/activate") "true"}}
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
 cas.authn.mfa.core.provider-selection.cookie.enabled=false
 
-cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.GetAndDecrypt "totp/encryption_key" }}
-cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.GetAndDecrypt "totp/signing_key" }}
+cas.authn.mfa.core.provider-selection.cookie.crypto.encryption.key={{ .Config.GetAndDecrypt "2fa/encryption_key" }}
+cas.authn.mfa.core.provider-selection.cookie.crypto.signing.key={{ .Config.GetAndDecrypt "2fa/signing_key" }}
 
 ### gauth ###
 cas.authn.mfa.gauth.core.issuer=CASIssuer
 cas.authn.mfa.gauth.json.location=file:/etc/cas/gauth/gauths.json
-cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.GetAndDecrypt "totp/scratch_codes/encryption_key" }}
-cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.GetAndDecrypt "totp/encryption_key" }}
-cas.authn.mfa.gauth.crypto.signing.key={{ .Config.GetAndDecrypt "totp/signing_key" }}
+cas.authn.mfa.gauth.core.scratch-codes.encryption.key={{ .Config.GetAndDecrypt "2fa/scratch_codes/encryption_key" }}
+cas.authn.mfa.gauth.crypto.encryption.key={{ .Config.GetAndDecrypt "2fa/encryption_key" }}
+cas.authn.mfa.gauth.crypto.signing.key={{ .Config.GetAndDecrypt "2fa/signing_key" }}
 cas.authn.mfa.gauth.core.label={{ .Config.Get "normalized_fqdn" }}
 cas.authn.mfa.gauth.bypass.principal-attribute-name=patAuthentication
 cas.authn.mfa.gauth.bypass.principal-attribute-value=true
@@ -403,11 +403,11 @@ cas.monitor.endpoints.endpoint.gauthCredentialRepository.access=AUTHENTICATED
 management.endpoint.gauthCredentialRepository.enabled=true
 {{ end }}
 
-{{ if and (.Config.Exists "experimental/totp/api_user_name") (.Config.Exists "experimental/totp/api_user_password") }}
-{{ $apiUser := .Config.GetAndDecrypt "experimental/totp/api_user_name" }}
+{{ if and (.Config.Exists "2fa/api_user_name") (.Config.Exists "2fa/api_user_password") }}
+{{ $apiUser := .Config.GetAndDecrypt "2fa/api_user_name" }}
 {{ if ne $apiUser "" }}
 spring.security.user.name={{ $apiUser }}
-spring.security.user.password={{ .Config.GetAndDecrypt "experimental/totp/api_user_password" }}
+spring.security.user.password={{ .Config.GetAndDecrypt "2fa/api_user_password" }}
 {{ end }}
 {{ end }}
 
