@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.2-10] - 2026-11-02
+### Changed
+- Die Zwei-Faktor-Authentifizierung (2FA) mit einer Authenticator-App steht jetzt als vollständig unterstützte Funktion zur Verfügung.
+
 ## [v8.0.2-9] - 2026-10-28
 ### Security
 - [#390] Die Schlüssel, mit denen die Zwei-Faktor-Anmeldung abgesichert wird, werden nun verschlüsselt in der Dogu-Konfiguration abgelegt.
