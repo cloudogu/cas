@@ -162,9 +162,9 @@ Dieses Beispiel liest das eigene Benutzerkonto über `GET /usermgt/api/account`.
 
 ### 1. Voraussetzungen
 
-CAS benötigt `pat/enabled=true`, einen erreichbaren LDAP-Benutzer und die technischen API-Zugangsdaten. Im Dogu-Template stammen diese aus den verschlüsselten Schlüsseln `experimental/totp/api_user_name` und `experimental/totp/api_user_password`, auch wenn TOTP deaktiviert ist. Nach Änderungen CAS neu starten. Usermgt muss erreichbar und seine konfigurierte CAS-Service-URL in CAS zugelassen sein; deren Pfad muss vom Scope `/usermgt` abgedeckt werden.
+CAS benötigt `pat/enabled=true`, einen erreichbaren LDAP-Benutzer und die technischen API-Zugangsdaten. Im Dogu-Template stammen diese aus den verschlüsselten Schlüsseln `2fa/api_user_name` und `2fa/api_user_password`, auch wenn TOTP deaktiviert ist. Nach Änderungen CAS neu starten. Usermgt muss erreichbar und seine konfigurierte CAS-Service-URL in CAS zugelassen sein; deren Pfad muss vom Scope `/usermgt` abgedeckt werden.
 
-Ohne 2FA gilt `experimental/totp/activate=false`. Mit 2FA gilt `experimental/totp/activate=true`; das CAS-Template setzt dann den GAuth-Bypass auf das Principal-Attribut `patAuthentication` mit Wert `true`. Die PAT-Anmeldung benötigt dadurch keinen TOTP-Code. Ein frischer regulärer Browser-Login mit Benutzerpasswort verlangt weiterhin TOTP. Die API-Credentials in Usermgt selbst sind für die Verwaltung von PATs über die Oberfläche nötig, nicht für diesen Basic-Auth-Aufruf mit einem bereits erstellten PAT.
+Ohne 2FA gilt `2fa/activate=false`. Mit 2FA gilt `2fa/activate=true`; das CAS-Template setzt dann den GAuth-Bypass auf das Principal-Attribut `patAuthentication` mit Wert `true`. Die PAT-Anmeldung benötigt dadurch keinen TOTP-Code. Ein frischer regulärer Browser-Login mit Benutzerpasswort verlangt weiterhin TOTP. Die API-Credentials in Usermgt selbst sind für die Verwaltung von PATs über die Oberfläche nötig, nicht für diesen Basic-Auth-Aufruf mit einem bereits erstellten PAT.
 
 ### 2. Token mit dem Verwaltungsskript erstellen
 

@@ -474,20 +474,20 @@
       "Optional": true
     },
     {
-      "Name": "experimental/totp/activate",
-      "Description": "Warning: Experimental Feature. Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. This feature currently prohibits api access with basic auth to all dogus. Set this value to 'true' to enable.",
+      "Name": "2fa/activate",
+      "Description": "Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. Set this value to 'true' to enable.",
       "Default": "false",
       "Optional": true
     },
     {
-      "Name": "experimental/totp/api_user_name",
-      "Description": "Warning: Experimental Feature. Username for totp administration in encrypted form. Supply the same username to the usermgt dogu.",
+      "Name": "2fa/api_user_name",
+      "Description": "Username for totp administration in encrypted form. Supply the same username to the usermgt dogu.",
       "Optional": true,
       "Encrypted": true
     },
     {
-      "Name": "experimental/totp/api_user_password",
-      "Description": "Warning: Experimental Feature. API password for totp administration in encrypted form. Supply the same password to the usermgt dogu.",
+      "Name": "2fa/api_user_password",
+      "Description": "API password for totp administration in encrypted form. Supply the same password to the usermgt dogu.",
       "Optional": true,
       "Encrypted": true
     },

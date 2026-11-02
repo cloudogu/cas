@@ -11,14 +11,14 @@ You need a CAS build with PAT support, a working LDAP connection to resolve the 
 | Dogu / key | PAT without 2FA | PAT with 2FA | Purpose |
 | --- | --- | --- | --- |
 | CAS: `pat/enabled` | `true` | `true` | Enables management, the PAT authentication handler, and scope validation. Default: `false`. |
-| CAS: `experimental/totp/activate` | `false` | `true` | Enables the global TOTP provider `mfa-gauth`. Default: `false`. |
-| CAS: `experimental/totp/api_user_name` | Required | Required | Technical API username stored in encrypted form. |
-| CAS: `experimental/totp/api_user_password` | Required | Required | Technical API password stored in encrypted form. |
+| CAS: `2fa/activate` | `false` | `true` | Enables the global TOTP provider `mfa-gauth`. Default: `false`. |
+| CAS: `2fa/api_user_name` | Required | Required | Technical API username stored in encrypted form. |
+| CAS: `2fa/api_user_password` | Required | Required | Technical API password stored in encrypted form. |
 | CAS: `pat/database_url` | Optional | Optional | Default: `jdbc:sqlite:/var/ces/config/pats.db`. SQLite is the currently implemented provider. |
-| Usermgt: `experimental/totp/api_user_name` | Required for Usermgt | Required for Usermgt | Must match the value in CAS. Store in encrypted form. |
-| Usermgt: `experimental/totp/api_user_password` | Required for Usermgt | Required for Usermgt | Must match the value in CAS. Store in encrypted form. |
+| Usermgt: `2fa/api_user_name` | Required for Usermgt | Required for Usermgt | Must match the value in CAS. Store in encrypted form. |
+| Usermgt: `2fa/api_user_password` | Required for Usermgt | Required for Usermgt | Must match the value in CAS. Store in encrypted form. |
 
-When using the Dogu template, the API credentials are **required even without 2FA**, although their keys are located under `experimental/totp/`. The CAS template uses them to set `spring.security.user.name` and `spring.security.user.password`, independently of whether TOTP is enabled. If explicit credentials are missing while the PAT service is enabled, CAS fails to start. An automatically generated Spring Security password is not sufficient.
+When using the Dogu template, the API credentials are **required even without 2FA**, although their keys are located under `2fa/`. The CAS template uses them to set `spring.security.user.name` and `spring.security.user.password`, independently of whether TOTP is enabled. If explicit credentials are missing while the PAT service is enabled, CAS fails to start. An automatically generated Spring Security password is not sufficient.
 
 Usermgt does not currently require its own `pat/enabled` flag. Its startup script passes the credentials to the JVM system properties `cas.mfa.user` and `cas.mfa.password`, independently of whether TOTP is enabled. `PATResource` uses these properties for backend requests to CAS.
 
@@ -28,19 +28,19 @@ The following commands apply to a Docker development environment with containers
 
 ```bash
 docker exec cas doguctl config pat/enabled true
-docker exec cas doguctl config experimental/totp/activate false
-docker exec cas doguctl config -e experimental/totp/api_user_name '<API-USER>'
-docker exec cas doguctl config -e experimental/totp/api_user_password '<API-PASSWORD>'
+docker exec cas doguctl config 2fa/activate false
+docker exec cas doguctl config -e 2fa/api_user_name '<API-USER>'
+docker exec cas doguctl config -e 2fa/api_user_password '<API-PASSWORD>'
 
 # Only required for management through Usermgt:
-docker exec usermgt doguctl config -e experimental/totp/api_user_name '<API-USER>'
-docker exec usermgt doguctl config -e experimental/totp/api_user_password '<API-PASSWORD>'
+docker exec usermgt doguctl config -e 2fa/api_user_name '<API-USER>'
+docker exec usermgt doguctl config -e 2fa/api_user_password '<API-PASSWORD>'
 
 cesapp restart cas
 cesapp restart usermgt
 ```
 
-For operation with 2FA, set `experimental/totp/activate` in CAS to `true` instead and restart CAS. At startup, CAS generates the TOTP keys under `totp/encryption_key`, `totp/signing_key`, and `totp/scratch_codes/encryption_key` if TOTP is enabled and `totp/encryption_key` has not yet been set. If other keys are missing while `totp/encryption_key` already exists, the startup script does not automatically supply them. TOTP registrations are stored in `/etc/cas/gauth/gauths.json`. Interactive login requires a configured authenticator app; see [Two-factor authentication](../operations/two_factor_authentication_en.md).
+For operation with 2FA, set `2fa/activate` in CAS to `true` instead and restart CAS. At startup, CAS generates the TOTP keys under `2fa/encryption_key`, `2fa/signing_key`, and `2fa/scratch_codes/encryption_key` if TOTP is enabled and `2fa/encryption_key` has not yet been set. If other keys are missing while `2fa/encryption_key` already exists, the startup script does not automatically supply them. TOTP registrations are stored in `/etc/cas/gauth/gauths.json`. Interactive login requires a configured authenticator app; see [Two-factor authentication](../operations/two_factor_authentication_en.md).
 
 In the CAS Helm chart, the corresponding PAT values are `configuration.normal.pat.enabled` and `configuration.normal.pat.database_url`. Supply credentials through the sensitive configuration of the respective deployment environment. After configuration changes, restart the affected Dogus so that templates or JVM properties are updated.
 
@@ -169,9 +169,9 @@ This example reads the current user's account through `GET /usermgt/api/account`
 
 ### 1. Prerequisites
 
-CAS requires `pat/enabled=true`, a reachable LDAP user, and technical API credentials. In the Dogu template, these come from the encrypted keys `experimental/totp/api_user_name` and `experimental/totp/api_user_password`, even when TOTP is disabled. Restart CAS after changes. Usermgt must be reachable and its configured CAS service URL must be allowed in CAS; its path must be covered by the scope `/usermgt`.
+CAS requires `pat/enabled=true`, a reachable LDAP user, and technical API credentials. In the Dogu template, these come from the encrypted keys `2fa/api_user_name` and `2fa/api_user_password`, even when TOTP is disabled. Restart CAS after changes. Usermgt must be reachable and its configured CAS service URL must be allowed in CAS; its path must be covered by the scope `/usermgt`.
 
-Without 2FA, set `experimental/totp/activate=false`. With 2FA, set `experimental/totp/activate=true`; the CAS template then configures the GAuth bypass for the principal attribute `patAuthentication` with the value `true`. PAT login therefore requires no TOTP code. A fresh regular browser login with the user's password still requires TOTP. API credentials in Usermgt itself are needed for managing PATs through the interface, not for this Basic Auth request using an existing PAT.
+Without 2FA, set `2fa/activate=false`. With 2FA, set `2fa/activate=true`; the CAS template then configures the GAuth bypass for the principal attribute `patAuthentication` with the value `true`. PAT login therefore requires no TOTP code. A fresh regular browser login with the user's password still requires TOTP. API credentials in Usermgt itself are needed for managing PATs through the interface, not for this Basic Auth request using an existing PAT.
 
 ### 2. Create a token using the management script
 
