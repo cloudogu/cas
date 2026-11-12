@@ -8,6 +8,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ### Fixed
 - Fixed translations in two factor authentication ui workflow
 
+### Added
+- added documentation for two factor authentication
+
+
 ## [v8.0.2-10] - 2026-11-02
 ### Changed
 - Two-factor authentication (2FA) using an authenticator app is now available as a fully supported feature.
