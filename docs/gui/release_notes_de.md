@@ -6,7 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 ### Fixed
-- [#397] Englische Übersetzungsprobleme im Zwei-Faktor-Authentifizierungs Workflow korrigiert
+- Englische Übersetzungsprobleme im Zwei-Faktor-Authentifizierungs Workflow korrigiert
+
+### Added
+- Dokumentation für Zwei-Faktor-Authentifizierung hinzugefügt
 
 ## [v8.0.2-10] - 2026-11-02
 ### Changed
