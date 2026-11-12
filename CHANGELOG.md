@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v8.0.2-11] - 2026-11-12
 ### Fixed
 - [#397] fixed translations in two factor authentication ui workflow
+
+### Added
+- [#397] added documentation for two-factor authentication
 
 ## [v8.0.2-10] - 2026-11-02
 ### Changed

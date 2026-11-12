@@ -5,11 +5,13 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.2-11] - 2026-11-12
 ### Fixed
-- Fixed translations in two factor authentication ui workflow
+- Fixed translations in two-factor authentication ui workflow
 
 ### Added
-- added documentation for two factor authentication
+- added documentation for two-factor authentication
 
 
 ## [v8.0.2-10] - 2026-11-02
