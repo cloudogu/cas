@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-    <title>Eingabe zweiter Faktor</title>
+    <title th:text="#{screen.authentication.gauth.login.title}">Eingabe zweiter Faktor</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
-        <h1>Eingabe zweiter Faktor</h1>
+        <h1 th:text="#{screen.authentication.gauth.login.title}">Eingabe zweiter Faktor</h1>
         <p th:utext="#{screen.authentication.gauth.selecteddevice(${registeredDevice.name})}"></p>
 
         <form method="post" id="fm1" th:object="${credential}" th:action="@{/login}">
@@ -73,7 +73,7 @@
                                     </svg>
                                 </span>
                                 </button>
-                                <span>Token-Eingabe anzeigen</span>
+                                <span th:text="#{screen.tokenfield.toggle}">Token-Eingabe anzeigen</span>
                             </label>
 
                             <script>
@@ -209,7 +209,7 @@
                                                        class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                                                     <div class="banner banner-danger alert alert-danger banner-dismissible"
                                                          role="alert" style="display: none" id="errorPanel">
-                                                        <h3>Failure</h3>
+                                                        <h3 th:text="#{screen.authentication.gauth.error.title}">Failure</h3>
                                                         <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                                     </div>
                                                     <span class="mdc-notched-outline">
@@ -312,7 +312,7 @@
                                 <button type="button"
                                         class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel"
                                         data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
-                                    <span class="mdc-button__label"></span>
+                                    <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}"></span>
                                 </button>
                             </footer>
                         </div>

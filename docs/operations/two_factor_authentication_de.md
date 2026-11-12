@@ -1,9 +1,5 @@
 # Zwei-Faktor-Authentifizierung
 
-> ️⚠ **Achtung**
-> 
-> Diese Funktion ist **experimentell** und kann zu Problemen beim Zugriff auf andere Dogus oder die API von Dogus führen, vor allem wenn Basic Auth verwendet wird.
-
 CAS unterstützt Zwei-Faktor-Authentifizierung mit TOTP (Time-based One-Time Password). Nach der Aktivierung benötigen 
 alle Mitarbeitenden eine Authenticator-App wie z.B. Google Authenticator oder Microsoft Authenticator, um sich anzumelden.
 
