@@ -29,7 +29,7 @@
     */-->
     <div th:fragment="gauthRegistrationConfirmation">
         <div th:id="${dialogId}">
-            <h2>3. Registrierung abschließen</h2>
+            <h2 th:text="#{screen.authentication.gauth.setup.complete}">3. Registrierung abschließen</h2>
             <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
@@ -50,18 +50,18 @@
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
                                                         <span class="mdc-floating-label"
-                                                              th:utext="'Token'"></span>
+                                                              th:text="#{cas.mfa.googleauth.label.token}"></span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
-                                                <span>Tragen Sie einen Token aus der Authenticator-App ein, um Ihre Registrierung zu bestätigen.</span>
+                                                <span th:text="#{screen.authentication.gauth.setup.token.instructions}">Tragen Sie einen Token aus der Authenticator-App ein, um Ihre Registrierung zu bestätigen.</span>
                                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                                      role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
                                                     <a href="#" class="close" onclick="$(this).parent().hide();"
                                                        th:aria-label="#{screen.pm.button.close}">
                                                         <span class="mdi mdi-close-box" aria-hidden="true"></span>
                                                     </a>
-                                                    <p class="text-danger" th:utext="'Fehler bei der Registrierung: ' + #{screen.authentication.gauth.invalidtoken}">
+                                                    <p class="text-danger" th:text="#{screen.authentication.gauth.setup.error(#{screen.authentication.gauth.invalidtoken})}">
                                                 </div>
                                                 <input class="w-full block rounded outline-none p-1.5 focus-visible:p-1 hover:p-1 active:p-1 disabled:p-1.5 border focus-visible:border-3 hover:border-3 active:border-3 disabled:border disabled:text-neutral focus-visible:ces-focused bg-old-background desktop:text-desktop-regular mobile:text-mobile-regular border-neutral hover:border-neutral-strong focus:border-brand active:border-brand disabled:border-neutral disabled:bg-neutral-weak text-default-text"
                                                        type="password"
@@ -88,7 +88,7 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                <span>Token anzeigen</span>
+                                                <span th:text="#{screen.tokenfield.toggle}">Token anzeigen</span>
                                             </label>
 
                                             <script>
@@ -128,7 +128,7 @@
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label">Name des zweiten Faktors</span>
+                                                        <span class="mdc-floating-label" th:text="#{screen.authentication.gauth.setup.name}">Name des zweiten Faktors</span>
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
@@ -138,6 +138,7 @@
                                                        id="accountName"
                                                        size="50"
                                                        value="Mein-Smartphone"
+                                                       th:value="#{screen.authentication.gauth.device.defaultname}"
                                                        autocomplete="off"/>
                                             </label>
                                         </div>
