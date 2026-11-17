@@ -256,6 +256,9 @@ Die Tabelle `personal_access_tokens` enthält:
 | `created_at` | UTC-Erzeugungszeitpunkt als Text |
 | `expires_at` | Optionaler UTC-Ablaufzeitpunkt als Text |
 | `scope` | Kommagetrennte Service-Pfade |
+| `description` | Optionaler Beschreibungstext |
+| `owner` | Optionale LDAP-Benutzer-ID als Text; bei Bestandsdaten aus `user_id` übernommen |
+| `expiry_notification` | Ablaufbenachrichtigung (`expiryNotification`), Boolean mit Standardwert `true` |
 
 Ein Index auf `(user_id, created_at DESC)` unterstützt die Listenoperation. Ein weiterer Index auf `token_fingerprint` unterstützt die Tokenauflösung bei der PAT-Anmeldung.
 

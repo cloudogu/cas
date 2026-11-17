@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 class PATModelTest {
 
@@ -44,6 +46,34 @@ class PATModelTest {
         assertFalse(stored.toString().contains(new String(new byte[32])));
         assertTrueMasked(response.toString());
         assertTrueMasked(stored.toString());
+    }
+
+    @Test
+    void acceptsOptionalJsonParametersIncludingFalse() {
+        var mapper = JsonMapper.builder().findAndAddModules().build();
+        var request = mapper.readValue("""
+                {"displayName":"name", "description":"Beschreibung", "owner":"ldap-user",
+                 "expiryNotification":false}
+                """, CreatePATRequest.class);
+
+        assertEquals("Beschreibung", request.description());
+        assertEquals("ldap-user", request.owner());
+        assertEquals(Boolean.FALSE, request.expiryNotification());
+    }
+
+    @Test
+    void acceptsMissingAndNullOptionalJsonParameters() {
+        var mapper = JsonMapper.builder().findAndAddModules().build();
+        for (String json : new String[] {
+                "{\"displayName\":\"name\"}",
+                """
+                {"displayName":"name", "description":null, "owner":null, "expiryNotification":null}
+                """}) {
+            var request = mapper.readValue(json, CreatePATRequest.class);
+            assertNull(request.description());
+            assertNull(request.owner());
+            assertNull(request.expiryNotification());
+        }
     }
 
     @Test
