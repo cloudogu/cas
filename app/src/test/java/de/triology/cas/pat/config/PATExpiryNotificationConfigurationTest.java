@@ -10,6 +10,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.config.CronTask;
+import org.springframework.scheduling.config.ScheduledTaskHolder;
 
 class PATExpiryNotificationConfigurationTest {
     @Test
@@ -24,10 +26,7 @@ class PATExpiryNotificationConfigurationTest {
         try (var context = new AnnotationConfigApplicationContext()) {
             context.getEnvironment().getPropertySources().addFirst(new MapPropertySource("test", java.util.Map.of(
                     "personal-acces-token-service.enabled", "true",
-                    "personal-acces-token-service.expiry-notificationenabled", "false")));
-            var dataSource = new org.sqlite.SQLiteDataSource();
-            dataSource.setUrl("jdbc:sqlite::memory:");
-            context.registerBean("patJdbcTemplate", JdbcTemplate.class, () -> new JdbcTemplate(dataSource));
+                    "personal-acces-token-service.expiry-notification.enabled", "false")));
             context.register(PATExpiryNotificationConfiguration.class);
             context.refresh();
             assertTrue(context.getBeansOfType(ScheduledPATExpiryNotifier.class).isEmpty());
@@ -38,8 +37,10 @@ class PATExpiryNotificationConfigurationTest {
     @Test
     void startsItsOwnSchedulerWithoutAnyOidcConfiguration() {
         try (var context = new AnnotationConfigApplicationContext()) {
+            String cron = "0 15 9 * * *";
             context.getEnvironment().getPropertySources().addFirst(new MapPropertySource("test", java.util.Map.of(
-                    "personal-acces-token-service.enabled", "true")));
+                    "personal-acces-token-service.enabled", "true",
+                    "personal-acces-token-service.expiry-notification.cron", cron)));
             context.registerBean("patClock", Clock.class, Clock::systemUTC);
             context.registerBean("cesGroupAwareLdapAuthenticationHandler", CesGroupAwareLdapAuthenticationHandler.class,
                     () -> mock(CesGroupAwareLdapAuthenticationHandler.class));
@@ -52,6 +53,9 @@ class PATExpiryNotificationConfigurationTest {
             assertNotNull(context.getBean(ScheduledPATExpiryNotifier.class));
             assertNotNull(context.getBean("patExpiryTaskScheduler"));
             assertFalse(context.containsBean("scheduledOidcLdapSynchronizer"));
+            var tasks = context.getBean(ScheduledTaskHolder.class).getScheduledTasks();
+            assertEquals(1, tasks.size());
+            assertEquals(cron, assertInstanceOf(CronTask.class, tasks.iterator().next().getTask()).getExpression());
         }
     }
 }

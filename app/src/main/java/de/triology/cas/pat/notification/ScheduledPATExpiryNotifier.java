@@ -24,13 +24,14 @@ public class ScheduledPATExpiryNotifier {
         this.clock = clock;
     }
 
-    @Scheduled(cron = "${personal-acces-token-service.expiry-notificationcron:0 0 8 * * *}",
+    @Scheduled(cron = "${personal-acces-token-service.expiry-notification.cron:0 0 8 * * *}",
             scheduler = "patExpiryTaskScheduler")
     public void run() {
         try {
             var now = clock.instant();
             var zone = ZoneId.systemDefault();
             var today = LocalDate.ofInstant(now, zone);
+            LOGGER.info("starting PAT expiry check");
             for (var pat : repository.findCandidates(now)) {
                 long days = ChronoUnit.DAYS.between(today, LocalDate.ofInstant(pat.expiresAt(), zone));
                 if (!REMINDER_DAYS.contains(days)) {

@@ -272,7 +272,7 @@ The technical HTTP Basic credentials used by the management endpoints remain ind
 
 An independent PAT job (`ScheduledPATExpiryNotifier`) runs on its own `patExpiryTaskScheduler`, without OIDC
 synchronization. When the PAT service is enabled, reminders default to 08:00 in the system time zone every day.
-Configure `personal-acces-token-service.expiry-notificationenabled` (default `true`), `.cron` (default `0 0 8 * * *`),
+Configure `personal-acces-token-service.expiry-notification.enabled` (default `true`), `.cron` (default `0 0 8 * * *`),
 and `.from` (defaults to `cas.authn.pm.reset.mail.from`). SMTP uses `spring.mail.*`.
 
 Enabled, unexpired PATs with a nonblank `owner` and an expiration date trigger reminders exactly 30, 14, 7 and 1
