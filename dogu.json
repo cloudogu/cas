@@ -511,6 +511,29 @@
       "Optional": true
     },
     {
+      "Name": "pat/expiry_notification/enabled",
+      "Description": "Should an email be sent to the owner before a PAT expires",
+      "Default": "true",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "pat/expiry_notification/cron",
+      "Description": "at what interval should PAT expiration dates be checked",
+      "Optional": true
+    },
+    {
+      "Name": "pat/expiry_notification/from",
+      "Description": "sender address for the pat notification",
+      "Optional": true
+    },
+    {
       "Name": "allow_local_urls",
       "Description": "Determines whether the CAS should allow domains like *.localhost or *.localdomain.",
       "Default": "false",

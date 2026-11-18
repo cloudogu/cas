@@ -266,3 +266,23 @@ curl --user 'alice:pat_...' 'https://example.org/cas/api/pats/validate?scope=/re
 Every request validates the token, expiration, and owner and resolves the LDAP principal. `200 OK` returns `{ "id": "alice", "attributes": { ... } }`, including `patScope` and `patAuthentication`, with `Cache-Control: no-store`. Missing or invalid credentials receive `401` without a login redirect. Regular passwords and existing login sessions are insufficient. No CAS tickets are created. The `scope` query parameter is mandatory: missing or blank values receive `400`; a scope not covered by the PAT receives `401`. Matching follows the service-ticket path rules: `/redmine` allows `/redmine` and its descendants, but not `/redmine-admin`; `/*` allows every path. For comma-separated stored scopes, one matching entry is sufficient. Callers must supply the scope of their actual target service.
 
 The technical HTTP Basic credentials used by the management endpoints remain independent.
+
+
+## Daily expiration reminders
+
+An independent PAT job (`ScheduledPATExpiryNotifier`) runs on its own `patExpiryTaskScheduler`, without OIDC
+synchronization. When the PAT service is enabled, reminders default to 08:00 in the system time zone every day.
+Configure `personal-acces-token-service.expiry-notificationenabled` (default `true`), `.cron` (default `0 0 8 * * *`),
+and `.from` (defaults to `cas.authn.pm.reset.mail.from`). SMTP uses `spring.mail.*`.
+
+Enabled, unexpired PATs with a nonblank `owner` and an expiration date trigger reminders exactly 30, 14, 7 and 1
+calendar days before expiration in the system time zone. The owner is resolved in LDAP and its `mail` principal
+attribute supplies recipients. Empty owners are skipped without falling back to `user_id`. The plaintext English
+message contains the PAT name, record ID and expiry timestamp, never the token. LDAP/SMTP failures are logged per
+PAT and do not stop other reminders.
+
+Migration V3 records successful reminder stages in `pat_expiry_notifications`, preventing repeats after restarts.
+Deleting a PAT cascades to these markers. Failed sends roll back their marker and can be retried by another run on
+the same calendar day; missed stages are not caught up on later days. SMTP runs inside the PAT database write
+transaction, so configure SMTP connection/read/write timeouts for your environment. An SMTP success followed by
+a process crash before the database commit can still cause a duplicate email on retry.

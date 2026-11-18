@@ -80,7 +80,7 @@ public class JdbcPATRepository implements PATRepository {
         try {
             return jdbcTemplate.query(
                     "SELECT " + METADATA_COLUMNS + " FROM personal_access_tokens WHERE user_id = ? ORDER BY created_at DESC",
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     userId);
         } catch (DataAccessException e) {
             throw translate(e);
@@ -95,7 +95,7 @@ public class JdbcPATRepository implements PATRepository {
         try {
             List<PATMetadata> result = jdbcTemplate.query(
                     "SELECT " + METADATA_COLUMNS + " FROM personal_access_tokens WHERE user_id = ? AND id = ?",
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     userId,
                     id.toString());
             return result.stream().findFirst();
@@ -142,7 +142,7 @@ public class JdbcPATRepository implements PATRepository {
                     FROM personal_access_tokens
                     WHERE token_fingerprint = ?
                     """,
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     fingerprint.bytes());
 
             return matches.stream()
@@ -160,7 +160,7 @@ public class JdbcPATRepository implements PATRepository {
      * @return mapped PAT metadata
      * @throws SQLException when a column cannot be read
      */
-    private PATMetadata mapMetadata(ResultSet resultSet, int rowNumber) throws SQLException {
+    static PATMetadata mapMetadata(ResultSet resultSet, int rowNumber) throws SQLException {
         String expiresAt = resultSet.getString("expires_at");
         try {
             return new PATMetadata(
