@@ -275,11 +275,12 @@ synchronization. When the PAT service is enabled, reminders default to 08:00 in 
 Configure `personal-acces-token-service.expiry-notification.enabled` (default `true`), `.cron` (default `0 0 8 * * *`),
 and `.from` (defaults to `cas.authn.pm.reset.mail.from`). SMTP uses `spring.mail.*`.
 
-Enabled, unexpired PATs with a nonblank `owner` and an expiration date trigger reminders exactly 30, 14, 7 and 1
-calendar days before expiration in the system time zone. The owner is resolved in LDAP and its `mail` principal
-attribute supplies recipients. Empty owners are skipped without falling back to `user_id`. The plaintext English
-message contains the PAT name, record ID and expiry timestamp, never the token. LDAP/SMTP failures are logged per
-PAT and do not stop other reminders.
+CAS sends reminders 30, 14, and 7 calendar days before expiration, with a final reminder one calendar day before
+expiration. It calculates these dates in the system time zone. A PAT qualifies if notifications are enabled for it,
+it has a future expiration date, and its `owner` is nonblank. CAS looks up the owner in LDAP and uses the principal's
+`mail` attribute to find the recipients. If `owner` is blank, CAS skips the PAT without falling back to `user_id`.
+The plain-text email is in English and includes the PAT's display name, record ID, and expiration timestamp.
+CAS omits the token value. It logs LDAP and SMTP failures for each PAT and continues sending other reminders.
 
 Migration V3 records successful reminder stages in `pat_expiry_notifications`, preventing repeats after restarts.
 Deleting a PAT cascades to these markers. Failed sends roll back their marker and can be retried by another run on

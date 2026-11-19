@@ -43,10 +43,11 @@ public class PATExpiryMailSender {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(recipients);
-        message.setSubject("CAS: Personal Access Token expires in " + daysBefore + " day(s)");
-        message.setText("Your Personal Access Token \"" + pat.displayName() + "\" (ID: " + pat.id()
-                + ") expires at " + pat.expiresAt() + " (UTC), in " + daysBefore + " day(s).\n\n"
-                + "Please replace it before it expires and update applications using it.\n");
+        String timeUntilExpiry = daysBefore + (daysBefore == 1 ? " day" : " days");
+        message.setSubject("CAS: Personal access token expires in " + timeUntilExpiry);
+        message.setText("Your personal access token \"" + pat.displayName() + "\" (ID: " + pat.id()
+                + ") expires in " + timeUntilExpiry + ". The expiration time is " + pat.expiresAt() + " (UTC).\n\n"
+                + "Please replace the token before it expires and update any applications that use it.\n");
         LOGGER.info("Sending PAT expiry reminder (patId={}, daysBefore={}, recipientCount={})",
                 pat.id(), daysBefore, recipients.length);
         try {
