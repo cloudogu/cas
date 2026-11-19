@@ -237,7 +237,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-otp-mfa-core:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-notifications:${project.'cas.version'}"
 
-    // Patched thymeleaf (3.1.5.RELEASE via thymeleaf.version) onto the classpath; see gradle.properties.
+    // Patched thymeleaf (3.1.7.RELEASE via thymeleaf.version) onto the classpath; see gradle.properties.
     implementation "org.thymeleaf:thymeleaf"
     implementation "org.thymeleaf:thymeleaf-spring6"
 }
