@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [#400] Update CAS to v8.0.3
+- [#400] Update base image to v3.24.4-1
+- [#400] Update java base image to v25.0.5-4
+- [#400] Bump Tomcat to v11.0.29
+
+### Security
+- [#400] Use Alpine repositories of base image instead of pinned ones
 
 ## [v8.0.2-11] - 2026-11-12
 ### Fixed
