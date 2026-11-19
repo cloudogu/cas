@@ -1,6 +1,6 @@
 ARG TOMCAT_MAJOR_VERSION=11
-ARG TOMCAT_VERSION=11.0.26
-ARG TOMCAT_TARGZ_SHA512=e77e080d9d8d7e052544d0d21b0c738169f9ecf284fe5a68d0c7e2da97dd93e0f0f3b2aa178507ad8552583c355d8e2b193fdb76b3e4c2c12ebfd458c43ced24
+ARG TOMCAT_VERSION=11.0.29
+ARG TOMCAT_TARGZ_SHA512=be277ce58876a584653f980fd695c82e6708029f05fc7ad9fcfbdcede3836ae6ffa4f858eac26de6ff938f130f31158be8a54b5f546393ea1ad5da0cd202873c
 
 FROM eclipse-temurin:25-jdk-alpine AS builder
 
@@ -20,7 +20,7 @@ RUN ./gradlew --no-daemon dependencies
 COPY ./app/src /cas-overlay/src/
 RUN ./gradlew clean build --parallel --no-daemon
 
-FROM registry.cloudogu.com/official/base:3.24.2-1 AS tomcat
+FROM registry.cloudogu.com/official/base:3.24.4-1 AS tomcat
 
 ARG TOMCAT_MAJOR_VERSION
 ARG TOMCAT_VERSION
@@ -38,9 +38,9 @@ RUN apk update && apk add wget && wget -O  "apache-tomcat-${TOMCAT_VERSION}.tar.
   && rm "apache-tomcat-${TOMCAT_VERSION}.tar"
 
 # registry.cloudogu.com/official/cas
-FROM registry.cloudogu.com/official/java:25.0.4-2 AS cas
+FROM registry.cloudogu.com/official/java:25.0.5-4 AS cas
 LABEL NAME="official/cas" \
-      VERSION="8.0.2-11" \
+      VERSION="8.0.3-1" \
       maintainer="hello@cloudogu.com"
 
 ARG TOMCAT_VERSION
@@ -49,8 +49,6 @@ ARG TOMCAT_VERSION
 RUN set -o errexit \
   && set -o nounset \
   && set -o pipefail \
-  && echo "https://mirror.netcologne.de/alpine/v3.20/main" > /etc/apk/repositories \
-  && echo "https://mirror.netcologne.de/alpine/v3.20/community" >> /etc/apk/repositories \
   && apk update \
   && apk upgrade \
   && apk add --no-cache --update \

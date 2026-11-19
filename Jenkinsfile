@@ -480,7 +480,7 @@ pipe.overrideStage('Integration Tests') {
         // cosmiconfig@10 (pulled in by @badeball/cypress-cucumber-preprocessor@28,
         // required for cypress@16 compatibility). Override to an image with a
         // newer bundled Node until the shared pipeline lib's own default catches up.
-        cypressImage        : "cypress/included:16.0.0",
+        cypressImage        : "cypress/included:16.2.0",
         enableVideo      : params.EnableVideoRecording,
         enableScreenshots: params.EnableScreenshotRecording])
     // run special non-encrypted password test
