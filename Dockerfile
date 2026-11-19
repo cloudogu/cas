@@ -49,8 +49,6 @@ ARG TOMCAT_VERSION
 RUN set -o errexit \
   && set -o nounset \
   && set -o pipefail \
-  && echo "https://mirror.netcologne.de/alpine/v3.20/main" > /etc/apk/repositories \
-  && echo "https://mirror.netcologne.de/alpine/v3.20/community" >> /etc/apk/repositories \
   && apk update \
   && apk upgrade \
   && apk add --no-cache --update \
