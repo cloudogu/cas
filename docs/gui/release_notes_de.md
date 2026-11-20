@@ -8,6 +8,13 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 ### Added
 - Vor Ablauf eines Zugriffschlüssels oder technischen Kontos werden nun 30/14/7 und 1 Tag vorher Benachrichtigungen an den Eigentümer des Schlüssels versendt.
 
+## [v8.0.3-1] - 2026-11-19
+### Changed
+- CAS auf v8.0.3 aktualisiert
+
+### Security
+- Verwenden der Alpine-Repositorys des Basis-Images anstelle der angehefteten
+
 ## [v8.0.2-11] - 2026-11-12
 ### Fixed
 - Englische Übersetzungsprobleme im Zwei-Faktor-Authentifizierungs Workflow korrigiert

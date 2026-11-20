@@ -8,6 +8,13 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 ### Added
 - CAS now emails owners 30, 14, and 7 days before their access key or technical account expires, with a final reminder one day before expiration.
 
+## [v8.0.3-1] - 2026-11-19
+### Changed
+- CAS has been updated to version v8.0.3
+
+### Security
+- Use Alpine repositories of base image instead of pinned ones
+
 ## [v8.0.2-11] - 2026-11-12
 ### Fixed
 - Fixed translations in two-factor authentication ui workflow
