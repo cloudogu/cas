@@ -70,6 +70,38 @@ class PATServiceTest {
     }
 
     @Test
+    void passesOptionalCreateParametersToPersistenceAndResponse() {
+        when(generator.generate()).thenReturn(new GeneratedPAT("pat_secret", FINGERPRINT));
+        var response = service.create("user", new CreatePATRequest(
+                "name", null, null, "Beschreibung", "ldap-owner", false), "actor");
+
+        ArgumentCaptor<StoredPAT> captor = ArgumentCaptor.forClass(StoredPAT.class);
+        verify(repository).insert(captor.capture());
+        assertEquals("Beschreibung", captor.getValue().description());
+        assertEquals("ldap-owner", captor.getValue().owner());
+        assertFalse(captor.getValue().expiryNotification());
+        assertEquals("Beschreibung", response.description());
+        assertEquals("ldap-owner", response.owner());
+        assertFalse(response.expiryNotification());
+    }
+
+    @Test
+    void defaultsNullOptionalCreateParameters() {
+        when(generator.generate()).thenReturn(new GeneratedPAT("pat_secret", FINGERPRINT));
+        var response = service.create("user", new CreatePATRequest(
+                "name", null, null, null, null, null), "actor");
+
+        ArgumentCaptor<StoredPAT> captor = ArgumentCaptor.forClass(StoredPAT.class);
+        verify(repository).insert(captor.capture());
+        assertEquals("", captor.getValue().description());
+        assertEquals("", captor.getValue().owner());
+        assertTrue(captor.getValue().expiryNotification());
+        assertEquals("", response.description());
+        assertEquals("", response.owner());
+        assertTrue(response.expiryNotification());
+    }
+
+    @Test
     void deletesAllPatsUsingNormalizedOwnerId() {
         service.deleteAllForUser(" user-1 ");
 

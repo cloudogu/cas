@@ -9,10 +9,10 @@ all employees will need an authenticator app such as Google Authenticator or Mic
 
 ## Activation
 
-The corresponding Dogu configuration key must be set to `true`. 
+Set the global configuration key `2fa/activate` to `true`.
 
 ```shell
-etcdctl set config/cas/2fa/activate "true"
+etcdctl set /config/_global/2fa/activate "true"
 ```
 
 Restart the Dogu to activate the configuration.
@@ -24,11 +24,11 @@ cesapp restart cas
 ## Deactivation
 
 If you encounter problems with two-factor authentication, you can deactivate the function. To do so, set the corresponding
-Dogu configuration key to `false`. Deactivation means that the internal encryption codes
+global configuration key to `false`. Deactivation means that the internal encryption codes
 will not be regenerated.
 
 ```shell
-etcdctl set config/cas/2fa/activate "false"
+etcdctl set /config/_global/2fa/activate "false"
 ```
 
 Restart the Dogu to activate the configuration.

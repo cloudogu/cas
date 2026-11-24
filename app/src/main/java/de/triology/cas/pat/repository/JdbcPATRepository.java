@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class JdbcPATRepository implements PATRepository {
     private static final String METADATA_COLUMNS =
-            "id, user_id, display_name, created_at, expires_at, scope";
+            "id, user_id, display_name, created_at, expires_at, scope, description, owner, expiry_notification";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -47,8 +47,9 @@ public class JdbcPATRepository implements PATRepository {
             jdbcTemplate.update(connection -> {
                 PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO personal_access_tokens
-                            (id, user_id, display_name, token_fingerprint, created_at, expires_at, scope)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                            (id, user_id, display_name, token_fingerprint, created_at, expires_at, scope,
+                             description, owner, expiry_notification)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """);
                 statement.setString(1, pat.id().toString());
                 statement.setString(2, pat.userId());
@@ -61,6 +62,9 @@ public class JdbcPATRepository implements PATRepository {
                     statement.setString(6, pat.expiresAt().toString());
                 }
                 statement.setString(7, pat.scope());
+                statement.setString(8, pat.description() == null ? "" : pat.description());
+                statement.setString(9, pat.owner() == null ? "" : pat.owner());
+                statement.setBoolean(10, pat.expiryNotification());
                 return statement;
             });
         } catch (DataAccessException e) {
@@ -76,7 +80,7 @@ public class JdbcPATRepository implements PATRepository {
         try {
             return jdbcTemplate.query(
                     "SELECT " + METADATA_COLUMNS + " FROM personal_access_tokens WHERE user_id = ? ORDER BY created_at DESC",
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     userId);
         } catch (DataAccessException e) {
             throw translate(e);
@@ -91,7 +95,7 @@ public class JdbcPATRepository implements PATRepository {
         try {
             List<PATMetadata> result = jdbcTemplate.query(
                     "SELECT " + METADATA_COLUMNS + " FROM personal_access_tokens WHERE user_id = ? AND id = ?",
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     userId,
                     id.toString());
             return result.stream().findFirst();
@@ -134,11 +138,11 @@ public class JdbcPATRepository implements PATRepository {
         try {
             List<PATMetadata> matches = jdbcTemplate.query(
                     """
-                    SELECT id, user_id, display_name, created_at, expires_at, scope
+                    SELECT id, user_id, display_name, created_at, expires_at, scope, description, owner, expiry_notification
                     FROM personal_access_tokens
                     WHERE token_fingerprint = ?
                     """,
-                    this::mapMetadata,
+                    JdbcPATRepository::mapMetadata,
                     fingerprint.bytes());
 
             return matches.stream()
@@ -156,7 +160,7 @@ public class JdbcPATRepository implements PATRepository {
      * @return mapped PAT metadata
      * @throws SQLException when a column cannot be read
      */
-    private PATMetadata mapMetadata(ResultSet resultSet, int rowNumber) throws SQLException {
+    static PATMetadata mapMetadata(ResultSet resultSet, int rowNumber) throws SQLException {
         String expiresAt = resultSet.getString("expires_at");
         try {
             return new PATMetadata(
@@ -165,7 +169,10 @@ public class JdbcPATRepository implements PATRepository {
                     resultSet.getString("display_name"),
                     Instant.parse(resultSet.getString("created_at")),
                     expiresAt == null ? null : Instant.parse(expiresAt),
-                    resultSet.getString("scope"));
+                    resultSet.getString("scope"),
+                    resultSet.getString("description"),
+                    resultSet.getString("owner"),
+                    resultSet.getBoolean("expiry_notification"));
         } catch (RuntimeException e) {
             throw new DataIntegrityViolationException("PAT storage contains invalid metadata", e);
         }

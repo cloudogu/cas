@@ -164,7 +164,7 @@ Dieses Beispiel liest das eigene Benutzerkonto über `GET /usermgt/api/account`.
 
 CAS benötigt `pat/enabled=true`, einen erreichbaren LDAP-Benutzer und die technischen API-Zugangsdaten. Im Dogu-Template stammen diese aus den verschlüsselten Schlüsseln `2fa/api_user_name` und `2fa/api_user_password`, auch wenn TOTP deaktiviert ist. Nach Änderungen CAS neu starten. Usermgt muss erreichbar und seine konfigurierte CAS-Service-URL in CAS zugelassen sein; deren Pfad muss vom Scope `/usermgt` abgedeckt werden.
 
-Ohne 2FA gilt `2fa/activate=false`. Mit 2FA gilt `2fa/activate=true`; das CAS-Template setzt dann den GAuth-Bypass auf das Principal-Attribut `patAuthentication` mit Wert `true`. Die PAT-Anmeldung benötigt dadurch keinen TOTP-Code. Ein frischer regulärer Browser-Login mit Benutzerpasswort verlangt weiterhin TOTP. Die API-Credentials in Usermgt selbst sind für die Verwaltung von PATs über die Oberfläche nötig, nicht für diesen Basic-Auth-Aufruf mit einem bereits erstellten PAT.
+Der globale Schlüssel `2fa/activate` steuert, ob CAS 2FA aktiviert. Bei `true` setzt das CAS-Template den GAuth-Bypass auf das Principal-Attribut `patAuthentication` mit Wert `true`. Die PAT-Anmeldung benötigt dadurch keinen TOTP-Code. Ein frischer regulärer Browser-Login mit Benutzerpasswort verlangt weiterhin TOTP. Die API-Credentials in Usermgt selbst sind für die Verwaltung von PATs über die Oberfläche nötig, nicht für diesen Basic-Auth-Aufruf mit einem bereits erstellten PAT.
 
 ### 2. Token mit dem Verwaltungsskript erstellen
 
@@ -256,6 +256,9 @@ Die Tabelle `personal_access_tokens` enthält:
 | `created_at` | UTC-Erzeugungszeitpunkt als Text |
 | `expires_at` | Optionaler UTC-Ablaufzeitpunkt als Text |
 | `scope` | Kommagetrennte Service-Pfade |
+| `description` | Optionaler Beschreibungstext |
+| `owner` | Optionale LDAP-Benutzer-ID als Text; bei Bestandsdaten aus `user_id` übernommen |
+| `expiry_notification` | Ablaufbenachrichtigung (`expiryNotification`), Boolean mit Standardwert `true` |
 
 Ein Index auf `(user_id, created_at DESC)` unterstützt die Listenoperation. Ein weiterer Index auf `token_fingerprint` unterstützt die Tokenauflösung bei der PAT-Anmeldung.
 
@@ -348,3 +351,39 @@ curl --user 'alice:pat_...' 'https://example.org/cas/api/pats/validate?scope=/re
 Der Endpunkt prüft bei jeder Anfrage Token, Ablaufdatum und Eigentümer und löst den Principal über LDAP auf. `200 OK` liefert `{ "id": "alice", "attributes": { ... } }`, einschließlich `patScope` und `patAuthentication`, mit `Cache-Control: no-store`. Fehlende oder ungültige Zugangsdaten ergeben `401` ohne Login-Weiterleitung. Normale Passwörter und vorhandene Login-Sessions reichen nicht aus. Der Endpunkt erstellt keine CAS-Tickets. Der Query-Parameter `scope` ist Pflicht: Fehlende oder leere Angaben ergeben `400`; ein vom PAT nicht abgedeckter Scope ergibt `401`. Es gelten dieselben Pfadregeln wie bei Service-Tickets: `/redmine` erlaubt `/redmine` und Unterpfade, aber nicht `/redmine-admin`; `/*` erlaubt alle Pfade. Bei mehreren gespeicherten, durch Kommas getrennten Scopes genügt ein passender Eintrag. Aufrufende Dienste müssen den Scope ihres tatsächlichen Zieldienstes übergeben.
 
 Die technische HTTP-Basic-Anmeldung der Verwaltungsendpunkte bleibt davon unabhängig.
+
+
+## Tägliche Ablaufbenachrichtigungen
+
+`ScheduledPATExpiryNotifier` ist ein eigenständiger PAT-Hintergrundjob. Er besitzt einen eigenen Scheduler
+(`patExpiryTaskScheduler`, Threadpräfix `pat-expiry-`) und benötigt weder aktiviertes OIDC noch die OIDC/LDAP-Synchronisation.
+Bei aktiviertem PAT-Service ist der Job standardmäßig aktiv und läuft täglich um 08:00 Uhr in der Systemzeitzone.
+Die Einstellungen können in der CAS-Konfiguration überschrieben werden:
+
+```properties
+personal-acces-token-service.expiry-notification.enabled=true
+personal-acces-token-service.expiry-notification.cron=0 0 8 * * *
+# Optional; ansonsten wird cas.authn.pm.reset.mail.from verwendet:
+personal-acces-token-service.expiry-notification.from=cas@example.org
+```
+
+Der Job verschickt Erinnerungen, wenn das Ablaufdatum in der Systemzeitzone in genau 30, 14, 7 oder 1 Kalendertagen
+liegt. Es handelt sich um Kalendertage und nicht um abgerundete 24-Stunden-Intervalle. PATs ohne Ablaufdatum,
+mit `expiryNotification=false`, mit leerem `owner` oder bereits abgelaufene PATs werden übersprungen.
+`owner` wird als LDAP-Benutzer-ID aufgelöst; das bereits konfigurierte Principal-Attribut `mail` liefert die Empfänger.
+Ein leerer `owner` wird nicht automatisch durch `user_id` ersetzt. Fehlende Mailadressen und LDAP-/SMTP-Fehler
+werden pro PAT protokolliert und unterbrechen die Bearbeitung der anderen PATs nicht.
+
+Der Versand verwendet die vorhandene SMTP-Konfiguration (`spring.mail.*`, im Dogu `postfix:25`). Die englische
+Textnachricht enthält PAT-Anzeigename, Datensatz-ID und Ablaufzeitpunkt, jedoch keinen Tokenwert.
+Die Flyway-Migration `V3` erstellt `pat_expiry_notifications`. Pro PAT, Ablaufzeitpunkt und Erinnerungsstufe wird
+der erfolgreiche SMTP-Aufruf gespeichert. Erneute Läufe derselben Stufe werden dadurch auch nach einem Neustart
+unterdrückt; beim Löschen eines PATs werden seine Versandmarker mitgelöscht.
+
+Versand und Marker werden innerhalb einer PAT-Datenbanktransaktion koordiniert. Ein Versandfehler rollt den Marker
+zurück, sodass ein erneuter Lauf am selben Kalendertag die Stufe wieder versuchen kann. Versäumte Stufen werden an
+späteren Tagen nicht nachgeholt. SMTP und Datenbank können keine gemeinsame atomare Transaktion bilden:
+Bei einem Absturz nach SMTP-Annahme und vor dem Datenbank-Commit ist eine doppelte Mail möglich.
+Während des SMTP-Aufrufs hält SQLite die Schreibtransaktion; SMTP-Verbindungs- und Lesezeitlimits sollten daher
+über `spring.mail.properties.mail.smtp.connectiontimeout`, `spring.mail.properties.mail.smtp.timeout` und
+`spring.mail.properties.mail.smtp.writetimeout` passend zum Betrieb gesetzt werden.

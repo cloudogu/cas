@@ -474,12 +474,6 @@
       "Optional": true
     },
     {
-      "Name": "2fa/activate",
-      "Description": "Enables two factor authentication with TOTP (Time-based One-Time Password) in CAS. Set this value to 'true' to enable.",
-      "Default": "false",
-      "Optional": true
-    },
-    {
       "Name": "2fa/api_user_name",
       "Description": "Username for totp administration in encrypted form. Supply the same username to the usermgt dogu.",
       "Optional": true,
@@ -508,6 +502,29 @@
       "Name": "pat/database_url",
       "Description": "JDBC URL of the PAT database.",
       "Default": "jdbc:sqlite:/var/ces/config/pats.db",
+      "Optional": true
+    },
+    {
+      "Name": "pat/expiry_notification/enabled",
+      "Description": "Whether to email owners before their personal access tokens expire.",
+      "Default": "true",
+      "Optional": true,
+      "Validation": {
+        "Type": "ONE_OF",
+        "Values": [
+          "true",
+          "false"
+        ]
+      }
+    },
+    {
+      "Name": "pat/expiry_notification/cron",
+      "Description": "Cron schedule for checking personal access token expiration dates.",
+      "Optional": true
+    },
+    {
+      "Name": "pat/expiry_notification/from",
+      "Description": "Sender email address for personal access token expiration reminders.",
       "Optional": true
     },
     {
