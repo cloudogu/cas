@@ -417,7 +417,7 @@ personal-acces-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "fals
 personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
 personal-acces-token-service.expiry-notification.enabled={{ .Config.GetOrDefault "pat/expiry_notification/enabled" "true" }}
 personal-acces-token-service.expiry-notification.cron={{ .Config.GetOrDefault "pat/expiry_notification/cron" "0 0 8 * * *" }}
-personal-acces-token-service.expiry-notification.from={{ .Config.GetOrDefault "pat/expiry_notification/from" "do-not-reply@cloudogu.com" }}
+personal-acces-token-service.expiry-notification.from={{ .Config.GetOrDefault "pat/expiry_notification/from" "cas.dogu@cloudogu.com" }}
 ########################################################################################################################
 
 ########################################################################################################################
