@@ -27,8 +27,6 @@ public class PATExpiryMailSender {
         Principal principal;
         try {
             principal = ldapHandler.resolvePrincipal(pat.owner());
-        } catch (Error e) {
-            throw e;
         } catch (Throwable e) {
             LOGGER.warn("LDAP lookup failed for PAT expiry reminder (patId={})", pat.id());
             throw new IllegalStateException("Could not resolve PAT owner in LDAP", e);
