@@ -5,6 +5,10 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Security
+- Sicherheitslücke [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414) geschlossen
+- Sicherheitslücke [CVE-2026-59378](https://nvd.nist.gov/vuln/detail/CVE-2026-59378) geschlossen
+- Sicherheitslücke [CVE-2026-59273](https://nvd.nist.gov/vuln/detail/CVE-2026-59273) geschlossen
 
 ## [v8.0.3-1] - 2026-11-19
 ### Changed
