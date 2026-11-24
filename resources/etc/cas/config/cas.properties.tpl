@@ -378,7 +378,7 @@ cas.service-registry.schedule.start-delay=PT1M
 # always enable password reset
 cas.authn.pm.reset.multifactor-authentication-enabled=false
 
-{{ if eq (.Config.Get "2fa/activate") "true"}}
+{{ if eq (.GlobalConfig.GetOrDefault "2fa/activate" "false") "true"}}
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
@@ -415,6 +415,9 @@ spring.security.user.password={{ .Config.GetAndDecrypt "2fa/api_user_password" }
 # PAT service
 personal-acces-token-service.enabled={{ .Config.GetOrDefault "pat/enabled" "false" }}
 personal-acces-token-service.database-url={{ .Config.GetOrDefault "pat/database_url" "jdbc:sqlite:/var/ces/config/pats.db" }}
+personal-acces-token-service.expiry-notification.enabled={{ .Config.GetOrDefault "pat/expiry_notification/enabled" "true" }}
+personal-acces-token-service.expiry-notification.cron={{ .Config.GetOrDefault "pat/expiry_notification/cron" "0 0 8 * * *" }}
+personal-acces-token-service.expiry-notification.from={{ .Config.GetOrDefault "pat/expiry_notification/from" "cas.dogu@cloudogu.com" }}
 ########################################################################################################################
 
 ########################################################################################################################

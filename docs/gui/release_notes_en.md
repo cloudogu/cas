@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.3-2] - 2026-11-24
+### Added
+- CAS now emails owners 30, 14, and 7 days before their access key or technical account expires, with a final reminder one day before expiration.
+
 ## [v8.0.3-1] - 2026-11-19
 ### Changed
 - CAS has been updated to version v8.0.3

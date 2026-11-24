@@ -2,6 +2,7 @@ package de.triology.cas.pat.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -75,6 +76,74 @@ class JdbcPATRepositoryTest {
         assertFalse(repository.deleteByUserIdAndId("other", newer.id()));
         assertTrue(repository.deleteByUserIdAndId("owner", newer.id()));
         assertTrue(repository.findByUserIdAndId("owner", newer.id()).isEmpty());
+    }
+
+    @Test
+    void storesEmptyStringsAndDefaultNotificationForOptionalColumns() {
+        StoredPAT pat = pat(UUID.randomUUID(), "ldap-user", "name", NOW, null);
+        repository.insert(pat);
+
+        var row = jdbcTemplate.queryForMap(
+                "SELECT description, owner, expiry_notification FROM personal_access_tokens WHERE id = ?",
+                pat.id().toString());
+
+        assertEquals("", row.get("description"));
+        assertEquals("", row.get("owner"));
+        assertEquals(1, ((Number) row.get("expiry_notification")).intValue());
+    }
+
+    @Test
+    void persistsOptionalMetadataAndReturnsItFromEveryLookup() {
+        StoredPAT pat = new StoredPAT(UUID.randomUUID(), "user", "name", new PATFingerprint(new byte[32]),
+                NOW, null, "/*", "Beschreibung äöü", "ldap-owner", false);
+        repository.insert(pat);
+
+        var listed = repository.findAllByUserId("user").getFirst();
+        assertEquals("Beschreibung äöü", listed.description());
+        assertEquals("ldap-owner", listed.owner());
+        assertFalse(listed.expiryNotification());
+        assertEquals(listed, repository.findByUserIdAndId("user", pat.id()).orElseThrow());
+        assertEquals(listed, repository.validate(pat.tokenFingerprint(), NOW).orElseThrow());
+    }
+
+    @Test
+    void convertsNullTextParametersToEmptyStringsAtInsert() {
+        StoredPAT pat = new StoredPAT(UUID.randomUUID(), "user", "name", new PATFingerprint(new byte[32]),
+                NOW, null, "/*", null, null, true);
+        repository.insert(pat);
+
+        var metadata = repository.findByUserIdAndId("user", pat.id()).orElseThrow();
+        assertEquals("", metadata.description());
+        assertEquals("", metadata.owner());
+        assertTrue(metadata.expiryNotification());
+    }
+
+    @Test
+    void migratesExistingPatsAndPreservesTheirMetadata() {
+        SQLiteDataSource dataSource = new SQLiteDataSource();
+        dataSource.setUrl("jdbc:sqlite:" + tempDir.resolve("legacy-pat.db"));
+        Flyway.configure().dataSource(dataSource).locations("classpath:db/pat/migration/sqlite")
+                .target("1").load().migrate();
+        JdbcTemplate legacyTemplate = new JdbcTemplate(dataSource);
+        StoredPAT pat = pat(UUID.randomUUID(), "legacy-ldap-user", "existing", NOW, null);
+        legacyTemplate.update("""
+                INSERT INTO personal_access_tokens
+                    (id, user_id, display_name, token_fingerprint, created_at, expires_at, scope)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, pat.id().toString(), pat.userId(), pat.displayName(), pat.tokenFingerprint().bytes(),
+                pat.createdAt().toString(), null, pat.scope());
+
+        Flyway flyway = Flyway.configure().dataSource(dataSource)
+                .locations("classpath:db/pat/migration/sqlite").load();
+        flyway.migrate();
+        flyway.validate();
+
+        assertEquals(pat.displayName(), new JdbcPATRepository(legacyTemplate)
+                .findByUserIdAndId(pat.userId(), pat.id()).orElseThrow().displayName());
+        var row = legacyTemplate.queryForMap("SELECT description, owner, expiry_notification FROM personal_access_tokens");
+        assertNull(row.get("description"));
+        assertEquals(pat.userId(), row.get("owner"));
+        assertEquals(1, ((Number) row.get("expiry_notification")).intValue());
     }
 
     @Test

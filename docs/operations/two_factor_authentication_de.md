@@ -5,10 +5,10 @@ alle Mitarbeitenden eine Authenticator-App wie z.B. Google Authenticator oder Mi
 
 ## Aktivierung
 
-Der zugehörige Dogu-Konfigurationsschlüssel muss auf `true` gesetzt werden.
+Setze den globalen Konfigurationsschlüssel `2fa/activate` auf `true`.
 
 ```shell
-etcdctl set config/cas/2fa/activate "true"
+etcdctl set /config/_global/2fa/activate "true"
 ```
 
 Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.
@@ -20,11 +20,11 @@ cesapp restart cas
 ## Deaktivierung
 
 Bei Problemen mit der Zwei-Faktor-Authentifizierung kann die Funktion deaktiviert werden. Dafür muss der zugehörige 
-Dogu-Konfigurationsschlüssel auf `false` gesetzt werden. Durch eine Deaktivierung werden die internen Verschlüsselungscodes
+globale Konfigurationsschlüssel auf `false` gesetzt werden. Durch eine Deaktivierung werden die internen Verschlüsselungscodes
 nicht neu generiert.
 
 ```shell
-etcdctl set config/cas/2fa/activate "false"
+etcdctl set /config/_global/2fa/activate "false"
 ```
 
 Das Dogu muss neu gestartet werden, damit die Konfiguration wirksam wird.

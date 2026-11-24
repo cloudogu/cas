@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.3-2] - 2026-11-24
+### Added
+- [#399] description and owner attibutes for PAT stored in database
+  - configurable for expiring PATs    
+
 ## [v8.0.3-1] - 2026-11-19
 ### Changed
 - [#400] Update CAS to v8.0.3

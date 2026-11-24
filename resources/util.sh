@@ -165,7 +165,7 @@ function renderCustomMessagesTpl() {
 # create totp signing and encrpytion codes
 # these codes are generated once
 function create2FAEncryptionCodes() {
-  ACTIVATE_2FA=$(doguctl config --default "false" "2fa/activate")
+  ACTIVATE_2FA=$(doguctl config --global --default "false" "2fa/activate")
   ENCRYPTION_CODES_CREATED=$(doguctl config --default "false" "2fa/encryption_key")
   if [[ "$ACTIVATE_2FA" == "true" && "$ENCRYPTION_CODES_CREATED" == "false" ]]; then
     echo "generating totp encryption and signing keys"

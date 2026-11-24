@@ -68,6 +68,10 @@ public class PATService {
         Instant createdAt = clock.instant();
         Instant expiresAt = validateExpiresAt(request.expiresAt(), createdAt);
 
+        String description = request.description() == null ? "" : request.description();
+        String owner = request.owner() == null ? "" : request.owner();
+        boolean expiryNotification = request.expiryNotification() == null || request.expiryNotification();
+
         UUID id = UUID.randomUUID();
         GeneratedPAT generated = generator.generate();
         StoredPAT stored = new StoredPAT(
@@ -77,7 +81,7 @@ public class PATService {
                 generated.fingerprint(),
                 createdAt,
                 expiresAt,
-                scope);
+                scope, description, owner, expiryNotification);
         try {
             repository.insert(stored);
         } catch (PATStorageUnavailableException e) {
@@ -86,7 +90,8 @@ public class PATService {
         }
         AUDIT.info("event=pat_created patId={} userId={} principal={} result=success", id, validatedUserId, actor);
         return new CreatePATResponse(
-                id, validatedUserId, displayName, generated.token(), createdAt, expiresAt, scope);
+                id, validatedUserId, displayName, generated.token(), createdAt, expiresAt, scope,
+                description, owner, expiryNotification);
     }
 
     /**
