@@ -129,7 +129,7 @@ bootWar {
                     // CVE-2026-59414/59378: the base WAR ships Spring Boot 4.1.0; all Spring Boot
                     // jars come from this overlay's classpath (springBootVersion) instead.
                     "WEB-INF/lib/spring-boot-*.jar",
-                    // CVE-2026-22732
+                    // CVE-2026-22732/59273
                     "WEB-INF/lib/spring-security-config-*.jar",
                     "WEB-INF/lib/spring-security-core-*.jar",
                     "WEB-INF/lib/spring-security-crypto-*.jar",
