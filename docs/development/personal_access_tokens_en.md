@@ -8,10 +8,10 @@ This guide describes the current implementation, including `PATAuthenticationHan
 
 You need a CAS build with PAT support, a working LDAP connection to resolve the token owner, and writable, persistent storage for the PAT database. Management through the user interface also requires a Usermgt build with PAT support. The target Dogu must forward authentication to CAS and be allowed as a CAS service; a PAT does not automatically enable Basic Auth in arbitrary Dogus.
 
-| Dogu / key | PAT without 2FA | PAT with 2FA | Purpose |
+| Configuration / key | PAT without 2FA | PAT with 2FA | Purpose |
 | --- | --- | --- | --- |
 | CAS: `pat/enabled` | `true` | `true` | Enables management, the PAT authentication handler, and scope validation. Default: `false`. |
-| CAS: `2fa/activate` | `false` | `true` | Enables the global TOTP provider `mfa-gauth`. Default: `false`. |
+| Global: `2fa/activate` | `false` | `true` | Enables the global TOTP provider `mfa-gauth`. Default: `false`. |
 | CAS: `2fa/api_user_name` | Required | Required | Technical API username stored in encrypted form. |
 | CAS: `2fa/api_user_password` | Required | Required | Technical API password stored in encrypted form. |
 | CAS: `pat/database_url` | Optional | Optional | Default: `jdbc:sqlite:/var/ces/config/pats.db`. SQLite is the currently implemented provider. |
@@ -24,11 +24,11 @@ Usermgt does not currently require its own `pat/enabled` flag. Its startup scrip
 
 ### Example: Configuring the Dogus
 
-The following commands apply to a Docker development environment with containers named `cas` and `usermgt`. Replace the username and password with your own values; `-e` stores the API credentials in encrypted form.
+The following commands apply to a Docker development environment with containers named `cas` and `usermgt`. Replace the username and password with your own values. `-e` encrypts the values stored in the Dogu configuration.
 
 ```bash
 docker exec cas doguctl config pat/enabled true
-docker exec cas doguctl config 2fa/activate false
+docker exec cas doguctl config --global 2fa/activate false
 docker exec cas doguctl config -e 2fa/api_user_name '<API-USER>'
 docker exec cas doguctl config -e 2fa/api_user_password '<API-PASSWORD>'
 
@@ -40,7 +40,7 @@ cesapp restart cas
 cesapp restart usermgt
 ```
 
-For operation with 2FA, set `2fa/activate` in CAS to `true` instead and restart CAS. At startup, CAS generates the TOTP keys under `2fa/encryption_key`, `2fa/signing_key`, and `2fa/scratch_codes/encryption_key` if TOTP is enabled and `2fa/encryption_key` has not yet been set. If other keys are missing while `2fa/encryption_key` already exists, the startup script does not automatically supply them. TOTP registrations are stored in `/etc/cas/gauth/gauths.json`. Interactive login requires a configured authenticator app; see [Two-factor authentication](../operations/two_factor_authentication_en.md).
+For operation with 2FA, set the global `2fa/activate` key to `true` and restart CAS. At startup, CAS generates the TOTP keys under `2fa/encryption_key`, `2fa/signing_key`, and `2fa/scratch_codes/encryption_key` if TOTP is enabled and `2fa/encryption_key` has not yet been set. If other keys are missing while `2fa/encryption_key` already exists, the startup script does not automatically supply them. TOTP registrations are stored in `/etc/cas/gauth/gauths.json`. Interactive login requires a configured authenticator app; see [Two-factor authentication](../operations/two_factor_authentication_en.md).
 
 In the CAS Helm chart, the corresponding PAT values are `configuration.normal.pat.enabled` and `configuration.normal.pat.database_url`. Supply credentials through the sensitive configuration of the respective deployment environment. After configuration changes, restart the affected Dogus so that templates or JVM properties are updated.
 

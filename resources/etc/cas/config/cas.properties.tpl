@@ -378,7 +378,7 @@ cas.service-registry.schedule.start-delay=PT1M
 # always enable password reset
 cas.authn.pm.reset.multifactor-authentication-enabled=false
 
-{{ if eq (.Config.Get "2fa/activate") "true"}}
+{{ if eq (.GlobalConfig.GetOrDefault "2fa/activate" "false") "true"}}
 #### multi factor authentication ####
 cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth
 cas.authn.mfa.core.provider-selection.provider-selection-enabled=true
