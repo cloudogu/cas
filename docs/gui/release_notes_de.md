@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.3-2] - 2026-11-24
 ### Added
 - Vor Ablauf eines Zugriffschlüssels oder technischen Kontos werden nun 30/14/7 und 1 Tag vorher Benachrichtigungen an den Eigentümer des Schlüssels versendt.
 

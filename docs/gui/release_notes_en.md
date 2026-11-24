@@ -5,6 +5,8 @@ Below you will find the release notes for CAS-Dogu.
 Technical details on a release can be found in the corresponding [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+
+## [v8.0.3-2] - 2026-11-24
 ### Added
 - CAS now emails owners 30, 14, and 7 days before their access key or technical account expires, with a final reminder one day before expiration.
 
