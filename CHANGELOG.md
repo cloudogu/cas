@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.3-4] - 2026-11-25
+### Fixed
+- XSS-Issue for multi factor authentication fixed
+
 ## [v8.0.3-3] - 2026-11-25
 ### Changed
 - [#403] Update Spring Boot to v4.1.3

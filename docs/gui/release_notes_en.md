@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.3-4] - 2026-11-25
+### Fixed
+- XSS-Issue for multi factor authentication fixed
+
 ## [v8.0.3-3] - 2026-11-25
 ### Security
 - Fix vulnerability [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414)

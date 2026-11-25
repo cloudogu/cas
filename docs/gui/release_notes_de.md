@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.3-4] - 2026-11-25
+### Fixed
+- XSS-schwachstelle bei der Zweifaktor-Authentifizierung behoben
+
 ## [v8.0.3-3] - 2026-11-25
 ### Security
 - Sicherheitslücke [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414) geschlossen
