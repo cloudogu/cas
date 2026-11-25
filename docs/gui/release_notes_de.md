@@ -6,7 +6,7 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 ### Fixed
-- XSS-Issue for multi factor authentication fixed
+- XSS-schwachstelle bei der Zweifaktor-Authentifizierung behoben
 
 ## [v8.0.3-2] - 2026-11-24
 ### Added
