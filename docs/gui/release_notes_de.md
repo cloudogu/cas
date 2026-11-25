@@ -6,6 +6,12 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.3-3] - 2026-11-25
+### Security
+- Sicherheitslücke [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414) geschlossen
+- Sicherheitslücke [CVE-2026-59378](https://nvd.nist.gov/vuln/detail/CVE-2026-59378) geschlossen
+- Sicherheitslücke [CVE-2026-59273](https://nvd.nist.gov/vuln/detail/CVE-2026-59273) geschlossen
+
 ## [v8.0.3-2] - 2026-11-24
 ### Added
 - Vor Ablauf eines Zugriffschlüssels oder technischen Kontos werden nun 30/14/7 und 1 Tag vorher Benachrichtigungen an den Eigentümer des Schlüssels versendt.

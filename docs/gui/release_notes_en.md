@@ -6,6 +6,12 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.3-3] - 2026-11-25
+### Security
+- Fix vulnerability [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414)
+- Fix vulnerability [CVE-2026-59378](https://nvd.nist.gov/vuln/detail/CVE-2026-59378)
+- Fix vulnerability [CVE-2026-59273](https://nvd.nist.gov/vuln/detail/CVE-2026-59273)
+
 ## [v8.0.3-2] - 2026-11-24
 ### Added
 - CAS now emails owners 30, 14, and 7 days before their access key or technical account expires, with a final reminder one day before expiration.

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v8.0.3-3] - 2026-11-25
+### Changed
+- [#403] Update Spring Boot to v4.1.3
+  - The Spring Boot jars of the base CAS WAR (v4.1.0) are now replaced by the overlay's version, so the WAR no longer contains two Spring Boot versions side by side.
+  - Via the Spring Boot BOM, this also moves Spring Framework to v7.0.11, Netty and Micrometer to their latest patch releases.
+- [#403] Update Spring Security to v7.1.3
+
+### Security
+- [#403] Fix [CVE-2026-59414](https://nvd.nist.gov/vuln/detail/CVE-2026-59414)
+- [#403] Fix [CVE-2026-59378](https://nvd.nist.gov/vuln/detail/CVE-2026-59378)
+- [#403] Fix [CVE-2026-59273](https://nvd.nist.gov/vuln/detail/CVE-2026-59273)
+
 ## [v8.0.3-2] - 2026-11-24
 ### Added
 - [#399] description and owner attibutes for PAT stored in database

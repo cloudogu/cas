@@ -241,6 +241,13 @@ dependencies {
     // Patched thymeleaf (3.1.7.RELEASE via thymeleaf.version) onto the classpath; see gradle.properties.
     implementation "org.thymeleaf:thymeleaf"
     implementation "org.thymeleaf:thymeleaf-spring6"
+
+    // CVE-2026-59414/59378: the base WAR's Spring Boot jars are excluded (see springboot.gradle).
+    // These modules are only in the base WAR, not on this overlay's classpath, so they are added
+    // here without transitive dependencies to keep the WAR content unchanged, at springBootVersion.
+    runtimeOnly("org.springframework.boot:spring-boot-mustache") { transitive = false }
+    runtimeOnly("org.springframework.boot:spring-boot-thymeleaf") { transitive = false }
+    runtimeOnly("org.springframework.boot:spring-boot-tomcat") { transitive = false }
 }
 
 configurations.all {
