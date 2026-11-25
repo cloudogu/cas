@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [#403] Update Spring Boot to v4.1.3
   - The Spring Boot jars of the base CAS WAR (v4.1.0) are now replaced by the overlay's version, so the WAR no longer contains two Spring Boot versions side by side.
-  - Via the Spring Boot BOM, this also moves Spring Framework to v7.0.11 and Jackson, Netty and Micrometer to their latest patch releases.
+  - Via the Spring Boot BOM, this also moves Spring Framework to v7.0.11, Netty and Micrometer to their latest patch releases.
 - [#403] Update Spring Security to v7.1.3
 
 ### Security
