@@ -5,6 +5,8 @@ Im Folgenden finden Sie die Release Notes für das CAS-Dogu.
 Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https://docs.cloudogu.com/de/docs/dogus/cas/CHANGELOG/).
 
 ## [Unreleased]
+### Fixed
+- XSS-schwachstelle bei der Zweifaktor-Authentifizierung behoben
 
 ## [v8.0.3-3] - 2026-11-25
 ### Security
