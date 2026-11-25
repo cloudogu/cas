@@ -13,7 +13,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
         <h1 th:text="#{screen.authentication.gauth.login.title}">Eingabe zweiter Faktor</h1>
-        <p th:utext="#{screen.authentication.gauth.selecteddevice(${registeredDevice.name})}"></p>
+        <p><th:block th:text="#{screen.authentication.gauth.selecteddevice.prefix}"/> <code th:text="${registeredDevice.name}"></code>.</p>
 
         <form method="post" id="fm1" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="banner banner-danger alert alert-danger my-2" th:if="${#fields.hasErrors('*')}">
@@ -160,7 +160,7 @@
         <span th:if="${registeredDevices}">
             <p>
             <hr width="75%">
-            <p th:utext="#{screen.authentication.gauth.selanotherdevice(${registeredDevice.name})}"></p>
+            <p><th:block th:text="#{screen.authentication.gauth.selanotherdevice.prefix}"/> <code th:text="${registeredDevice.name}"></code> <th:block th:text="#{screen.authentication.gauth.selanotherdevice.suffix}"/></p>
             <form method="post" id="fm3">
                 <input type="hidden" name="_eventId" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -292,7 +292,7 @@
                                                                 th:data-value="${account.id}" role="option">
                                                                 <span class="mdc-list-item__ripple"></span>
                                                                 <span class="mdc-list-item__text"
-                                                                      th:utext="${account.name}"></span>
+                                                                      th:text="${account.name}"></span>
                                                             </li>
                                                         </ul>
                                                     </div>
