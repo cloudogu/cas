@@ -12,7 +12,8 @@ These facts drive the whole upgrade:
 
 1. **The CAS version dictates the Spring Boot and Tomcat versions.** `app/build.gradle` pulls
    `enforcedPlatform("org.apereo.cas:cas-server-support-bom:<cas.version>")`. Do **not** bump Spring Boot or
-   the bundled Tomcat independently — align them to what the target CAS release expects.
+   the bundled Tomcat independently — align them to what the target CAS release expects. Exception: CVE
+   overrides.
 2. **Every customization is a coupling to CAS.** Custom Java overrides CAS beans/webflow by name; custom
    templates render CAS model objects and post to CAS webflow events. A CAS upgrade can rename a bean, a
    webflow state, a property, or a template model field and break a customization **silently** (no compile
@@ -27,7 +28,7 @@ These facts drive the whole upgrade:
 | What | Where (in this repo) |
 |---|---|
 | CAS | `app/gradle.properties` → `cas.version` |
-| Spring Boot plugin | `app/gradle.properties` → `springBootVersion` (must match the CAS BOM) |
+| Spring Boot plugin | `app/gradle.properties` → `springBootVersion` (matches the CAS BOM unless a security override raises it) |
 | Tomcat (embedded ref) | `app/gradle.properties` → `tomcatVersion` |
 | Tomcat (standalone, baked into the image — the one that actually serves) | `Dockerfile` → `TOMCAT_MAJOR_VERSION`, `TOMCAT_VERSION`, **and** `TOMCAT_TARGZ_SHA512` |
 | Java | `gradle.properties`, `system.properties`, both Docker base images |
