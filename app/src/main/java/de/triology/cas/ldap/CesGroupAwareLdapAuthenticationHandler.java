@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.auth.User;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Setter
 @Slf4j
@@ -52,13 +54,31 @@ public class CesGroupAwareLdapAuthenticationHandler extends LdapAuthenticationHa
     }
 
     public Principal resolvePrincipal(String username) throws Throwable {
+        return createPrincipal(username, findUserEntry(username, getAuthenticatedEntryAttributes()));
+    }
+
+    public Optional<String> findTechnicalAccountDisplayName(String username) throws LdapException {
+        LdapEntry entry = findUserEntry(username, "technical", CesInternalLdapUser.DisplayNameAttribute);
+        var technical = entry.getAttribute("technical");
+        if (technical == null || !"TRUE".equalsIgnoreCase(technical.getStringValue())) {
+            return Optional.empty();
+        }
+
+        var displayName = entry.getAttribute(CesInternalLdapUser.DisplayNameAttribute);
+        return Optional.ofNullable(displayName)
+                .map(attribute -> attribute.getStringValue())
+                .filter(value -> !value.isBlank())
+                .or(() -> Optional.of(username));
+    }
+
+    private LdapEntry findUserEntry(String username, String... attributes) throws LdapException {
         String dn = getAuthenticator().resolveDn(new User(username));
-        SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, getAuthenticatedEntryAttributes());
+        SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, attributes);
         var response = new SearchOperation(connectionFactory).execute(request);
         if (response.getEntries().isEmpty()) {
             throw new IllegalStateException("No LDAP entry found for " + username);
         }
-        return createPrincipal(username, response.getEntries().iterator().next());
+        return response.getEntries().iterator().next();
     }
 
 

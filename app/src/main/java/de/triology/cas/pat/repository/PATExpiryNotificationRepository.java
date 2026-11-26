@@ -23,7 +23,7 @@ public class PATExpiryNotificationRepository {
                 SELECT id, user_id, display_name, created_at, expires_at, scope, description, owner, expiry_notification
                 FROM personal_access_tokens
                 WHERE expiry_notification = TRUE AND expires_at IS NOT NULL
-                  AND julianday(expires_at) > julianday(?) AND owner IS NOT NULL AND trim(owner) <> ''
+                  AND julianday(expires_at) > julianday(?)
                 """, JdbcPATRepository::mapMetadata, now.toString());
     }
 

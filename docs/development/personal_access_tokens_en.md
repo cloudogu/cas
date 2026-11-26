@@ -276,9 +276,9 @@ Configure `personal-acces-token-service.expiry-notification.enabled` (default `t
 and `.from` (defaults to `cas.authn.pm.reset.mail.from`). SMTP uses `spring.mail.*`.
 
 CAS sends reminders 30, 14, and 7 calendar days before expiration, with a final reminder one calendar day before
-expiration. It calculates these dates in the system time zone. A PAT qualifies if notifications are enabled for it,
-it has a future expiration date, and its `owner` is nonblank. CAS looks up the owner in LDAP and uses the principal's
-`mail` attribute to find the recipients. If `owner` is blank, CAS skips the PAT without falling back to `user_id`.
+expiration. It calculates these dates in the system time zone. A PAT qualifies if notifications are enabled for it
+and it has a future expiration date. CAS looks up `owner` in LDAP, using the PAT's `user_id` if `owner` is
+missing or blank. The principal's `mail` attribute supplies the recipients.
 The plain-text email is in English and includes the PAT's display name, record ID, and expiration timestamp.
 CAS omits the token value. It logs LDAP and SMTP failures for each PAT and continues sending other reminders.
 

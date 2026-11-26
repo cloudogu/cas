@@ -5,8 +5,10 @@ import de.triology.cas.pat.model.PATFingerprint;
 import de.triology.cas.pat.model.StoredPAT;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,17 +44,18 @@ class PATExpiryNotificationRepositoryTest {
     }
 
     @Test
-    void selectsOnlyEnabledUnexpiredPatsWithOwners() {
+    void selectsEnabledUnexpiredPatsEvenWithoutOwners() {
         var candidate = insert(NOW.plusSeconds(3600), "ldap-owner", true);
         insert(NOW.plusSeconds(3600), "ldap-owner", false);
         insert(NOW, "ldap-owner", true);
         insert(NOW.minusSeconds(1), "ldap-owner", true);
         insert(null, "ldap-owner", true);
-        insert(NOW.plusSeconds(3600), "  ", true);
-        insert(NOW.plusSeconds(3600), null, true);
+        var blankOwner = insert(NOW.plusSeconds(3600), "  ", true);
+        var missingOwner = insert(NOW.plusSeconds(3600), null, true);
+        jdbc.update("UPDATE personal_access_tokens SET owner = NULL WHERE id = ?", missingOwner.id().toString());
 
-        assertEquals(java.util.List.of(candidate.id()), repository.findCandidates(NOW).stream()
-                .map(metadata -> metadata.id()).toList());
+        assertEquals(Set.of(candidate.id(), blankOwner.id(), missingOwner.id()), repository.findCandidates(NOW).stream()
+                .map(metadata -> metadata.id()).collect(Collectors.toSet()));
     }
 
     @Test
