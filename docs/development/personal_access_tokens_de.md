@@ -368,10 +368,9 @@ personal-acces-token-service.expiry-notification.from=cas@example.org
 ```
 
 Der Job verschickt Erinnerungen, wenn das Ablaufdatum in der Systemzeitzone in genau 30, 14, 7 oder 1 Kalendertagen
-liegt. Es handelt sich um Kalendertage und nicht um abgerundete 24-Stunden-Intervalle. PATs ohne Ablaufdatum,
-mit `expiryNotification=false`, mit leerem `owner` oder bereits abgelaufene PATs werden übersprungen.
-`owner` wird als LDAP-Benutzer-ID aufgelöst; das bereits konfigurierte Principal-Attribut `mail` liefert die Empfänger.
-Ein leerer `owner` wird nicht automatisch durch `user_id` ersetzt. Fehlende Mailadressen und LDAP-/SMTP-Fehler
+liegt. PATs mit aktiviertem Erinnerungsversand und einem zukünftigen Ablaufdatum kommen für den Versand infrage.
+CAS löst `owner` im LDAP auf. Fehlt `owner` oder ist er leer, verwendet CAS die `user_id` des PATs.
+Das konfigurierte Principal-Attribut `mail` liefert die Empfänger. Fehlende Mailadressen und LDAP-/SMTP-Fehler
 werden pro PAT protokolliert und unterbrechen die Bearbeitung der anderen PATs nicht.
 
 Der Versand verwendet die vorhandene SMTP-Konfiguration (`spring.mail.*`, im Dogu `postfix:25`). Die englische

@@ -6,6 +6,10 @@ Technical details on a release can be found in the corresponding [Changelog](htt
 
 ## [Unreleased]
 
+## [v8.0.3-5] - 2026-11-27
+### Fixed
+- send different mails for technical accounts and personal access tokens
+
 ## [v8.0.3-4] - 2026-11-25
 ### Fixed
 - XSS-Issue for multi factor authentication fixed
