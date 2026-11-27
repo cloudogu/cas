@@ -3,8 +3,10 @@ package de.triology.cas.pat.notification;
 import de.triology.cas.ldap.CesGroupAwareLdapAuthenticationHandler;
 import de.triology.cas.pat.model.PATMetadata;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
+import org.ldaptive.LdapException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,9 +26,10 @@ public class PATExpiryMailSender {
     }
 
     public void send(PATMetadata pat, int daysBefore) {
+        String recipientUserId = pat.owner() == null || pat.owner().isBlank() ? pat.userId() : pat.owner();
         Principal principal;
         try {
-            principal = ldapHandler.resolvePrincipal(pat.owner());
+            principal = ldapHandler.resolvePrincipal(recipientUserId);
         } catch (Throwable e) {
             LOGGER.warn("LDAP lookup failed for PAT expiry reminder (patId={})", pat.id());
             throw new IllegalStateException("Could not resolve PAT owner in LDAP", e);
@@ -42,9 +45,16 @@ public class PATExpiryMailSender {
         message.setFrom(from);
         message.setTo(recipients);
         String timeUntilExpiry = daysBefore + (daysBefore == 1 ? " day" : " days");
-        message.setSubject("CAS: Personal access token expires in " + timeUntilExpiry);
-        message.setText("Your personal access token \"" + pat.displayName() + "\" (ID: " + pat.id()
-                + ") expires in " + timeUntilExpiry + ". The expiration time is " + pat.expiresAt() + " (UTC).\n\n"
+        var technicalAccountDisplayName = findTechnicalAccountDisplayName(pat);
+        String subjectPrefix = technicalAccountDisplayName.isPresent()
+                ? "CAS: Technical account expires in "
+                : "CAS: Personal access token expires in ";
+        message.setSubject(subjectPrefix + timeUntilExpiry);
+        String tokenDescription = technicalAccountDisplayName
+                .map(name -> "The access token for the technical account \"" + name + "\"")
+                .orElseGet(() -> "Your personal access token \"" + pat.displayName() + "\"");
+        message.setText(tokenDescription + " expires in " + timeUntilExpiry
+                + ". The expiration time is " + pat.expiresAt() + " (UTC).\n\n"
                 + "Please replace the token before it expires and update any applications that use it.\n");
         LOGGER.info("Sending PAT expiry reminder (patId={}, daysBefore={}, recipientCount={})",
                 pat.id(), daysBefore, recipients.length);
@@ -56,5 +66,14 @@ public class PATExpiryMailSender {
             throw e;
         }
         LOGGER.info("Mail sender accepted PAT expiry reminder (patId={}, daysBefore={})", pat.id(), daysBefore);
+    }
+
+    private Optional<String> findTechnicalAccountDisplayName(PATMetadata pat) {
+        try {
+            return ldapHandler.findTechnicalAccountDisplayName(pat.userId());
+        } catch (LdapException | IllegalStateException e) {
+            LOGGER.warn("LDAP account lookup failed for PAT expiry reminder (patId={})", pat.id());
+            return Optional.empty();
+        }
     }
 }
