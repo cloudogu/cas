@@ -6,6 +6,10 @@ Technische Details zu einem Release finden Sie im zugehörigen [Changelog](https
 
 ## [Unreleased]
 
+## [v8.0.3-5] - 2026-11-27
+### Fixed
+- Unterschiedliche E-Mails beim Ablauf von persönlichen Zugriffschlüsseln und technischen Konten
+
 ## [v8.0.3-4] - 2026-11-25
 ### Fixed
 - XSS-schwachstelle bei der Zweifaktor-Authentifizierung behoben
